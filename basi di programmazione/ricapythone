@@ -8,14 +8,27 @@ anno = 1995
 
 # print(help(str)) aiuto su un tipo specifico di parametro
 
-frutta = ['mele','pere','banane']
-frutti_piccoli = ['mirtilli','fragole','ribes']
+# frutta = ['mele','pere','banane']
+# frutti_piccoli = ['mirtilli','fragole','ribes']
 
 # tutti_frutti = frutta.extend(frutti_piccoli)
 
-tutti_frutti = frutta + frutti_piccoli
+# tutti_frutti = frutta + frutti_piccoli
 
-print(frutta)
-print(tutti_frutti)
+# print(frutta)
+# print(tutti_frutti)
 # print(type(frutta))
 # print(help(frutta))
+
+
+frutti = ['mele','pere','banane']
+verdure =['spinaci','costine','broccoli']
+dolci =['cassatina','cannolo','meringata']
+
+zippati = zip(frutti, verdure, dolci)
+
+for zippato in zippati:
+    print(zippato)
+
+for f,v,d in zippati:
+    print(f,v,d)    
