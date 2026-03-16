@@ -26,9 +26,18 @@ verdure =['spinaci','costine','broccoli']
 dolci =['cassatina','cannolo','meringata']
 
 zippati = zip(frutti, verdure, dolci)
+alimenti = frutti + verdure + dolci
 
 for zippato in zippati:
     print(zippato)
 
 for f,v,d in zippati:
     print(f,v,d)    
+
+scatola = []
+
+for alimento in alimenti:
+    if alimento.startswith('c'):
+        scatola.append(alimento)
+
+print(scatola)        
