@@ -17,11 +17,7 @@ class Libro:
         editore: {self.editore}, 
         Collocazione: {self.collocazione}       
         """
-        
-        
-        
-        
-        
+            
     def tohtml(self):
 
         return f"""

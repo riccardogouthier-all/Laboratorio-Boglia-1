@@ -1,0 +1,21 @@
+titolo : str = 'Quo vadis'
+anno = 1995
+
+# print(type(titolo)) stampa il tipo di variabile
+# print(type(anno))
+
+# print(help(titolo)) aiuto per capire i metodi del parametro
+
+# print(help(str)) aiuto su un tipo specifico di parametro
+
+frutta = ['mele','pere','banane']
+frutti_piccoli = ['mirtilli','fragole','ribes']
+
+# tutti_frutti = frutta.extend(frutti_piccoli)
+
+tutti_frutti = frutta + frutti_piccoli
+
+print(frutta)
+print(tutti_frutti)
+# print(type(frutta))
+# print(help(frutta))
