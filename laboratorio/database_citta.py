@@ -1,5 +1,5 @@
 
-# import json
+import json
 
 import sqlite3
 
@@ -23,7 +23,6 @@ regioni = {
 # print(regionipy)
 # print(regionijson)
 
-
 db = sqlite3.connect("Regioni.db")
 cursor = db.cursor()
 
@@ -45,14 +44,7 @@ for regione in regioni :
     query = f"insert into Regioni (regione_nome, capoluogo) VALUES ('{regione}','{regioni.get(regione)[0]}');"
     cursor.execute(query)
 
-
-
 db.commit()
-
-item = (1,2,3,4,5,6,7,8,9)
-
-for i in item :
-    print("AURA")
 
 
 
