@@ -11,8 +11,8 @@ def prodotti():
     return jsonify(service.getAllProducts())
 
 @app.get('/api/categorie')
-def prodotti():
-    return jsonify(service.getAllProducts())
+def categorie():
+    return jsonify(service.getAllCategories())
 
 
 app.run(debug=True)

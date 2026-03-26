@@ -7,3 +7,6 @@ class MagazzinoService:
 
     def getAllProducts(self):
         return self.repo_prodotti.getProdotti()
+    
+    def getAllCategories(self):
+        return self.repo_prodotti.getCategorie()

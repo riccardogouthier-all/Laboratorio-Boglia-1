@@ -11,3 +11,8 @@ class ProdottoRepo:
         query = "SELECT nome, prezzo_unitario FROM prodotti"
         self.cursor.execute(query)
         return self.cursor.fetchall()
+    
+    def getCategorie(self):
+        query = "SELECT nome, descrizione FROM categorie"
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
