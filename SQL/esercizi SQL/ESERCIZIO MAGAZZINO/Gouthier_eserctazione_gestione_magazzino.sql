@@ -1,7 +1,7 @@
 -- 3. Esercitazione: 30 Query SQL
 -- Ecco una lista di query divise per livello di difficoltà crescente.
 
--- Query di Base (Selezione e Filtro)
+							-- Query di Base (Selezione e Filtro)
 -- Selezionare tutti i prodotti.
 select * from prodotti;
 -- Selezionare nome e prezzo dei prodotti con prezzo superiore a 100€.
@@ -25,11 +25,9 @@ select (prezzo_unitario * quantita_stock) as 'Valore prodotti' from prodotti;
 
 
 
-
-
--- Query con Join (Relazioni tra tabelle)
+							-- Query con Join (Relazioni tra tabelle)
 -- Visualizzare nome prodotto e nome della relativa categoria.
-select id_prodotto, categorie.id_categoria from prodotti join categorie on prodotti.id_categoria = categorie.id_categoria;
+select prodotti.nome, categorie.nome from prodotti join categorie on prodotti.id_categoria = categorie.id_categoria;
 -- Elencare i prodotti insieme alla ragione sociale del loro fornitore.
 select prodotti.nome as nome_prodotto, fornitori.ragione_sociale as ragione_sociale_fornitore from prodotti join fornitori on prodotti.id_fornitore = fornitori.id_fornitore;
 -- Trovare tutti i prodotti della categoria 'Elettronica'.
@@ -50,43 +48,27 @@ select prodotti.nome, categorie.nome, fornitori.ragione_sociale from prodotti jo
 select distinct fornitori.ragione_sociale from fornitori join prodotti on fornitori.id_fornitore = prodotti.id_fornitore join categorie on prodotti.id_categoria = categorie.id_categoria where categorie.nome = 'Elettronica';
 
 
-
-
-
--- Query di Aggregazione e Funzioni (Statistiche)
+							-- Query di Aggregazione e Funzioni (Statistiche)
 -- Contare quanti prodotti ci sono in totale nel database.
 select count(*) as numero_oggetti from prodotti;
 -- Calcolare il prezzo medio dei prodotti.
 select avg(prezzo_unitario) as prezzo_medio from prodotti;
-
 -- Calcolare la somma totale degli articoli in magazzino.
 select sum(quantita_stock) as tutto_magazzino from prodotti;
 -- Trovare il prezzo massimo per ogni categoria.
 select categorie.nome, max(prezzo_unitario) from prodotti join categorie using(id_categoria) group by categorie.nome;
-
--- 25 Contare quanti prodotti fornisce ogni fornitore.
-select fornitori.ragione_sociale, count(prodotti.id_prodotto) as numero_prodotti 
-from fornitori 
-join prodotti using(id_fornitore) 
-group by fornitori.ragione_sociale;
-
+							-- Contare quanti prodotti fornisce ogni fornitore.
+select fornitori.ragione_sociale, count(prodotti.id_prodotto) as numero_prodotti from fornitori join prodotti using(id_fornitore) group by fornitori.ragione_sociale;
 -- Calcolare il valore totale economico del magazzino intero.
 select sum(prezzo_unitario * quantita_stock) as valore_magazzino from prodotti;
-
--- 27 Mostrare le categorie che hanno più di 2 prodotti.
-select categorie.nome, count(prodotti.id_prodotto) 
-from categorie 
-join prodotti using(id_categoria) 
-group by categorie.nome 
-having count(prodotti.id_prodotto) >2;
-
+							-- Mostrare le categorie che hanno più di 2 prodotti.
+select categorie.nome, count(prodotti.id_prodotto) from categorie join prodotti using(id_categoria) group by categorie.nome having count(prodotti.id_prodotto) >2;
 -- Trovare il fornitore che ha il prodotto più economico.
 select fornitori.ragione_sociale, prodotti.nome, prodotti.prezzo_unitario from fornitori join prodotti on fornitori.id_fornitore = prodotti.id_fornitore where prodotti.prezzo_unitario = (select min(prezzo_unitario) from prodotti);
 -- Calcolare la media dei prezzi dei prodotti per il fornitore 'TechSpA'.
-
+select avg(prezzo_unitario) as media_prezzi, fornitori.ragione_sociale as fornitore from prodotti join fornitori using(id_fornitore) where fornitori.ragione_sociale = 'TechSpA';
 -- Visualizzare le categorie e il numero di pezzi totali (somma stock) per ognuna.
-
-
+select categorie.nome as Categoria, sum(quantita_stock) as Pezzi_in_sotck from prodotti join categorie using(id_categoria) group by categorie.nome;
 
 
 -- Esempio di risoluzione (Query 25 & 27)
