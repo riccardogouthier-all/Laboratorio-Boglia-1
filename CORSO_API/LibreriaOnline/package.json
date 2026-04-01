@@ -1,0 +1,16 @@
+{
+  "name": "libreriaonline",
+  "version": "1.0.0",
+  "description": "Progetto di prova libreriaonline",
+  "license": "ISC",
+  "author": "Fabio Abbà",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14"
+  }
+}
