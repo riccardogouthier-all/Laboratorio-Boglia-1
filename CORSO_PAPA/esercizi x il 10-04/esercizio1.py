@@ -27,44 +27,42 @@ def controllo_tempi(tempo1, tempo2):
 
 def inserimento_tempi():           
     """    metodo per gestire gli input"""
-    correttezza_input = False
-    while correttezza_input != True:
-        def manuale_ore():
-            """ ciclo per controllare se il numero inserito per le ore non è negativo o un valore alfabetico """
-            a = input("Inserisci qui il numero di ore: ")
-            while not a.isdigit():
-                a = input("Inserisci qui il NUMERO di ore CORRETTO (FORMATO NUMERICO): ")
-            ore = int(a)
-            return ore
-        b_ore = manuale_ore()
 
-        def manuale_minuti():
-            """ ciclo per controllare se il numero inserito per i minuti non è negativo o un valore alfabetico o se è maggiore di 59"""
-            b = input("Inserisci qui il numero di minuti: ")
-            while not b.isdigit():
-                b = input("Inserisci qui il NUMERO di minuti CORRETTO (FORMATO NUMERICO): ")
-            minuti = int(b)
-            if not  minuti < 60:
-                minuti = 0
-                print("Valore di riferimento dei minuti non valido, inserire un range fino a 59")
-                manuale_minuti()
-            return minuti
-        b_minuti = manuale_minuti()
+    def manuale_ore():
+        """ ciclo per controllare se il numero inserito per le ore non è negativo o un valore alfabetico """
+        a = input("Inserisci qui il numero di ore: ")
+        while not a.isdigit():
+            a = input("Inserisci qui il NUMERO di ore CORRETTO (FORMATO NUMERICO): ")
+        ore = int(a)
+        return ore
+    b_ore = manuale_ore()
 
-        def manuale_secondi():
-            """ ciclo per controllare se il numero inserito per i secondi non è negativo o un valore alfabetico o se è maggiore di 59"""
-            c = input("Inserisci qui il numero di secondi: ")
-            while not c.isdigit():
-                c = input("Inserisci qui il NUMERO di secondi CORRETTO (FORMATO NUMERICO): ")
-            secondi = int(c)
-            if not secondi < 60:
-                secondi = 0
-                print("Valore di riferimento dei secondi non valido, inserire un range fino a 59")
-                manuale_secondi()
-            return secondi
-        b_secondi = manuale_secondi()
+    def manuale_minuti():
+        """ ciclo per controllare se il numero inserito per i minuti non è negativo o un valore alfabetico o se è maggiore di 59"""
+        b = input("Inserisci qui il numero di minuti: ")
+        while not b.isdigit():
+            b = input("Inserisci qui il NUMERO di minuti CORRETTO (FORMATO NUMERICO): ")
+        minuti = int(b)
+        if not  minuti < 60:
+            minuti = 0
+            print("Valore di riferimento dei minuti non valido, inserire un range fino a 59")
+            manuale_minuti()
+        return minuti
+    b_minuti = manuale_minuti()
 
-        correttezza_input = True
+    def manuale_secondi():
+        """ ciclo per controllare se il numero inserito per i secondi non è negativo o un valore alfabetico o se è maggiore di 59"""
+        c = input("Inserisci qui il numero di secondi: ")
+        while not c.isdigit():
+            c = input("Inserisci qui il NUMERO di secondi CORRETTO (FORMATO NUMERICO): ")
+        secondi = int(c)
+        if not secondi < 60:
+            secondi = 0
+            print("Valore di riferimento dei secondi non valido, inserire un range fino a 59")
+            manuale_secondi()
+        return secondi
+    b_secondi = manuale_secondi()
+
     return b_ore, b_minuti, b_secondi 
 
 def main():
@@ -84,7 +82,7 @@ def main():
         return controllo_tempi(tot1, tot2)
     elif risposta1.capitalize() == "Z":
         """  """
-        tot2 = 2345
+        tot2 = 10000
         return controllo_tempi(tot1, tot2)                      
 
 if __name__ == "__main__":
