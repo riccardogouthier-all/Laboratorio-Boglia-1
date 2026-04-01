@@ -1,14 +1,18 @@
 import express from 'express';
 import catalogoLibri from './model/catalogo.js';
 import clientiFile from './model/clienti.js';
+import e from 'express';
+import { get } from 'node:http';
+import bodyparser from 'body-parser';
 
 
 const app = express();
+app.use(bodyparser);
 const PORT = 3000;
 const BASE_PATH = "/api/v1";
-
-var catalogo = catalogoLibri;
-var clienti = clientiFile;
+    
+var catalogo = [...catalogoLibri];
+var clienti = [...clientiFile];
 
 app.listen(PORT, () => {
     console.log("Server attivo sulla porta " + PORT);
@@ -18,10 +22,43 @@ app.get("/", (req, res) => {
     res.send("Benvenuto nella tua libreria online!");
 });
 
-app.get(BASE_PATH + "/catalogo", (req, res) => {
+app.get(`${BASE_PATH}/libri`, (req, res) => {
     res.json(catalogo);
 });
 
 app.get(BASE_PATH + "/clienti", (req, res) => {
     res.json(clienti);
+});
+
+app.get(`${BASE_PATH}/libri/search`, (req, res) => {
+    let titoloParam = (req.query.titolo||"").toString().trim().toLowerCase();
+
+    if (!titoloParam) return res.status(400).json({ error: "Parametro errato" });
+
+    let results = catalogo.filter(libro => libro.titolo.toLowerCase().includes(titoloParam));
+
+    return res.json(results);
+});
+
+app.get(`${BASE_PATH}/libri/:id`, (req, res) => {
+    let idParam = parseInt(req.params.id);
+
+    let libroTrovato = catalogo.find(libro => libro.id === idParam);
+
+    if (!libroTrovato) {
+        return res.status(404).json({ error: "Libro non trovato" });
+    } else {
+        return res.json(libroTrovato);
+    }
+});
+
+app.post(`${BASE_PATH}/libri`, (req, res) => {
+    const nuovoLibro = req.body;
+
+    if (!nuovoLibro) {
+        return res.status(400).json({ error: "Nessun dato fornito" });
+    }
+
+    catalogo.push(nuovoLibro);
+    return res.status(201).json({ message: "Libro aggiunto con successo"});
 });
