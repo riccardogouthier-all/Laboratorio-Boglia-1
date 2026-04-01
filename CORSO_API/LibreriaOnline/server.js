@@ -3,11 +3,11 @@ import catalogoLibri from './model/catalogo.js';
 import clientiFile from './model/clienti.js';
 import e from 'express';
 import { get } from 'node:http';
-import bodyparser from 'body-parser';
+import bodyParser from 'body-parser';
 
 
 const app = express();
-app.use(bodyparser);
+app.use(bodyParser.json());
 const PORT = 3000;
 const BASE_PATH = "/api/v1";
     
