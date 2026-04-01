@@ -43,7 +43,7 @@ def inserimento_tempi():
         while not b.isdigit():
             b = input("Inserisci qui il NUMERO di minuti CORRETTO (FORMATO NUMERICO): ")
         minuti = int(b)
-        if not  minuti < 60:
+        if not minuti < 60:
             minuti = 0
             print("Valore di riferimento dei minuti non valido, inserire un range fino a 59")
             manuale_minuti()
