@@ -13,15 +13,7 @@ No standard input.
 """main(somma() prodotto() print(somma prodotto))"""
 """no dati salvati in memoria"""
 
-
-"""
-- "*args" permette di passare un numero qualsiasi di valori alla funzione
-- Il ciclo `for` controlla ogni numero: se è **pari** (`n % 2 == 0`) lo aggiunge alla somma, altrimenti lo moltiplica al prodotto
-- Il flag `ci_sono_dispari` serve per gestire il caso in cui non ci siano dispari (prodotto rimane 0 invece di 1)
-- Il programma principale legge i numeri da tastiera e richiama la funzione
-"""
-
-def analizza_numeri(*args):
+def analizza_numeri(numeri):
     """
     Riceve un numero variabile di valori numerici.
     Restituisce la somma dei pari e il prodotto dei dispari.
@@ -30,7 +22,7 @@ def analizza_numeri(*args):
     prodotto_dispari = 1
     ci_sono_dispari = False
 
-    for n in args:
+    for n in numeri:
         if n % 2 == 0:
             somma_pari += n
         else:
@@ -47,34 +39,27 @@ def leggi_numeri():
     Legge e valida l'input dell'utente.
     Accetta solo numeri interi separati da spazio.
     """
-    while True:
-        print("Inserisci i numeri da analizzare (separati da spazio):")
-        input_utente = input("> ").strip()
+    
+    print("Inserisci i numeri da analizzare (separati da spazio):")
+    input_utente = input("> ").strip()
 
         # Controlla che non sia vuoto
-        if not input_utente:
-            print("Input vuoto. Inserisci almeno un numero.\n")
-            continue
+    if not input_utente:
+        print("Input vuoto. Inserisci almeno un numero.\n")
+        return leggi_numeri()
 
-        valori = input_utente.split()
-        numeri_validi = []
-        errore = False
-
-        for valore in valori:
-            try:
-                numeri_validi.append(int(valore))
-            except ValueError:
-                print("E' presente un carattere numerico o simbolico non valido. Reinserisci gli input.\n")
-                errore = True
-                break
-
-        if not errore:
-            return numeri_validi
-
+    valori = input_utente.split()
+    
+    if not all(v.lstrip('-').isdigit() for v in valori):
+        print("E' presente un carattere non numerico o simbolico non valido. Reinserisci gli input.")
+        return leggi_numeri()
+    
+    return list(map(int, valori))
+    
 # --- Programma principale ---
 def main():
     numeri = leggi_numeri()
-    somma, prodotto = analizza_numeri(*numeri)
+    somma, prodotto = analizza_numeri(numeri)
 
     print(f"\nNumeri inseriti: {numeri}")
     print(f"Somma dei pari: {somma}")
