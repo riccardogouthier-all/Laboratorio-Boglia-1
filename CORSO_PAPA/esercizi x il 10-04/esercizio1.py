@@ -46,7 +46,7 @@ def inserimento_tempi():
         if not minuti < 60:
             minuti = 0
             print("Valore di riferimento dei minuti non valido, inserire un range fino a 59")
-            manuale_minuti()
+            return manuale_minuti()
         return minuti
     b_minuti = manuale_minuti()
 
@@ -59,7 +59,7 @@ def inserimento_tempi():
         if not secondi < 60:
             secondi = 0
             print("Valore di riferimento dei secondi non valido, inserire un range fino a 59")
-            manuale_secondi()
+            return manuale_secondi()
         return secondi
     b_secondi = manuale_secondi()
 
