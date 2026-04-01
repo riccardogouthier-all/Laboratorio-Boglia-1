@@ -5,7 +5,7 @@ Titolo:
 Creare una funzione che riceva una quantità di tempo in formato ore, minuti e secondi e la restituisca espressa solamente in secondi. 
 Successivamente creare un programma principale che chieda in input due quantità di tempo e stampi in output quale quantità di tempo è maggiore. 
 La funzione deve avere i parametri formali con valori predefiniti. 
-'''
+''' 
 
 def calcolo_secondi(ore, minuti, secondi):              
     """metodo per calcolare l'output (numero di secondi) dagli input(ore, minuti, secondi)"""
