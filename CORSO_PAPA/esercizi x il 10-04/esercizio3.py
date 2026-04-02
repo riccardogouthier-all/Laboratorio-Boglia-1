@@ -5,16 +5,17 @@ Titolo:
 Conversione temperatura: implementare una funzione convertiCF che converta una 
 temperatura espressa in gradi Fahrenheit in una temperatura espressa in gradi Celsius. 
 Usare la seguente formula: C = (F   - 32) * 5 / 9 
-Creare un programma principale che richiami la funzione e ne stampi il risultato visualizzando solo 3 cifre decimali. 
+Creare un programma principale che richiami la funzione e ne stampi il risultato
+visualizzando solo 3 cifre decimali. 
 '''
 def fahrenheit():
     """ ciclo per controllare se il numero inserito per le ore non è negativo o un valore alfabetico """
     g = input("Inserisci qui i gradi Fahrenheit: ")
     while not g.lstrip('-.').isdigit():
         g = input("Inserisci qui il NUMERO di Fahrenheit CORRETTO (FORMATO NUMERICO): ")
-        cels = float(g)
         return fahrenheit()
-    return cels
+    cels = float(g)
+    return cels    
 
 def conversione(F):
     C = (F   - 32) * 5 / 9
@@ -22,9 +23,9 @@ def conversione(F):
 
 def main():
     fahr = fahrenheit()
-    C = conversione(fahr)
-    print(fahr)
-    return C, fahr
+    celsius = conversione(fahr)
+    print(f"hai inserito {fahr:.3f} fahrenheit, cioè {celsius:.3f} Celsius")
+    
 
 if __name__ == "__main__":
     main()
