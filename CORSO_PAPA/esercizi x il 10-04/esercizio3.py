@@ -25,7 +25,6 @@ def main():
     fahr = fahrenheit()
     celsius = conversione(fahr)
     print(f"hai inserito {fahr:.3f} fahrenheit, cioè {celsius:.3f} Celsius")
-    
 
 if __name__ == "__main__":
     main()
