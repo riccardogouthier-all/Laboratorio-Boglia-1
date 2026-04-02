@@ -9,11 +9,12 @@ Creare un programma principale che richiami la funzione e ne stampi il risultato
 '''
 def fahrenheit():
     """ ciclo per controllare se il numero inserito per le ore non è negativo o un valore alfabetico """
-    a = input("Inserisci qui i gradi Fahrenheit: ")
-    while not a.lstrip('-').isdigit():
-        a = input("Inserisci qui il NUMERO di Fahrenheit CORRETTO (FORMATO NUMERICO): ")
-        ore = int(a)
-    return ore
+    g = input("Inserisci qui i gradi Fahrenheit: ")
+    while not g.lstrip('-.').isdigit():
+        g = input("Inserisci qui il NUMERO di Fahrenheit CORRETTO (FORMATO NUMERICO): ")
+        cels = float(g)
+        return fahrenheit()
+    return cels
 
 def conversione(F):
     C = (F   - 32) * 5 / 9
@@ -21,8 +22,9 @@ def conversione(F):
 
 def main():
     fahr = fahrenheit()
-    celsius = conversione(fahr)
+    C = conversione(fahr)
     print(fahr)
+    return C, fahr
 
 if __name__ == "__main__":
     main()
