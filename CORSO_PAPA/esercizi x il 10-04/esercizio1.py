@@ -70,7 +70,7 @@ def main():
     ore1 ,minuti1, secondi1 = inserimento_tempi()
     tot1 = calcolo_secondi(ore1, minuti1, secondi1) 
     """ Dopo aver usato i metodi per inizializzare le variabili  """     
-    risposta1 = input("Vuoi inserire un primo orario da comparare? (y/N) PPURE premi z per compararlo con il numero in storage: ")
+    risposta1 = input("Vuoi inserire un primo orario da comparare? (y/N) OPPURE premi z per compararlo con il numero in storage: ")
     if risposta1.capitalize() == "Y":
         ore2 ,minuti2, secondi2 = inserimento_tempi()
         tot2 = calcolo_secondi(ore2, minuti2, secondi2)    
