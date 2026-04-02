@@ -8,6 +8,16 @@ Usare la seguente formula: C = (F   - 32) * 5 / 9
 Creare un programma principale che richiami la funzione e ne stampi il risultato visualizzando solo 3 cifre decimali. 
 '''
 
+
+def main():
+    pass
+
+if __name__ == "__main__":
+    main()
+
+
+
+
 # metodo per gestire gli input
 
 # metodo per calcolare il numero di secondi dagli input
