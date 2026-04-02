@@ -9,6 +9,9 @@ La seguente è la formula per valutare numericamente il numero di Nepero e:
             e= 1/0! + 1/1! + 1/2! = 1 + 1 + 0.5 = 2.5 
     La funzione calcola_e deve richiamare la funzione di calcolo del fattoriale. 
     Scrivere il codice della funzione e il programma principale che la chiama chiedendo in input il numero N. 
+
+
+    
 4.b Supponendo di porre il numero di Nepero = 2.718281828459045 dico che  errore = calcola_e(N) - Nepero  sia l'errore che commetto nella valutazione di e. 
     Modificare la funzione che restituisce la valutazione di e con N termini andando a far restituire anche l'errore commesso nella valutazione.  
     Suggerimento: la funzione calcola_e(N) dovrà restituire due valori,  2.718281828459045 potrebbe essere memorizzato in una variabile globale. 
