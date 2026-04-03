@@ -27,5 +27,3 @@ print(f"Valore di e (math.e): {e_val}")
 n = 20 # Numero di termini
 e_approx = sum(1/math.factorial(i) for i in range(n))
 print(f"Valore di e (serie Taylor): {e_approx}")
-
-
