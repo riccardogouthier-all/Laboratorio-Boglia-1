@@ -12,7 +12,7 @@ def calcolo_secondi(ore, minuti, secondi):
     tot = ore * 3600 + minuti * 60 + secondi
     return tot
 
-def controllo_tempi(tempo1, tempo2):
+def controllo_tempi(tempo1, tempo2=10000):
     """ metodo per controllare quale dei due tempi è maggiore, funziona con due valori passati dal codice e li mette a confronto
     i valori in ingresso possono essere in storage macchina o due input. """
     tot1 = tempo1
@@ -82,8 +82,8 @@ def main():
         return controllo_tempi(tot1, tot2)
     elif risposta1.capitalize() == "Z":
         """  """
-        tot2 = 10000
-        return controllo_tempi(tot1, tot2)                      
+        # tot2 = 10000
+        return controllo_tempi(tot1)                      
 
 if __name__ == "__main__":
     main()
