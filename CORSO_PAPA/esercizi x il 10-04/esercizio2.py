@@ -14,10 +14,7 @@ No standard input.
 """no dati salvati in memoria"""
 
 def analizza_numeri(numeri):
-    """
-    Riceve un numero variabile di valori numerici.
-    Restituisce la somma dei pari e il prodotto dei dispari.
-    """
+    """Riceve un numero variabile di valori numerici. Restituisce la somma dei pari e il prodotto dei dispari."""
     somma_pari = 0
     prodotto_dispari = 1
     ci_sono_dispari = False
@@ -35,19 +32,14 @@ def analizza_numeri(numeri):
     return somma_pari, prodotto_dispari
 
 def leggi_numeri():
-    """
-    Legge e valida l'input dell'utente.
-    Accetta solo numeri interi separati da spazio.
-    """
-    
+    """Legge e valida l'input dell'utente. Accetta solo numeri interi separati da spazio."""
     print("Inserisci i numeri da analizzare (separati da spazio):")
     input_utente = input("> ").strip()
-
-        # Controlla che non sia vuoto
+    """Controlla che non sia vuoto"""
     if not input_utente:
         print("Input vuoto. Inserisci almeno un numero.\n")
         return leggi_numeri()
-
+    
     valori = input_utente.split()
     
     if not all(v.lstrip('-').isdigit() for v in valori):
@@ -56,12 +48,12 @@ def leggi_numeri():
     
     return list(map(int, valori))
     
-# --- Programma principale ---
+"""Programma principale"""
 def main():
     numeri = leggi_numeri()
     somma, prodotto = analizza_numeri(numeri)
 
-    print(f"\nNumeri inseriti: {numeri}")
+    print(f"Numeri inseriti: {numeri}")
     print(f"Somma dei pari: {somma}")
     print(f"Prodotto dei dispari: {prodotto}")
 
