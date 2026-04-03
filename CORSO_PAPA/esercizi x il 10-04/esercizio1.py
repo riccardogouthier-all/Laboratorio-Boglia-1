@@ -82,7 +82,6 @@ def main():
         return controllo_tempi(tot1, tot2)
     elif risposta1.capitalize() == "Z":
         """  """
-        # tot2 = 10000
         return controllo_tempi(tot1)                      
 
 if __name__ == "__main__":
