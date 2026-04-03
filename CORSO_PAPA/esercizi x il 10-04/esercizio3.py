@@ -17,9 +17,9 @@ def fahrenheit():
     cels = float(g)
     return cels    
 
-def conversione(F):
-    C = (F   - 32) * 5 / 9
-    return C
+def conversione(f):
+    c = (f   - 32) * 5 / 9
+    return c
 
 def main():
     fahr = fahrenheit()
