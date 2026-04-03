@@ -20,12 +20,10 @@ La seguente è la formula per valutare numericamente il numero di Nepero e:
 import math
 
 """Metodo 1: Costante predefinita"""
-
 e_val = math.e
 print(f"Valore di e (math.e): {e_val}")
 
 """Metodo 2: Serie di Taylor (approssimazione)"""
-
 n = 20 # Numero di termini
 e_approx = sum(1/math.factorial(i) for i in range(n))
 print(f"Valore di e (serie Taylor): {e_approx}")
