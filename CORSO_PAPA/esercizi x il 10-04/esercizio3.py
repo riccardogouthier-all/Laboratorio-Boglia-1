@@ -11,6 +11,7 @@ visualizzando solo 3 cifre decimali.
 def fahrenheit():
     """ ciclo per controllare se il numero inserito per le ore non è negativo o un valore alfabetico """
     g = input("Inserisci qui i gradi Fahrenheit: ")
+    """"""
     while not g.lstrip('-.').isdigit():
         g = input("Inserisci qui il NUMERO di Fahrenheit CORRETTO (FORMATO NUMERICO): ")
         return fahrenheit()
@@ -18,15 +19,18 @@ def fahrenheit():
     return cels    
 
 def conversione(f):
+    """"""
     c = (f   - 32) * 5 / 9
     return c
 
 def main():
+    """"""
     fahr = fahrenheit()
     celsius = conversione(fahr)
     print(f"hai inserito {fahr:.3f} fahrenheit, cioè {celsius:.3f} Celsius")
 
 if __name__ == "__main__":
+    """"""
     main()
 
 # metodo per gestire gli input
