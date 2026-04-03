@@ -17,7 +17,7 @@ def controllo_tempi(tempo1, tempo2=10000):
     i valori in ingresso possono essere in storage macchina o due input. """
     tot1 = tempo1
     tot2 = tempo2
-
+    """"""
     if tot1 > tot2:                                                         
         print(f"L'input maggiore è il numero 1:: | {tot1} |")
     elif tot1 < tot2:
@@ -27,7 +27,6 @@ def controllo_tempi(tempo1, tempo2=10000):
 
 def inserimento_tempi():           
     """    metodo per gestire gli input"""
-
     def manuale_ore():
         """ ciclo per controllare se il numero inserito per le ore non è negativo o un valore alfabetico """
         a = input("Inserisci qui il numero di ore: ")
@@ -66,7 +65,7 @@ def inserimento_tempi():
     return b_ore, b_minuti, b_secondi 
 
 def main():
-
+    """"""
     ore1 ,minuti1, secondi1 = inserimento_tempi()
     tot1 = calcolo_secondi(ore1, minuti1, secondi1) 
     """ Dopo aver usato i metodi per inizializzare le variabili  """     
@@ -85,6 +84,7 @@ def main():
         return controllo_tempi(tot1)                      
 
 if __name__ == "__main__":
+    """"""
     main()
 # Stampa di prova
 # print(f"Prova di stampa per 1: {tot1}   2: {tot2}")
