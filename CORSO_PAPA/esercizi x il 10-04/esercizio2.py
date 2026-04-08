@@ -13,7 +13,7 @@ No standard input.
 """main(somma() prodotto() print(somma prodotto))"""
 """no dati salvati in memoria"""
 
-def analizza_numeri(numeri):
+def analizza_numeri(*numeri):
     """Riceve un numero variabile di valori numerici. Restituisce la somma dei pari e il prodotto dei dispari."""
     somma_pari = 0
     prodotto_dispari = 1
@@ -31,27 +31,28 @@ def analizza_numeri(numeri):
 
     return somma_pari, prodotto_dispari
 
-def leggi_numeri():
-    """Legge e valida l'input dell'utente. Accetta solo numeri interi separati da spazio."""
-    print("Inserisci i numeri da analizzare (separati da spazio):")
-    input_utente = input("> ").strip()
-    """Controlla che non sia vuoto"""
-    if not input_utente:
-        print("Input vuoto. Inserisci almeno un numero.\n")
-        return leggi_numeri()
+# def leggi_numeri():
+#     """Legge e valida l'input dell'utente. Accetta solo numeri interi separati da spazio."""
+#     print("Inserisci i numeri da analizzare (separati da spazio):")
+#     input_utente = input("> ").strip()
+#     """Controlla che non sia vuoto"""
+#     if not input_utente:
+#         print("Input vuoto. Inserisci almeno un numero.\n")
+#         return leggi_numeri()
     
-    valori = input_utente.split()
+#     valori = input_utente.split()
     
-    if not all(v.lstrip('-').isdigit() for v in valori):
-        print("E' presente un carattere non numerico o simbolico non valido. Reinserisci gli input.")
-        return leggi_numeri()
+#     if not all(v.lstrip('-').isdigit() for v in valori):
+#         print("E' presente un carattere non numerico o simbolico non valido. Reinserisci gli input.")
+#         return leggi_numeri()
     
-    return list(map(int, valori))
+#     return list(map(int, valori))
     
 """Programma principale"""
 def main():
-    numeri = leggi_numeri()
-    somma, prodotto = analizza_numeri(numeri)
+    numeri = (1,2,3,4,5,6,7,8,9)
+    # numeri = leggi_numeri()
+    somma, prodotto = analizza_numeri(*numeri)
 
     print(f"Numeri inseriti: {numeri}")
     print(f"Somma dei pari: {somma}")
