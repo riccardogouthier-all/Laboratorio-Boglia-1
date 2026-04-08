@@ -7,11 +7,10 @@ class Impiegato:
     cognome : str
     ruolo : str
 
+class EmployeeDao:
 
-DB_impiegati = database.connetti()
+    def findImpiegati(self):
+        DB_impiegati = database.connetti()
+        impiegati = database.interroga(DB_impiegati, "select FirstName, LastName, Title from employee")
 
-impiegati = database.interroga(DB_impiegati, "select FirstName, LastName, Title from employee")
-
-scatola = [Impiegato(n, c, r) for n, c, r in impiegati]
-
-print(scatola)
+        return [Impiegato(n, c, r) for n, c, r in impiegati]
