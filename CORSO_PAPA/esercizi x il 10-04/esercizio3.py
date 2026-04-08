@@ -8,6 +8,7 @@ Usare la seguente formula: C = (F   - 32) * 5 / 9
 Creare un programma principale che richiami la funzione e ne stampi il risultato
 visualizzando solo 3 cifre decimali. 
 '''
+
 def fahrenheit():
     """ ciclo per controllare se il numero inserito per le ore non è negativo o un valore alfabetico """
     g = input("Inserisci qui i gradi Fahrenheit: ")

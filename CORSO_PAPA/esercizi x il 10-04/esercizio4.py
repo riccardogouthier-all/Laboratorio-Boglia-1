@@ -16,15 +16,7 @@ La seguente è la formula per valutare numericamente il numero di Nepero e:
     Suggerimento: la funzione calcola_e(N) dovrà restituire due valori,  2.718281828459045 potrebbe essere memorizzato in una variabile globale. 
     esempio: valuta_e(3) restituisce il valore calcolato nel punto 4.a 2.5 e 0,218281828459045 che rappresenta la differenza tra 2.718281828459045 e 2.5 
 '''
-# """Metodo 1: Costante predefinita"""
-# e_val = math.e
-# print(f"Valore di e (math.e): {e_val}")
 
-# """Metodo 2: Serie di Taylor (approssimazione)"""
-# n = 20 # Numero di termini
-
-# e_approx = sum(1/math.factorial(i) for i in range(n))
-# print(f"Valore di e (serie Taylor): {e_approx}")
 import math
 
 def fattoriale(n):

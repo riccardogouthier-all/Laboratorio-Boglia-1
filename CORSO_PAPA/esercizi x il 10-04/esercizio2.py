@@ -8,11 +8,6 @@ Successivamente creare un programma che richiami tale funzione e che stampi in o
 No standard input. 
 '''
 
-"""funzione con x numeri"""
-"""somma if int/2 = int :: prodotto if int/2 != int"""
-"""main(somma() prodotto() print(somma prodotto))"""
-"""no dati salvati in memoria"""
-
 def analizza_numeri(*numeri):
     """Riceve un numero variabile di valori numerici. Restituisce la somma dei pari e il prodotto dei dispari."""
     somma_pari = 0
