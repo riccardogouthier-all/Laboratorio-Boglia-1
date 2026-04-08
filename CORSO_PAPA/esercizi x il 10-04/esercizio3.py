@@ -20,6 +20,7 @@ def fahrenheit():
         print("Inserisci NUMERO di Fahrenheit col formato corretto -+xxx.yyy")
         return fahrenheit()
 
+    """"""
     segno = g_nop.count('+') + g_nop.count('-')
     if segno > 1 or (segno == 1 and not (g_nop.startswith('+') or g_nop.startswith('-'))):
         print("Hai inserito troppo segni davanti al valore numerico")
@@ -34,15 +35,13 @@ def fahrenheit():
     return cels    
 
 def conversione(f):
-    """"""
+    """Formula per converitre da gradi fahrenheit a celsius"""
     return (f - 32) * 5 / 9
 
 def main():
-    """"""
     f = fahrenheit()
     celsius = conversione(f)
     print(f"hai inserito {f:.3f} fahrenheit, cioè {celsius:.3f} Celsius")
 
 if __name__ == "__main__":
-    """"""
     main()

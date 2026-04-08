@@ -20,12 +20,14 @@ La seguente è la formula per valutare numericamente il numero di Nepero e:
 import math
 
 def fattoriale(n):
+    """Calcola il fattoriale di n in modo iterativo."""
     risultato = 1 
     for i in range(1, n+1):
         risultato *= i
     return risultato
 
 def calcola_e(n):
+    """Calcola il numero di Nepero e con n termini della serie."""
     somma = 0
     for i in range(n):
         somma += 1/fattoriale(i)
