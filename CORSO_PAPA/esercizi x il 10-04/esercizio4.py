@@ -16,14 +16,39 @@ La seguente è la formula per valutare numericamente il numero di Nepero e:
     Suggerimento: la funzione calcola_e(N) dovrà restituire due valori,  2.718281828459045 potrebbe essere memorizzato in una variabile globale. 
     esempio: valuta_e(3) restituisce il valore calcolato nel punto 4.a 2.5 e 0,218281828459045 che rappresenta la differenza tra 2.718281828459045 e 2.5 
 '''
+# """Metodo 1: Costante predefinita"""
+# e_val = math.e
+# print(f"Valore di e (math.e): {e_val}")
 
+# """Metodo 2: Serie di Taylor (approssimazione)"""
+# n = 20 # Numero di termini
+
+# e_approx = sum(1/math.factorial(i) for i in range(n))
+# print(f"Valore di e (serie Taylor): {e_approx}")
 import math
 
-"""Metodo 1: Costante predefinita"""
-e_val = math.e
-print(f"Valore di e (math.e): {e_val}")
+def fattoriale(n):
+    risultato = 1 
+    for i in range(1, n+1):
+        risultato *= i
+    return risultato
 
-"""Metodo 2: Serie di Taylor (approssimazione)"""
-n = 20 # Numero di termini
-e_approx = sum(1/math.factorial(i) for i in range(n))
-print(f"Valore di e (serie Taylor): {e_approx}")
+def calcola_e(n):
+    somma = 0
+    for i in range(n):
+        somma += 1/fattoriale(i)
+    return somma
+
+def main():
+    n = input("Inserisci il numero di termini N: ")
+    while not n.isdigit():
+            print("Hai sbagliato a inserire il valore, solo numeri ammessi")
+            main()
+            
+    n = int(n)        
+    e_approssimato = calcola_e(n)
+    print(f"e approssimato con {n} termini: {e_approssimato:.6f}")
+    print(f"e reale (valore di math.e):     {math.e:.6f}")
+
+if __name__ == "__main__":
+     main()    
