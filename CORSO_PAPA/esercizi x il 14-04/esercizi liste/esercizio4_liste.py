@@ -21,7 +21,5 @@ def dividi_lista(lista, n):
 
 lista = [1,2,1,2,3,4,5,6,7,8,9]
 n = 4
-
 prima_parte, seconda_parte = dividi_lista(lista, n)
-
 print(f"hai inserito come lista: {lista} e hai scelto di dividerla dal carattere numero {n}. \n {prima_parte} \n {seconda_parte}")
