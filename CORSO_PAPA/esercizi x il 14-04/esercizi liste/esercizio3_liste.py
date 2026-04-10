@@ -14,5 +14,5 @@ def piccolo(lista):
 
 lista = [4, 2, 7, 1, 3, 1]
 
-print(f"Lista: {lista}")
+# print(f"Lista: {lista}")
 print(f"Secondo numero più piccolo: {piccolo(lista)}")
