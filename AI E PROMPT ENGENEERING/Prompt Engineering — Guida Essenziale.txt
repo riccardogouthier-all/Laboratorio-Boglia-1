@@ -20,19 +20,20 @@ Le 6 regole d'oro sono: chiarezza > brevità, specificità > genericità, contes
 verifica critica dell'output non negoziabile, documentare i pattern che funzionano.
 
 I framework principali
-COSTAR (Context, Objective, Style, Tone, Audience, Response) è il framework per task di comunicazione professionale: 
+-COSTAR (Context, Objective, Style, Tone, Audience, Response) è il framework per task di comunicazione professionale: 
 email, report, documentazione. Compilarlo richiede 3-4 minuti ma evita 20-30 minuti di riscritture. 
-AUTOMAT (Act as, User Persona, Targeted Action, Output Definition, Mode, Atypical Cases, Topic Whitelisting) 
+-AUTOMAT (Act as, User Persona, Targeted Action, Output Definition, Mode, Atypical Cases, Topic Whitelisting) 
 è pensato per definire il comportamento di sistemi AI riusabili: chatbot, assistenti aziendali, agenti integrati in pipeline. 
-CARE (Context, Action, Result, Example) segue una struttura narrativa causa-effetto, ideale per post-mortem, case study, 
+-CARE (Context, Action, Result, Example) segue una struttura narrativa causa-effetto, ideale per post-mortem, case study, 
 report con ROI quantificato.
 
 Tecniche specifiche
-Chain-of-Thought: aggiungere "ragiona passo per passo" migliora l'accuratezza del 20–50% su task di reasoning complesso, 
+-Chain-of-Thought: aggiungere "ragiona passo per passo" migliora l'accuratezza del 20–50% su task di reasoning complesso, 
 forzando il modello a esplicitare ogni passaggio intermedio. Few-shot: fornire 2–3 esempi input/output prima del task reale; 
 con i modelli del 2025 va testato sempre prima il zero-shot (descrizione chiara), aggiungendo esempi solo se necessario. 
 Role-playing: assegnare un ruolo specifico ("Sei AWS Solutions Architect Senior con 10 anni di esperienza") attiva pattern 
-di expertise dai dati di training — 10 parole extra con ROI altissimo. Output Formatting: specificare esplicitamente JSON, 
+di expertise dai dati di training — 10 parole extra con ROI altissimo. 
+Output Formatting: specificare esplicitamente JSON, 
 YAML, Markdown o tabella rende l'output parsabile, integrabile in pipeline e coerente tra run diverse.
 
 Framework avanzati (panoramica)
