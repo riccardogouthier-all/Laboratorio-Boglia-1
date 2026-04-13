@@ -44,3 +44,6 @@ Mentalità produzione
 I prompt critici vanno trattati come codice: version control su Git, test suite con golden output, documentazione inline, 
 code review prima di andare in produzione. Il prompt engineering è una meta-competenza trasferibile: gli stessi principi 
 migliorano ticket, documentazione tecnica, email e comunicazione con stakeholder.
+
+
+
