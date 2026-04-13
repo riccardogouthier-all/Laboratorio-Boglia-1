@@ -9,11 +9,11 @@ str="PIPPO" NON PALINDROMA
 
 
 def e_palindormo(parola):
-    stringa = parola.lower().replace(' ','')
+    stringa = parola.lower().replace(" ","").replace("'","")
     agnirts = stringa[::-1]
     return bool(stringa == agnirts)
 
-stringa = "ai lati d italia"
+stringa = "Ai lati d'Italia"
 
 if e_palindormo(stringa):
     print(f"{stringa} E' PALINDROMO")
