@@ -1,0 +1,55 @@
+LLM Premium e Modelli Offline — Riassunto Completo
+
+Come si valuta un LLM: i criteri chiave sono benchmark di ragionamento (MMLU, GPQA, HumanEval), lunghezza del contesto 
+(da 128K a 1M token), multimodalità (testo, immagini, audio, video), latenza, costo per token (varia di 50x tra il modello 
+più caro e il più economico), privacy/data residency e aggiornamento della knowledge cutoff.
+
+OpenAI: GPT-5.4 è il modello tuttofare con 128K token di contesto e multimodalità nativa. 
+La serie o3/o4-mini (solo API) usa chain-of-thought interno per ragionamento avanzato — o3 supera il 99° percentile umano su 
+matematica olimpionica. Nell'interfaccia ChatGPT il reasoning è ora integrato nel Thinking mode di GPT-5.x. GPT-5-mini è 
+circa 10x più economico per task semplici. L'ecosistema si estende a GitHub Copilot, Microsoft 365 Copilot, Azure OpenAI e Bing.
+
+Anthropic Claude: filosofia orientata a sicurezza e Constitutional AI. La famiglia Claude 4 comprende Opus 4.6 (flagship, 
+ragionamento profondo, extended thinking), Sonnet 4.6 (ottimo bilanciamento qualità/costo, default per utenti Plus) e 
+Haiku 4.5 (velocissimo, 20-30x più economico di Opus). Tutti i modelli supportano 200K token di contesto. Claude eccelle 
+in coding (top su SWE-bench), scrittura lunga e analisi di contratti. Disponibile su Amazon Bedrock e Google Vertex; 
+offre HIPAA BAA per dati sanitari.
+
+Google Gemini: Gemini 3.1 Pro ha una finestra di contesto da 1 milione di token (codebase interi, 800+ pagine di documenti legali, 
+video fino a 1 ora). Gemini Flash risponde in <1 secondo. Integrazione nativa in Gmail, Docs, Sheets e Meet per riassunti, 
+bozze e action items. NotebookLM (powered by Gemini) analizza PDF e genera podcast sintetici. Gemma 2 è il modello open-weight 
+di Google per deployment locale.
+
+Mistral AI: startup francese, l'alternativa europea con sede UE = conformità GDPR nativa senza trasferimento dati extra-UE. 
+Mistral Small 4 (marzo 2026) supera Large 3 su coding a costo inferiore. Codestral è specializzato su 80+ linguaggi 
+con Fill-in-the-Middle; Pixtral eccelle su visione e documenti scansionati in lingue europee. Disponibile anche self-hosted 
+con pesi aperti.
+
+Modelli cinesi: DeepSeek R1 è il primo modello open-weight con chain-of-thought paragonabile a o1, sviluppato con ~6M$ vs i miliardi 
+di OpenAI — ha causato un -17% di Nvidia in un giorno. Qwen 3-Coder 32B supera GPT-4o su HumanEval, supporta 90+ linguaggi 
+inclusi COBOL e PL/SQL. CodeGeeX4 ha contesto 128K e capacità agentiche. Attenzione: per dati aziendali sensibili preferire 
+il deployment self-hosted dei modelli open-weight.
+Tier gratuiti: ChatGPT free → GPT-5-mini con limiti orari; Claude.ai free → Sonnet 4.6 con limite giornaliero; 
+Gemini free → Flash senza limite fisso; Mistral Le Chat → Large 3 gratuito; DeepSeek → API con crediti iniziali e costi molto bassi. 
+
+Nota: i dati delle conversazioni gratuite finanziano il training (salvo opt-out).
+Modelli locali — perché usarli: privacy assoluta (dati mai in cloud), zero costo per token, zero latenza di rete, 
+personalizzazione totale. Limiti: hardware costoso (RTX 4090 24GB VRAM o Apple Silicon M3/M4), qualità inferiore ai top cloud,
+manutenzione necessaria. La quantizzazione Q4 dimezza la VRAM richiesta con perdita di qualità del 3-8%.
+Strumenti locali: Ollama è il "Docker" dei modelli AI — una riga di comando per scaricare e avviare qualsiasi modello, 
+API REST compatibile con OpenAI su localhost. LM Studio offre GUI completa, Model Hub e server MCP (v0.3+) per connettere editor 
+e file system al modello locale. Jan.ai è open-source puro; Open WebUI dà un'interfaccia tipo ChatGPT accessibile da tutta la 
+rete locale; AnythingLLM aggiunge RAG integrato per knowledge base private.
+
+Migliori modelli locali oggi: Llama 4 Scout (109B/17B attivi, MoE, ~22GB VRAM in Q4), Qwen 3 72B (eccellente italiano e coding), 
+Mistral Small 3 (22B, ottimo su lingue europee), Phi-4 Mini (3.8B, gira su CPU con 8GB RAM). Per coding: Qwen 3-Coder 32B; 
+per ragionamento: DeepSeek R1 32B; per visione: Pixtral 12B.
+
+Matrice decisionale rapida: dati sensibili → locale o cloud enterprise con BAA; 
+ragionamento complesso → GPT-5.4 Thinking / Claude Opus; ecosistema Google → Gemini; coding quotidiano → GitHub Copilot + Claude Sonnet; 
+budget zero → free tier o Ollama+Phi; GDPR UE → Mistral self-hosted o Azure OpenAI con data residency EU.
+
+Trend chiave: i gap qualitativi tra i top model si assottigliano — la scelta dipende sempre più da ecosistema, prezzo e privacy. 
+I modelli "mini" del 2026 eguagliano GPT-4 del 2023 a una frazione del costo. La specializzazione batte la generalizzazione 
+per task intensi. 
+L'AI è uno strumento: la responsabilità umana sui risultati rimane imprescindibile.

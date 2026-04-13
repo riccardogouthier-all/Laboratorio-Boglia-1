@@ -1,0 +1,46 @@
+Prompt Engineering — Guida Essenziale
+
+Cos'è e perché esiste
+Il Prompt Engineering è la disciplina che progetta in modo sistematico gli input agli LLM per massimizzare qualità e affidabilità 
+degli output. Nasce dal fatto che i modelli non leggono la mente: non conoscono il tuo progetto, i tuoi vincoli, il tuo contesto. 
+Ogni informazione rilevante va esplicitata. Piccole variazioni nella formulazione producono output drasticamente diversi, e 
+l'ambiguità del linguaggio naturale richiede un ponte strutturato tra intenzione umana e interpretazione della macchina.
+
+Come funzionano gli LLM (basi tecniche)
+Gli LLM sono reti neurali basate sull'architettura Transformer ("Attention is All You Need", 2017) che generano testo un token 
+alla volta, predicendo il successivo più probabile. Il meccanismo di attention pesa l'importanza relativa di ogni parte del prompt: 
+informazioni critiche all'inizio ricevono più attenzione, la struttura aiuta il modello a focalizzarsi. La context window è limitata 
+(GPT-4: 128k token, Claude: 200k): oltre quel limite, le informazioni vengono "dimenticate". 
+I modelli non capiscono la semantica come gli umani — simulano la comprensione tramite pattern statistici sofisticati, 
+e per questo allucinano: possono inventare paper, DOI, autori e dati perfettamente plausibili ma falsi.
+
+Anatomia di un prompt efficace
+Schema base: [Istruzione] + [Contesto] + [Vincoli] + [Esempi] + [Formato output]. 
+Le 6 regole d'oro sono: chiarezza > brevità, specificità > genericità, contesto sempre, iterazione normale, 
+verifica critica dell'output non negoziabile, documentare i pattern che funzionano.
+
+I framework principali
+COSTAR (Context, Objective, Style, Tone, Audience, Response) è il framework per task di comunicazione professionale: 
+email, report, documentazione. Compilarlo richiede 3-4 minuti ma evita 20-30 minuti di riscritture. 
+AUTOMAT (Act as, User Persona, Targeted Action, Output Definition, Mode, Atypical Cases, Topic Whitelisting) 
+è pensato per definire il comportamento di sistemi AI riusabili: chatbot, assistenti aziendali, agenti integrati in pipeline. 
+CARE (Context, Action, Result, Example) segue una struttura narrativa causa-effetto, ideale per post-mortem, case study, 
+report con ROI quantificato.
+
+Tecniche specifiche
+Chain-of-Thought: aggiungere "ragiona passo per passo" migliora l'accuratezza del 20–50% su task di reasoning complesso, 
+forzando il modello a esplicitare ogni passaggio intermedio. Few-shot: fornire 2–3 esempi input/output prima del task reale; 
+con i modelli del 2025 va testato sempre prima il zero-shot (descrizione chiara), aggiungendo esempi solo se necessario. 
+Role-playing: assegnare un ruolo specifico ("Sei AWS Solutions Architect Senior con 10 anni di esperienza") attiva pattern 
+di expertise dai dati di training — 10 parole extra con ROI altissimo. Output Formatting: specificare esplicitamente JSON, 
+YAML, Markdown o tabella rende l'output parsabile, integrabile in pipeline e coerente tra run diverse.
+
+Framework avanzati (panoramica)
+Prompt Chaining (output di un prompt diventa input del successivo), Self-Consistency (stesso prompt N volte + majority vote), 
+Tree-of-Thought (esplorazione di ragionamenti alternativi), RAG/Context Engineering (injection di conoscenza esterna), 
+Negative Prompting (specificare cosa NON fare).
+
+Mentalità produzione
+I prompt critici vanno trattati come codice: version control su Git, test suite con golden output, documentazione inline, 
+code review prima di andare in produzione. Il prompt engineering è una meta-competenza trasferibile: gli stessi principi 
+migliorano ticket, documentazione tecnica, email e comunicazione con stakeholder.

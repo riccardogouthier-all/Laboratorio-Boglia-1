@@ -1,0 +1,49 @@
+Tipologie di Modelli LLM — Guida Essenziale
+
+Modelli Reasoning
+I modelli classici generano testo token per token in un'unica passata, senza verificare la propria logica. 
+I modelli reasoning (o1/o3/o4 di OpenAI, Claude con Extended Thinking, DeepSeek R1) generano invece un "blocco di pensiero" 
+interno prima di rispondere — come fare una brutta prima di riscrivere in bella copia. Il meccanismo si chiama Chain-of-Thought: 
+i token già generati diventano memoria di lavoro, con backtracking esplicito se una premessa è sbagliata. 
+Più "budget di pensiero" si assegna, migliore è la risposta (scaling test-time compute). 
+Il costo: sono più lenti (30–60 secondi) e costosi. Usarli ha senso per problemi multi-step, debugging complesso, analisi con 
+conseguenze reali; non ha senso per task semplici, risposte real-time o elaborazioni di massa. DeepSeek R1 è l'alternativa 
+open-source deployabile on-premise.
+
+Vision e Multimodalità
+Le immagini vengono scomposte in patch 16×16 pixel, trasformate in embeddings e aggiunte al contesto come token visivi. 
+I modelli con multimodalità nativa (GPT-5.4, Gemini 3.1 Pro, Claude 4) sono superiori a quelli con vision aggiunta post-training. 
+Le capacità includono OCR avanzato, analisi di grafici, interpretazione di diagrammi UML, lettura di screenshot di errori. 
+Per video, Gemini 3.1 Pro analizza fino a ~1 ora di contenuto. Pixtral 12B (Mistral) è l'unico modello vision europeo eseguibile 
+localmente su GPU da 12–16GB, ideale per documenti sensibili senza inviarli al cloud.
+
+Tool Use, MCP e Function Calling
+Il function calling permette al modello di decidere autonomamente quando chiamare funzioni esterne (API meteo, database, file system) 
+restituendo nome e parametri in JSON. 
+Il loop è: richiesta utente → decisione modello → esecuzione codice reale → risultato → risposta finale. 
+Il Model Context Protocol (MCP), standard aperto proposto da Anthropic nel 2024, funziona come un "USB per l'AI": connette 
+LLM a strumenti esterni in modo uniforme. Esistono già centinaia di MCP server (GitHub, Slack, Notion, filesystem). 
+Differenza chiave con RAG: il tool use esegue operazioni nel mondo reale, può scrivere non solo leggere.
+
+Sistemi Multi-Agente
+Un sistema multi-agente distribuisce il lavoro tra LLM specializzati: l'orchestratore (modello frontier) scompone il task e 
+delega senza eseguire direttamente; il router (modello piccolo ed economico, anche solo embedding con similarità coseno) 
+smista le richieste al worker giusto; i worker sono specializzati per task specifici con il modello minimo sufficiente. 
+Il principio fondamentale: non usare Opus per classificare email — un router con GPT-mini costa 10–20x meno. 
+Pattern comuni: ricerca e sintesi parallela (5 agenti in parallelo = 5x più veloce), 
+pipeline di supporto clienti (70–80% ticket gestiti automaticamente), 
+agentic coding (architect → developer → tester → reviewer con modelli diversi per ridurre bias di auto-conferma).
+
+RAG, Fine-Tuning ed Embedding
+Il RAG (Retrieval-Augmented Generation) risolve il problema del knowledge cutoff e dei documenti privati: i testi vengono 
+indicizzati in un vector database (Pinecone, Chroma, pgvector), la domanda viene convertita in vettore, i chunk più simili 
+vengono iniettati nel contesto. È più flessibile e interpretabile del fine-tuning. Il fine-tuning ha senso solo con centinaia 
+di esempi di alta qualità e comportamento specifico da imparare; con LoRA/QLoRA il costo si riduce di 10–100x rispetto 
+all'aggiornamento completo del modello.
+
+Guardrail, Etica e Produzione
+Human-in-the-loop obbligatorio per azioni irreversibili (email, deploy, pagamenti). 
+Loggare tutto: ogni chiamata, input, output, latenza, costo. Budget massimo per sessione per evitare loop infiniti. 
+Per GDPR: mai incollare dati di clienti in ChatGPT free — usare modelli locali o contratti con DPA firmato. 
+I benchmark pubblici sono indicativi: costruire un eval set di 50–200 esempi reali del proprio use case è più predittivo 
+di qualunque classifica generale.

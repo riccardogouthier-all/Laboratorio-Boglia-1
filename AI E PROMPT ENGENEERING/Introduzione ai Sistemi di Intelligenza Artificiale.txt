@@ -1,0 +1,42 @@
+Introduzione ai Sistemi di Intelligenza Artificiale
+
+Le quattro onde dell'AI
+Lo sviluppo dell'intelligenza artificiale si è evoluto attraverso quattro fasi storiche. 
+
+L'onda simbolica (1950–1980) trattava l'intelligenza come manipolazione logica di simboli e regole esplicite 
+(sistemi IF-THEN, es. MYCIN per diagnosi mediche), ma si rivelò fragile fuori dai contesti codificati. 
+
+L'onda statistica (1990–2010) spostò il paradigma verso l'apprendimento dai dati: algoritmi di Machine Learning 
+capaci di riconoscere pattern, alimentando sistemi come Netflix, Spotify e i filtri antispam, con il limite però 
+del feature engineering manuale. 
+
+L'onda neurale (2010–2020) introdusse il Deep Learning — reti neurali profonde 
+capaci di apprendere rappresentazioni autonomamente. Breakthrough come ImageNet (2012), AlphaGo (2016) e 
+l'architettura Transformer (2017) posero le basi per i modelli linguistici. 
+
+L'onda generativa (2020–oggi) ha prodotto 
+i Large Language Models (GPT, Claude, Gemini): sistemi general-purpose addestrati su miliardi di parametri, 
+capaci di ragionamento multi-step, comprensione contestuale e adattamento a nuovi task senza re-training.
+
+Il momento spartiacque: ChatGPT (novembre 2022)
+ChatGPT raggiunse 1 milione di utenti in 5 giorni e 100 milioni in 2 mesi — la crescita più rapida nella storia della tecnologia. 
+La chiave fu l'interfaccia in linguaggio naturale: chiunque può usarla senza competenze tecniche. La reazione globale fu immediata: 
+aziende accelerarono l'adozione, università rivistarono le politiche, governi avviarono regolamentazioni.
+
+Applicazioni e casi d'uso
+L'AI trasforma settori trasversali: nella computer vision alimenta Face ID, diagnosi mediche, veicoli autonomi e moderazione contenuti; 
+nell'NLP classico gestisce sentiment analysis, traduzione automatica e chatbot; nella fotografia computazionale supera 
+limiti fisici dell'hardware (Night Sight, Super-resolution); nello sviluppo software strumenti come GitHub Copilot e 
+Claude Code velocizzano il lavoro 5–10x. In ambito medico il potenziale è enorme (diagnostica assistita, scoperta farmaci accelerata), 
+ma i rischi sono proporzionali: allucinazioni su dosaggi, bias diagnostici, falsa sicurezza.
+
+Limiti persistenti
+Nonostante i progressi, i modelli attuali continuano ad allucinare (meno frequentemente, ma non eliminato), presentano 
+bias derivanti dai dati di addestramento e richiedono sempre validazione umana. Non "comprendono" nel senso umano: 
+simulano la comprensione in modo sempre più convincente.
+
+Il futuro del lavoro
+L'AI non elimina la competenza: la trasforma. Il lavoro si sposta dall'esecuzione manuale verso architettura, 
+supervisione e validazione critica. Le competenze che contano sono pensiero critico, comprensione profonda del dominio, 
+comunicazione precisa (prompt engineering) e adattabilità continua. Chi esegue meccanicamente è a rischio; 
+chi sa guidare l'AI prospera.
