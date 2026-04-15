@@ -93,7 +93,7 @@ app.put (`${BASE_PATH}/libri/:id`, (req, res) => {
     }
 
     let libroDaAggiornare = catalogo[index];
-    libroDaAggiornare= [...libroDaAggiornare, ...libroAggiornato];
+    libroDaAggiornare= {...libroDaAggiornare, ...libroAggiornato};
     res.status(200).json({message: 'Libro aggiornato con successo'});
 });
 
