@@ -7,7 +7,7 @@ Progettare una funzione che accetti la stringa, la posizione del carattere e res
 
 
 def rimouvi_carattere(stringa, lettera):
-    return stringa[:lettera-1] + stringa[lettera:]
+    return stringa[:lettera] + stringa[lettera+1:]
 
 stringa = "capra"
 lettera = 3
