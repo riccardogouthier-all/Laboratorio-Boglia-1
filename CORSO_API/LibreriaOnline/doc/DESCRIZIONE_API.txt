@@ -1,6 +1,6 @@
 GET /api/v1/libri           -> endpoint che restutuisce lintero catalogo dei libri
 GET /api/v1/libri/:id       -> endpoint che restutuisce il libro con id specifico
-GET /api/v1/libri?titolo=:titolo     -> endpoint che restutuisce i libri per titolo
+GET /api/v1/libri/search?titolo=:titolo     -> endpoint che restutuisce i libri per titolo
 GET /api/v1/libri/generi           -> endpoint che restutuisce lelenco dei generi dei libri in catalogo
 
 POST /api/v1/libri          -> endpoint che aggiunge un nuovo libro
