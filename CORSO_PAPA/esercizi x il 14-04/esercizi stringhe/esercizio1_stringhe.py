@@ -10,10 +10,10 @@ def rimouvi_carattere(stringa, lettera):
     return stringa[:lettera-1] + stringa[lettera:]
 
 stringa = "capra"
-lettera = 6
+lettera = 3
 
 if lettera > len(stringa):
     print("La parola ha meno caratteri del numero inserito")
     lettera = len(stringa)
-    
-print(rimouvi_carattere(stringa, lettera))
+else:
+    print(rimouvi_carattere(stringa, lettera))
