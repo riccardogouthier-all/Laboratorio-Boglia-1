@@ -77,9 +77,8 @@ app.delete(`${BASE_PATH}/libri/:id`, (req, res) => {
         return res.status(404).json({ error: "Libro non trovato" });
     }
     catalogo.splice(index, 1)
-   
+    res.json({message: 'Libro eliminato con successo'})
     
-
 });
 
 
