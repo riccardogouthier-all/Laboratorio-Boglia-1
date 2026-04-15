@@ -7,9 +7,9 @@ def rimouvi_carattere(tupla, posizione):
     if posizione > 0:
         nuova_tupla = tupla[:posizione-1] + tupla[posizione:]
         return nuova_tupla
-    # elif posizione < 0:
-    #     nuova_tupla = tupla[:posizione] + tupla[posizione:]
-    #     return nuova_tupla
+    elif posizione < 0 and posizione != -1:
+        nuova_tupla = tupla[:posizione] + tupla[posizione+1:]
+        return nuova_tupla
     elif posizione == -1:
          nuova_tupla = ()
          nuova_tupla = tupla[:len(tupla)-1]
@@ -17,7 +17,7 @@ def rimouvi_carattere(tupla, posizione):
     return nuova_tupla
 
 tupla = ([10, 20, 40],"python",[40, 50, 60],"Miss Italia",[70, 80, 90])
-posizione = -1
+posizione = -5
 
 if posizione > len(tupla) or posizione < -len(tupla):
     print("La parola ha meno caratteri del numero inserito")
