@@ -83,7 +83,7 @@ app.delete(`${BASE_PATH}/libri/:id`, (req, res) => {
 app.put (`${BASE_PATH}/libri/:id`, (req, res) => {
     const idParam = parseInt(req.params.id);
     let libroAggiornato = req.body;
-    if (!validaLibro(nuovoLibro)) {
+    if (!validaLibro(libroAggiornato)) {
         return res.status(400).json({ error: "Nessun dato fornito" });
     }
     const index = catalogo.findIndex(libro=> libro.id === idParam);
@@ -93,7 +93,8 @@ app.put (`${BASE_PATH}/libri/:id`, (req, res) => {
     }
 
     let libroDaAggiornare = catalogo[index];
-    libroDaAggiornare= {...libroDaAggiornare, ...libroAggiornato};
+    catalogo[index] = {...libroDaAggiornare, ...libroAggiornato};
+
     res.status(200).json({message: 'Libro aggiornato con successo'});
 });
 
