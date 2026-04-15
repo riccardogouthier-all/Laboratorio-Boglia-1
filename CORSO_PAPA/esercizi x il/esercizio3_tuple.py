@@ -16,7 +16,11 @@ def controllo_liste_tupla(tupla):
     Ritorna =>
     bool: True se tutti gli elementi sono liste, False altrimenti
     """
-    permesso = all(isinstance(elemento, list) for elemento in tupla)    #   all() rende bool la variabile
+    permesso = all(isinstance(elemento, list) for elemento in tupla)
+    '''
+    all() rende bool la variabile 
+    isisntance controlla che l'elemento sia una lista
+    e con il for controlla tutti gli elementi della tupla'''
     return permesso     #   ritorna valore bool (True False)
 
 def sostituisci_ultimo_valore(tupla_liste, valore):
