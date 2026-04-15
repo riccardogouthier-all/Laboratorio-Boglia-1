@@ -80,6 +80,23 @@ app.delete(`${BASE_PATH}/libri/:id`, (req, res) => {
     res.json({message: 'Libro eliminato con successo'})
 });
 
+app.put (`${BASE_PATH}/libri/:id`, (req, res) => {
+    const idParam = parseInt(req.params.id);
+    let libroAggiornato = req.body;
+    if (!validaLibro(nuovoLibro)) {
+        return res.status(400).json({ error: "Nessun dato fornito" });
+    }
+    const index = catalogo.findIndex(libro=> libro.id === idParam);
+
+    if (index === -1) {
+        return res.status(404).json({ error: "Libro non trovato" });
+    }
+
+    let libroDaAggiornare = catalogo[index];
+    libroDaAggiornare= [...libroDaAggiornare, ...libroAggiornato];
+    res.status(200).json({message: 'Libro aggiornato con successo'});
+});
+
 
 function validaLibro(libro) {
     if (libro && libro.titolo && libro.autore && libro.editore)       // autore titolo editore NOT NULL   
