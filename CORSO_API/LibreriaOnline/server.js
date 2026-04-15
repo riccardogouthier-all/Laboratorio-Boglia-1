@@ -22,8 +22,8 @@ app.get("/", (req, res) => {
     res.send("Benvenuto nella tua libreria online!");
 });
 
-app.get(`${BASE_PATH}/libri`, (req, res) => {
-    res.json(catalogo);
+app.get(`${BASE_PATH}/libri`, 
+    (req, res) => {res.json(catalogo); 
 });
 
 app.get(BASE_PATH + "/clienti", (req, res) => {
