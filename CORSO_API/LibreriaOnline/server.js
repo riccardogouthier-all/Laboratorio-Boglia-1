@@ -30,6 +30,8 @@ app.get(BASE_PATH + "/clienti", (req, res) => {
     res.json(clienti);
 });
 
+
+// LIBRI
 //RICERCA PER TITOLO
 app.get(`${BASE_PATH}/libri/search`, (req, res) => {
     let titoloParam = (req.query.titolo||"").toString().trim().toLowerCase();
@@ -101,6 +103,83 @@ app.put (`${BASE_PATH}/libri/:id`, (req, res) => {
 
 function validaLibro(libro) {
     if (libro && libro.titolo && libro.autore && libro.editore)       // autore titolo editore NOT NULL   
+        {return true;}
+    else
+        {return false}
+}
+
+
+// CLIENTI
+app.get(`${BASE_PATH}/clienti/search`, (req, res) => {
+    let nomeParam = (req.query.nome||"").toString().trim().toLowerCase();
+
+    if (!nomeParam) return res.status(400).json({ error: "Parametro errato" });
+
+    let results = clienti.filter(cliente => cliente.nome.toLowerCase().includes(nomeParam));
+
+    return res.json(results);
+});
+
+//RICERCA PER ID
+app.get(`${BASE_PATH}/clienti/:id`, (req, res) => {
+    let idParam = parseInt(req.params.id);
+
+    let clienteTrovato = clienti.find(cliente => cliente.id === idParam);
+
+    if (!clienteTrovato) {
+        return res.status(404).json({ error: "cliente non trovato" });
+    } else {
+        return res.json(clienteTrovato);
+    }
+});
+
+
+app.post(`${BASE_PATH}/clienti`, (req, res) => {
+    const nuovoCliente = req.body;
+
+    if (!validaCliente(nuovoCliente)) {
+        return res.status(400).json({ error: "Nessun dato fornito" });
+    }
+
+    const maxId = clienti.map(item => item.id).reduce((a,b) =>Math.max(a,b),0);
+    nuovoCliente.id = maxId +1;
+
+    clienti.push(nuovoCliente);
+    return res.status(201).json({ message: "Cliente aggiunto con successo"});
+});
+
+
+app.delete(`${BASE_PATH}/clienti/:id`, (req, res) => {
+    const idParam = parseInt(req.params.id);
+    const index = clienti.findIndex(cliente=> cliente.id === idParam)
+    if (index === -1) {
+        return res.status(404).json({ error: "Cliente non trovato" });
+    }
+    clienti.splice(index, 1)
+    res.json({message: 'Cliente eliminato con successo'})
+});
+
+app.put (`${BASE_PATH}/clienti/:id`, (req, res) => {
+    const idParam = parseInt(req.params.id);
+    let clienteAggiornato = req.body;
+    if (!validaCliente(clienteAggiornato)) {
+        return res.status(400).json({ error: "Nessun dato fornito" });
+    }
+    const index = clienti.findIndex(cliente=> cliente.id === idParam);
+
+    if (index === -1) {
+        return res.status(404).json({ error: "cliente non trovato" });
+    }
+
+    let clienteDaAggiornare = clienti[index];
+    clienti[index] = {...clienteDaAggiornare, ...clienteAggiornato};
+
+    res.status(200).json({message: 'cliente aggiornato con successo'});
+});
+
+
+function validaCliente(cliente) {
+    if (cliente && cliente.nome && cliente.cognome && cliente.eta)       // autore titolo editore NOT NULL   
         {return true;}
     else
         {return false}
