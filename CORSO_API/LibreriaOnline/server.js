@@ -30,6 +30,7 @@ app.get(BASE_PATH + "/clienti", (req, res) => {
     res.json(clienti);
 });
 
+//RICERCA PER TITOLO
 app.get(`${BASE_PATH}/libri/search`, (req, res) => {
     let titoloParam = (req.query.titolo||"").toString().trim().toLowerCase();
 
@@ -40,6 +41,7 @@ app.get(`${BASE_PATH}/libri/search`, (req, res) => {
     return res.json(results);
 });
 
+//RICERCA PER ID
 app.get(`${BASE_PATH}/libri/:id`, (req, res) => {
     let idParam = parseInt(req.params.id);
 
@@ -52,13 +54,38 @@ app.get(`${BASE_PATH}/libri/:id`, (req, res) => {
     }
 });
 
+
 app.post(`${BASE_PATH}/libri`, (req, res) => {
     const nuovoLibro = req.body;
 
-    if (!nuovoLibro) {
+    if (!validaLibro(nuovoLibro)) {
         return res.status(400).json({ error: "Nessun dato fornito" });
     }
+
+    const maxId = catalogo.map(item => item.id).reduce((a,b) =>Math.max(a,b),0);
+    nuovoLibro.id = maxId +1;
 
     catalogo.push(nuovoLibro);
     return res.status(201).json({ message: "Libro aggiunto con successo"});
 });
+
+
+app.delete(`${BASE_PATH}/libri/:id`, (req, res) => {
+    const idParam = parseInt(req.params.id);
+    const index = catalogo.findIndex(libro=> libro.id === idParam)
+    if (index === -1) {
+        return res.status(404).json({ error: "Libro non trovato" });
+    }
+    catalogo.splice(index, 1)
+   
+    
+
+});
+
+
+function validaLibro(libro) {
+    if (libro && libro.titolo && libro.autore && libro.editore)       // autore titolo editore NOT NULL   
+        {return true;}
+    else
+        {return false}
+}
