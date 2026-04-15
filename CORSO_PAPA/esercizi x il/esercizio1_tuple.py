@@ -17,7 +17,7 @@ def rimouvi_carattere(tupla, posizione):
     return nuova_tupla
 
 tupla = ([10, 20, 40],"python",[40, 50, 60],"Miss Italia",[70, 80, 90])
-posizione = -5
+posizione = 2
 
 if posizione > len(tupla) or posizione < -len(tupla):
     print("La parola ha meno caratteri del numero inserito")
