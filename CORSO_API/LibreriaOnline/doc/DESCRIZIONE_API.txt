@@ -13,10 +13,10 @@ GET /api/v1/clienti           -> endpoint che restutuisce lintero catalogo dei l
 GET /api/v1/clienti/:id       -> endpoint che restutuisce il libro con id specifico
 GET /api/v1/clienti?nome=:mome     -> endpoint che restutuisce i libri per titolo
 
-POST /api/v1/clienti          -> endpoint che aggiunge un nuovo libro
-PUT /api/v1/clienti:id        -> endpoint che aggiunge un libro con l'id
-PATCH /api/v1/clienti:id      -> endpoint per aggiornare singoli campi
-DELETE /api/v1/clienti:id     -> endpoint per eliminare una singola risorsa
+POST /api/v1/clienti          -> endpoint che aggiunge un nuovo clienti
+PUT /api/v1/clienti:id        -> endpoint che aggiunge un clienti con l'id
+PATCH /api/v1/clienti:id      -> endpoint per aggiornare singoli campi clienti
+DELETE /api/v1/clienti:id     -> endpoint per eliminare una singola risorsa clienti
 
 
 http://localhost:3000/api/v1/libri           ->

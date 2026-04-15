@@ -33,6 +33,13 @@ const clientiFile = [
         "cognome": "Gialli",
         "eta": 27,
         "ordini": []
+    },
+    {
+        "id": 6,
+        "nome": "Gesù Cristo",
+        "cognome": "Di Nazareth",
+        "eta": 33,
+        "ordini": []
     }
 ];
 
