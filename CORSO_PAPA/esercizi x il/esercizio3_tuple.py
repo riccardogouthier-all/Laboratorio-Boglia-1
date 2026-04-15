@@ -8,6 +8,9 @@ TuplaOUT: ([10, 20, 100], [40, 50, 100], [70, 80, 100])
 '''
 
 
+def controllo_liste_tupla(tupla):
+    permesso = all(isinstance(elemento, list) for elemento in tupla)
+    return permesso
 
 def sostituisci_ultimo_valore(tupla_liste, valore):
 
@@ -21,4 +24,10 @@ valore = 100
 TuplaIN = ([10, 20, 40], [40, 50, 60], [70, 80, 90])
 
 print(TuplaIN)
-print(sostituisci_ultimo_valore(TuplaIN, valore))
+if not controllo_liste_tupla(TuplaIN):
+    print("La tupla non contiene solo liste")
+else:
+    if any(len(lista) == 0 for lista in TuplaIN):
+        print("La tupla contiene almeno una lista vuota")
+    if controllo_liste_tupla(TuplaIN) and not any(len(lista) == 0 for lista in TuplaIN):
+        print(sostituisci_ultimo_valore(TuplaIN, valore))
