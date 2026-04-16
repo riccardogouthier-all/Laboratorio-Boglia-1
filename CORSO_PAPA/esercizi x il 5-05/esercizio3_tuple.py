@@ -7,7 +7,6 @@ TuplaIN: ([10, 20, 40], [40, 50, 60], [70, 80, 90])
 TuplaOUT: ([10, 20, 100], [40, 50, 100], [70, 80, 100])
 '''
 
-
 def controllo_liste_tupla(tupla):
     """
     Verifica che tutti gli elementi della tupla siano liste.
