@@ -1,0 +1,51 @@
+id,nome,cognome,data_nascita,email,Matematica,Informatica,Italiano,assenze
+1,Giorgio,De Luca,2006-10-09,giorgio.deluca1@scuola.it,2,2,4,18
+2,Matteo,De Luca,2007-01-24,matteo.deluca2@scuola.it,5,6,6,0
+3,Federica,Rossi,2009-11-23,federica.rossi3@scuola.it,5,5,6,19
+4,Giorgio,Ricci,2007-07-20,giorgio.ricci4@scuola.it,7,6,4,6
+5,Federica,Giordano,2004-04-19,federica.giordano5@scuola.it,4,6,4,7
+6,Luca,Greco,2009-12-01,luca.greco6@scuola.it,3,5,2,5
+7,Sara,Santoro,2009-11-28,sara.santoro7@scuola.it,9,10,7,3
+8,Andrea,Costa,2004-07-25,andrea.costa8@scuola.it,5,5,7,20
+9,Alice,Mariani,2005-07-21,alice.mariani9@scuola.it,6,3,2,2
+10,Paolo,Bianchi,2005-11-12,paolo.bianchi10@scuola.it,4,8,9,0
+11,Simone,Costa,2008-11-22,simone.costa11@scuola.it,9,8,7,5
+12,Matteo,Greco,2009-09-13,matteo.greco12@scuola.it,5,9,10,12
+13,Simone,Mancini,2006-10-30,simone.mancini13@scuola.it,9,7,9,4
+14,Matteo,Mariani,2006-08-17,matteo.mariani14@scuola.it,5,3,3,0
+15,Alessia,Ricci,2005-10-29,alessia.ricci15@scuola.it,7,7,5,3
+16,Luca,Ferrari,2009-12-27,luca.ferrari16@scuola.it,5,10,3,11
+17,Sofia,Moreno,2008-01-23,sofia.moreno17@scuola.it,7,8,10,6
+18,Laura,Costa,2008-02-20,laura.costa18@scuola.it,9,3,9,3
+19,Marco,Rossi,2009-01-04,marco.rossi19@scuola.it,9,3,5,19
+20,Giulia,Rizzo,2009-12-06,giulia.rizzo20@scuola.it,5,10,4,19
+21,Roberto,Bruno,2004-12-23,roberto.bruno21@scuola.it,3,2,5,8
+22,Giulia,Rinaldi,2007-07-03,giulia.rinaldi22@scuola.it,6,3,7,1
+23,Davide,Lombardi,2006-12-11,davide.lombardi23@scuola.it,10,5,6,2
+24,Sofia,Ferrari,2004-01-31,sofia.ferrari24@scuola.it,3,6,10,14
+25,Alessia,Mancini,2005-10-12,alessia.mancini25@scuola.it,2,6,9,2
+26,Sara,Lombardi,2005-08-03,sara.lombardi26@scuola.it,2,5,7,4
+27,Sara,Conti,2006-12-19,sara.conti27@scuola.it,9,6,10,13
+28,Simone,Moreno,2005-09-23,simone.moreno28@scuola.it,6,8,7,0
+29,Lorenzo,Giordano,2005-12-25,lorenzo.giordano29@scuola.it,6,10,3,3
+30,Federica,Bianchi,2009-02-08,federica.bianchi30@scuola.it,8,4,4,3
+31,Luca,Costa,2008-03-05,luca.costa31@scuola.it,5,8,10,19
+32,Sofia,Bianchi,2008-01-26,sofia.bianchi32@scuola.it,7,5,9,1
+33,Matteo,Rinaldi,2006-07-24,matteo.rinaldi33@scuola.it,4,3,9,15
+34,Sofia,Romano,2008-01-14,sofia.romano34@scuola.it,3,9,6,6
+35,Federica,Lombardi,2004-06-20,federica.lombardi35@scuola.it,3,10,3,8
+36,Matteo,De Luca,2005-04-24,matteo.deluca36@scuola.it,3,4,2,0
+37,Giulia,Giordano,2007-12-15,giulia.giordano37@scuola.it,3,9,7,3
+38,Francesco,Barbieri,2009-09-10,francesco.barbieri38@scuola.it,7,8,2,9
+39,Alessia,Bianchi,2007-03-28,alessia.bianchi39@scuola.it,6,10,9,2
+40,Matteo,Ferrari,2007-01-07,matteo.ferrari40@scuola.it,5,9,4,14
+41,Lorenzo,Bianchi,2009-04-28,lorenzo.bianchi41@scuola.it,4,6,4,18
+42,Laura,Santoro,2009-05-18,laura.santoro42@scuola.it,9,7,7,9
+43,Andrea,Costa,2006-09-13,andrea.costa43@scuola.it,8,9,4,10
+44,Davide,Romano,2007-01-06,davide.romano44@scuola.it,2,8,8,17
+45,Alessia,Giordano,2005-12-25,alessia.giordano45@scuola.it,4,5,6,18
+46,Elena,Romano,2008-05-28,elena.romano46@scuola.it,7,7,6,0
+47,Sofia,Mancini,2004-02-21,sofia.mancini47@scuola.it,6,10,2,1
+48,Lorenzo,Mancini,2004-03-17,lorenzo.mancini48@scuola.it,9,9,8,13
+49,Alice,De Luca,2005-09-20,alice.deluca49@scuola.it,7,4,2,20
+50,Chiara,Mariani,2004-09-26,chiara.mariani50@scuola.it,7,4,5,8

@@ -8,6 +8,7 @@ python main.py report     → calcola statistiche e produce il report
 python main.py all        → esegue tutto in sequenza
 """
 
+
 import sys           # Step 10 — CLI
 import os            # Step 0, 9 — cartelle e backup
 import json          # Step 1, 5, 6 — config e JSON
@@ -23,7 +24,8 @@ from collections import Counter      # Step 4, 7 — conteggio errori
 
 def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartelle di progetto
     """Crea la struttura di cartelle del progetto se non esistono."""
-    base_path = Path.cwd()
+    path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline")
+    base_path = path
 
     cartelle = [
         base_path / "data/input",
@@ -36,7 +38,8 @@ def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartell
     print("[Step 0] Cartelle create/verificate.")
 
 def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
-    CONFIG_PATH = Path.cwd() / "config.json"
+    path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline")    
+    CONFIG_PATH = path / "config.json"
     
     DEFAULT_CONFIG = {
         "numero_studenti": 50,
@@ -111,7 +114,9 @@ def genera_studenti(config: dict) -> list[dict]:        # STEP 2 - lista di stud
 '''GENERAZIONE STUDENTI'''
 def salva_su_csv(studenti: list[dict], config:dict) -> Path:       # STEP 3 - SALVATAGGIO SU CSV - path sistema x la lista python
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    percorso = Path.cwd() / "data/input/" / f"studenti_{timestamp}.csv"
+
+    path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline")    
+    percorso = path / "data/input/" / f"studenti_{timestamp}.csv"
 
     materie = config["materie"]
     nomicampi = ["id","nome","cognome","data_nascita","email"] + materie +["assenze"]
@@ -170,7 +175,7 @@ def valida_studenti(percorso_csv: Path, config: dict) -> tuple[list,list,Counter
             for materia in materie:
                 try:
                     voto = int(riga[materia])
-                    if not (config["voto_min"] <= config["voto_max"]):
+                    if not (config["voto_min"] <= voto <= config["voto_max"]):
                         errori.append("voto_fuori_range")
                         conteggio_errori["voto_fuori_range"] += 1
                 except (ValueError, KeyError):
@@ -200,8 +205,23 @@ def valida_studenti(percorso_csv: Path, config: dict) -> tuple[list,list,Counter
     print(f"         Errori trovati: {dict(conteggio_errori) or 'nessuno'}")
     return validi, scartati, conteggio_errori       # ritorna lista validi, scartati python e conteggio errori (contatore)
 
-# def valida_studenti(percorso_csv: Path, config: dict) -> tuple[list, list, Counter]:
-    
+def salva_json_validi(studenti: list[dict]) -> Path:            # STEP 5 — Conversione PERCORSO CSV → JSON
+    path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline") 
+
+    percorso = path / "data/output" / "studenti_validi.json"
+    with open(percorso, "w", encoding= "utf-8") as f:
+        json.dump(studenti, f, indent=2, ensure_ascii=False)
+    print(f"[Step 5] JSON validi salvati in: {percorso}")
+    return percorso         # percorso json_validi
+
+def salva_json_scartati(scartati: list[dict]) -> Path:          # STEP 5 — Conversione PERCORSO CSV → JSON
+    path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline")
+    percorso = path / "data/output" / "studenti_scartati.json"
+    with open(percorso, "w", encoding= "utf-8") as f:
+        
+        json.dump(scartati, f, indent=2, ensure_ascii=False)
+    print(f"[Step 5] JSON scartati in: {percorso} | ({len(scartati)} record)")
+    return percorso         # percorso json_scartati
 
 
 
@@ -209,8 +229,10 @@ def valida_studenti(percorso_csv: Path, config: dict) -> tuple[list,list,Counter
 
 
 crea_cartelle()
-# config = carica_config()
-# studenti = genera_studenti(config= config)
-# print(studenti)
-# lista_csv = salva_su_csv(studenti= studenti ,config= config)
-# valida_studenti(percorso_csv= lista_csv, config= config)
+config = carica_config()
+studenti = genera_studenti(config= config)
+print(studenti)
+lista_csv = salva_su_csv(studenti= studenti ,config= config)
+validi, scartati, _ = valida_studenti(percorso_csv= lista_csv, config= config)
+salva_json_validi(validi)
+salva_json_scartati(scartati)
