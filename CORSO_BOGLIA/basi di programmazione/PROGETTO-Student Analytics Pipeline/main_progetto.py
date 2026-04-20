@@ -223,7 +223,8 @@ def salva_json_scartati(scartati: list[dict]) -> Path:          # STEP 5 — Con
     print(f"[Step 5] JSON scartati in: {percorso} | ({len(scartati)} record)")
     return percorso         # percorso json_scartati
 
-
+#
+#
 
 
 
