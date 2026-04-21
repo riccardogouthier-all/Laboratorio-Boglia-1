@@ -241,12 +241,19 @@ def calcola_statistica(studenti: list[dict], config: dict) -> dict:         # ST
     print(f"[Step 6] Statistiche calcolate per {len(stats)} materie.")
     return stats
 
+# def classifica_studenti(studenti: list[dict], top_n: int = 5) -> list[dict]:            # STEP 7 — Classifica migliori studenti
+#     for studente in studenti:
+#         voti_lista = list(studente["voti"].values())
 
 
 
-
-
-
+DEFAULT_CONFIG = {
+    "numero_studenti": 50,
+    "voto_min": 2,
+    "voto_max": 10,
+    "materie": ["Matematica", "Informatica", "Italiano"],
+    "classe": "5A"
+    }
 
 crea_cartelle()
 config = carica_config()
@@ -257,4 +264,11 @@ validi, scartati, _ = valida_studenti(percorso_csv= lista_csv, config= config)
 salva_json_validi(validi)
 salva_json_scartati(scartati)
 statistica = calcola_statistica(studenti= studenti, config= config)
-print(f"{statistica}")
+
+
+
+materie =     DEFAULT_CONFIG["materie"]
+print(f"{materie[0]}")       # ,n{statistica(2)},/n{statistica(3)}")
+
+
+statistica[materie[0]]
