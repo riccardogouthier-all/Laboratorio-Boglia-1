@@ -243,6 +243,13 @@ def calcola_statistica(studenti: list[dict], config: dict) -> dict:         # ST
     print(f"[Step 6] Statistiche calcolate per {len(stats)} materie.")
     return stats
 
+
+
+
+
+
+
+
 crea_cartelle()
 config = carica_config()
 studenti = genera_studenti(config= config)
