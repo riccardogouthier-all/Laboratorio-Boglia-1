@@ -69,7 +69,6 @@ def genera_data_nascita() -> str:         # STEP 2 - stringa con la data
     return date.fromordinal(giorno_casuale).isoformat()         #stringa con la data
 '''GENERAZIONE STUDENTI'''
 def genera_studenti(config: dict) -> list[dict]:        # STEP 2 - lista di studenti in python
-
     NOMI = [
     "Luca", "Marco", "Andrea", "Giulia", "Sofia", "Elena",
     "Matteo", "Lorenzo", "Alice", "Chiara", "Davide", "Sara",
@@ -142,7 +141,6 @@ def salva_su_csv(studenti: list[dict], config:dict) -> Path:       # STEP 3 - SA
     return percorso       # path sistema x la lista python
 
 def valida_studenti(percorso_csv: Path, config: dict) -> tuple[list,list,Counter]:       # STEP 4 - Lettura CSV e validazione - ritorna lista validi e scartati python e conteggio errori (contatore)
-
     # Pattern regex per validare l'email: testo@testo.dominio
     PATTERN_EMAIL = re.compile(r"^[\w.\-]+@[\w.\-]+\.\w{2,}$")
     # Pattern per la data in formato YYYY-MM-DD
