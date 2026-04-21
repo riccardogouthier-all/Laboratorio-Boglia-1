@@ -269,6 +269,7 @@ statistica = calcola_statistica(studenti= studenti, config= config)
 
 materie =     DEFAULT_CONFIG["materie"]
 print(f"{materie[0]}")       # ,n{statistica(2)},/n{statistica(3)}")
+print(f"{statistica[materie]}")
 
 
 statistica[materie[0]]
