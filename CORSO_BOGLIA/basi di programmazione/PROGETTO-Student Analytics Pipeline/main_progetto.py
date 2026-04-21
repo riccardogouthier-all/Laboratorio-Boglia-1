@@ -220,14 +220,28 @@ def salva_json_scartati(scartati: list[dict]) -> Path:          # STEP 5 — Con
     with open(percorso, "w", encoding= "utf-8") as f:
         
         json.dump(scartati, f, indent=2, ensure_ascii=False)
-    print(f"[Step 5] JSON scartati in: {percorso} | ({len(scartati)} record)")
+    print(f"[Step 5] JSON scartati salvati in: {percorso} | ({len(scartati)} record)")
     return percorso         # percorso json_scartati
 
-#
-#
+def calcola_statistica(studenti: list[dict], config: dict) -> dict:         # STEP 6 - Calcolo statistiche per materia
+    stats = {}
+    for materia in config["materie"]:
+        voti = [s["voti"][materia] for s in studenti if materia in s["voti"]]
+        if len(voti) < 2:
+            continue
 
+        stats[materia] = {
+            "media": round(statistics.mean(voti), 2),
+            "mediana": statistics.median(voti),
+            "stdev": round(statistics.stdev(voti), 2),
+            "min": min(voti),
+            "max": max(voti)
+        }
+        soglia = math.floor(statistics.mean(voti))
+        stats[materia]["soglia_floor"] = soglia
 
-
+    print(f"[Step 6] Statistiche calcolate per {len(stats)} materie.")
+    return stats
 
 crea_cartelle()
 config = carica_config()
@@ -237,3 +251,5 @@ lista_csv = salva_su_csv(studenti= studenti ,config= config)
 validi, scartati, _ = valida_studenti(percorso_csv= lista_csv, config= config)
 salva_json_validi(validi)
 salva_json_scartati(scartati)
+statistica = calcola_statistica(studenti= studenti, config= config)
+print(f"{statistica}")
