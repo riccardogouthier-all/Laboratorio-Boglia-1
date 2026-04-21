@@ -496,18 +496,18 @@ def cmd_report(config):
 
 def cmd_all(config):
     """Comando 'all': esegue l'intera pipeline in sequenza."""
-    print("\n▶ FASE 1 — Generazione dati")
+    print("\n FASE 1 — Generazione dati")
     percorso_csv = cmd_generate(config)
 
-    print("\n▶ FASE 2 — Validazione e conversione")
+    print("\n FASE 2 — Validazione e conversione")
     validi, scartati = cmd_validate(config)
 
-    print("\n▶ FASE 3 — Statistiche e report")
+    print("\n FASE 3 — Statistiche e report")
     stats = calcola_statistiche(validi, config)
     top5  = classifica_studenti(validi, top_n=5)
     genera_report(config, validi, scartati, stats, top5)
 
-    print("\n✅ Pipeline completata con successo.")
+    print("\n Pipeline completata con successo.")
 
 
 def mostra_aiuto():
