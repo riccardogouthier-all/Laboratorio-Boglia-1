@@ -10,8 +10,14 @@ lista = [ "a" , 1 , ["a","b","c"] , "a"  , ["a","b","c"] , 1 , "a" , ("LA TUPLA 
 print(lista)
 
 def spulcia_lista(lista):
+    '''
+    metodo per contare gli elementi prima di incontrare un elemento di tipo tupla
+    '''
     contatore = 0
     for elemento in lista:
+        '''
+        per ogni elemento controlla se è una tupla, nel qual caso esce dal cico for, altrimenti incrementa il contatore
+        '''
         if isinstance(elemento, tuple):
             break
         contatore += 1
@@ -20,6 +26,7 @@ def spulcia_lista(lista):
 elementi = spulcia_lista(lista= lista)
 
 if elementi == len(lista):
+    '''gestione dell'unico errore, assenza di tuple nella lista'''
     print(f"Nella lista non sono presenti elementi di tipo tupla e contiene {len(lista)} elementi.")
 else:       
     print(f"Nella lista ci sono {elementi} elementi prima di incontrare una tupla")
