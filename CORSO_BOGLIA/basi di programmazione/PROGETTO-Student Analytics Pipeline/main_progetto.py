@@ -203,25 +203,23 @@ def valida_studenti(percorso_csv: Path, config: dict) -> tuple[list,list,Counter
     print(f"         Errori trovati: {dict(conteggio_errori) or 'nessuno'}")
     return validi, scartati, conteggio_errori       # ritorna lista validi, scartati python e conteggio errori (contatore)
 
-def salva_json_validi(studenti: list[dict]) -> Path:            # STEP 5 — Conversione PERCORSO CSV → JSON
+def salva_json_validi(studenti: list[dict]) -> Path:            # STEP 5 - Conversione PERCORSO CSV → JSON - ritorna il percorso json_validi
     path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline") 
-
     percorso = path / "data/output" / "studenti_validi.json"
     with open(percorso, "w", encoding= "utf-8") as f:
         json.dump(studenti, f, indent=2, ensure_ascii=False)
     print(f"[Step 5] JSON validi salvati in: {percorso}")
     return percorso         # percorso json_validi
 
-def salva_json_scartati(scartati: list[dict]) -> Path:          # STEP 5 — Conversione PERCORSO CSV → JSON
+def salva_json_scartati(scartati: list[dict]) -> Path:          # STEP 5 - Conversione PERCORSO CSV → JSON - ritorno il percorso json_scartati
     path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline")
     percorso = path / "data/output" / "studenti_scartati.json"
     with open(percorso, "w", encoding= "utf-8") as f:
-        
         json.dump(scartati, f, indent=2, ensure_ascii=False)
     print(f"[Step 5] JSON scartati salvati in: {percorso} | ({len(scartati)} record)")
     return percorso         # percorso json_scartati
 
-def calcola_statistica(studenti: list[dict], config: dict) -> dict:         # STEP 6 - Calcolo statistiche per materia
+def calcola_statistica(studenti: list[dict], config: dict) -> dict:         # STEP 6 - Calcolo statistiche per materia - ritorna dizionario di materie con le loro statistiche
     stats = {}
     for materia in config["materie"]:
         voti = [s["voti"][materia] for s in studenti if materia in s["voti"]]
@@ -241,35 +239,97 @@ def calcola_statistica(studenti: list[dict], config: dict) -> dict:         # ST
     print(f"[Step 6] Statistiche calcolate per {len(stats)} materie.")
     return stats
 
-# def classifica_studenti(studenti: list[dict], top_n: int = 5) -> list[dict]:            # STEP 7 — Classifica migliori studenti
-#     for studente in studenti:
-#         voti_lista = list(studente["voti"].values())
+def classifica_studenti(studenti: list[dict], top_n: int = 5) -> list[dict]:            # STEP 7 - Classifica migliori studenti - ritorna dizionario di studenti con le loro statistiche
+    for studente in studenti:
+        voti_lista = list(studente["voti"].values())
+        studente["media_personale"] = round(statistics.mean(voti_lista), 2)
+
+    classifica = sorted(studenti,key=lambda s:s["media_personale"], reverse=True)
+    top = classifica[:top_n]
+
+    print(f"[Step 7] Top {top_n} studenti calcolati.")
+    for i, s in enumerate(top, 5):
+        print(f" {i}. {s['nome']} {s['cognome']} — media: {s['media_personale']}")
+        return top
+
+def genera_report(config, validi, scartati, stats, top5) -> Path:
+    oggi= datetime.now()
+    nome_file = f"report_{oggi.strftime('%Y%m%d')}.txt"
+    path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline","report")
+    percorso = path / nome_file
+
+    righe = []
+    righe.append("=" * 60)
+    righe.append("  REPORT STUDENTI — PIPELINE PYTHON")
+    righe.append("=" * 60)
+    righe.append(f"Classe:              {config['classe']}")
+    righe.append(f"Data generazione:    {oggi.strftime('%d/%m/%Y %H:%M:%S')}")
+    righe.append(f"Studenti totali:     {len(validi) + len(scartati)}")
+    righe.append(f"Studenti validi:     {len(validi)}")
+    righe.append(f"Studenti scartati:   {len(scartati)}")
+    righe.append("")
+    
+    righe.append("-" * 60)
+    righe.append("  STATISTICHE PER MATERIA")
+    righe.append("-" * 60)
+    for materia, s in stats.items():
+        righe.append(f"\n  {materia}")
+        righe.append(f"    Media:            {s['media']}")
+        righe.append(f"    Mediana:          {s['mediana']}")
+        righe.append(f"    Dev. standard:    {s['stdev']}")
+        righe.append(f"    Voto minimo:      {s['min']}")
+        righe.append(f"    Voto massimo:     {s['max']}")
+
+    righe.append("")
+    righe.append("-" * 60)
+    righe.append("  TOP 5 STUDENTI")
+    righe.append("-" * 60)
+    for i, s in enumerate(top5, 1):
+        righe.append(
+            f"  {i}. {s['nome']:<12} {s['cognome']:<15} "
+            f"media: {s['media_personale']}  assenze: {s['assenze']}"
+        )
+    # if validi:
+    #     righe.append("")
+    #     righe.append("-" * 60)
+    #     righe.append("  CORRELAZIONE ASSENZE / MEDIA VOTI (approssimata)")
+    #     righe.append("-" * 60)
+    #     alta_ass   = [s for s in validi if s["assenze"] >= 10]
+    #     bassa_ass  = [s for s in validi if s["assenze"] <  10]
+    #     if alta_ass and bassa_ass:
+    #         media_alta  = round(statistics.mean(s["media_personale"] for s in alta_ass), 2)
+    #         media_bassa = round(statistics.mean(s["media_personale"] for s in bassa_ass), 2)
+    #         righe.append(f"  Studenti con ≥10 assenze ({len(alta_ass)}): media voti = {media_alta}")
+    #         righe.append(f"  Studenti con <10 assenze ({len(bassa_ass)}): media voti = {media_bassa}")
+
+    righe.append("")
+    righe.append("=" * 60)
+
+    # with open(percorso, "w", encoding="utf-8") as f:
+    #     f.write("\n".join(righe))
+
+    print(f"[Step 8] Report salvato in: {percorso}")
+    return percorso
 
 
+crea_cartelle()            # STEP 0 
 
-DEFAULT_CONFIG = {
-    "numero_studenti": 50,
-    "voto_min": 2,
-    "voto_max": 10,
-    "materie": ["Matematica", "Informatica", "Italiano"],
-    "classe": "5A"
-    }
+config = carica_config()       # STEP 1
 
-crea_cartelle()
-config = carica_config()
-studenti = genera_studenti(config= config)
-print(studenti)
-lista_csv = salva_su_csv(studenti= studenti ,config= config)
-validi, scartati, _ = valida_studenti(percorso_csv= lista_csv, config= config)
-salva_json_validi(validi)
-salva_json_scartati(scartati)
-statistica = calcola_statistica(studenti= studenti, config= config)
+studenti = genera_studenti(config= config)         # STEP 2
+# print(studenti)
 
+lista_csv = salva_su_csv(studenti= studenti ,config= config)       # STEP 3
 
+validi, scartati, conteggioerrori = valida_studenti(percorso_csv= lista_csv, config= config)       # STEP 4
 
-materie =     DEFAULT_CONFIG["materie"]
-print(f"{materie[0]}")       # ,n{statistica(2)},/n{statistica(3)}")
-print(f"{statistica[materie]}")
+salva_json_validi(validi)            # STEP 5
+salva_json_scartati(scartati)            # STEP 5
 
+statistica_per_materia = calcola_statistica(studenti= studenti, config= config)         # STEP 6
+# print(statistica_per_materia)
 
-statistica[materie[0]]
+classifica_completa = classifica_studenti(studenti= studenti)            # STEP 7
+# print(classifica_completa)
+
+report = genera_report(config=config, validi=validi, scartati=scartati, stats=statistica_per_materia, top5=classifica_completa)            # STEP 8
