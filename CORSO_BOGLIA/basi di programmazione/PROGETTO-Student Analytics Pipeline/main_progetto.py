@@ -252,11 +252,11 @@ def classifica_studenti(studenti: list[dict], top_n: int = 5) -> list[dict]:    
         print(f" {i}. {s['nome']} {s['cognome']} — media: {s['media_personale']}")
         return top
 
-def genera_report(config, validi, scartati, stats, top5) -> Path:
+def genera_report(config, validi, scartati, stats, top5) -> Path:           # STEP 8 - Report finale - crea file txt in report/reportXXX.txt e ritorna il percorso
     oggi= datetime.now()
     nome_file = f"report_{oggi.strftime('%Y%m%d')}.txt"
-    path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline","report")
-    percorso = path / nome_file
+    path = Path("report")
+    percorso  = path / nome_file
 
     righe = []
     righe.append("=" * 60)
@@ -289,27 +289,37 @@ def genera_report(config, validi, scartati, stats, top5) -> Path:
             f"  {i}. {s['nome']:<12} {s['cognome']:<15} "
             f"media: {s['media_personale']}  assenze: {s['assenze']}"
         )
-    # if validi:
-    #     righe.append("")
-    #     righe.append("-" * 60)
-    #     righe.append("  CORRELAZIONE ASSENZE / MEDIA VOTI (approssimata)")
-    #     righe.append("-" * 60)
-    #     alta_ass   = [s for s in validi if s["assenze"] >= 10]
-    #     bassa_ass  = [s for s in validi if s["assenze"] <  10]
-    #     if alta_ass and bassa_ass:
-    #         media_alta  = round(statistics.mean(s["media_personale"] for s in alta_ass), 2)
-    #         media_bassa = round(statistics.mean(s["media_personale"] for s in bassa_ass), 2)
-    #         righe.append(f"  Studenti con ≥10 assenze ({len(alta_ass)}): media voti = {media_alta}")
-    #         righe.append(f"  Studenti con <10 assenze ({len(bassa_ass)}): media voti = {media_bassa}")
+    if validi:
+        righe.append("")
+        righe.append("-" * 60)
+        righe.append("  CORRELAZIONE ASSENZE SU STUDENTI VALIDI")
+        righe.append("-" * 60)
+        alta_ass   = [s for s in validi if s["assenze"] >= 10]
+        bassa_ass  = [s for s in validi if s["assenze"] <  10]
+
+        if alta_ass and bassa_ass:
+            # media_alta  = round(statistics.mean(s["media_personale"] for s in alta_ass), 2)
+            # media_bassa = round(statistics.mean(s["media_personale"] for s in bassa_ass), 2)
+            righe.append(f"  Studenti con ≥10 assenze ({len(alta_ass)})")#: media voti = {media_alta}")
+            righe.append(f"  Studenti con <10 assenze ({len(bassa_ass)})")#): media voti = {media_bassa}")
 
     righe.append("")
     righe.append("=" * 60)
 
-    # with open(percorso, "w", encoding="utf-8") as f:
-    #     f.write("\n".join(righe))
+    directory = "CORSO_BOGLIA/basi di programmazione/PROGETTO-Student Analytics Pipeline/report"    
+    percorso_completo = os.path.join(directory, nome_file)
+    with open(percorso_completo, "w", encoding="utf-8") as f:
+        f.write("\n".join(righe))
+
 
     print(f"[Step 8] Report salvato in: {percorso}")
     return percorso
+
+# STEP 9 - Backup automatico
+
+# STEP 10 — Gestione CLI con sys.argv
+
+# STEP CLI - GESTIONE INPUT
 
 
 crea_cartelle()            # STEP 0 
@@ -332,4 +342,10 @@ statistica_per_materia = calcola_statistica(studenti= studenti, config= config) 
 classifica_completa = classifica_studenti(studenti= studenti)            # STEP 7
 # print(classifica_completa)
 
-report = genera_report(config=config, validi=validi, scartati=scartati, stats=statistica_per_materia, top5=classifica_completa)            # STEP 8
+report = genera_report(config, validi, scartati, statistica_per_materia, classifica_completa)            # STEP 8
+
+# STEP 9
+
+# STEP 10
+
+# STEP CLI - GESTIONE INPUT
