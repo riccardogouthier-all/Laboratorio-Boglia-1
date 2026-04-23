@@ -311,13 +311,48 @@ def genera_report(config, validi, scartati, stats, top5) -> Path:           # ST
     with open(percorso_completo, "w", encoding="utf-8") as f:
         f.write("\n".join(righe))
 
-
     print(f"[Step 8] Report salvato in: {percorso}")
     return percorso
 
-# STEP 9 - Backup automatico
+def backup_csv(percorso_csv : Path) -> Path:            # STEP 9 - Backup automatico
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-# STEP 10 — Gestione CLI con sys.argv
+    directory = "CORSO_BOGLIA/basi di programmazione/PROGETTO-Student Analytics Pipeline/data/backup"    
+    destinazione = os.path.join(directory, f"backup_studenti_{timestamp}.csv")
+    shutil.copy2(percorso_csv, destinazione)
+    print(f"[Step 9] Backup salvato in {destinazione}")
+    return destinazione
+
+def cmd_generate(config):           # STEP 10 — Gestione CLI con sys.argv
+    studenti = genera_studenti(config)        # STEP 2
+    lista_csv = salva_su_csv(studenti= studenti ,config= config)       # STEP 3
+    backup_csv(lista_csv)         # STEP 9
+    return lista_csv
+
+def cmd_validate(config):           # STEP 10 — Gestione CLI con sys.argv
+    directory = "CORSO_BOGLIA/basi di programmazione/PROGETTO-Student Analytics Pipeline/data/input"
+    file_csv = sorted(directory.glob("studenti_*.csv"))
+    if not file_csv:
+        print("[ERRORE] Nessun file CSV trovato in data/input/. Esegui prima 'generate'.")
+        sys.exit(1)
+    percorso_csv = file_csv[-1]         # solo per stampare in ordine alfabetico
+    print(f"[Step 4] Lettura file: {percorso_csv}")
+
+    validi, scartati, _ = valida_studenti(percorso_csv, config)       # STEP 4
+    salva_json_validi(validi)            # STEP 5
+    salva_json_scartati(scartati)            # STEP 5
+    return validi, scartati
+
+def cmd_report():           # STEP 10 — Gestione CLI con sys.argv
+    directory = "CORSO_BOGLIA/basi di programmazione/PROGETTO-Student Analytics Pipeline/data/output"
+    json_path = directory / "studenti_validi.json"
+    if not json_path.exists():
+        print("[ERRORE] studenti_validi.json non trovato. Esegui prima 'validate'.")
+        sys.exit(1)
+    with open(json_path, "r", encoding="utf-8") as f:
+        validi = json.load(f)
+
+    scartati_path = directory / "scartati."
 
 # STEP CLI - GESTIONE INPUT
 
@@ -326,15 +361,11 @@ crea_cartelle()            # STEP 0
 
 config = carica_config()       # STEP 1
 
-studenti = genera_studenti(config= config)         # STEP 2
+
 # print(studenti)
 
-lista_csv = salva_su_csv(studenti= studenti ,config= config)       # STEP 3
 
-validi, scartati, conteggioerrori = valida_studenti(percorso_csv= lista_csv, config= config)       # STEP 4
 
-salva_json_validi(validi)            # STEP 5
-salva_json_scartati(scartati)            # STEP 5
 
 statistica_per_materia = calcola_statistica(studenti= studenti, config= config)         # STEP 6
 # print(statistica_per_materia)
@@ -344,7 +375,7 @@ classifica_completa = classifica_studenti(studenti= studenti)            # STEP 
 
 report = genera_report(config, validi, scartati, statistica_per_materia, classifica_completa)            # STEP 8
 
-# STEP 9
+
 
 # STEP 10
 
