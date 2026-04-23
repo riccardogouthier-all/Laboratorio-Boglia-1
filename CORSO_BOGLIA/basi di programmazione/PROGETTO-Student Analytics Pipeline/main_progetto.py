@@ -24,7 +24,7 @@ from collections import Counter      # Step 4, 7 — conteggio errori
 
 def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartelle di progetto
     """Crea la struttura di cartelle del progetto se non esistono."""
-    path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline")
+    path = Path.cwd()#("PROGETTO-Student Analytics Pipeline")      #"CORSO_BOGLIA","basi di programmazione",
     base_path = path
 
     cartelle = [
@@ -38,8 +38,9 @@ def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartell
     print("[Step 0] Cartelle create/verificate.")
 
 def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
-    path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline")    
+    path = Path.cwd()#("PROGETTO-Student Analytics Pipeline")    #"CORSO_BOGLIA","basi di programmazione",
     CONFIG_PATH = path / "config.json"
+    
     
     DEFAULT_CONFIG = {
         "numero_studenti": 50,
@@ -114,8 +115,8 @@ def genera_studenti(config: dict) -> list[dict]:        # STEP 2 - lista di stud
 def salva_su_csv(studenti: list[dict], config:dict) -> Path:       # STEP 3 - SALVATAGGIO SU CSV - path sistema x la lista python
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline")    
-    percorso = path / "data/input/" / f"studenti_{timestamp}.csv"
+    path = Path("data","input")    
+    percorso = path / f"studenti_{timestamp}.csv"
 
     materie = config["materie"]
     nomicampi = ["id","nome","cognome","data_nascita","email"] + materie +["assenze"]
@@ -204,16 +205,16 @@ def valida_studenti(percorso_csv: Path, config: dict) -> tuple[list,list,Counter
     return validi, scartati, conteggio_errori       # ritorna lista validi, scartati python e conteggio errori (contatore)
 
 def salva_json_validi(studenti: list[dict]) -> Path:            # STEP 5 - Conversione PERCORSO CSV → JSON - ritorna il percorso json_validi
-    path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline") 
-    percorso = path / "data/output" / "studenti_validi.json"
+    path = Path("data/output")       #("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline") 
+    percorso = path / "studenti_validi.json"
     with open(percorso, "w", encoding= "utf-8") as f:
         json.dump(studenti, f, indent=2, ensure_ascii=False)
     print(f"[Step 5] JSON validi salvati in: {percorso}")
     return percorso         # percorso json_validi
 
 def salva_json_scartati(scartati: list[dict]) -> Path:          # STEP 5 - Conversione PERCORSO CSV → JSON - ritorno il percorso json_scartati
-    path = Path("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline")
-    percorso = path / "data/output" / "studenti_scartati.json"
+    path = Path("data/output")       #("CORSO_BOGLIA","basi di programmazione","PROGETTO-Student Analytics Pipeline") 
+    percorso = path / "studenti_scartati.json"
     with open(percorso, "w", encoding= "utf-8") as f:
         json.dump(scartati, f, indent=2, ensure_ascii=False)
     print(f"[Step 5] JSON scartati salvati in: {percorso} | ({len(scartati)} record)")
@@ -239,7 +240,7 @@ def calcola_statistica(studenti: list[dict], config: dict) -> dict:         # ST
     print(f"[Step 6] Statistiche calcolate per {len(stats)} materie.")
     return stats
 
-def classifica_studenti(studenti: list[dict], top_n: int = 5) -> list[dict]:            # STEP 7 - Classifica migliori studenti - ritorna dizionario di studenti con le loro statistiche
+def classifica_studenti(studenti: list[dict], top_n: int) -> list[dict]:            # STEP 7 - Classifica migliori studenti - ritorna dizionario di studenti con le loro statistiche
     for studente in studenti:
         voti_lista = list(studente["voti"].values())
         studente["media_personale"] = round(statistics.mean(voti_lista), 2)
@@ -306,7 +307,7 @@ def genera_report(config, validi, scartati, stats, top5) -> Path:           # ST
     righe.append("")
     righe.append("=" * 60)
 
-    directory = "CORSO_BOGLIA/basi di programmazione/PROGETTO-Student Analytics Pipeline/report"    
+    directory = Path("report")    
     percorso_completo = os.path.join(directory, nome_file)
     with open(percorso_completo, "w", encoding="utf-8") as f:
         f.write("\n".join(righe))
@@ -317,20 +318,21 @@ def genera_report(config, validi, scartati, stats, top5) -> Path:           # ST
 def backup_csv(percorso_csv : Path) -> Path:            # STEP 9 - Backup automatico
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    directory = "CORSO_BOGLIA/basi di programmazione/PROGETTO-Student Analytics Pipeline/data/backup"    
-    destinazione = os.path.join(directory, f"backup_studenti_{timestamp}.csv")
+    directory = Path("data","backup")          #("PROGETTO-Student Analytics Pipeline","data","backup")
+    destinazione = directory / f"backup_studenti_{timestamp}.csv"
     shutil.copy2(percorso_csv, destinazione)
     print(f"[Step 9] Backup salvato in {destinazione}")
     return destinazione
-
+##################################################################################################################################################
+##################################################################################################################################################
 def cmd_generate(config):           # STEP 10 — Gestione CLI con sys.argv
     studenti = genera_studenti(config)        # STEP 2
     lista_csv = salva_su_csv(studenti= studenti ,config= config)       # STEP 3
     backup_csv(lista_csv)         # STEP 9
     return lista_csv
-
+##################################################################################################################################################
 def cmd_validate(config):           # STEP 10 — Gestione CLI con sys.argv
-    directory = "CORSO_BOGLIA/basi di programmazione/PROGETTO-Student Analytics Pipeline/data/input"
+    directory = Path("data/input")
     file_csv = sorted(directory.glob("studenti_*.csv"))
     if not file_csv:
         print("[ERRORE] Nessun file CSV trovato in data/input/. Esegui prima 'generate'.")
@@ -342,9 +344,9 @@ def cmd_validate(config):           # STEP 10 — Gestione CLI con sys.argv
     salva_json_validi(validi)            # STEP 5
     salva_json_scartati(scartati)            # STEP 5
     return validi, scartati
-
-def cmd_report():           # STEP 10 — Gestione CLI con sys.argv
-    directory = "CORSO_BOGLIA/basi di programmazione/PROGETTO-Student Analytics Pipeline/data/output"
+##################################################################################################################################################
+def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
+    directory = Path("data/output")
     json_path = directory / "studenti_validi.json"
     if not json_path.exists():
         print("[ERRORE] studenti_validi.json non trovato. Esegui prima 'validate'.")
@@ -353,30 +355,62 @@ def cmd_report():           # STEP 10 — Gestione CLI con sys.argv
         validi = json.load(f)
 
     scartati_path = directory / "scartati."
+    scartati = []
+    if scartati_path.exists():
+        with open(scartati_path, "r", encoding="utf-8") as f:
+            scartati = json.load(f)
 
-# STEP CLI - GESTIONE INPUT
+    statistica_per_materia = calcola_statistica(validi, config)         # STEP 6
+    classifica = classifica_studenti(validi, top_n=5)            # STEP 7
+    genera_report(config, validi, scartati, statistica_per_materia, classifica)            # STEP 8
+##################################################################################################################################################
+def cmd_all(config):
+    print("\n FASE 1 — Generazione dati")
+    percorso_csv = cmd_generate(config)
 
+    print("\n FASE 2 — Validazione e conversione")
+    validi, scartati = cmd_validate(config)
 
-crea_cartelle()            # STEP 0 
+    print("\n FASE 3 — Statistiche e report")
+    statistica_per_materia = calcola_statistica(validi, config)         # STEP 6
+    classifica = classifica_studenti(validi, top_n=5)            # STEP 7
+    genera_report(config, validi, scartati, statistica_per_materia, classifica)            # STEP 8
 
-config = carica_config()       # STEP 1
+    print("\n Pipeline completata con successo.")
+##################################################################################################################################################
+def help():
+    print("""
+        Uso:  python main.py <comando>
+        
+        Comandi disponibili:
+          generate   Genera studenti casuali e salva il CSV in data/input/
+          validate   Valida il CSV e produce JSON in data/output/
+          report     Calcola statistiche e genera il report in report/
+          all        Esegue l'intera pipeline dall'inizio alla fine
+        """)
+##################################################################################################################################################
+##################################################################################################################################################
+# def main():         # STEP CLI - GESTIONE INPUT
+if __name__ == "__main__":
+    crea_cartelle()            # STEP 0 
+    config = carica_config()       # STEP 1
+    
+    if len(sys.argv) <2:
+        help()
+        sys.exit(0)
 
+    # comando = input().lower()
+    comando = sys.argv[1].lower()
 
-# print(studenti)
-
-
-
-
-statistica_per_materia = calcola_statistica(studenti= studenti, config= config)         # STEP 6
-# print(statistica_per_materia)
-
-classifica_completa = classifica_studenti(studenti= studenti)            # STEP 7
-# print(classifica_completa)
-
-report = genera_report(config, validi, scartati, statistica_per_materia, classifica_completa)            # STEP 8
-
-
-
-# STEP 10
-
-# STEP CLI - GESTIONE INPUT
+    if comando == "generate":
+        cmd_generate(config)
+    elif comando == "validate":
+        cmd_validate(config)
+    elif comando == "report":
+        cmd_report(config)
+    elif comando == "all":
+        cmd_all(config)
+    else:
+        print(f"[ERRORE] Comando sconosciuto: '{comando}'")
+        help()
+        sys.exit(1)
