@@ -1,0 +1,141 @@
+Ciao Riccardo! Ecco i passaggi sequenziali dettagliati per completare tutte le consegne in MySQL Workbench, 
+usando query SQL pronte da copiare-incollare. 
+Esegui tutto come root/admin (connessione principale), poi switcha utente dove specificato.
+
+Apri una nuova tab SQL (icona + o Ctrl+T) e usa Ctrl+Enter per eseguire blocchi.
+
+-----------------------------------------------------------------------------------------------
+
+1. Creazione Database e Utente
+Esegui questi comandi in sequenza (come root):
+
+sql
+CREATE DATABASE EsercizioSQL;
+CREATE USER 'esercizio_user'@'localhost' IDENTIFIED BY 'password123';
+GRANT ALL PRIVILEGES ON EsercizioSQL.* TO 'esercizio_user'@'localhost';
+FLUSH PRIVILEGES;
+Verifica con SHOW GRANTS FOR 'esercizio_user'@'localhost';.
+
+-----------------------------------------------------------------------------------------------
+
+2. Creazione Tabelle
+Crea/disconnetti la connessione root, poi connettiti come 'esercizio_user'@'localhost' 
+(password: password123) – usa Connection > Manage Connections se non esiste.
+
+Seleziona database: USE EsercizioSQL;
+
+Esegui:
+
+sql
+CREATE TABLE Clienti (
+    id_cliente INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE Prodotti (
+    id_prodotto INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50) NOT NULL,
+    prezzo DECIMAL(10,2) CHECK (prezzo > 0)
+);
+
+CREATE TABLE Ordini (
+    id_ordine INT PRIMARY KEY AUTO_INCREMENT,
+    id_cliente INT,
+    id_prodotto INT,
+    quantita INT NOT NULL CHECK (quantita > 0),
+    data_ordine DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_cliente) REFERENCES Clienti(id_cliente) ON DELETE CASCADE,
+    FOREIGN KEY (id_prodotto) REFERENCES Prodotti(id_prodotto) ON DELETE CASCADE
+);
+Verifica: SHOW TABLES; DESCRIBE Ordini;.
+
+-----------------------------------------------------------------------------------------------
+
+3. Inserimento Dati
+Sempre come esercizio_user, esegui:
+
+sql
+INSERT INTO Clienti (nome, email) VALUES 
+('Mario Rossi', 'mario@email.com'),
+('Anna Verdi', 'anna@email.com');
+
+INSERT INTO Prodotti (nome, prezzo) VALUES 
+('Laptop', 1200.00),
+('Mouse', 25.50);
+
+INSERT INTO Ordini (id_cliente, id_prodotto, quantita) VALUES 
+(1, 1, 1),
+(2, 2, 2),
+(1, 2, 1);
+Verifica: SELECT * FROM Clienti; SELECT * FROM Ordini;.
+
+-----------------------------------------------------------------------------------------------
+
+4. Query di Lettura
+Esegui una per volta:
+
+sql
+-- Tutti ordini con dettagli
+SELECT o.*, c.nome AS cliente_nome, p.nome AS prodotto_nome, p.prezzo * o.quantita AS totale
+FROM Ordini o
+JOIN Clienti c ON o.id_cliente = c.id_cliente
+JOIN Prodotti p ON o.id_prodotto = p.id_prodotto;
+
+-- Ordini per cliente
+SELECT c.nome, COUNT(o.id_ordine) AS num_ordini
+FROM Clienti c LEFT JOIN Ordini o ON c.id_cliente = o.id_cliente
+GROUP BY c.id_cliente;
+
+-- Clienti con >1 ordine
+SELECT c.nome, COUNT(o.id_ordine) AS num_ordini
+FROM Clienti c JOIN Ordini o ON c.id_cliente = o.id_cliente
+GROUP BY c.id_cliente HAVING num_ordini > 1;
+
+-- Totale speso per cliente
+SELECT c.nome, SUM(p.prezzo * o.quantita) AS totale_speso
+FROM Clienti c JOIN Ordini o ON c.id_cliente = o.id_cliente
+JOIN Prodotti p ON o.id_prodotto = p.id_prodotto
+GROUP BY c.id_cliente;
+Risultati in griglia; Mario ha 2 ordini, totale 1225.50.
+
+-----------------------------------------------------------------------------------------------
+
+5. Update e Delete
+sql
+-- Update prezzo Laptop
+UPDATE Prodotti SET prezzo = 1300.00 WHERE nome = 'Laptop';
+
+-- Prova delete cliente con ordini (fallisce? No, CASCADE elimina ordini)
+DELETE FROM Clienti WHERE nome = 'Mario Rossi';  -- Ordini eliminati auto
+
+-- Elimina ordine specifico (usa ID da SELECT)
+DELETE FROM Ordini WHERE id_ordine = 1;
+CASCADE elimina cascata senza errore.
+
+-----------------------------------------------------------------------------------------------
+
+6. Test Vincoli
+Prova insert errato:
+
+sql
+INSERT INTO Ordini (id_cliente, id_prodotto, quantita) VALUES (1,1,-1);
+Fallisce per CHECK (quantità >0).
+
+-----------------------------------------------------------------------------------------------
+
+7. Eliminazione Finale
+Torna come root (disconnetti e riconnetti).
+
+sql
+USE EsercizioSQL;
+DELETE FROM Ordini;
+DROP TABLE Ordini, Clienti, Prodotti;
+DROP USER 'esercizio_user'@'localhost';
+DROP DATABASE EsercizioSQL;
+Verifica: SHOW DATABASES;. Tutto pulito.
+
+Esegui con attenzione, verifica output dopo ogni blocco. 
+Se errori (es. permessi), FLUSH PRIVILEGES di nuovo. 
+
+
