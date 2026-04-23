@@ -364,7 +364,7 @@ def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
     classifica = classifica_studenti(validi, top_n=5)            # STEP 7
     genera_report(config, validi, scartati, statistica_per_materia, classifica)            # STEP 8
 ##################################################################################################################################################
-def cmd_all(config):
+def cmd_all(config):           # STEP 10 — Gestione CLI con sys.argv
     print("\n FASE 1 — Generazione dati")
     percorso_csv = cmd_generate(config)
 
@@ -378,7 +378,7 @@ def cmd_all(config):
 
     print("\n Pipeline completata con successo.")
 ##################################################################################################################################################
-def help():
+def help():           # STEP 10 — Gestione CLI con sys.argv
     print("""
         Uso:  python main.py <comando>
         

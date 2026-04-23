@@ -1,702 +1,702 @@
 [
   {
     "id": 1,
-    "nome": "Marco",
-    "cognome": "Ricci",
-    "data_nascita": "2005-03-11",
-    "email": "marco.ricci1@scuola.it",
-    "assenze": 13,
-    "voti": {
-      "Matematica": 2,
-      "Informatica": 10,
-      "Italiano": 7
-    },
-    "timestamp_import": "2026-04-23T15:06:50.039869"
-  },
-  {
-    "id": 2,
-    "nome": "Andrea",
-    "cognome": "Mancini",
-    "data_nascita": "2004-12-25",
-    "email": "andrea.mancini2@scuola.it",
+    "nome": "Sofia",
+    "cognome": "Marino",
+    "data_nascita": "2005-10-24",
+    "email": "sofia.marino1@scuola.it",
     "assenze": 16,
     "voti": {
       "Matematica": 2,
-      "Informatica": 6,
-      "Italiano": 10
+      "Informatica": 2,
+      "Italiano": 2
     },
-    "timestamp_import": "2026-04-23T15:06:50.039906"
+    "timestamp_import": "2026-04-23T15:59:16.207066"
+  },
+  {
+    "id": 2,
+    "nome": "Elena",
+    "cognome": "Ferrari",
+    "data_nascita": "2005-12-17",
+    "email": "elena.ferrari2@scuola.it",
+    "assenze": 14,
+    "voti": {
+      "Matematica": 5,
+      "Informatica": 2,
+      "Italiano": 3
+    },
+    "timestamp_import": "2026-04-23T15:59:16.207102"
   },
   {
     "id": 3,
-    "nome": "Marco",
-    "cognome": "Ricci",
-    "data_nascita": "2009-02-14",
-    "email": "marco.ricci3@scuola.it",
-    "assenze": 9,
+    "nome": "Alice",
+    "cognome": "Giordano",
+    "data_nascita": "2008-05-30",
+    "email": "alice.giordano3@scuola.it",
+    "assenze": 4,
     "voti": {
-      "Matematica": 7,
+      "Matematica": 2,
       "Informatica": 2,
-      "Italiano": 6
+      "Italiano": 9
     },
-    "timestamp_import": "2026-04-23T15:06:50.039923"
+    "timestamp_import": "2026-04-23T15:59:16.207119"
   },
   {
     "id": 4,
-    "nome": "Marta",
-    "cognome": "Lombardi",
-    "data_nascita": "2007-01-05",
-    "email": "marta.lombardi4@scuola.it",
-    "assenze": 13,
+    "nome": "Laura",
+    "cognome": "Esposito",
+    "data_nascita": "2006-03-13",
+    "email": "laura.esposito4@scuola.it",
+    "assenze": 7,
     "voti": {
-      "Matematica": 8,
-      "Informatica": 9,
-      "Italiano": 8
+      "Matematica": 3,
+      "Informatica": 4,
+      "Italiano": 4
     },
-    "timestamp_import": "2026-04-23T15:06:50.039936"
+    "timestamp_import": "2026-04-23T15:59:16.207131"
   },
   {
     "id": 5,
-    "nome": "Sofia",
-    "cognome": "Esposito",
-    "data_nascita": "2009-05-24",
-    "email": "sofia.esposito5@scuola.it",
-    "assenze": 14,
+    "nome": "Francesco",
+    "cognome": "Conti",
+    "data_nascita": "2007-08-14",
+    "email": "francesco.conti5@scuola.it",
+    "assenze": 18,
     "voti": {
       "Matematica": 8,
-      "Informatica": 3,
-      "Italiano": 8
+      "Informatica": 2,
+      "Italiano": 10
     },
-    "timestamp_import": "2026-04-23T15:06:50.039953"
+    "timestamp_import": "2026-04-23T15:59:16.207143"
   },
   {
     "id": 6,
-    "nome": "Lorenzo",
-    "cognome": "Costa",
-    "data_nascita": "2008-12-07",
-    "email": "lorenzo.costa6@scuola.it",
-    "assenze": 4,
+    "nome": "Alessia",
+    "cognome": "Gallo",
+    "data_nascita": "2006-01-14",
+    "email": "alessia.gallo6@scuola.it",
+    "assenze": 2,
     "voti": {
-      "Matematica": 8,
-      "Informatica": 10,
-      "Italiano": 9
+      "Matematica": 2,
+      "Informatica": 5,
+      "Italiano": 3
     },
-    "timestamp_import": "2026-04-23T15:06:50.039964"
+    "timestamp_import": "2026-04-23T15:59:16.207153"
   },
   {
     "id": 7,
-    "nome": "Anna",
-    "cognome": "Romano",
-    "data_nascita": "2009-01-29",
-    "email": "anna.romano7@scuola.it",
-    "assenze": 7,
+    "nome": "Luca",
+    "cognome": "Costa",
+    "data_nascita": "2008-12-26",
+    "email": "luca.costa7@scuola.it",
+    "assenze": 10,
     "voti": {
-      "Matematica": 2,
-      "Informatica": 3,
-      "Italiano": 2
+      "Matematica": 7,
+      "Informatica": 6,
+      "Italiano": 9
     },
-    "timestamp_import": "2026-04-23T15:06:50.039974"
+    "timestamp_import": "2026-04-23T15:59:16.207163"
   },
   {
     "id": 8,
     "nome": "Sara",
-    "cognome": "Esposito",
-    "data_nascita": "2006-09-05",
-    "email": "sara.esposito8@scuola.it",
-    "assenze": 19,
+    "cognome": "Moreno",
+    "data_nascita": "2009-03-03",
+    "email": "sara.moreno8@scuola.it",
+    "assenze": 6,
     "voti": {
-      "Matematica": 2,
+      "Matematica": 9,
       "Informatica": 6,
-      "Italiano": 9
+      "Italiano": 3
     },
-    "timestamp_import": "2026-04-23T15:06:50.039983"
+    "timestamp_import": "2026-04-23T15:59:16.207179"
   },
   {
     "id": 9,
-    "nome": "Riccardo",
-    "cognome": "Barbieri",
-    "data_nascita": "2005-08-03",
-    "email": "riccardo.barbieri9@scuola.it",
-    "assenze": 4,
+    "nome": "Davide",
+    "cognome": "Rinaldi",
+    "data_nascita": "2009-07-19",
+    "email": "davide.rinaldi9@scuola.it",
+    "assenze": 18,
     "voti": {
       "Matematica": 4,
-      "Informatica": 2,
-      "Italiano": 6
+      "Informatica": 10,
+      "Italiano": 9
     },
-    "timestamp_import": "2026-04-23T15:06:50.039992"
+    "timestamp_import": "2026-04-23T15:59:16.207189"
   },
   {
     "id": 10,
-    "nome": "Giorgio",
-    "cognome": "Colombo",
-    "data_nascita": "2008-01-14",
-    "email": "giorgio.colombo10@scuola.it",
-    "assenze": 15,
+    "nome": "Francesco",
+    "cognome": "Fontana",
+    "data_nascita": "2009-02-05",
+    "email": "francesco.fontana10@scuola.it",
+    "assenze": 13,
     "voti": {
       "Matematica": 9,
-      "Informatica": 3,
-      "Italiano": 4
+      "Informatica": 6,
+      "Italiano": 7
     },
-    "timestamp_import": "2026-04-23T15:06:50.040001"
+    "timestamp_import": "2026-04-23T15:59:16.207199"
   },
   {
     "id": 11,
-    "nome": "Giulia",
+    "nome": "Marco",
     "cognome": "Giordano",
-    "data_nascita": "2007-12-19",
-    "email": "giulia.giordano11@scuola.it",
-    "assenze": 14,
+    "data_nascita": "2009-05-10",
+    "email": "marco.giordano11@scuola.it",
+    "assenze": 5,
     "voti": {
-      "Matematica": 2,
-      "Informatica": 5,
-      "Italiano": 5
+      "Matematica": 4,
+      "Informatica": 3,
+      "Italiano": 6
     },
-    "timestamp_import": "2026-04-23T15:06:50.040010"
+    "timestamp_import": "2026-04-23T15:59:16.207208"
   },
   {
     "id": 12,
-    "nome": "Alice",
-    "cognome": "Santoro",
-    "data_nascita": "2004-05-03",
-    "email": "alice.santoro12@scuola.it",
-    "assenze": 2,
+    "nome": "Marta",
+    "cognome": "Mariani",
+    "data_nascita": "2009-04-25",
+    "email": "marta.mariani12@scuola.it",
+    "assenze": 9,
     "voti": {
-      "Matematica": 8,
-      "Informatica": 2,
-      "Italiano": 5
+      "Matematica": 4,
+      "Informatica": 9,
+      "Italiano": 3
     },
-    "timestamp_import": "2026-04-23T15:06:50.040019"
+    "timestamp_import": "2026-04-23T15:59:16.207218"
   },
   {
     "id": 13,
-    "nome": "Marco",
-    "cognome": "De Luca",
-    "data_nascita": "2008-06-06",
-    "email": "marco.deluca13@scuola.it",
-    "assenze": 17,
+    "nome": "Laura",
+    "cognome": "Bianchi",
+    "data_nascita": "2008-09-25",
+    "email": "laura.bianchi13@scuola.it",
+    "assenze": 18,
     "voti": {
-      "Matematica": 4,
-      "Informatica": 8,
-      "Italiano": 8
+      "Matematica": 8,
+      "Informatica": 2,
+      "Italiano": 4
     },
-    "timestamp_import": "2026-04-23T15:06:50.040027"
+    "timestamp_import": "2026-04-23T15:59:16.207227"
   },
   {
     "id": 14,
-    "nome": "Sara",
-    "cognome": "Bruno",
-    "data_nascita": "2008-11-11",
-    "email": "sara.bruno14@scuola.it",
-    "assenze": 14,
+    "nome": "Valentina",
+    "cognome": "Ferrari",
+    "data_nascita": "2009-01-17",
+    "email": "valentina.ferrari14@scuola.it",
+    "assenze": 2,
     "voti": {
-      "Matematica": 8,
-      "Informatica": 5,
-      "Italiano": 7
+      "Matematica": 3,
+      "Informatica": 6,
+      "Italiano": 5
     },
-    "timestamp_import": "2026-04-23T15:06:50.040041"
+    "timestamp_import": "2026-04-23T15:59:16.207236"
   },
   {
     "id": 15,
-    "nome": "Alessia",
-    "cognome": "Fontana",
-    "data_nascita": "2004-01-08",
-    "email": "alessia.fontana15@scuola.it",
-    "assenze": 4,
+    "nome": "Matteo",
+    "cognome": "Greco",
+    "data_nascita": "2009-11-28",
+    "email": "matteo.greco15@scuola.it",
+    "assenze": 10,
     "voti": {
-      "Matematica": 10,
-      "Informatica": 7,
-      "Italiano": 5
+      "Matematica": 5,
+      "Informatica": 2,
+      "Italiano": 2
     },
-    "timestamp_import": "2026-04-23T15:06:50.040051"
+    "timestamp_import": "2026-04-23T15:59:16.207250"
   },
   {
     "id": 16,
-    "nome": "Anna",
-    "cognome": "Santoro",
-    "data_nascita": "2006-10-07",
-    "email": "anna.santoro16@scuola.it",
-    "assenze": 4,
+    "nome": "Davide",
+    "cognome": "Bianchi",
+    "data_nascita": "2004-12-07",
+    "email": "davide.bianchi16@scuola.it",
+    "assenze": 16,
     "voti": {
       "Matematica": 8,
       "Informatica": 2,
-      "Italiano": 4
+      "Italiano": 8
     },
-    "timestamp_import": "2026-04-23T15:06:50.040059"
+    "timestamp_import": "2026-04-23T15:59:16.207259"
   },
   {
     "id": 17,
-    "nome": "Sofia",
-    "cognome": "Esposito",
-    "data_nascita": "2008-02-27",
-    "email": "sofia.esposito17@scuola.it",
-    "assenze": 3,
+    "nome": "Lorenzo",
+    "cognome": "De Luca",
+    "data_nascita": "2004-03-25",
+    "email": "lorenzo.deluca17@scuola.it",
+    "assenze": 5,
     "voti": {
-      "Matematica": 2,
-      "Informatica": 9,
-      "Italiano": 7
+      "Matematica": 4,
+      "Informatica": 10,
+      "Italiano": 9
     },
-    "timestamp_import": "2026-04-23T15:06:50.040068"
+    "timestamp_import": "2026-04-23T15:59:16.207269"
   },
   {
     "id": 18,
-    "nome": "Alice",
-    "cognome": "Gallo",
-    "data_nascita": "2006-05-06",
-    "email": "alice.gallo18@scuola.it",
-    "assenze": 9,
+    "nome": "Riccardo",
+    "cognome": "Ferrari",
+    "data_nascita": "2009-05-12",
+    "email": "riccardo.ferrari18@scuola.it",
+    "assenze": 2,
     "voti": {
-      "Matematica": 9,
-      "Informatica": 2,
-      "Italiano": 4
+      "Matematica": 6,
+      "Informatica": 8,
+      "Italiano": 3
     },
-    "timestamp_import": "2026-04-23T15:06:50.040077"
+    "timestamp_import": "2026-04-23T15:59:16.207277"
   },
   {
     "id": 19,
     "nome": "Luca",
-    "cognome": "Rizzo",
-    "data_nascita": "2004-08-17",
-    "email": "luca.rizzo19@scuola.it",
-    "assenze": 20,
+    "cognome": "Mariani",
+    "data_nascita": "2009-07-05",
+    "email": "luca.mariani19@scuola.it",
+    "assenze": 5,
     "voti": {
-      "Matematica": 5,
-      "Informatica": 10,
+      "Matematica": 8,
+      "Informatica": 5,
       "Italiano": 9
     },
-    "timestamp_import": "2026-04-23T15:06:50.040086"
+    "timestamp_import": "2026-04-23T15:59:16.207286"
   },
   {
     "id": 20,
-    "nome": "Anna",
-    "cognome": "Rizzo",
-    "data_nascita": "2008-04-12",
-    "email": "anna.rizzo20@scuola.it",
-    "assenze": 12,
+    "nome": "Matteo",
+    "cognome": "Colombo",
+    "data_nascita": "2007-11-10",
+    "email": "matteo.colombo20@scuola.it",
+    "assenze": 5,
     "voti": {
-      "Matematica": 8,
-      "Informatica": 9,
-      "Italiano": 5
+      "Matematica": 7,
+      "Informatica": 8,
+      "Italiano": 6
     },
-    "timestamp_import": "2026-04-23T15:06:50.040095"
+    "timestamp_import": "2026-04-23T15:59:16.207295"
   },
   {
     "id": 21,
-    "nome": "Roberto",
-    "cognome": "Costa",
-    "data_nascita": "2008-08-17",
-    "email": "roberto.costa21@scuola.it",
-    "assenze": 7,
+    "nome": "Francesco",
+    "cognome": "De Luca",
+    "data_nascita": "2007-04-28",
+    "email": "francesco.deluca21@scuola.it",
+    "assenze": 9,
     "voti": {
-      "Matematica": 2,
-      "Informatica": 5,
-      "Italiano": 9
+      "Matematica": 4,
+      "Informatica": 7,
+      "Italiano": 4
     },
-    "timestamp_import": "2026-04-23T15:06:50.040104"
+    "timestamp_import": "2026-04-23T15:59:16.207303"
   },
   {
     "id": 22,
-    "nome": "Marco",
-    "cognome": "Bruno",
-    "data_nascita": "2006-09-15",
-    "email": "marco.bruno22@scuola.it",
-    "assenze": 4,
+    "nome": "Francesco",
+    "cognome": "De Luca",
+    "data_nascita": "2006-05-14",
+    "email": "francesco.deluca22@scuola.it",
+    "assenze": 20,
     "voti": {
-      "Matematica": 3,
-      "Informatica": 9,
-      "Italiano": 2
+      "Matematica": 10,
+      "Informatica": 4,
+      "Italiano": 6
     },
-    "timestamp_import": "2026-04-23T15:06:50.040116"
+    "timestamp_import": "2026-04-23T15:59:16.207312"
   },
   {
     "id": 23,
-    "nome": "Sara",
-    "cognome": "Romano",
-    "data_nascita": "2006-10-26",
-    "email": "sara.romano23@scuola.it",
-    "assenze": 1,
+    "nome": "Marco",
+    "cognome": "Giordano",
+    "data_nascita": "2004-12-25",
+    "email": "marco.giordano23@scuola.it",
+    "assenze": 10,
     "voti": {
-      "Matematica": 10,
-      "Informatica": 6,
-      "Italiano": 3
+      "Matematica": 2,
+      "Informatica": 2,
+      "Italiano": 4
     },
-    "timestamp_import": "2026-04-23T15:06:50.040125"
+    "timestamp_import": "2026-04-23T15:59:16.207321"
   },
   {
     "id": 24,
-    "nome": "Roberto",
-    "cognome": "Rinaldi",
-    "data_nascita": "2005-06-07",
-    "email": "roberto.rinaldi24@scuola.it",
-    "assenze": 5,
+    "nome": "Federica",
+    "cognome": "Bruno",
+    "data_nascita": "2004-02-02",
+    "email": "federica.bruno24@scuola.it",
+    "assenze": 14,
     "voti": {
-      "Matematica": 9,
-      "Informatica": 5,
+      "Matematica": 2,
+      "Informatica": 2,
       "Italiano": 7
     },
-    "timestamp_import": "2026-04-23T15:06:50.040134"
+    "timestamp_import": "2026-04-23T15:59:16.207329"
   },
   {
     "id": 25,
-    "nome": "Giorgio",
-    "cognome": "Barbieri",
-    "data_nascita": "2005-01-24",
-    "email": "giorgio.barbieri25@scuola.it",
-    "assenze": 6,
+    "nome": "Simone",
+    "cognome": "Lombardi",
+    "data_nascita": "2006-01-22",
+    "email": "simone.lombardi25@scuola.it",
+    "assenze": 8,
     "voti": {
-      "Matematica": 2,
-      "Informatica": 9,
-      "Italiano": 4
+      "Matematica": 5,
+      "Informatica": 3,
+      "Italiano": 10
     },
-    "timestamp_import": "2026-04-23T15:06:50.040143"
+    "timestamp_import": "2026-04-23T15:59:16.207342"
   },
   {
     "id": 26,
-    "nome": "Elena",
-    "cognome": "De Luca",
-    "data_nascita": "2007-04-19",
-    "email": "elena.deluca26@scuola.it",
-    "assenze": 6,
+    "nome": "Luca",
+    "cognome": "Ricci",
+    "data_nascita": "2008-09-17",
+    "email": "luca.ricci26@scuola.it",
+    "assenze": 19,
     "voti": {
       "Matematica": 10,
-      "Informatica": 5,
-      "Italiano": 2
+      "Informatica": 8,
+      "Italiano": 4
     },
-    "timestamp_import": "2026-04-23T15:06:50.040151"
+    "timestamp_import": "2026-04-23T15:59:16.207353"
   },
   {
     "id": 27,
-    "nome": "Francesco",
+    "nome": "Matteo",
     "cognome": "De Luca",
-    "data_nascita": "2007-11-01",
-    "email": "francesco.deluca27@scuola.it",
-    "assenze": 15,
+    "data_nascita": "2009-11-02",
+    "email": "matteo.deluca27@scuola.it",
+    "assenze": 12,
     "voti": {
-      "Matematica": 6,
-      "Informatica": 9,
-      "Italiano": 9
+      "Matematica": 5,
+      "Informatica": 8,
+      "Italiano": 4
     },
-    "timestamp_import": "2026-04-23T15:06:50.040161"
+    "timestamp_import": "2026-04-23T15:59:16.207362"
   },
   {
     "id": 28,
     "nome": "Davide",
-    "cognome": "Fontana",
-    "data_nascita": "2004-10-14",
-    "email": "davide.fontana28@scuola.it",
-    "assenze": 3,
+    "cognome": "Ferrari",
+    "data_nascita": "2008-03-18",
+    "email": "davide.ferrari28@scuola.it",
+    "assenze": 5,
     "voti": {
-      "Matematica": 4,
-      "Informatica": 9,
+      "Matematica": 10,
+      "Informatica": 10,
       "Italiano": 3
     },
-    "timestamp_import": "2026-04-23T15:06:50.040169"
+    "timestamp_import": "2026-04-23T15:59:16.207371"
   },
   {
     "id": 29,
-    "nome": "Federica",
-    "cognome": "Rizzo",
-    "data_nascita": "2006-04-19",
-    "email": "federica.rizzo29@scuola.it",
-    "assenze": 15,
+    "nome": "Matteo",
+    "cognome": "Costa",
+    "data_nascita": "2008-02-22",
+    "email": "matteo.costa29@scuola.it",
+    "assenze": 16,
     "voti": {
-      "Matematica": 6,
+      "Matematica": 5,
       "Informatica": 7,
-      "Italiano": 5
+      "Italiano": 9
     },
-    "timestamp_import": "2026-04-23T15:06:50.040178"
+    "timestamp_import": "2026-04-23T15:59:16.207380"
   },
   {
     "id": 30,
     "nome": "Lorenzo",
-    "cognome": "Rossi",
-    "data_nascita": "2006-03-23",
-    "email": "lorenzo.rossi30@scuola.it",
-    "assenze": 8,
+    "cognome": "Ferrari",
+    "data_nascita": "2005-04-02",
+    "email": "lorenzo.ferrari30@scuola.it",
+    "assenze": 10,
     "voti": {
-      "Matematica": 8,
-      "Informatica": 6,
-      "Italiano": 6
+      "Matematica": 7,
+      "Informatica": 2,
+      "Italiano": 9
     },
-    "timestamp_import": "2026-04-23T15:06:50.040192"
+    "timestamp_import": "2026-04-23T15:59:16.207389"
   },
   {
     "id": 31,
-    "nome": "Roberto",
-    "cognome": "Gallo",
-    "data_nascita": "2005-04-25",
-    "email": "roberto.gallo31@scuola.it",
-    "assenze": 19,
+    "nome": "Riccardo",
+    "cognome": "Giordano",
+    "data_nascita": "2006-11-14",
+    "email": "riccardo.giordano31@scuola.it",
+    "assenze": 14,
     "voti": {
-      "Matematica": 2,
-      "Informatica": 8,
-      "Italiano": 6
+      "Matematica": 3,
+      "Informatica": 7,
+      "Italiano": 3
     },
-    "timestamp_import": "2026-04-23T15:06:50.040201"
+    "timestamp_import": "2026-04-23T15:59:16.207398"
   },
   {
     "id": 32,
-    "nome": "Roberto",
-    "cognome": "Colombo",
-    "data_nascita": "2005-03-22",
-    "email": "roberto.colombo32@scuola.it",
-    "assenze": 3,
+    "nome": "Riccardo",
+    "cognome": "Greco",
+    "data_nascita": "2005-03-26",
+    "email": "riccardo.greco32@scuola.it",
+    "assenze": 7,
     "voti": {
-      "Matematica": 5,
-      "Informatica": 2,
-      "Italiano": 9
+      "Matematica": 7,
+      "Informatica": 5,
+      "Italiano": 3
     },
-    "timestamp_import": "2026-04-23T15:06:50.040210"
+    "timestamp_import": "2026-04-23T15:59:16.207407"
   },
   {
     "id": 33,
-    "nome": "Marta",
-    "cognome": "Moreno",
-    "data_nascita": "2008-01-29",
-    "email": "marta.moreno33@scuola.it",
-    "assenze": 6,
+    "nome": "Laura",
+    "cognome": "Lombardi",
+    "data_nascita": "2004-01-10",
+    "email": "laura.lombardi33@scuola.it",
+    "assenze": 0,
     "voti": {
-      "Matematica": 2,
-      "Informatica": 2,
-      "Italiano": 7
+      "Matematica": 7,
+      "Informatica": 7,
+      "Italiano": 9
     },
-    "timestamp_import": "2026-04-23T15:06:50.040218"
+    "timestamp_import": "2026-04-23T15:59:16.207421"
   },
   {
     "id": 34,
-    "nome": "Paolo",
-    "cognome": "De Luca",
-    "data_nascita": "2007-01-03",
-    "email": "paolo.deluca34@scuola.it",
-    "assenze": 7,
+    "nome": "Alice",
+    "cognome": "Fontana",
+    "data_nascita": "2009-09-02",
+    "email": "alice.fontana34@scuola.it",
+    "assenze": 2,
     "voti": {
-      "Matematica": 5,
-      "Informatica": 5,
-      "Italiano": 10
+      "Matematica": 2,
+      "Informatica": 7,
+      "Italiano": 9
     },
-    "timestamp_import": "2026-04-23T15:06:50.040227"
+    "timestamp_import": "2026-04-23T15:59:16.207430"
   },
   {
     "id": 35,
-    "nome": "Lorenzo",
-    "cognome": "Moreno",
-    "data_nascita": "2009-02-01",
-    "email": "lorenzo.moreno35@scuola.it",
+    "nome": "Francesco",
+    "cognome": "Rizzo",
+    "data_nascita": "2009-08-31",
+    "email": "francesco.rizzo35@scuola.it",
     "assenze": 15,
     "voti": {
-      "Matematica": 10,
-      "Informatica": 5,
-      "Italiano": 8
+      "Matematica": 7,
+      "Informatica": 10,
+      "Italiano": 3
     },
-    "timestamp_import": "2026-04-23T15:06:50.040236"
+    "timestamp_import": "2026-04-23T15:59:16.207439"
   },
   {
     "id": 36,
-    "nome": "Valentina",
-    "cognome": "Esposito",
-    "data_nascita": "2008-05-01",
-    "email": "valentina.esposito36@scuola.it",
-    "assenze": 13,
+    "nome": "Simone",
+    "cognome": "Mancini",
+    "data_nascita": "2009-11-11",
+    "email": "simone.mancini36@scuola.it",
+    "assenze": 9,
     "voti": {
-      "Matematica": 7,
-      "Informatica": 7,
-      "Italiano": 3
+      "Matematica": 10,
+      "Informatica": 2,
+      "Italiano": 6
     },
-    "timestamp_import": "2026-04-23T15:06:50.040245"
+    "timestamp_import": "2026-04-23T15:59:16.207448"
   },
   {
     "id": 37,
-    "nome": "Davide",
-    "cognome": "Giordano",
-    "data_nascita": "2005-02-04",
-    "email": "davide.giordano37@scuola.it",
-    "assenze": 7,
+    "nome": "Federica",
+    "cognome": "Romano",
+    "data_nascita": "2004-06-14",
+    "email": "federica.romano37@scuola.it",
+    "assenze": 20,
     "voti": {
-      "Matematica": 6,
-      "Informatica": 7,
+      "Matematica": 10,
+      "Informatica": 3,
       "Italiano": 5
     },
-    "timestamp_import": "2026-04-23T15:06:50.040253"
+    "timestamp_import": "2026-04-23T15:59:16.207457"
   },
   {
     "id": 38,
-    "nome": "Paolo",
-    "cognome": "Bruno",
-    "data_nascita": "2006-09-16",
-    "email": "paolo.bruno38@scuola.it",
-    "assenze": 6,
+    "nome": "Elena",
+    "cognome": "Marino",
+    "data_nascita": "2007-03-08",
+    "email": "elena.marino38@scuola.it",
+    "assenze": 11,
     "voti": {
-      "Matematica": 3,
-      "Informatica": 7,
-      "Italiano": 3
+      "Matematica": 5,
+      "Informatica": 4,
+      "Italiano": 2
     },
-    "timestamp_import": "2026-04-23T15:06:50.040262"
+    "timestamp_import": "2026-04-23T15:59:16.207466"
   },
   {
     "id": 39,
-    "nome": "Riccardo",
-    "cognome": "Rizzo",
-    "data_nascita": "2005-01-16",
-    "email": "riccardo.rizzo39@scuola.it",
-    "assenze": 11,
+    "nome": "Giulia",
+    "cognome": "De Luca",
+    "data_nascita": "2005-10-26",
+    "email": "giulia.deluca39@scuola.it",
+    "assenze": 15,
     "voti": {
-      "Matematica": 7,
+      "Matematica": 5,
       "Informatica": 5,
-      "Italiano": 10
+      "Italiano": 6
     },
-    "timestamp_import": "2026-04-23T15:06:50.040270"
+    "timestamp_import": "2026-04-23T15:59:16.207474"
   },
   {
     "id": 40,
-    "nome": "Lorenzo",
-    "cognome": "Mancini",
-    "data_nascita": "2005-11-24",
-    "email": "lorenzo.mancini40@scuola.it",
-    "assenze": 14,
+    "nome": "Alice",
+    "cognome": "Lombardi",
+    "data_nascita": "2009-07-09",
+    "email": "alice.lombardi40@scuola.it",
+    "assenze": 20,
     "voti": {
       "Matematica": 2,
-      "Informatica": 9,
-      "Italiano": 5
+      "Informatica": 6,
+      "Italiano": 2
     },
-    "timestamp_import": "2026-04-23T15:06:50.040279"
+    "timestamp_import": "2026-04-23T15:59:16.207483"
   },
   {
     "id": 41,
-    "nome": "Sara",
-    "cognome": "Marino",
-    "data_nascita": "2005-11-21",
-    "email": "sara.marino41@scuola.it",
-    "assenze": 8,
+    "nome": "Laura",
+    "cognome": "Mariani",
+    "data_nascita": "2004-08-02",
+    "email": "laura.mariani41@scuola.it",
+    "assenze": 19,
     "voti": {
-      "Matematica": 7,
-      "Informatica": 6,
-      "Italiano": 10
+      "Matematica": 4,
+      "Informatica": 5,
+      "Italiano": 3
     },
-    "timestamp_import": "2026-04-23T15:06:50.040288"
+    "timestamp_import": "2026-04-23T15:59:16.207496"
   },
   {
     "id": 42,
-    "nome": "Lorenzo",
-    "cognome": "Colombo",
-    "data_nascita": "2006-01-29",
-    "email": "lorenzo.colombo42@scuola.it",
-    "assenze": 12,
+    "nome": "Giorgio",
+    "cognome": "Mancini",
+    "data_nascita": "2007-02-01",
+    "email": "giorgio.mancini42@scuola.it",
+    "assenze": 18,
     "voti": {
-      "Matematica": 8,
-      "Informatica": 5,
-      "Italiano": 2
+      "Matematica": 3,
+      "Informatica": 6,
+      "Italiano": 5
     },
-    "timestamp_import": "2026-04-23T15:06:50.040296"
+    "timestamp_import": "2026-04-23T15:59:16.207506"
   },
   {
     "id": 43,
-    "nome": "Andrea",
-    "cognome": "Mancini",
-    "data_nascita": "2004-11-06",
-    "email": "andrea.mancini43@scuola.it",
-    "assenze": 7,
+    "nome": "Laura",
+    "cognome": "De Luca",
+    "data_nascita": "2008-05-31",
+    "email": "laura.deluca43@scuola.it",
+    "assenze": 2,
     "voti": {
-      "Matematica": 3,
-      "Informatica": 7,
-      "Italiano": 2
+      "Matematica": 4,
+      "Informatica": 5,
+      "Italiano": 8
     },
-    "timestamp_import": "2026-04-23T15:06:50.040309"
+    "timestamp_import": "2026-04-23T15:59:16.207515"
   },
   {
     "id": 44,
-    "nome": "Sofia",
-    "cognome": "Giordano",
-    "data_nascita": "2008-03-19",
-    "email": "sofia.giordano44@scuola.it",
-    "assenze": 4,
+    "nome": "Alice",
+    "cognome": "Gallo",
+    "data_nascita": "2009-05-05",
+    "email": "alice.gallo44@scuola.it",
+    "assenze": 19,
     "voti": {
-      "Matematica": 6,
-      "Informatica": 6,
-      "Italiano": 3
+      "Matematica": 10,
+      "Informatica": 5,
+      "Italiano": 9
     },
-    "timestamp_import": "2026-04-23T15:06:50.040323"
+    "timestamp_import": "2026-04-23T15:59:16.207528"
   },
   {
     "id": 45,
-    "nome": "Valentina",
+    "nome": "Elena",
     "cognome": "Lombardi",
-    "data_nascita": "2008-11-09",
-    "email": "valentina.lombardi45@scuola.it",
-    "assenze": 3,
+    "data_nascita": "2005-11-18",
+    "email": "elena.lombardi45@scuola.it",
+    "assenze": 9,
     "voti": {
-      "Matematica": 9,
+      "Matematica": 5,
       "Informatica": 9,
-      "Italiano": 5
+      "Italiano": 10
     },
-    "timestamp_import": "2026-04-23T15:06:50.040332"
+    "timestamp_import": "2026-04-23T15:59:16.207537"
   },
   {
     "id": 46,
-    "nome": "Simone",
-    "cognome": "Lombardi",
-    "data_nascita": "2009-11-15",
-    "email": "simone.lombardi46@scuola.it",
-    "assenze": 16,
+    "nome": "Davide",
+    "cognome": "Bianchi",
+    "data_nascita": "2008-03-16",
+    "email": "davide.bianchi46@scuola.it",
+    "assenze": 14,
     "voti": {
-      "Matematica": 6,
-      "Informatica": 6,
-      "Italiano": 9
+      "Matematica": 10,
+      "Informatica": 9,
+      "Italiano": 4
     },
-    "timestamp_import": "2026-04-23T15:06:50.040340"
+    "timestamp_import": "2026-04-23T15:59:16.207546"
   },
   {
     "id": 47,
-    "nome": "Valentina",
-    "cognome": "Colombo",
-    "data_nascita": "2005-09-17",
-    "email": "valentina.colombo47@scuola.it",
-    "assenze": 6,
+    "nome": "Federica",
+    "cognome": "Santoro",
+    "data_nascita": "2009-10-07",
+    "email": "federica.santoro47@scuola.it",
+    "assenze": 8,
     "voti": {
       "Matematica": 7,
-      "Informatica": 6,
+      "Informatica": 9,
       "Italiano": 9
     },
-    "timestamp_import": "2026-04-23T15:06:50.040354"
+    "timestamp_import": "2026-04-23T15:59:16.207555"
   },
   {
     "id": 48,
-    "nome": "Elena",
-    "cognome": "Mariani",
-    "data_nascita": "2007-03-10",
-    "email": "elena.mariani48@scuola.it",
-    "assenze": 10,
+    "nome": "Lorenzo",
+    "cognome": "Esposito",
+    "data_nascita": "2004-03-22",
+    "email": "lorenzo.esposito48@scuola.it",
+    "assenze": 0,
     "voti": {
-      "Matematica": 5,
-      "Informatica": 7,
+      "Matematica": 9,
+      "Informatica": 10,
       "Italiano": 6
     },
-    "timestamp_import": "2026-04-23T15:06:50.040363"
+    "timestamp_import": "2026-04-23T15:59:16.207564"
   },
   {
     "id": 49,
-    "nome": "Federica",
-    "cognome": "Conti",
-    "data_nascita": "2007-10-23",
-    "email": "federica.conti49@scuola.it",
+    "nome": "Luca",
+    "cognome": "Greco",
+    "data_nascita": "2009-08-28",
+    "email": "luca.greco49@scuola.it",
     "assenze": 0,
     "voti": {
-      "Matematica": 8,
-      "Informatica": 3,
-      "Italiano": 4
+      "Matematica": 5,
+      "Informatica": 9,
+      "Italiano": 3
     },
-    "timestamp_import": "2026-04-23T15:06:50.040371"
+    "timestamp_import": "2026-04-23T15:59:16.207572"
   },
   {
     "id": 50,
-    "nome": "Marco",
-    "cognome": "Gallo",
-    "data_nascita": "2009-01-01",
-    "email": "marco.gallo50@scuola.it",
-    "assenze": 5,
+    "nome": "Giorgio",
+    "cognome": "Fontana",
+    "data_nascita": "2005-09-12",
+    "email": "giorgio.fontana50@scuola.it",
+    "assenze": 13,
     "voti": {
-      "Matematica": 8,
-      "Informatica": 5,
-      "Italiano": 2
+      "Matematica": 7,
+      "Informatica": 9,
+      "Italiano": 7
     },
-    "timestamp_import": "2026-04-23T15:06:50.040380"
+    "timestamp_import": "2026-04-23T15:59:16.207581"
   }
 ]

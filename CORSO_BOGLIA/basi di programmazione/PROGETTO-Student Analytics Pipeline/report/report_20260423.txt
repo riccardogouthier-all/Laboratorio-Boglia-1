@@ -1,0 +1,50 @@
+============================================================
+  REPORT STUDENTI — PIPELINE PYTHON
+============================================================
+Classe:              5A
+Data generazione:    23/04/2026 15:59:16
+Studenti totali:     50
+Studenti validi:     50
+Studenti scartati:   0
+
+------------------------------------------------------------
+  STATISTICHE PER MATERIA
+------------------------------------------------------------
+
+  Matematica
+    Media:            5.8
+    Mediana:          5.0
+    Dev. standard:    2.66
+    Voto minimo:      2
+    Voto massimo:     10
+
+  Informatica
+    Media:            5.7
+    Mediana:          6.0
+    Dev. standard:    2.76
+    Voto minimo:      2
+    Voto massimo:     10
+
+  Italiano
+    Media:            5.72
+    Mediana:          5.5
+    Dev. standard:    2.67
+    Voto minimo:      2
+    Voto massimo:     10
+
+------------------------------------------------------------
+  TOP 5 STUDENTI
+------------------------------------------------------------
+  1. Federica     Santoro         media: 8.33  assenze: 8
+  2. Lorenzo      Esposito        media: 8.33  assenze: 0
+  3. Alice        Gallo           media: 8  assenze: 19
+  4. Elena        Lombardi        media: 8  assenze: 9
+  5. Davide       Rinaldi         media: 7.67  assenze: 18
+
+------------------------------------------------------------
+  CORRELAZIONE ASSENZE SU STUDENTI VALIDI
+------------------------------------------------------------
+  Studenti con ≥10 assenze (27)
+  Studenti con <10 assenze (23)
+
+============================================================
