@@ -11,18 +11,15 @@ show grants for 'esercizio_user'@'localhost';
 -- 2. Creazione Tabelle
 use EsercizioSQL;
 drop table if exists eserciziosql.clienti, eserciziosql.ordini, eserciziosql.prodotti;
-
 CREATE TABLE Clienti (
 id_cliente INT PRIMARY KEY AUTO_INCREMENT,
 nome VARCHAR(50) NOT NULL,
 email VARCHAR(100) UNIQUE NOT NULL);
-
 CREATE TABLE Prodotti (
 id_prodotto INT PRIMARY KEY AUTO_INCREMENT,
 nome VARCHAR(50) NOT NULL,
 prezzo DECIMAL(10,2) CHECK (prezzo > 0)
 );
-
 CREATE TABLE Ordini (
 id_ordine INT PRIMARY KEY AUTO_INCREMENT,
 id_cliente INT,
@@ -43,11 +40,9 @@ describe ordini;
 INSERT INTO Clienti (nome, email) VALUES 
 ('Mario Rossi', 'mario@email.com'),
 ('Anna Verdi', 'anna@email.com');
-
 INSERT INTO Prodotti (nome, prezzo) VALUES 
 ('Laptop', 1200.00),
 ('Mouse', 25.50);
-
 INSERT INTO Ordini (id_cliente, id_prodotto, quantita) VALUES 
 (1, 1, 1),
 (2, 2, 2),
@@ -57,12 +52,10 @@ INSERT INTO Ordini (id_cliente, id_prodotto, quantita) VALUES
 SELECT * FROM Clienti; SELECT * FROM Ordini; SELECT * FROM prodotti;
 
 -- 4. Query di Lettura
-
 -- Ordini con tutti i dettagli
 select o.*, c.nome, p.nome, p.prezzo + o.quantita as totale from ordini o
 join clienti c using(id_cliente)
 join prodotti p using(id_prodotto);
-
 -- Ordini x cliente
 select c.nome, count(o.id_ordine) as num_ordini from clienti c
 join ordini o using(id_cliente)
@@ -79,23 +72,23 @@ join prodotti p using(id_prodotto)
 group by c.id_cliente
 ;
 
--- Verifica
-
 -- 5. Update e Delete
-;
-;
+update prodotti set prezzo = 1300.00 where nome = 'Laptop';
+delete from clienti where nome= 'Mario Rossi';
+delete from ordini where id_ordine = 1;
 
 -- Verifica
+select * from ordini;
 
 -- 6. Test Vincoli
-;
-;
-
--- Verifica
+insert into ordini (id_cliente,id_prodotto,quantita) values(1,1,-1);
+-- Fallisce perché il numero quantita è negativo 
 
 -- 7. Eliminazione Finale
-;
-;
+use eserciziosql;
+delete from ordini;
+drop user 'esercizio_user'@'localhost';
+drop database eserciziosql;
 
 -- Verifica
-
+show databases;
