@@ -57,8 +57,17 @@ INSERT INTO Ordini (id_cliente, id_prodotto, quantita) VALUES
 SELECT * FROM Clienti; SELECT * FROM Ordini;
 
 -- 4. Query di Lettura
-;
-;
+
+-- Ordini con tutti i dettagli
+select o.*, c.nome, p.nome, p.prezzo + o.quantita as totale from ordini o
+join clienti c using(id_cliente)
+join prodotti p using(id_prodotto);
+
+-- Ordini x cliente
+
+-- Clienti con >1 ordini
+
+-- Totale speso per cliente
 
 -- Verifica
 
