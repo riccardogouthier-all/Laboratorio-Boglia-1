@@ -54,7 +54,7 @@ INSERT INTO Ordini (id_cliente, id_prodotto, quantita) VALUES
 (1, 2, 1);
 
 -- Verifica
-SELECT * FROM Clienti; SELECT * FROM Ordini;
+SELECT * FROM Clienti; SELECT * FROM Ordini; SELECT * FROM prodotti;
 
 -- 4. Query di Lettura
 
@@ -64,10 +64,20 @@ join clienti c using(id_cliente)
 join prodotti p using(id_prodotto);
 
 -- Ordini x cliente
-
+select c.nome, count(o.id_ordine) as num_ordini from clienti c
+join ordini o using(id_cliente)
+group by c.id_cliente;
 -- Clienti con >1 ordini
-
+select c.nome, count(o.id_ordine) as num_ordini from clienti c
+join ordini o using(id_cliente)
+group by c.id_cliente having num_ordini > 1;
 -- Totale speso per cliente
+select c.nome, sum(p.prezzo * o.quantita) as totale_cliente
+from clienti c
+join ordini o using(id_cliente)
+join prodotti p using(id_prodotto)
+group by c.id_cliente
+;
 
 -- Verifica
 
