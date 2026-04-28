@@ -74,8 +74,10 @@ group by c.id_cliente
 
 -- 5. Update e Delete
 update prodotti set prezzo = 1300.00 where nome = 'Laptop';
+update prodotti set prezzo = 1300.00 where id_prodotto = 1;		-- Giusta
+
 delete from clienti where nome= 'Mario Rossi';
-delete from ordini where id_ordine = 1;
+delete from ordini where id_ordine = 1;		-- Giusta
 
 -- Verifica
 select * from ordini;
