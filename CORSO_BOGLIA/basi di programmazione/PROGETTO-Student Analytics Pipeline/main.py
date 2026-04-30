@@ -328,6 +328,8 @@ def backup_csv(percorso_csv : Path) -> Path:            # STEP 9 - Backup automa
 def cmd_generate(config):           # STEP 10 — Gestione CLI con sys.argv
     studenti = genera_studenti(config)        # STEP 2
     lista_csv = salva_su_csv(studenti= studenti ,config= config)       # STEP 3
+    
+    
     backup_csv(lista_csv)         # STEP 9
     return lista_csv
 ##################################################################################################################################################
