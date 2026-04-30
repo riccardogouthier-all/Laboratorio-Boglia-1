@@ -141,6 +141,43 @@ def salva_su_csv(studenti: list[dict], config:dict) -> Path:       # STEP 3 - SA
     print(f"[Step 3] CSV salvato in: {percorso}")
     return percorso       # path sistema x la lista python
 
+def aggiungi_errori(percorso_csv: Path, config: dict) -> None:       # STEP 2B - Aggiunta studenti non validi per attivare controllo errori
+    with open(percorso_csv, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        fieldnames = reader.fieldnames
+        righe = list(reader)
+    
+    ultimo_id = max(int(r["id"]) for r in righe) if righe else 0
+
+    studenti_da_scartare = [
+            {
+            "id":            ultimo_id + 1,
+            "nome":          "Carlo",
+            "cognome":       "Verdi",
+            "data_nascita":  "99-99-9999",        # data non valida
+            "email":         "carlo.verdiATscuola.it",  # email senza @
+            **{m: config["voto_max"] + 3 for m in config["materie"]},  # voti fuori range
+            "assenze":       5,
+            },
+            {
+            "id":            ultimo_id + 2,
+            "nome":          "Paola",
+            "cognome":       "Neri",
+            "data_nascita":  "2005-13-40",        # mese e giorno impossibili
+            "email":         "paola.neri@scuola.it",  # email valida
+            **{m: config["voto_max"] - config["voto_max"] for m in config["materie"]},  # voti = 0
+            "assenze":       3,
+            }
+            ]
+    
+    righe.extend(studenti_da_scartare)
+
+    with open(percorso_csv, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames= fieldnames)
+        writer.writeheader()
+        writer.writerows(righe)
+    print(f"[Step 2B] studenti non validi aggiunti in: {percorso_csv}")
+
 def valida_studenti(percorso_csv: Path, config: dict) -> tuple[list,list,Counter]:       # STEP 4 - Lettura CSV e validazione - ritorna lista validi e scartati python e conteggio errori (contatore)
     # Pattern regex per validare l'email: testo@testo.dominio
     PATTERN_EMAIL = re.compile(r"^[\w.\-]+@[\w.\-]+\.\w{2,}$")
@@ -162,14 +199,14 @@ def valida_studenti(percorso_csv: Path, config: dict) -> tuple[list,list,Counter
                 conteggio_errori["email_non_valida"] += 1
 
             if not PATTERN_DATA.match(riga["data_nascita"]):
-                errori.append("email_non_valida")
-                conteggio_errori["email_non_valida"] += 1
+                errori.append("data_nascita_non_valida")
+                conteggio_errori["data_nascita_non_valida"] += 1
             else:
                 try:
                     datetime.strptime(riga["data_nascita"], "%Y-%m-%d")
                 except ValueError:
-                    errori.append("email_non_valida")
-                    conteggio_errori["email_non_valida"] += 1
+                    errori.append("data_nascita_non_valida")
+                    conteggio_errori["data_nascita_non_valida"] += 1
 
             for materia in materie:
                 try:
@@ -180,7 +217,6 @@ def valida_studenti(percorso_csv: Path, config: dict) -> tuple[list,list,Counter
                 except (ValueError, KeyError):
                         errori.append("voto_non_numerico")
                         conteggio_errori["voto_non_numerico"] += 1
-
 
             studente = {
                 "id":           int(riga["id"]),
@@ -328,8 +364,7 @@ def backup_csv(percorso_csv : Path) -> Path:            # STEP 9 - Backup automa
 def cmd_generate(config):           # STEP 10 — Gestione CLI con sys.argv
     studenti = genera_studenti(config)        # STEP 2
     lista_csv = salva_su_csv(studenti= studenti ,config= config)       # STEP 3
-    
-    
+    aggiungi_errori(lista_csv, config)         # STEP 2B
     backup_csv(lista_csv)         # STEP 9
     return lista_csv
 ##################################################################################################################################################
