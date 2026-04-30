@@ -551,3 +551,69 @@ if __name__ == "__main__":
         print(f"[ERRORE] Comando sconosciuto: '{comando}'")
         mostra_aiuto()
         sys.exit(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+aggiungi dopo il valida csv per mettere studenti non ammessi in file JSON
+
+def aggiungi_errori(percorso_csv: Path, config: dict) -> None:       # STEP 2B - Aggiunta studenti non validi per attivare controllo errori
+    with open(percorso_csv, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        fieldnames = reader.fieldnames
+        righe = list(reader)
+    
+    ultimo_id = max(int(r["id"]) for r in righe) if righe else 0
+
+    studenti_da_scartare = [
+            {
+            "id":            ultimo_id + 1,
+            "nome":          "Carlo",
+            "cognome":       "Verdi",
+            "data_nascita":  "99-99-9999",        # data non valida
+            "email":         "carlo.verdiATscuola.it",  # email senza @
+            **{m: config["voto_max"] + 3 for m in config["materie"]},  # voti fuori range
+            "assenze":       5,
+            },
+            {
+            "id":            ultimo_id + 2,
+            "nome":          "Paola",
+            "cognome":       "Neri",
+            "data_nascita":  "2005-13-40",        # mese e giorno impossibili
+            "email":         "paola.neri@scuola.it",  # email valida
+            **{m: config["voto_max"] - config["voto_max"] for m in config["materie"]},  # voti = 0
+            "assenze":       3,
+            }
+            ]
+    
+    righe.extend(studenti_da_scartare)
+
+    with open(percorso_csv, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames= fieldnames)
+        writer.writeheader()
+        writer.writerows(righe)
+    print(f"[Step 2B] studenti non validi aggiunti in: {percorso_csv}")
+
+
+
++ 
+
+
+aggiungi nel comando GENERATE il richiamo alla funzione prima del backup csv, così si ha il file vergine modificato prima di fare i controlli
