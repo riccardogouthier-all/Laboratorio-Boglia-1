@@ -1,0 +1,35 @@
+aura jacket
+
+ABC GIT
+STARTING
+-- git init
+crea una repository .git nel pc che salva i file di log e le info su git
+-- git clone <url>
+clona repository in locale
+
+CODE TO COMMIT
+-- git add .
+aggiunge tutti i file non conosciuti o modificati
+-- 
+
+BRANCH
+
+
+
+
+
+
+-- 
+-- 
+-- 
+-- 
+-- 
+
+
+
+
+
+
+
+
+AI (UTILE SE SI SA COSA SI STA FACENDO)
