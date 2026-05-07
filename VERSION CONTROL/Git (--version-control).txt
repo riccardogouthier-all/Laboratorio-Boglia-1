@@ -16,14 +16,18 @@ BRANCH
 
 
 
+1   git init (o git clone)
+2
+3   per ogni task:
+4   apro un nuovo branch per un task (il nome del branch riporta il task es: 20240110_login)
+5   inizio il mio sviluppo
+6   commit intermedi es: situazione intermedia ma funzionante, backup su remoto (dopo un push),
+    condivisione codice (dopo il push)
+7   commit finale
+8   validazione di qualcuno
+9   merge sul branch principale
 
 
-
--- 
--- 
--- 
--- 
--- 
 
 
 
