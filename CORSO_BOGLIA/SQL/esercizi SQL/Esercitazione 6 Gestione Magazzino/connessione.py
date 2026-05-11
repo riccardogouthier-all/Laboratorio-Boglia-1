@@ -1,8 +1,7 @@
 import mysql.connector
 
 class Connessione:
-
-
+    
     def connetti(self):
 
         def __init__(self):
