@@ -9,6 +9,8 @@ export const CREATE_LIBRI_TABLE = `CREATE TABLE IF NOT EXISTS libri (
 
 export const SELECT_ALL = "SELECT * FROM libri";
 
+export const SELECT_ALL_ID = "SELECT id FROM libri";
+
 export const SELECT_BY_ID = "SELECT * FROM libri WHERE id = ?";
 
 export const SELECT_BY_TITOLO = "SELECT * FROM libri WHERE LOWER(titolo) LIKE '%' || LOWER(?) || '%'";

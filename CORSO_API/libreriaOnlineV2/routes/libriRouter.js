@@ -1,14 +1,14 @@
 import express from 'express';
 import { db } from '../server.js';
-import {SELECT_ALL, SELECT_BY_ID, SELECT_BY_TITOLO,
+import {SELECT_ALL, SELECT_BY_ID, SELECT_BY_TITOLO, SELECT_ALL_ID,
         INSERT_LIBRO, UPDATE_LIBRO, DELETE_LIBRO} from '../database/script_libri.js';
 
 
 const libriRouter = express.Router();
 
 
-libriRouter.get("/", (req, res) => {
-    console.log("GET /api/v2/libri")
+libriRouter.get("/", (req, res) => {            // GET ALL
+    console.log("GET /api/v2/libri");
 
     db.all(SELECT_ALL, (err, rows) => {
         if (err) {
@@ -19,13 +19,54 @@ libriRouter.get("/", (req, res) => {
     });
 });
 
+libriRouter.get("/id", (req, res) => {            // GET ALL ID
+    console.log("GET /api/v2/libri/id");
 
-libriRouter.post("/", (req, res) => {
-    console.log("POST /api/v2/libri")
+    db.all(SELECT_ALL_ID, (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: message });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
+libriRouter.get("/:id", (req, res) => {            // GET BY ID
+    console.log(`GET /api/v2/libri/${req.params.id}`);
+
+    db.all(SELECT_BY_ID, [req.params.id], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: message });
+        } else if (rows) {
+            res.json(rows);
+        } else {
+            res.status(404).json({ message: `Libro con ID ${req.params.id} non trovato` });
+        }
+    });
+});
+
+libriRouter.get("/:titolo", (req, res) => {            // GET BY TITOLO
+    console.log(`GET /api/v2/libri/${req.params.titolo}`);
+
+    db.all(SELECT_BY_TITOLO, [req.params.titolo], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: message });
+        } else if (rows) {
+            res.json(rows);
+        } else {
+            res.status(404).json({ message: `Libro con titolo ${req.params.titolo} non trovato` });
+        }
+    });
+});
+
+libriRouter.post("/", (req, res) => {               // POST NUOVO LIBRO
+    console.log("POST /api/v2/libri", req.body)
 
     // controllo che il body esista
-    if (!req.body) {
-        res.status(400).json({ error: "Libro non presente"});
+    const errorMessage = validaLibro(req.body);
+    if (errorMessage) {
+        res.status(400).json({ error: errorMessage });
+        return;
     }
 
     // estraggo le proprietà dal body
@@ -39,5 +80,41 @@ libriRouter.post("/", (req, res) => {
         }
     });
 });
+
+libriRouter.put("/:id", (req, res) => {             // PUT AGGIORNA LIBRO
+    console.log(`PUT /api/v2/libri/${req.params.id}`);
+
+    const errorMessage = validaLibro(req.body);
+    if (errorMessage) {
+        res.status(400).json({ error: errorMessage });
+        return;
+    }
+
+    const id = req.params.id;
+    const { titolo, autore, editore, genere, numero_pagine } = req.body;
+
+    db.run(UPDATE_LIBRO, [titolo, autore, editore, genere, numero_pagine, id], function(err) {
+        if (err) {
+            res.status(500).json({ error: err.message });
+        } else if (this.changes > 0) {
+            res.json({ message: `Libro con ID ${id} aggiornato` });
+        } else {
+            res.status(404).json({ message: "Libro non trovato" });
+        }   
+
+    });
+});
+
+function validaLibro(libro) {                   // validazione del body
+    let errorMessage;
+
+    if (!libro) {
+        errorMessage = "Libro non presente";
+    }
+    if (isNaN(libro.numero_pagine)) {
+        errorMessage = "Il numero di pagine deve essere un valore numerico intero";
+    }
+    return errorMessage;
+}
 
 export default libriRouter;
