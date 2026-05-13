@@ -1,0 +1,1322 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API Libreria Online",
+    "description": "Progetto di esempio per una libreria online",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "tags": [
+    {
+      "name": "Catalogo",
+      "description": "Operazioni relative al catalogo dei libri"
+    },
+    {
+      "name": "Clienti",
+      "description": "Operazioni relative ai clienti"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Endpoint di prova",
+        "description": "Endpoint di prova per verificare che il server sia attivo",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/libri": {
+      "get": {
+        "tags": [
+          "Catalogo"
+        ],
+        "summary": "Recupera l'intero catalogo dei libri",
+        "description": "Endpoint per recuperare l'intero catalogo dei libri",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Catalogo recuperato con successo",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Libro"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Messaggio di errore"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Catalogo"
+        ],
+        "summary": "Aggiunge un nuovo libro",
+        "description": "Inserisce un nuovo libro nel catalogo con i dati forniti nel corpo della richiesta",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dati del nuovo libro da inserire",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NuovoLibro"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Libro creato con successo",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Libro aggiunto con successo"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Dati del libro mancanti o non validi",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Dati del libro incompleti"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Messaggio di errore"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/libri/search": {
+      "get": {
+        "tags": [
+          "Catalogo"
+        ],
+        "summary": "Ricerca libri per titolo",
+        "description": "Esegue una ricerca case-insensitive sui titoli dei libri in base al parametro fornito",
+        "parameters": [
+          {
+            "name": "titolo",
+            "in": "query",
+            "description": "Stringa da cercare nel titolo del libro",
+            "required": true,
+            "type": "string",
+            "example": "Node"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista dei libri corrispondenti alla ricerca",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Libro"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Parametro titolo mancante o non valido",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Parametro 'titolo' errato"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Messaggio di errore"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/libri/{id}": {
+      "get": {
+        "tags": [
+          "Catalogo"
+        ],
+        "summary": "Recupera il dettaglio di un libro specificato",
+        "description": "Restituisce i dettagli di un singolo libro identificato dal suo ID univoco",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID univoco del libro",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dettagli del libro trovato",
+            "schema": {
+              "$ref": "#/definitions/Libro"
+            }
+          },
+          "404": {
+            "description": "Libro non trovato",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Libro non trovato"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Messaggio di errore"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Catalogo"
+        ],
+        "summary": "Aggiorna i dettagli di un libro esistente",
+        "description": "Aggiorna i dettagli di un libro esistente identificato dal suo ID univoco",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Libro non trovato",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Libro non trovato"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Messaggio di errore"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Catalogo"
+        ],
+        "summary": "Elimina un libro esistente",
+        "description": "Elimina un libro esistente identificato dal suo ID univoco",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Libro non trovato",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Libro non trovato"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Messaggio di errore"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clienti": {
+      "get": {
+        "tags": [
+          "Clienti"
+        ],
+        "summary": "Recupera l'elenco di tutti i clienti",
+        "description": "Endpoint per recuperare l'elenco completo di tutti i clienti registrati",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Elenco dei clienti recuperato con successo",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Cliente"
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Messaggio di errore"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Clienti"
+        ],
+        "summary": "Aggiunge un nuovo cliente",
+        "description": "Inserisce un nuovo cliente con i dati forniti nel corpo della richiesta",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dati del nuovo cliente da inserire",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NuovoCliente"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Cliente creato con successo",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Cliente aggiunto con successo"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Dati del cliente mancanti o non validi",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Cliente non valido"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Messaggio di errore"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/clienti/{id}": {
+      "get": {
+        "tags": [
+          "Clienti"
+        ],
+        "summary": "Recupera il dettaglio di un cliente specificato",
+        "description": "Restituisce i dettagli di un singolo cliente identificato dal suo ID univoco",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID univoco del cliente",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dettagli del cliente trovato",
+            "schema": {
+              "$ref": "#/definitions/Cliente"
+            }
+          },
+          "404": {
+            "description": "Cliente non trovato",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Cliente non trovato"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "object"
+                },
+                "properties": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "example": "string"
+                        },
+                        "example": {
+                          "type": "string",
+                          "example": "Messaggio di errore"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Clienti"
+        ],
+        "summary": "Aggiorna i dettagli di un cliente esistente",
+        "description": "Aggiorna i dettagli di un cliente esistente identificato dal suo ID univoco",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID univoco del cliente",
+            "example": 1
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dati del cliente da aggiornare",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NuovoCliente"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente aggiornato con successo",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Cliente aggiornato con successo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dati del cliente non validi",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Cliente non valido"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente non trovato",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Cliente non trovato"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Messaggio di errore"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Clienti"
+        ],
+        "summary": "Elimina un cliente esistente",
+        "description": "Elimina un cliente esistente identificato dal suo ID univoco",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID univoco del cliente",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente eliminato con successo",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Cliente eliminato con successo"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente non trovato",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Cliente non trovato"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno del server",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Messaggio di errore"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Libro": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "example": "object"
+        },
+        "properties": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "example": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            },
+            "titolo": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Corso di RESTful API"
+                }
+              }
+            },
+            "genere": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Informatica"
+                }
+              }
+            },
+            "autore": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Fabio Abbà"
+                }
+              }
+            },
+            "editore": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Edizioni Tech"
+                }
+              }
+            },
+            "numeroPagine": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "example": {
+                  "type": "number",
+                  "example": 80
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "NuovoLibro": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "example": "object"
+        },
+        "required": {
+          "type": "array",
+          "example": [
+            "titolo",
+            "genere",
+            "autore",
+            "editore",
+            "numeroPagine"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "properties": {
+          "type": "object",
+          "properties": {
+            "titolo": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Il Signore degli Anelli"
+                }
+              }
+            },
+            "genere": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Fantasy"
+                }
+              }
+            },
+            "autore": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "J.R.R. Tolkien"
+                }
+              }
+            },
+            "editore": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Mondadori"
+                }
+              }
+            },
+            "numeroPagine": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "example": {
+                  "type": "number",
+                  "example": 800
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Cliente": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "example": "object"
+        },
+        "properties": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "example": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            },
+            "nome": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Mario"
+                }
+              }
+            },
+            "cognome": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Rossi"
+                }
+              }
+            },
+            "eta": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "example": {
+                  "type": "number",
+                  "example": 30
+                }
+              }
+            },
+            "ordini": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "array"
+                },
+                "example": {
+                  "type": "array",
+                  "example": []
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "NuovoCliente": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "example": "object"
+        },
+        "required": {
+          "type": "array",
+          "example": [
+            "nome",
+            "cognome"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "properties": {
+          "type": "object",
+          "properties": {
+            "nome": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Giovanni"
+                }
+              }
+            },
+            "cognome": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "string"
+                },
+                "example": {
+                  "type": "string",
+                  "example": "Ferrari"
+                }
+              }
+            },
+            "eta": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "integer"
+                },
+                "example": {
+                  "type": "number",
+                  "example": 35
+                }
+              }
+            },
+            "ordini": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "array"
+                },
+                "example": {
+                  "type": "array",
+                  "example": []
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
