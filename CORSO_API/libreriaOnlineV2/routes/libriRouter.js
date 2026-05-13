@@ -8,6 +8,8 @@ const libriRouter = express.Router();
 
 
 libriRouter.get("/", (req, res) => {
+    console.log("GET /api/v2/libri")
+
     db.all(SELECT_ALL, (err, rows) => {
         if (err) {
             res.status(500).json({ error: message });
@@ -19,6 +21,8 @@ libriRouter.get("/", (req, res) => {
 
 
 libriRouter.post("/", (req, res) => {
+    console.log("POST /api/v2/libri")
+
     // controllo che il body esista
     if (!req.body) {
         res.status(400).json({ error: "Libro non presente"});
