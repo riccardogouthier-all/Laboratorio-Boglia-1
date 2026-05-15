@@ -23,7 +23,7 @@ def controlla_dizionario(d):
 
 messaggio, dizio_controll = controlla_dizionario(dizionario)
 
-if messaggio == "Il dizionario è vuoto." or messaggio == f"Chiavi non valorizzate":
+if "vuoto" in messaggio or "Chiavi" in messaggio:
     print(messaggio)
 else:
     print(dizio_controll)
