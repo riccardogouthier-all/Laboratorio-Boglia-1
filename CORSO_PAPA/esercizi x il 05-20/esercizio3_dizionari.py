@@ -4,7 +4,7 @@ Scrivete un programma Python per ottenere il valore massimo e minimo in un dizio
 '''
 
 dizionario = {
-    'a': -42, 
+    'a': -42, #
     'b': 17, 
     'c': 89, 
     'd': 5, 
@@ -12,7 +12,7 @@ dizionario = {
     'f': 31.9238467, 
     'g': 78, 
     'h': -14, 
-    'i': 95.293874, 
+    'i': 95.293874, #
     'j': 26
 }
 
@@ -39,4 +39,3 @@ else:
         print("Valore massimo:", valore_massimo)
         print("Valore minimo:", valore_minimo)
 
-        

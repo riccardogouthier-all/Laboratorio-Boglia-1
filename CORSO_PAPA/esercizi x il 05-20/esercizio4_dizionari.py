@@ -4,14 +4,14 @@ Scrivete un programma Python per rimuovere i duplicati dal dizionario.
 '''
 
 dizionario = {
-    "a": 1,
-    "b": 2,
+    "a": 1, #
+    "b": 2, #
     "c": 1,
-    "d": 3,
+    "d": 3, #
     "e": 2,
-    "f": "casa",
+    "f": "casa", #
     "g": "casa",
-    "h": "a"
+    "h": "a" #
 }
 
 def controlla_dizionario(d):
