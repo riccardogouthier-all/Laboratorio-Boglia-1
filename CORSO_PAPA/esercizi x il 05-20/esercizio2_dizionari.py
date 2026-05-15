@@ -13,13 +13,4 @@ else:
         dizionario[x] = x * x
     print(dizionario)
 
-
-
-
-
-
-
-
-
-
     

@@ -39,4 +39,4 @@ else:
         print("Valore massimo:", valore_massimo)
         print("Valore minimo:", valore_minimo)
 
-
+        

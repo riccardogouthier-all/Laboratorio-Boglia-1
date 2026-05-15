@@ -22,3 +22,4 @@ if all(isinstance(d, dict) for d in [diz1, diz2, diz3]):                #   <---
 else:
     print("Errore: tutti gli argomenti devono essere dizionari")
 
+    
