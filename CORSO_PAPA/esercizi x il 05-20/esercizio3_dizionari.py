@@ -4,26 +4,24 @@ Scrivete un programma Python per ottenere il valore massimo e minimo in un dizio
 '''
 
 dizionario = {
-    "a": 10,
-    "b": 3,
-    "c": 25,
-    "d": 7
+    "a": "None" ,
+
 }
 
 def controlla_dizionario(d):
     if not d:
         return "Il dizionario è vuoto.", d
 
-    chiavi_vuote = [k for k, v in d.items() if v is None or v == ""]
+    chiavi_vuote = [k for k, v in d.items() if v is None or isinstance(v, str)]
 
     if chiavi_vuote:
-        return f"Chiavi non valorizzate: {chiavi_vuote}", d
+        return "Chiavi non valorizzate correttamente", d
 
     return "Il dizionario non è vuoto e tutte le chiavi hanno un valore.", d
 
 messaggio, dizio_controll = controlla_dizionario(dizionario)
 
-if "vuoto" in messaggio or "Chiavi" in messaggio:
+if messaggio == "Il dizionario è vuoto." or messaggio == "Chiavi non valorizzate correttamente":
     print(messaggio)
 else:
     print(dizio_controll)
