@@ -255,7 +255,7 @@ La primaria serve a riconoscere un record, la esterna a creare relazioni tra tab
 
 2. A cosa serve un indice:
 
-Un indice serve ad accelerare le ricerche e le operazioni di join su una tabella.
+Un indice serve ad velocizzare le ricerche e le operazioni di join su una tabella.
 È utile quando si fanno molte query di ricerca su colonne specifiche.
 Può peggiorare le prestazioni negli inserimenti, aggiornamenti e cancellazioni, perché il database deve aggiornare anche l’indice.
 
