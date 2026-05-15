@@ -12,3 +12,14 @@ else:
     for x in range(1, n + 1):
         dizionario[x] = x * x
     print(dizionario)
+
+
+
+
+
+
+
+
+
+
+    

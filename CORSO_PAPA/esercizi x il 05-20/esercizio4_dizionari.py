@@ -4,14 +4,7 @@ Scrivete un programma Python per rimuovere i duplicati dal dizionario.
 '''
 
 dizionario = {
-    "a": 1,
-    "b": 2,
-    "c": 1,  # duplicato di "a"
-    "d": 3,
-    "e": 2,   # duplicato di "b"
-    "f":"casa",
-    "g":"casa",
-    "h":"a"
+    "a": None
 }
 
 def controlla_dizionario(d):
@@ -33,9 +26,17 @@ def rimuovi_duplicati(d):
 
 print("Dizionario originale:", dizionario)
 messaggio, dizio_controll = controlla_dizionario(dizionario)
-if messaggio == "Il dizionario è vuoto.":
-    print(messaggio)
-else:
-    print(messaggio)
+
+
+print(messaggio)
+if messaggio != "Il dizionario è vuoto." and messaggio != "Chiavi non valorizzate correttamente":
     dsduplicati = rimuovi_duplicati(dizio_controll)
     print("Dizionario senza duplicati:", dsduplicati)
+
+# if messaggio == "Il dizionario è vuoto." or messaggio == "Chiavi non valorizzate correttamente":
+#     print(messaggio)
+# else:
+#     print(messaggio)
+#     dsduplicati = rimuovi_duplicati(dizio_controll)
+#     print("Dizionario senza duplicati:", dsduplicati)
+
