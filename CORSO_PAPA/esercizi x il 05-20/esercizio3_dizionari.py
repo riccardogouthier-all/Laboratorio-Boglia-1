@@ -4,8 +4,16 @@ Scrivete un programma Python per ottenere il valore massimo e minimo in un dizio
 '''
 
 dizionario = {
-    "a": "None" ,
-
+    'a': 42, 
+    'b': 17, 
+    'c': 89, 
+    'd': 5, 
+    'e': 63, 
+    'f': 31, 
+    'g': 78, 
+    'h': 14, 
+    'i': 95, 
+    'j': 26
 }
 
 def controlla_dizionario(d):
