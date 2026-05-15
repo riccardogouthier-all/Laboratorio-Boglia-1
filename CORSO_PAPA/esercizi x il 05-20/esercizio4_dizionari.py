@@ -25,12 +25,10 @@ def controlla_dizionario(d):
 def rimuovi_duplicati(d):
     ddpartenza = {}
     valori_visti = []
-    
     for chiave, valore in d.items():
         if valore not in valori_visti:
             ddpartenza[chiave] = valore
-            valori_visti.append(valore)
-    
+            valori_visti.append(valore)    
     return ddpartenza
 
 print("Dizionario originale:", dizionario)

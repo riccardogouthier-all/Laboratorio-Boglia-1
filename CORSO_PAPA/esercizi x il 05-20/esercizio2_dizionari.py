@@ -9,8 +9,6 @@ if n <= 0:
     print("n <= 0, cambiare il valore in input")
 else:
     dizionario = {}
-
     for x in range(1, n + 1):
         dizionario[x] = x * x
-
     print(dizionario)

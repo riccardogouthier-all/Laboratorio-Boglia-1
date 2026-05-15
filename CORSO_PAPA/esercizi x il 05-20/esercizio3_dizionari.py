@@ -19,12 +19,9 @@ dizionario = {
 def controlla_dizionario(d):
     if not d:
         return "Il dizionario è vuoto.", d
-
     chiavi_vuote = [k for k, v in d.items() if v is None or isinstance(v, str)]
-
     if chiavi_vuote:
         return "Chiavi non valorizzate correttamente", d
-
     return "Il dizionario non è vuoto e tutte le chiavi hanno un valore.", d
 
 messaggio, dizio_controll = controlla_dizionario(dizionario)
