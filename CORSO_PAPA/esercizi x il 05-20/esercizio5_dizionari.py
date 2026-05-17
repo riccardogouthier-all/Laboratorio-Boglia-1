@@ -6,7 +6,7 @@ Scrivete un programma Python per creare un dizionario da una stringa. Le lettere
 def crea_dizionario_da_stringa(string):
     """Crea un dizionario contando le occorrenze di ogni lettera nella stringa"""
     dizionario = {}
-    stringa = "".join(sorted(string.replace(" ","").replace(",","").replace("'","").replace("!","").replace("?","").replace(".","").lower()))
+    stringa = "".join(sorted(string.replace(" ","").replace(",","").replace("'","").replace("!","").replace("?","").replace(".","").replace(":","").replace(";","").lower()))
     for lettera in stringa:
         if lettera in dizionario:
             dizionario[lettera] += 1  # incrementa il conteggio
