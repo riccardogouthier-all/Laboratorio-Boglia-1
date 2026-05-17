@@ -1,6 +1,6 @@
 diz1 = {'v1': 1, 'v2': 2, 'v3': 3}  
 diz2 = {'v4': 4, 'v5': 5, 'v6': 6}
-diz3 = {'v7': 7, 'v8': 8}
+diz3 = {'v3': 7, 'v8': 8}
 
 stringa= "aaaaaaaaa"
 lista = ["aaaaaaaaaa"]
@@ -12,13 +12,15 @@ def concat_dizionari(*dizionari)-> dict:
         risultato.update(d)                                             # <--- Unisce i dizionari
     return risultato
 
-def check_chiavi(d1, d2):
+def check_chiavi(*d: dict):      # <--- *d
     chiavi_comuni = []
-    for chiave in d1:
-        if chiave in d2:                                                # <--- Controlla se la chiave è presente in entrambi
+    # print(d[0])
+
+    for chiave in d[0]:
+        if chiave in d[1]:                                                # <--- Controlla se la chiave è presente in entrambi
             chiavi_comuni.append(chiave)
     if not chiavi_comuni:
-        return concat_dizionari(d1,d2)
+        return concat_dizionari(d[0], d[1])
     return "Errore: chiavi in comune", chiavi_comuni
 
 if all(isinstance(d, dict) for d in [diz1, diz2, diz3]):                #   <--- Controllo per vedere se i parametri da inserire nella funzione sono dizionari 
