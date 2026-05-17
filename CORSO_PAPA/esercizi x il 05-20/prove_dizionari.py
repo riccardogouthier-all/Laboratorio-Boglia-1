@@ -1,6 +1,6 @@
 diz1 = {'v1': 1, 'v2': 2, 'v3': 3}  
-diz2 = {'v4': 4, 'v2': 5, 'v6': 6}
-diz3 = {'v2': 7, 'v3': 8}
+diz2 = {'v4': 4, 'v5': 5, 'v6': 6}
+diz3 = {'v7': 7, 'v8': 8}
 
 stringa= "aaaaaaaaa"
 lista = ["aaaaaaaaaa"]
@@ -23,9 +23,10 @@ def check_chiavi(d1, d2):
 
 if all(isinstance(d, dict) for d in [diz1, diz2, diz3]):                #   <--- Controllo per vedere se i parametri da inserire nella funzione sono dizionari 
     ddd1 = check_chiavi(diz1, diz2)
-    print(ddd1)
     if isinstance(ddd1, dict):
         ddd2 = check_chiavi(ddd1, diz3)
-        print(ddd2)
+        print("union: ", ddd2)
+    else:
+        print("union: ", ddd1)
 else:
     print("Errore: tutti gli argomenti devono essere dizionari")
