@@ -22,19 +22,10 @@ def check_chiavi(d1, d2):
     return "Errore: chiavi in comune", chiavi_comuni
 
 if all(isinstance(d, dict) for d in [diz1, diz2, diz3]):                #   <--- Controllo per vedere se i parametri da inserire nella funzione sono dizionari 
-    # chiavi_c12 = check_chiavi(diz1, diz2)
-    # if check_chiavi(diz1, diz2) or check_chiavi(diz2, diz3) or check_chiavi(diz1, diz3):
-        # print("Dizionari 1/2: ", check_chiavi(diz1, diz2))
-        # print("Dizionari 2/3: ", check_chiavi(diz2, diz3))
-        # print("Dizionari 1/3: ", check_chiavi(diz1, diz3))
     ddd1 = check_chiavi(diz1, diz2)
     print(ddd1)
     if isinstance(ddd1, dict):
         ddd2 = check_chiavi(ddd1, diz3)
         print(ddd2)
-
-    #     print("Errore: chiavi condivise nei dizionari sopra citati")
-    # else:
-    #     print(concat_dizionari(diz1, diz2, diz3))
 else:
     print("Errore: tutti gli argomenti devono essere dizionari")
