@@ -14,8 +14,6 @@ def concat_dizionari(*dizionari)-> dict:
 
 def check_chiavi(*d: dict):      # <--- *d
     chiavi_comuni = []
-    # print(d[0])
-
     for chiave in d[0]:
         if chiave in d[1]:                                                # <--- Controlla se la chiave è presente in entrambi
             chiavi_comuni.append(chiave)
