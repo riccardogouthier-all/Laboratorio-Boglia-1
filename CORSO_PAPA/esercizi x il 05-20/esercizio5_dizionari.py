@@ -19,8 +19,3 @@ risultato = crea_dizionario_da_stringa(actual_input)
 print("Stringa originale:", actual_input)
 print("Dizionario:", risultato)
 
-
-
-# tupla = [{"a":1},{"a":1}]
-
-# print(tupla[len(tupla)-1])

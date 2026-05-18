@@ -30,3 +30,9 @@ if all(isinstance(d, dict) for d in [diz1, diz2, diz3]):                #   <---
         print("union: ", ddd1)
 else:
     print("Errore: tutti gli argomenti devono essere dizionari")
+
+
+    
+# tupla = [{"a":1},{"a":1}]
+
+# print(tupla[len(tupla)-1])
