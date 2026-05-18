@@ -11,7 +11,7 @@ stringa= "aaaaaaaaa"
 lista = ["aaaaaaaaaa"]
 tupla = ("aaaaaaaaaaa")
 
-def concat_dizionari(*dizionari)-> dict:
+def concat_dizionari(*dizionari):
     risultato = {}
     for d in dizionari:
         risultato.update(d)                                             # <--- Unisce i dizionari
