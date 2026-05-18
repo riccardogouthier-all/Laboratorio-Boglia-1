@@ -17,22 +17,26 @@ def concat_dizionari(*dizionari)-> dict:
         risultato.update(d)                                             # <--- Unisce i dizionari
     return risultato
 
-def check_chiavi(d1, d2):
+def check_chiavi(*d):
     chiavi_comuni = []
-    for chiave in d1:
-        if chiave in d2:                                                # <--- Controlla se la chiave è presente in entrambi
+    for chiave in d[0]:
+        if chiave in d[1]:                                                # <--- Controlla se la chiave è presente in entrambi
             chiavi_comuni.append(chiave)
     return chiavi_comuni
 
-if all(isinstance(d, dict) for d in [diz1, diz2, diz3]):                #   <--- Controllo per vedere se i parametri da inserire nella funzione sono dizionari 
+tupla_diz = [diz1, diz2, diz3]
+if all(isinstance(d, dict) for d in tupla_diz):                #   <--- Controllo per vedere se i parametri da inserire nella funzione sono dizionari 
     # chiavi_c12 = check_chiavi(diz1, diz2)
-    if check_chiavi(diz1, diz2) or check_chiavi(diz2, diz3) or check_chiavi(diz1, diz3):
-        print("Dizionari 1/2: ", check_chiavi(diz1, diz2))
-        print("Dizionari 2/3: ", check_chiavi(diz2, diz3))
-        print("Dizionari 1/3: ", check_chiavi(diz1, diz3))
-        print("Errore: chiavi condivise nei dizionari sopra citati")
+    if len(tupla_diz)<2:
+        print("Errore: un solo dizionario presente")
     else:
-        print(concat_dizionari(diz1, diz2, diz3))
+        if check_chiavi(diz1, diz2) or check_chiavi(diz2, diz3) or check_chiavi(diz1, diz3):
+            print("Dizionari 1/2: ", check_chiavi(diz1, diz2))
+            print("Dizionari 2/3: ", check_chiavi(diz2, diz3))
+            print("Dizionari 1/3: ", check_chiavi(diz1, diz3))
+            print("Errore: chiavi condivise nei dizionari sopra citati")
+        else:
+            print(concat_dizionari(diz1, diz2, diz3))
 else:
     print("Errore: tutti gli argomenti devono essere dizionari")
 
