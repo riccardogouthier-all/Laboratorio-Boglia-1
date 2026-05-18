@@ -15,7 +15,6 @@ def crea_dizionario_da_stringa(string):
     return dizionario
 
 actual_input = "Da un sentiero partono sempre due strade, una che ti riporta da dove sei partito e l'altra chissa'."
-risultato = crea_dizionario_da_stringa(actual_input)
-print("Stringa originale:", actual_input)
-print("Dizionario:", risultato)
+print("Stringa di input:", actual_input)
+print("Dizionario:", crea_dizionario_da_stringa(actual_input))
 

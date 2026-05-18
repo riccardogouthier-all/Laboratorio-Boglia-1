@@ -1,7 +1,7 @@
-# '''
-# Secondo esercizio
-# Scrivete uno script Python per generare e stampare un dizionario che contenga un numero (compreso tra 1 e n) nella forma (x, x*x). 
-# '''
+'''
+Secondo esercizio
+Scrivete uno script Python per generare e stampare un dizionario che contenga un numero (compreso tra 1 e n) nella forma (x, x*x). 
+'''
 
 n = 5
 

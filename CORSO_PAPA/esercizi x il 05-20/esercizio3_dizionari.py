@@ -32,7 +32,6 @@ else:
     print(dizio_controll)
     valore_massimo = max(dizio_controll.values())
     valore_minimo = min(dizio_controll.values())
-
     if valore_massimo == valore_minimo:
         print("è presente un solo valore nel dizionario")
     else:
