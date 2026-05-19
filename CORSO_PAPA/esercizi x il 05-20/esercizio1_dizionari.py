@@ -21,21 +21,42 @@ def check_chiavi(*d):
     chiavi_comuni = []
     for chiave in d[0]:
         if chiave in d[1]:                                                # <--- Controlla se la chiave è presente in entrambi
-            chiavi_comuni.append(chiave)
+            chiavi_comuni.append(chiave)     
     return chiavi_comuni
 
-tupla_diz = [diz1, diz2, diz3]
-coppie = [(diz1, diz2), (diz2, diz3), (diz1, diz3)]
-chiavi_tutte = [check_chiavi(d1, d2) for d1, d2 in coppie]
+def check_valori(*d):
+    valori_comuni = []                      # Prendo tutti i valori del primo dizionario in una lista
+    valori0 = list(d[0].values())
+    valori1 = list(d[1].values())
+    for v in valori0:
+        if v in valori1:                    # controlla se il valore è presente anche nel secondo dizionario
+            if v not in valori_comuni:      # evita duplicati nella lista finale
+                valori_comuni.append(v)
+    return valori_comuni
 
-if all(isinstance(d, dict) for d in tupla_diz):                #   <--- Controllo per vedere se i parametri da inserire nella funzione sono dizionari 
-    if len(tupla_diz)<2:
+lista_diz = [diz1, diz2, diz3]
+coppie = [(diz1, diz2), (diz2, diz3), (diz3, diz1)]
+chiavi_tutte = [check_chiavi(d1, d2) for d1, d2 in coppie]
+valori_tutti = [check_valori(d1, d2) for d1, d2 in coppie]
+
+if all(isinstance(d, dict) for d in lista_diz):                #   <--- Controllo per vedere se i parametri da inserire nella funzione sono dizionari 
+    if len(lista_diz)<2:
         print("Errore: un solo dizionario presente")
     else:
         if any(chiavi_tutte):
-            print("Errore: chiavi condivise nei dizionari ", chiavi_tutte)
+            print("Errore: chiavi condivise nei dizionari:")
+            for chiave in chiavi_tutte:
+                print(chiave)
+            if any(valori_tutti):
+                print("Errore: valori condivisi a coppie:")    
+                for valore in valori_tutti:
+                    print(valore)
         else:
-            print(concat_dizionari(*tupla_diz))
+            print(concat_dizionari(*lista_diz))
+            if any(valori_tutti):
+                print("Errore: valori condivisi a coppie:")    
+                for valore in valori_tutti:
+                    print(valore)
 else:
     print("Errore: tutti gli argomenti devono essere dizionari")
 
