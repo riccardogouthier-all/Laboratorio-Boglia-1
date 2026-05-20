@@ -37,5 +37,9 @@ else:
         print("è presente un solo valore nel dizionario")
     else:
         print("Valore massimo:", valore_massimo)
+        if valore_massimo:
+            print([k for k, v in dizionario.items() if v is valore_massimo]) 
         print("Valore minimo:", valore_minimo)
+        if valore_minimo:
+            print([k for k, v in dizionario.items() if v is valore_minimo]) 
 
