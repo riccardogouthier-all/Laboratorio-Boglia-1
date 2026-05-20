@@ -1,0 +1,14 @@
+cicli di:
+    iterazione
+    selezione
+esercizi su cicli
+esercizi su:    
+    liste
+    stringhe
+esercizi su tuple
+esercizi su dizionari
+
+
+
+
+
