@@ -1,0 +1,60 @@
+DOMANDA 1 — Differenza tra errore di sintassi ed errore logico. Fai un esempio per ciascuno.
+Un errore di sintassi si verifica quando il codice non rispetta le regole del linguaggio Python e il programma non si avvia.
+
+Esempio:
+if x = 5:
+    print("ciao")
+Qui c’è = invece di ==, quindi Python segnala un errore.
+
+Un errore logico si verifica quando il programma funziona correttamente, ma il risultato è sbagliato perché la logica è errata.
+Esempio: se devo sommare due numeri ma scrivo la sottrazione, il codice gira ma produce un risultato non corretto.
+
+DOMANDA 2 — Spiega cosa sono le eccezioni in Python e come funziona try/except.
+In Python, le eccezioni sono errori che si verificano durante l'esecuzione del programma, come ad esempio una divisione per zero o l'accesso a un file inesistente.
+Le eccezioni servono a segnalare situazioni anomale che il programma non riesce a gestire normalmente.
+
+Grazie alla struttura try/except, è possibile provare a eseguire un blocco di codice e, in caso di errore, intercettarlo senza bloccare l'intero programma.
+
+Esempio:
+try:
+    numero = int(input("Inserisci un numero: "))
+    risultato = 10 / numero
+except ZeroDivisionError:
+    print("Non posso dividere per zero.")
+except ValueError:
+    print("Devi inserire un numero valido.")
+In questo modo, il programma risulta più robusto e gestisce meglio gli input dell'utente.
+
+DOMANDA 3 — Cosa significa che un file viene aperto con with open(...) as f:? Perché è preferibile rispetto a open() semplice?
+Quando apro un file con "with open(...) as f:", sto utilizzando una struttura che gestisce automaticamente l'apertura e la chiusura del file.
+Questo è utile perché, quando esco dal blocco with, il file viene chiuso automaticamente, anche in caso di errore.
+
+È preferibile rispetto alla funzione open() semplice perché riduce il rischio di dimenticare la funzione close(), che può causare problemi di memoria o di accesso al file.
+
+Esempio:
+with open("log.txt", "r") as f:
+    contenuto = f.read()
+Questa pratica è molto diffusa quando si lavora con file di testo, log o dati di configurazione.
+
+DOMANDA 4 — Spiega la differenza tra una funzione che stampa un valore e una funzione che usa return.
+Una funzione che usa print() mostra un valore sullo schermo, ma non lo restituisce al programma.
+Il valore viene quindi visualizzato, ma non è facilmente riutilizzabile in altre parti del codice.
+
+Una funzione che usa return, invece, restituisce il valore, così posso salvarlo in una variabile o utilizzarlo in altri calcoli.
+
+Esempio:
+def somma(a, b):
+    return a + b
+
+risultato = somma(2, 3)
+print(risultato)
+Secondo me, return è più utile quando la funzione deve eseguire un'elaborazione vera e propria, mentre print() è adatta solo per visualizzare un risultato.
+
+DOMANDA 5 — Spiega cosa significa “parsing” di un file di log e perché è utile in ambito cloud.
+Il parsing di un file di log consiste nel leggere il file e analizzarne le righe per estrarre informazioni utili, come gli errori, i timestamp, gli indirizzi IP, i codici HTTP o gli eventi particolari.
+In pratica, si trasforma un testo grezzo in dati più facili da utilizzare.
+
+In ambito cloud è utile perché i log servono per monitorare i servizi, individuare gli errori, controllare le prestazioni e fare troubleshooting.
+Per esempio, in un ambiente AWS o su un server cloud, il parsing dei log permette di capire subito se una funzione sta fallendo o se c'è un problema di accesso.
+
+Ciò è importante perché in un ambiente cloud ci sono molti componenti e avere i log analizzati in modo efficace consente di intervenire più rapidamente.
