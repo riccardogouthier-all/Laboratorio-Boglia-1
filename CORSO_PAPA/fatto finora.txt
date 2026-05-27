@@ -1,14 +1,17 @@
+
+x il 03-09
 cicli di:
     iterazione
     selezione
+x il 04-10
 esercizi su cicli
+x il 04-14
 esercizi su:    
     liste
     stringhe
+x il 05-05
 esercizi su tuple
+x il 05-20
 esercizi su dizionari
+x il 05-29
 esercizi OOP
-
-
-
-
