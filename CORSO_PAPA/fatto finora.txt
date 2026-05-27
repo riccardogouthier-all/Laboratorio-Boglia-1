@@ -7,7 +7,7 @@ esercizi su:
     stringhe
 esercizi su tuple
 esercizi su dizionari
-
+esercizi OOP
 
 
 
