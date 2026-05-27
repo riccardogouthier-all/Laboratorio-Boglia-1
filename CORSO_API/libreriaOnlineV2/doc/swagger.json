@@ -37,7 +37,7 @@
         }
       }
     },
-    "/api/v1/libri": {
+    "/api/v2/libri": {
       "get": {
         "tags": [
           "Catalogo"
@@ -213,7 +213,7 @@
         }
       }
     },
-    "/api/v1/libri/search": {
+    "/api/v2/libri/search": {
       "get": {
         "tags": [
           "Catalogo"
@@ -312,7 +312,7 @@
         }
       }
     },
-    "/api/v1/libri/{id}": {
+    "/api/v2/libri/{id}": {
       "get": {
         "tags": [
           "Catalogo"
@@ -577,7 +577,7 @@
         }
       }
     },
-    "/api/v1/clienti": {
+    "/api/v2/clienti": {
       "get": {
         "tags": [
           "Clienti"
@@ -753,7 +753,7 @@
         }
       }
     },
-    "/api/v1/clienti/{id}": {
+    "/api/v2/clienti/{id}": {
       "get": {
         "tags": [
           "Clienti"

@@ -31,8 +31,23 @@ libriRouter.get("/id", (req, res) => {            // SELECT ALL ID
     });
 });
 
+libriRouter.get("/search", (req, res) => {            // SELECT BY TITOLO
+    console.log(`GET /api/v2/libri/search?titolo=${req.query.titolo}`);
+
+    db.all(SELECT_BY_TITOLO, [req.query.titolo], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: message });
+        } else if (rows) {
+            res.json(rows);
+        } else {
+            res.status(404).json({ message: `Libro con titolo ${titolo} non trovato` });
+        }
+    });
+});
+
 libriRouter.get("/:id", (req, res) => {            // SELECT BY ID
-    console.log(`GET /api/v2/libri/${req.params.id}`, req.params.id);
+    console.log(`GET /api/v2/libri/${req.params.id}`);
+    console.log("search by id");
 
     db.all(SELECT_BY_ID, [req.params.id], (err, rows) => {
         if (err) {
@@ -45,19 +60,6 @@ libriRouter.get("/:id", (req, res) => {            // SELECT BY ID
     });
 });
 
-libriRouter.get("/:titolo", (req, res) => {            // SELECT BY TITOLO
-    console.log(`GET /api/v2/libri/${req.params.titolo}`, req.params.titolo);
-
-    db.all(SELECT_BY_TITOLO, [req.params.titolo], (err, rows) => {
-        if (err) {
-            res.status(500).json({ error: message });
-        } else if (rows) {
-            res.json(rows);
-        } else {
-            res.status(404).json({ message: `Libro con titolo ${titolo} non trovato` });
-        }
-    });
-});
 
 libriRouter.post("/", (req, res) => {               // INSERT NUOVO LIBRO
     console.log("POST /api/v2/libri", req.body)
@@ -106,20 +108,23 @@ libriRouter.put("/:id", (req, res) => {             // UPDATE AGGIORNA LIBRO
 });
 
 libriRouter.delete("/:id", (req, res) => {            // DELETE LIBRO
-    console.log(`DELETE /api/v2/libri/${req.params.id}`);
-
+    
     const id = req.params.id;
+    console.log(`DELETE /api/v2/libri/${req.params.id}`);
 
     db.run(DELETE_LIBRO, [id], function(err) {
         if (err) {
             res.status(500).json({ error: err.message });
-        } else if (this.changes > 0) {
-            res.json({ message: `Libro con ID ${id} eliminato` });
+        } else if (this.changes === 0) {
+            res.status (404).json({ message: "Libro non presente in database" });
         } else {
-            res.status(404).json({ message: "Libro non trovato" });
+            res.json({ message: "Libro cancellato con successo"});
         }
     });
 });
+
+
+
 
 function validaLibro(libro) {                   // validazione del body
     let errorMessage;

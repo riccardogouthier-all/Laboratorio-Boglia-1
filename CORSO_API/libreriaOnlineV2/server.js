@@ -18,6 +18,8 @@ export const db = new sqlite3.Database("./database/libreria.db");
 // Inizializzazione rotte
 app.use(`${BASE_PATH}/libri`, libriRouter);
 
+// Integrazione Swagger UI
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // attivo il listener dell'applicazione sulla porta 3000
 app.listen(PORT, () => {
