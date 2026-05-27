@@ -54,7 +54,7 @@ if __name__ == "__main__":
     ins2 = Insegnante("Luca Bianchi", 35, 2500.0)
 
     # print("=== Stampa con __str__ ===")
-    print("", ins1, "\n", ins2)
+    print(f"\n{ins1}\n{ins2}")
 
     print("\n=== Getter ins1===")
     print(f"Nome ins1:       {ins1.get_nome()} \nEtà ins1:        {ins1.get_eta()} \nStipendio ins1:  {ins1.get_stipendio()} €")
