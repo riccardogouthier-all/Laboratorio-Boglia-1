@@ -20,7 +20,7 @@ class Rettangolo:
         if base > 0:
             self.__base = base
         else:
-            raise ValueError("La base deve essere positiva.")
+            print("La base deve essere positiva.")
 
     '''Getter e setter altezza'''
     def get_altezza(self):
@@ -30,7 +30,7 @@ class Rettangolo:
         if altezza > 0:
             self.__altezza = altezza
         else:
-            raise ValueError("L'altezza deve essere positiva.")
+            print("L'altezza deve essere positiva.")
 
     '''Metodi di calcolo'''
     def area(self):

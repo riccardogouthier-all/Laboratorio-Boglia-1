@@ -21,7 +21,7 @@ class Insegnante:
         if isinstance(nuovo_nome, str) and nuovo_nome.strip():
             self.nome = nuovo_nome
         else:
-            raise ValueError("Il nome deve essere una stringa non vuota.")
+            print("Il nome deve essere una stringa non vuota.")
 
     # Getter e setter per ETÀ
     def get_eta(self):
@@ -31,7 +31,7 @@ class Insegnante:
         if isinstance(nuova_eta, int) and nuova_eta > 0:
             self.eta = nuova_eta
         else:
-            raise ValueError("L'età deve essere un intero positivo.")
+            print("L'età deve essere un intero positivo.")
 
     # Getter e setter per STIPENDIO (privato)
     def get_stipendio(self):
@@ -41,7 +41,7 @@ class Insegnante:
         if isinstance(nuovo_stipendio, (int, float)) and nuovo_stipendio >= 0:
             self.__stipendio = nuovo_stipendio
         else:
-            raise ValueError("Lo stipendio deve essere un numero non negativo.")
+            print("Lo stipendio deve essere un numero non negativo.")
 
     # Override di __str__: mostra solo nome ed età
     def __str__(self):
