@@ -52,7 +52,7 @@ if __name__ == "__main__":
     r2 = Rettangolo(6, 4)
     r3 = Rettangolo(12, 3)
 
-    print(f"\nRettangoli:\n{r1}\n{r2}\n{r3}")                                   # print di tutti gli oggetti Rettangolo
+    print(f"\nRettangoli:\n{r1}\n{r2}\n{r3}")                                                                                   # print di tutti gli oggetti Rettangolo
     print(f"\nAree:\nArea r1: {r1.area()} \nArea r2: {r2.area()} \nArea r3: {r3.area()}")                                       # 80, 24, 36
     print(f"\nPerimetri:\nPerimetro r1: {r1.perimetro()} \nPerimetro r2: {r2.perimetro()} \nPerimetro r3: {r3.perimetro()}")    # 36, 20, 30
 
