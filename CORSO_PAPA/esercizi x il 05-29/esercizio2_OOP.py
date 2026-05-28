@@ -46,17 +46,19 @@ class Rettangolo:
     def __str__(self):
         return f"Rettangolo(base={self.__base}, altezza={self.__altezza})"
 
-r1 = Rettangolo(10, 8)
-r2 = Rettangolo(6, 4)
-r3 = Rettangolo(12, 3)
+if __name__ == "__main__":
+    '''Test della classe Rettangolo con 3 oggetti'''
+    r1 = Rettangolo(10, 8)
+    r2 = Rettangolo(6, 4)
+    r3 = Rettangolo(12, 3)
 
-print(r1)                                   # Rettangolo ( base=10, altezza=8 )
-print(f"Area r1: {r1.area()}")              # 80
-print(f"Perimetro r1: {r1.perimetro()}")    # 36
+    print(f"\nRettangoli:\n{r1}\n{r2}\n{r3}")                                   # print di tutti gli oggetti Rettangolo
+    print(f"\nAree:\nArea r1: {r1.area()} \nArea r2: {r2.area()} \nArea r3: {r3.area()}")                                       # 80, 24, 36
+    print(f"\nPerimetri:\nPerimetro r1: {r1.perimetro()} \nPerimetro r2: {r2.perimetro()} \nPerimetro r3: {r3.perimetro()}")    # 36, 20, 30
 
-if r1.contiene(r2):
-    '''True con r2 → 10>6 e 8>4'''
-    print("il primo rettangolo contiene il secondo")
-else:
-    '''False con r3 → 10<12 (la base non è maggiore)'''
-    print("il primo rettangolo è più piccolo del secondo")
+    if r1.contiene(r2):
+        '''True con r2 → 10>6 e 8>4'''
+        print("\nil primo rettangolo contiene il secondo\n")
+    else:
+        '''False con r3 → 10<12 (la base non è maggiore)'''
+        print("\nil primo rettangolo è più piccolo del secondo\n")
