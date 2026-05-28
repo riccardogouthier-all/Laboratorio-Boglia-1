@@ -6,7 +6,6 @@ Terzo Esercizio
 4 - Creare un metodo tableMult() che crea e visualizza la tabellina di un dato intero. Quindi creare un metodo allTablesMult() per visualizzare tutte le tabelline di numeri interi 1, 2, 3, ..., 9. 
 '''
 
-
 class Calcolo:
     def __init__(self):
         pass
@@ -32,33 +31,40 @@ class Calcolo:
     def tableMult(self, n):
         righe = []
         for i in range(1, 11):
-            righe.append(f" {n} x {i:2} ={n * i:3}")
+            righe.append(f" {n} x {i:2} = {n * i:3}")
         return righe
 
+    '''Tutte le tabelline da 1 a 9'''
     def allTablesMult(self):
         '''Raccoglie le righe di tutte le tabelline'''
-        tabelline = [self.tableMult(n) for n in range(1, 10)]
+        tabelline = [self.tableMult(n) for n in range(1, 11)]
+
         '''Stampa riga per riga in orizzontale'''
         for i in range(10):
-            print("  // ".join(tabelline[n][i] for n in range(9)))
+            print(" // ".join(tabelline[n][i] for n in range(10)))
 
 if __name__ == "__main__":
     '''Test della classe Calcolo'''
     c = Calcolo()
     '''Test Factorial'''
+    print("\n","=" * 60)
     print("\nFATTORIALE")
     lista_test_factorial = [0, 1, 5, 10]
     for n in lista_test_factorial:
         print(f" {n}! = {c.Factorial(n)}")
     '''Test Sum'''
+    print("\n","=" * 60)
     print("\nSOMMA PRIMI N INTERI")
     lista_test_sum = [5, 10, 100]
     for n in lista_test_sum:
         print(f" Somma dei numeri da 1 a {n} = {c.Sum(n)}")
     '''Test tableMult'''
+    print("\n","=" * 60)
     print("\nTABELLINA SINGOLA")
     for riga in c.tableMult(7):
         print(riga)
     '''Test allTablesMult'''
+    print("\n","=" * 60)
     print("\nTUTTE LE TABELLINE")
     c.allTablesMult()
+    print("\n","=" * 60, "\n")
