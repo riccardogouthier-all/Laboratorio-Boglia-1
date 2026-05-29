@@ -1,5 +1,4 @@
 
-
 class Calcolo:
     def __init__(self):
         pass
@@ -34,3 +33,8 @@ if __name__ == "__main__":
     '''Test allTablesMult'''
     print("\nTUTTE LE TABELLINE")
     c.allTablesMult()
+
+
+print(f"TEST CLASSE ARITMETICA DUE E ARITMETICA TRE") 
+print(f'''
+TEST CLASSE ARITMETICA DUE E ARITMETICA TRE''')
