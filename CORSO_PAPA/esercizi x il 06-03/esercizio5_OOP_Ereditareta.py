@@ -9,3 +9,20 @@ Ridefinire il costruttore, il metodo str e i tre metodi differenza, prodotto e c
 Aggiungere un metodo per il calcolo della somma di tutti gli attributi. 
 Provare le classi e i metodi implementati. 
 '''
+
+class AritmeticaDue:
+    def __init__(self, operando1=0, operando2=0):
+        self.operando1 = operando1
+        self.operando2 = operando2
+
+    def __str__(self):
+        return f"AritmeticaDue(operando1={self.operando1}, operando2={self.operando2})"
+
+    def differenza(self):
+        return self.operando1 - self.operando2
+
+    def prodotto(self):
+        return self.operando1 * self.operando2
+
+    def confronto_prodotto(self, altro):
+        return self.prodotto() > altro.prodotto()
