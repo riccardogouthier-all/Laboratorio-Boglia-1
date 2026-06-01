@@ -31,12 +31,13 @@ class AritmeticaDue:
         return self.prodotto() > altro.prodotto()
 
 class AritmeticaTre(AritmeticaDue):
-    def __init__(self, operando3)
+    def __init__(self, operando1, operando2, operando3):
         super().__init__(operando1, operando2)
         self.__operando3 = operando3
 
     @property
-    def 
+    def somma(self):
+        return self.__operando1 + self.__operando2 + self.__operando3
 
 
 
