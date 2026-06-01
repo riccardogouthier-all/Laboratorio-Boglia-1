@@ -1,0 +1,70 @@
+Ciao! Ecco la soluzione completa con una spiegazione visiva interattiva del codice:Ecco la soluzione completa! Puoi navigare tra le tre schede: il codice di `AritmeticaDue`, quello di `AritmeticaTre`, e la demo interattiva dove puoi cambiare i valori e vedere i risultati in tempo reale.
+
+Qui sotto trovi il codice completo da copiare e incollare direttamente in Python:
+
+```python
+class AritmeticaDue:
+    def __init__(self, operando1=0, operando2=0):
+        self.operando1 = operando1
+        self.operando2 = operando2
+
+    def __str__(self):
+        return f"AritmeticaDue({self.operando1}, {self.operando2})"
+
+    def differenza(self):
+        return self.operando1 - self.operando2
+
+    def prodotto(self):
+        return self.operando1 * self.operando2
+
+    def confronto(self, altro):
+        return self.prodotto() > altro.prodotto()
+
+
+class AritmeticaTre(AritmeticaDue):
+    def __init__(self, operando1=0, operando2=0, operando3=0):
+        super().__init__(operando1, operando2)
+        self.operando3 = operando3
+
+    def __str__(self):
+        return f"AritmeticaTre({self.operando1}, {self.operando2}, {self.operando3})"
+
+    def differenza(self):
+        return self.operando1 - self.operando2 - self.operando3
+
+    def prodotto(self):
+        return self.operando1 * self.operando2 * self.operando3
+
+    def confronto(self, altro):
+        return self.prodotto() > altro.prodotto()
+
+    def somma(self):
+        return self.operando1 + self.operando2 + self.operando3
+
+
+# --- TEST AritmeticaDue ---
+a = AritmeticaDue(6, 3)
+b = AritmeticaDue(2, 4)
+print(a)               # AritmeticaDue(6, 3)
+print(a.differenza())  # 3
+print(a.prodotto())    # 18
+print(a.confronto(b))  # True (18 > 8)
+
+# --- TEST AritmeticaTre ---
+c = AritmeticaTre(4, 3, 2)
+d = AritmeticaTre(5, 1, 1)
+print(c)               # AritmeticaTre(4, 3, 2)
+print(c.differenza())  # -1  (4 - 3 - 2)
+print(c.prodotto())    # 24  (4 * 3 * 2)
+print(c.somma())       # 9   (4 + 3 + 2)
+print(c.confronto(d))  # True (24 > 5)
+```
+
+**Punti chiave da ricordare:**
+
+- `__init__` con valori predefiniti (`=0`) permette di creare oggetti anche senza passare argomenti, come `AritmeticaDue()`.
+- `super().__init__(...)` nel costruttore di `AritmeticaTre` richiama il costruttore del padre, evitando di duplicare codice.
+- Il metodo `confronto` riceve un altro oggetto come parametro e confronta i prodotti: questo funziona sia con due `AritmeticaDue` che con due `AritmeticaTre`, grazie al polimorfismo.
+- `differenza` e `prodotto` in `AritmeticaTre` fanno l'*override* (ridefinizione) dei metodi della classe padre, estendendo il calcolo al terzo operando.
+
+
