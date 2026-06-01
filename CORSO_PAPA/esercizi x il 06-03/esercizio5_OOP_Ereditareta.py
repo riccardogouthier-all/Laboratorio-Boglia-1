@@ -12,17 +12,31 @@ Provare le classi e i metodi implementati.
 
 class AritmeticaDue:
     def __init__(self, operando1=0, operando2=0):
-        self.operando1 = operando1
-        self.operando2 = operando2
+        self.__operando1 = operando1
+        self.__operando2 = operando2
 
     def __str__(self):
-        return f"AritmeticaDue(operando1={self.operando1}, operando2={self.operando2})"
+        return f"AritmeticaDue(operando1={self.__operando1}, operando2={self.__operando2})"
 
+    @property
     def differenza(self):
-        return self.operando1 - self.operando2
+        return self.__operando1 - self.__operando2
 
+    @property
     def prodotto(self):
-        return self.operando1 * self.operando2
+        return self.__operando1 * self.__operando2
 
+    @property
     def confronto_prodotto(self, altro):
         return self.prodotto() > altro.prodotto()
+
+class AritmeticaTre(AritmeticaDue):
+    def __init__(self, operando3)
+        super().__init__(operando1, operando2)
+        self.__operando3 = operando3
+
+    @property
+    def 
+
+
+
