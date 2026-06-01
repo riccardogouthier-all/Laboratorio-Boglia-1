@@ -39,5 +39,30 @@ class AritmeticaTre(AritmeticaDue):
     def somma(self):
         return self.__operando1 + self.__operando2 + self.__operando3
 
+    def __str__(self):
+        return f"AritmeticaTre(operando1={self.__operando1}, operando2={self.__operando2}, operando3={self.__operando3})"
+    
+    @property
+    def differenza(self):
+        return self.__operando1 - self.__operando2 - self.__operando3
+    
+    @property
+    def prodotto(self):
+        return self.__operando1 * self.__operando2 * self.__operando3
+    
+    @property
+    def confronto_prodotto(self, altro):
+        return self.prodotto() > altro.prodotto()   
+    
+# Prove
+a = AritmeticaDue(5, 3)
+print(a)
+print("Differenza:", a.differenza)
+print("Prodotto:", a.prodotto)
 
-
+b = AritmeticaTre(2, 4, 6)
+print(b)
+print("Differenza:", b.differenza)
+print("Prodotto:", b.prodotto)
+print("Somma:", b.somma)
+print("Confronto prodotto a vs b:", a.confronto_prodotto(b))
