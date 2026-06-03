@@ -1,0 +1,3 @@
+Python è un linguaggio di programmazione straordinariamente versatile.
+Viene utilizzato in molteplici settori: sviluppo web, intelligenza artificiale,
+analisi dei dati, automazione e molto altro ancora.
