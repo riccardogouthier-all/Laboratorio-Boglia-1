@@ -49,13 +49,13 @@ class FileTextReader:
 
 
 # Struttura per provare la classe (variabile DDDDDDDDDDDD non inizializzata)
-# DDDDDDDDDDDD =  # La inizializzerai tu a posteriori
+DDDDDDDDDDDD = "prova.txt" # La inizializzerai tu a posteriori
 
 # Esempio di utilizzo (commentato, da sbloccare quando inizializzi DDDDDDDDDDDD):
-# if DDDDDDDDDDDD:
-#     lettore = FileTextReader(DDDDDDDDDDD)
-#     risultato = lettore.parola_con_frequenza_massima()
-#     print(f"La parola con frequenza maggiore è: {risultato}")
+if DDDDDDDDDDDD:
+    lettore = FileTextReader(DDDDDDDDDDDD)
+    risultato = lettore.parola_con_frequenza_massima()
+    print(f"La parola con frequenza maggiore è: {risultato}")
 
 # La classe:
 # __init__: salva il percorso del file
