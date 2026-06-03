@@ -18,53 +18,48 @@ class AritmeticaDue:
     def __str__(self):
         return f"AritmeticaDue(operando1= {self._operando1:3}, operando2= {self._operando2:3})"
 
-    @property
     def differenza(self):
         return self._operando1 - self._operando2
 
-    @property
     def prodotto(self):
         return self._operando1 * self._operando2
 
     def confronto_prodotto(self, altro):
         if not isinstance(altro, AritmeticaDue):
             raise TypeError("Il parametro deve essere un'istanza di AritmeticaDue")
-        if self.prodotto > altro.prodotto:
-            return f"{self.prodotto} > {altro.prodotto}"
-        elif self.prodotto < altro.prodotto:
-            return f"{self.prodotto} < {altro.prodotto}"
+        if self.prodotto() > altro.prodotto():
+            return f"{self.prodotto()} > {altro.prodotto()}"
+        elif self.prodotto() < altro.prodotto():
+            return f"{self.prodotto()} < {altro.prodotto()}"
         else:
-            return f"{self.prodotto} = {altro.prodotto}"
+            return f"{self.prodotto()} = {altro.prodotto()}"
 
 class AritmeticaTre(AritmeticaDue):
     def __init__(self, operando1, operando2, operando3):
         super().__init__(operando1, operando2)
         self._operando3 = operando3
 
-    @property
     def somma(self):
         return self._operando1 + self._operando2 + self._operando3
 
     def __str__(self):
         return f"AritmeticaTre(operando1= {self._operando1:3}, operando2= {self._operando2:3}, operando3= {self._operando3:3})"
     
-    @property
     def differenza(self):
         return self._operando1 - self._operando2 - self._operando3
     
-    @property
     def prodotto(self):
         return self._operando1 * self._operando2 * self._operando3
     
     def confronto_prodotto(self, altro):
         if not isinstance(altro, AritmeticaDue):
             raise TypeError("Il parametro deve essere un'istanza di AritmeticaDue")
-        if self.prodotto > altro.prodotto:
-            return f"{self.prodotto} > {altro.prodotto}"
-        elif self.prodotto < altro.prodotto:
-            return f"{self.prodotto} < {altro.prodotto}"
+        if self.prodotto() > altro.prodotto():
+            return f"{self.prodotto()} > {altro.prodotto()}"
+        elif self.prodotto() < altro.prodotto():
+            return f"{self.prodotto()} < {altro.prodotto()}"
         else:
-            return f"{self.prodotto} = {altro.prodotto}"
+            return f"{self.prodotto()} = {altro.prodotto()}"
 
 # Prove
 print("\n","=" * 100,"\n")
@@ -75,8 +70,8 @@ c = AritmeticaDue(5, 10)
 print(a)
 print(b)
 print(c,"\n")
-print("Differenza:", a.differenza)
-print("Prodotto:", a.prodotto)
+print("Differenza:", a.differenza())
+print("Prodotto:", a.prodotto())
 print("Confronto prodotto a vs b:", a.confronto_prodotto(b))
 
 print("\n","=" * 100,"\n")
@@ -87,9 +82,9 @@ z = AritmeticaTre(10, 5, 1)
 print(x)
 print(y)
 print(z,"\n")
-print("Differenza:", x.differenza)
-print("Prodotto:", x.prodotto)
-print("Somma:", x.somma)
+print("Differenza:", x.differenza())
+print("Prodotto:", x.prodotto())
+print("Somma:", x.somma())
 print("Confronto prodotto x vs z:", x.confronto_prodotto(z))
 
 print("\n","=" * 100,"\n")
