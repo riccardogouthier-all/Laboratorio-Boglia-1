@@ -65,3 +65,4 @@ class FileTextReader:
 # Conta le frequenze delle parole con un dizionario
 # Restituisce la parola più frequente
 # La variabile DDDDDDDDDDD è dichiarata ma non inizializzata, pronta per essere_ASSIGNATA da te successivamente con il percorso del file.
+# il filepath è il nome del file che metterai nella stessa cartella del programma o il percorso completo se si trova altrove.
