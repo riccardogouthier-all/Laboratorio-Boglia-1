@@ -29,9 +29,20 @@ Provare le tre classi instanziando almeno un oggetto per classe e provando qualc
 
 class Persona:
     def __init__(self, nome, indirizzo, eta):
-        self.__nome      = nome
-        self.__indirizzo = indirizzo
-        self.__eta       = eta
+        if isinstance(nome, str):
+            self.__nome      = nome
+        else:
+            raise TypeError("I parametri devono essere di tipo corretto")
+        
+        if isinstance(indirizzo, str):    
+            self.__indirizzo = indirizzo
+        else:
+            raise TypeError("I parametri devono essere di tipo corretto")
+        
+        if isinstance(eta, int):
+            self.__eta       = eta
+        else:
+            raise TypeError("I parametri devono essere di tipo corretto")
 
     # getter
     @property
@@ -64,8 +75,14 @@ class Persona:
 class Studente(Persona):
     def __init__(self, nome, indirizzo, eta, scuola, media_voti):
         super().__init__(nome, indirizzo, eta)
-        self.__scuola     = scuola
-        self.__media_voti = media_voti
+        if isinstance(scuola, str):
+            self.__scuola     = scuola
+        else:
+            raise TypeError("I parametri aggiuntivi devono essere di tipo corretto")
+        if isinstance(media_voti, (int, float)):    
+            self.__media_voti = media_voti
+        else:
+            raise TypeError("I parametri aggiuntivi devono essere di tipo corretto")
 
     # getter aggiuntivi
     @property
@@ -89,8 +106,14 @@ class Studente(Persona):
 class Lavoratore(Persona):
     def __init__(self, nome, indirizzo, eta, azienda, stipendio):
         super().__init__(nome, indirizzo, eta)
-        self.__azienda = azienda
-        self.__stipendio = stipendio
+        if isinstance(azienda, str):
+            self.__azienda = azienda
+        else:
+            raise TypeError("I parametri aggiuntivi devono essere di tipo corretto")
+        if isinstance(stipendio, (int, float)):
+            self.__stipendio = stipendio
+        else:
+            raise TypeError("I parametri aggiuntivi devono essere di tipo corretto")
 
     # getter aggiuntivi
     @property
