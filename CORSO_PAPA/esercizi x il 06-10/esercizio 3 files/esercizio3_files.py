@@ -6,24 +6,17 @@ Progetta una classe che legga un file di testo. Tale classe deve avere un metodo
 Provare il programma con testi classici come la Divina Commedia di Dante Alighieri reperibile sul sito del progetto Gutenberg. 
 '''
 
-class FileTextReader:
+class LettoreTestoFile:
     def __init__(self, filepath):
-        """Inizializza con il percorso del file di testo"""
         self.filepath = filepath
     
     def read_file(self):
-        """Legge il contenuto del file e restituisce una stringa"""
         with open(self.filepath, 'r', encoding='utf-8') as f:
             return f.read()
     
     def parola_con_frequenza_massima(self):
-        """
-        Restituisce la parola con frequenza maggiore nel file.
-        Usa un dizionario per contare le frequenze delle parole.
-        """
         testo = self.read_file()
         
-        # Normalizza il testo: minuscolo e rimuove punteggiatura
         testo_pulito = ''
         for char in testo.lower():
             if char.isalpha() or char.isspace():
@@ -31,31 +24,24 @@ class FileTextReader:
             else:
                 testo_pulito += ' '
         
-        # Dividi in parole
         parole = testo_pulito.split()
         
-        # Conta le frequenze delle parole usando un dizionario
         frequenza_parole = {}
         for parola in parole:
-            if parola:  # evita stringhe vuote
+            if parola:
                 frequenza_parole[parola] = frequenza_parole.get(parola, 0) + 1
         
-        # Trova la parola con frequenza massima
         if not frequenza_parole:
-            return None
-        
-        parola_max = max(frequenza_parole, key=frequenza_parole.get)
-        return parola_max
+            return ("Il file è vuoto o non contiene parole.")
+        else:        
+            parola_max = max(frequenza_parole, key=frequenza_parole.get)
+            return (f"La parola con frequenza maggiore è: {parola_max} con frequenza {frequenza_parole[parola_max]}")
 
+DDDDDDDDDDDD = "prova.txt"
 
-# Struttura per provare la classe (variabile DDDDDDDDDDDD non inizializzata)
-DDDDDDDDDDDD = "prova.txt" # La inizializzerai tu a posteriori
-
-# Esempio di utilizzo (commentato, da sbloccare quando inizializzi DDDDDDDDDDDD):
 if DDDDDDDDDDDD:
-    lettore = FileTextReader(DDDDDDDDDDDD)
-    risultato = lettore.parola_con_frequenza_massima()
-    print(f"La parola con frequenza maggiore è: {risultato}")
+    lettore = LettoreTestoFile(DDDDDDDDDDDD)
+    print(lettore.parola_con_frequenza_massima())
 
 # La classe:
 # __init__: salva il percorso del file
