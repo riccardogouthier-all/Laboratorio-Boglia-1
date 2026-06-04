@@ -1,0 +1,42 @@
+
+Windows PowerShell
+Copyright (C) Microsoft Corporation. Tutti i diritti riservati.
+
+Installa la versione più recente di PowerShell per nuove funzionalità e miglioramenti. https://aka.ms/PSWindows
+
+PS C:\WINDOWS\system32> cd..
+
+PS C:\WINDOWS> cd..
+
+PS C:\> docker pull python:3.11-slim
+3.11-slim: Pulling from library/python
+Digest: sha256:a3ab0b966bc4e91546a033e22093cb840908979487a9fc0e6e38295747e49ac0
+Status: Downloaded newer image for python:3.11-slim
+docker.io/library/python:3.11-slim
+
+What's next:
+    View a summary of image vulnerabilities and recommendations → docker scout quickview python:3.11-slim
+
+PS C:\> docker image inspect python:3.11-slim --format '{{json .RootFS.Layers}}' | jq .
+[
+  "sha256:219a998c60509502b47b97f1158067d5dd62640d2d689560d32cfd5594f6bc40",
+  "sha256:98df1ca0e575d9026c1abd12994fad3c14effa4558d50b6961fd586930956b26",
+  "sha256:bffa3c30a00bb534b2e3637bd26d9a75e095172be7d0b33924f1a61bf6cb2120",
+  "sha256:89bfb82659d056dd4ef25b8b3f99c7a97874083d86d92924e931ffa2fb7c7861"
+]
+
+PS C:\> docker image inspect python:3.11-slim --format '{{json .Config}}' | jq .
+{
+  "Env": [
+    "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "LANG=C.UTF-8",
+    "GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D",
+    "PYTHON_VERSION=3.11.15",
+    "PYTHON_SHA256=272179ddd9a2e41a0fc8e42e33dfbdca0b3711aa5abf372d3f2d51543d09b625"
+  ],
+  "Cmd": [
+    "python3"
+  ]
+}
+
+PS C:\>
