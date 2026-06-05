@@ -1,0 +1,62 @@
+┌─────────┐
+│ Utente  │
+└────┬────┘
+     │
+     v
+┌───────────────────┐
+│ Amazon CloudFront │			CloudFront: riduce latenza e assorbe parte del traffico.
+└────┬──────────────┘
+     │
+     v
+┌────────────┐
+│  AWS WAF   │				WAF: blocca richieste sospette, bot e possibili attacchi di sovraccarico.
+└────┬───────┘
+     │
+     v
+┌──────────────────────────────┐
+│ Application Load Balancer    │	ALB: distribuisce le richieste tra più istanze backend.
+│            (ALB)             │
+└────┬─────────────────────────┘
+     │
+     v
+┌──────────────────────────────┐
+│ Backend API su EC2 / ASG     │	Backend API: riceve le richieste e le mette in coda.
+└────┬─────────────────────────┘
+     │
+     v
+┌────────────┐
+│ Amazon SQS │				SQS: evita che il sistema vada in crisi quando arrivano troppe richieste tutte insieme.
+└────┬───────┘
+     │
+     v
+┌──────────────────────────────┐
+│ Worker su EC2 / ASG          │	Worker: elabora le richieste una alla volta o in piccoli gruppi.
+└────┬─────────────────────────┘
+     │
+     v
+┌────────────┐
+│ Amazon RDS │				RDS: salva i dati finali in modo sicuro e transazionale.
+└────────────┘				Nel blocco RDS devi indicare che:
+						ci sono vincoli univoci;
+						la vendita avviene con transazione atomica;
+							controlla se il biglietto è ancora libero;
+							segna il biglietto come prenotato;
+							registra l’ordine;
+							conferma il pagamento.
+						il worker è idempotente;
+							Deve capire che quel biglietto è già stato gestito e quindi:
+								non fare doppioni;
+								non registrare due volte il pagamento;
+								non assegnare due volte lo stesso posto.
+							Per renderlo idempotente, di solito si usano:
+								un ID univoco della richiesta;
+								controlli nel database prima di scrivere;
+								vincoli che impediscono duplicati.
+						il biglietto viene prima prenotato, poi confermato dopo il pagamento.
+
+Per ridurre i costi:
+	usa Auto Scaling solo per il picco;
+	tieni poche istanze sempre attive;
+	spegni o riduci il numero di worker dopo i primi minuti;
+	usa CloudFront per scaricare lavoro dal backend;
+	evita architetture troppo complesse come Kubernetes, se non serve.
