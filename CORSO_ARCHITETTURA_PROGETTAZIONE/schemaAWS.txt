@@ -43,6 +43,7 @@
 							segna il biglietto come prenotato;
 							registra l’ordine;
 							conferma il pagamento.
+
 						il worker è idempotente;
 							Deve capire che quel biglietto è già stato gestito e quindi:
 								non fare doppioni;
@@ -52,6 +53,7 @@
 								un ID univoco della richiesta;
 								controlli nel database prima di scrivere;
 								vincoli che impediscono duplicati.
+								
 						il biglietto viene prima prenotato, poi confermato dopo il pagamento.
 
 Per ridurre i costi:
