@@ -16,3 +16,4 @@ esercizi su dizionari
 x il 05-29
 esercizi OOP
 esercizi OOP ereditarietà
+esercizi files
