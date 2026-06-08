@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  app:
+    build: ./app
+    container_name: demo-app
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_USER: demo
+      POSTGRES_PASSWORD: demo
+      POSTGRES_DB: demo
+      POSTGRES_HOST: db
+    depends_on:
+      - db
+    networks:
+      - demo-net
+
+  db:
+    image: postgres:16-alpine
+    container_name: demo-db
+    environment:
+      POSTGRES_USER: demo
+      POSTGRES_PASSWORD: demo
+      POSTGRES_DB: demo
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - demo-net
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: demo-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - demo-net
+
+volumes:
+  db-data:
+
+networks:
+  demo-net:
+

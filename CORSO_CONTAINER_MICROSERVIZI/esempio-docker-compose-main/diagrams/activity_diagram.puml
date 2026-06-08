@@ -1,0 +1,28 @@
+@startuml activity
+title Activity Diagram - Flusso API Studenti
+
+start
+
+:Client invia richiesta\nGET /studenti o POST /studenti;
+
+:FastAPI riceve la richiesta;
+
+if (Metodo = POST?) then (sì)
+    :Validazione input\n(nome, corso, matricola);
+    :Creazione oggetto Student;
+    :Apertura sessione DB;
+    :INSERT nella tabella studenti;
+    :Commit transazione;
+else (no)
+    :Apertura sessione DB;
+    :SELECT * FROM studenti;
+endif
+
+:Chiusura sessione DB;
+
+:FastAPI genera risposta JSON;
+
+stop
+
+@enduml
+

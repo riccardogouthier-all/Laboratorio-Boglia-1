@@ -1,0 +1,15 @@
+@startuml component
+title Component Diagram - Stack Python + PostgreSQL + pgAdmin
+
+package "Docker Compose Stack" {
+  
+  [FastAPI Application] as app
+  [PostgreSQL Database] as db
+  [pgAdmin 4] as pgadmin
+
+  app --> db : SQLAlchemy / psycopg2\nCRUD Studenti
+  pgadmin --> db : Connessione amministrativa\nvisualizzazione dati
+}
+
+@enduml
+
