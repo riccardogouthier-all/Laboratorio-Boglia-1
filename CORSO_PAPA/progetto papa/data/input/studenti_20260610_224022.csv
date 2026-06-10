@@ -1,0 +1,11 @@
+id,nome,cognome,data_nascita,email,Matematica,Informatica,Italiano,assenze
+1,Riccardo,Lombardi,2007-08-26,riccardo.lombardi1@scuola.it,10,7,7,2
+2,Alice,Santoro,2005-08-27,alice.santoro2@scuola.it,9,5,4,19
+3,Marta,Moreno,2009-07-06,marta.moreno3@scuola.it,6,7,9,4
+4,Alessia,Santoro,2007-01-05,alessia.santoro4@scuola.it,6,7,3,8
+5,Paolo,Costa,2007-03-29,paolo.costa5@scuola.it,5,6,6,3
+6,Simone,Colombo,2005-04-20,simone.colombo6@scuola.it,3,4,8,7
+7,Sara,Barbieri,2005-06-20,sara.barbieri7@scuola.it,10,4,3,11
+8,Luca,Barbieri,2004-09-21,luca.barbieri8@scuola.it,2,7,9,8
+9,Carlo,Verdi,99-99-9999,carlo.verdiATscuola.it,13,13,13,5
+10,Paola,Neri,2005-13-40,paola.neri@scuola.it,0,0,0,3

@@ -15,5 +15,9 @@ x il 05-20
 esercizi su dizionari
 x il 05-29
 esercizi OOP
+x il 06-03
 esercizi OOP ereditarietà
+x il 06-10
 esercizi files
+x il 06-12
+esercizi OS/Path

@@ -1,0 +1,114 @@
+[
+  {
+    "id": 1,
+    "nome": "Riccardo",
+    "cognome": "Lombardi",
+    "data_nascita": "2007-08-26",
+    "email": "riccardo.lombardi1@scuola.it",
+    "assenze": 2,
+    "voti": {
+      "Matematica": 10,
+      "Informatica": 7,
+      "Italiano": 7
+    },
+    "timestamp_import": "2026-06-10T22:43:56.183447"
+  },
+  {
+    "id": 2,
+    "nome": "Alice",
+    "cognome": "Santoro",
+    "data_nascita": "2005-08-27",
+    "email": "alice.santoro2@scuola.it",
+    "assenze": 19,
+    "voti": {
+      "Matematica": 9,
+      "Informatica": 5,
+      "Italiano": 4
+    },
+    "timestamp_import": "2026-06-10T22:43:56.183484"
+  },
+  {
+    "id": 3,
+    "nome": "Marta",
+    "cognome": "Moreno",
+    "data_nascita": "2009-07-06",
+    "email": "marta.moreno3@scuola.it",
+    "assenze": 4,
+    "voti": {
+      "Matematica": 6,
+      "Informatica": 7,
+      "Italiano": 9
+    },
+    "timestamp_import": "2026-06-10T22:43:56.183502"
+  },
+  {
+    "id": 4,
+    "nome": "Alessia",
+    "cognome": "Santoro",
+    "data_nascita": "2007-01-05",
+    "email": "alessia.santoro4@scuola.it",
+    "assenze": 8,
+    "voti": {
+      "Matematica": 6,
+      "Informatica": 7,
+      "Italiano": 3
+    },
+    "timestamp_import": "2026-06-10T22:43:56.183514"
+  },
+  {
+    "id": 5,
+    "nome": "Paolo",
+    "cognome": "Costa",
+    "data_nascita": "2007-03-29",
+    "email": "paolo.costa5@scuola.it",
+    "assenze": 3,
+    "voti": {
+      "Matematica": 5,
+      "Informatica": 6,
+      "Italiano": 6
+    },
+    "timestamp_import": "2026-06-10T22:43:56.183525"
+  },
+  {
+    "id": 6,
+    "nome": "Simone",
+    "cognome": "Colombo",
+    "data_nascita": "2005-04-20",
+    "email": "simone.colombo6@scuola.it",
+    "assenze": 7,
+    "voti": {
+      "Matematica": 3,
+      "Informatica": 4,
+      "Italiano": 8
+    },
+    "timestamp_import": "2026-06-10T22:43:56.183541"
+  },
+  {
+    "id": 7,
+    "nome": "Sara",
+    "cognome": "Barbieri",
+    "data_nascita": "2005-06-20",
+    "email": "sara.barbieri7@scuola.it",
+    "assenze": 11,
+    "voti": {
+      "Matematica": 10,
+      "Informatica": 4,
+      "Italiano": 3
+    },
+    "timestamp_import": "2026-06-10T22:43:56.183552"
+  },
+  {
+    "id": 8,
+    "nome": "Luca",
+    "cognome": "Barbieri",
+    "data_nascita": "2004-09-21",
+    "email": "luca.barbieri8@scuola.it",
+    "assenze": 8,
+    "voti": {
+      "Matematica": 2,
+      "Informatica": 7,
+      "Italiano": 9
+    },
+    "timestamp_import": "2026-06-10T22:43:56.183562"
+  }
+]

@@ -425,7 +425,7 @@ def cmd_all(config):           # STEP 10 — Gestione CLI con sys.argv
 ##################################################################################################################################################
 def help():           # STEP 10 — Gestione CLI con sys.argv
     print("""
-        Uso:  python main.py <comando>
+        Uso:  python progetto.py <comando>
         
         Comandi disponibili:
             generate - Genera studenti casuali e salva il CSV in data/input/
