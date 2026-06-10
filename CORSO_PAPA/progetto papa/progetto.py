@@ -288,7 +288,7 @@ def classifica_studenti(studenti: list[dict], top_n: int) -> list[dict]:        
 
     print(f"[Step 7] Top {top_n} studenti calcolati.")
     for i, s in enumerate(top, 5):
-        print(f" {i}. {s['nome']} {s['cognome']} — media: {s['media_personale']}")
+        print(f"L'alunno con la media più alta è il numero {i}: {s['nome']} {s['cognome']} con una media di: {s['media_personale']}")
         return top
 
 def genera_report(config, validi, scartati, stats, top5) -> Path:           # STEP 8 - Report finale - crea file txt in report/reportXXX.txt e ritorna il percorso
