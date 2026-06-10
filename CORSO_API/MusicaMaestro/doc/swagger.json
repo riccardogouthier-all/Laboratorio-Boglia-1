@@ -1,0 +1,233 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API Catalogo Musicale",
+    "description": "Progetto di esempio per un catalogo musicale",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "tags": [
+    { "name": "Canzoni", "description": "Operazioni relative al catalogo delle canzoni" },
+    { "name": "Clienti", "description": "Operazioni relative ai clienti" }
+  ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Endpoint di prova",
+        "description": "Verifica che il server sia attivo",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v2/canzoni": {
+      "get": {
+        "tags": ["Canzoni"],
+        "summary": "Recupera l'intero catalogo delle canzoni",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Catalogo recuperato con successo",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/Canzone" } }
+          },
+          "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
+        }
+      },
+      "post": {
+        "tags": ["Canzoni"],
+        "summary": "Aggiunge una nuova canzone",
+        "parameters": [
+          {
+            "name": "body", "in": "body", "required": true,
+            "schema": { "$ref": "#/definitions/NuovaCanzone" }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Canzone creata con successo", "schema": { "$ref": "#/definitions/Messaggio" } },
+          "400": { "description": "Dati non validi", "schema": { "$ref": "#/definitions/Errore" } },
+          "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
+        }
+      }
+    },
+    "/api/v2/canzoni/search": {
+      "get": {
+        "tags": ["Canzoni"],
+        "summary": "Ricerca canzoni per titolo",
+        "parameters": [
+          { "name": "titolo", "in": "query", "required": true, "type": "string", "example": "Bohemian" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista delle canzoni corrispondenti",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/Canzone" } }
+          },
+          "400": { "description": "Parametro mancante", "schema": { "$ref": "#/definitions/Errore" } },
+          "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
+        }
+      }
+    },
+    "/api/v2/canzoni/{id}": {
+      "get": {
+        "tags": ["Canzoni"],
+        "summary": "Recupera il dettaglio di una canzone",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer", "example": 1 }
+        ],
+        "responses": {
+          "200": { "description": "Canzone trovata", "schema": { "$ref": "#/definitions/Canzone" } },
+          "404": { "description": "Canzone non trovata", "schema": { "$ref": "#/definitions/Errore" } },
+          "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
+        }
+      },
+      "put": {
+        "tags": ["Canzoni"],
+        "summary": "Aggiorna una canzone esistente",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer", "example": 1 },
+          { "name": "body", "in": "body", "required": true, "schema": { "$ref": "#/definitions/NuovaCanzone" } }
+        ],
+        "responses": {
+          "200": { "description": "Canzone aggiornata con successo", "schema": { "$ref": "#/definitions/Messaggio" } },
+          "400": { "description": "Dati non validi", "schema": { "$ref": "#/definitions/Errore" } },
+          "404": { "description": "Canzone non trovata", "schema": { "$ref": "#/definitions/Errore" } },
+          "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
+        }
+      },
+      "delete": {
+        "tags": ["Canzoni"],
+        "summary": "Elimina una canzone esistente",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer", "example": 1 }
+        ],
+        "responses": {
+          "200": { "description": "Canzone eliminata con successo", "schema": { "$ref": "#/definitions/Messaggio" } },
+          "404": { "description": "Canzone non trovata", "schema": { "$ref": "#/definitions/Errore" } },
+          "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
+        }
+      }
+    },
+    "/api/v2/clienti": {
+      "get": {
+        "tags": ["Clienti"],
+        "summary": "Recupera l'elenco di tutti i clienti",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Elenco clienti recuperato con successo",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/Cliente" } }
+          },
+          "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
+        }
+      },
+      "post": {
+        "tags": ["Clienti"],
+        "summary": "Aggiunge un nuovo cliente",
+        "parameters": [
+          { "name": "body", "in": "body", "required": true, "schema": { "$ref": "#/definitions/NuovoCliente" } }
+        ],
+        "responses": {
+          "201": { "description": "Cliente creato con successo", "schema": { "$ref": "#/definitions/Messaggio" } },
+          "400": { "description": "Dati non validi", "schema": { "$ref": "#/definitions/Errore" } },
+          "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
+        }
+      }
+    },
+    "/api/v2/clienti/{id}": {
+      "get": {
+        "tags": ["Clienti"],
+        "summary": "Recupera il dettaglio di un cliente",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer", "example": 1 }
+        ],
+        "responses": {
+          "200": { "description": "Cliente trovato", "schema": { "$ref": "#/definitions/Cliente" } },
+          "404": { "description": "Cliente non trovato", "schema": { "$ref": "#/definitions/Errore" } },
+          "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
+        }
+      },
+      "put": {
+        "tags": ["Clienti"],
+        "summary": "Aggiorna un cliente esistente",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer", "example": 1 },
+          { "name": "body", "in": "body", "required": true, "schema": { "$ref": "#/definitions/NuovoCliente" } }
+        ],
+        "responses": {
+          "200": { "description": "Cliente aggiornato con successo", "schema": { "$ref": "#/definitions/Messaggio" } },
+          "400": { "description": "Dati non validi", "schema": { "$ref": "#/definitions/Errore" } },
+          "404": { "description": "Cliente non trovato", "schema": { "$ref": "#/definitions/Errore" } },
+          "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
+        }
+      },
+      "delete": {
+        "tags": ["Clienti"],
+        "summary": "Elimina un cliente esistente",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer", "example": 1 }
+        ],
+        "responses": {
+          "200": { "description": "Cliente eliminato con successo", "schema": { "$ref": "#/definitions/Messaggio" } },
+          "404": { "description": "Cliente non trovato", "schema": { "$ref": "#/definitions/Errore" } },
+          "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Canzone": {
+      "type": "object",
+      "properties": {
+        "id":              { "type": "integer", "example": 1 },
+        "titolo":          { "type": "string",  "example": "Bohemian Rhapsody" },
+        "artista":         { "type": "string",  "example": "Queen" },
+        "album":           { "type": "string",  "example": "A Night at the Opera" },
+        "genere":          { "type": "string",  "example": "Rock" },
+        "durata_secondi":  { "type": "integer", "example": 354 }
+      }
+    },
+    "NuovaCanzone": {
+      "type": "object",
+      "required": ["titolo", "artista", "album"],
+      "properties": {
+        "titolo":         { "type": "string",  "example": "Bohemian Rhapsody" },
+        "artista":        { "type": "string",  "example": "Queen" },
+        "album":          { "type": "string",  "example": "A Night at the Opera" },
+        "genere":         { "type": "string",  "example": "Rock" },
+        "durata_secondi": { "type": "integer", "example": 354 }
+      }
+    },
+    "Cliente": {
+      "type": "object",
+      "properties": {
+        "id":       { "type": "integer", "example": 1 },
+        "nome":     { "type": "string",  "example": "Mario" },
+        "cognome":  { "type": "string",  "example": "Rossi" },
+        "email":    { "type": "string",  "example": "mario.rossi@email.it" },
+        "telefono": { "type": "string",  "example": "3401234567" }
+      }
+    },
+    "NuovoCliente": {
+      "type": "object",
+      "required": ["nome", "cognome", "email"],
+      "properties": {
+        "nome":     { "type": "string", "example": "Giovanni" },
+        "cognome":  { "type": "string", "example": "Ferrari" },
+        "email":    { "type": "string", "example": "giovanni.ferrari@email.it" },
+        "telefono": { "type": "string", "example": "3401234567" }
+      }
+    },
+    "Messaggio": {
+      "type": "object",
+      "properties": {
+        "message": { "type": "string", "example": "Operazione completata con successo" }
+      }
+    },
+    "Errore": {
+      "type": "object",
+      "properties": {
+        "error": { "type": "string", "example": "Messaggio di errore" }
+      }
+    }
+  }
+}
