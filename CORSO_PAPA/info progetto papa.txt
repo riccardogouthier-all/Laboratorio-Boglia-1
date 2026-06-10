@@ -1,0 +1,79 @@
+
+Nome del Progetto: Student Data Generator & Analyzer
+Nome della Scuola: ITS ICT Piemonte
+Anno: 2026
+Materia: Programmazione - Python
+Nome del Docente: Prof. Massimo Papa
+Nome dello Studente: Riccardo Gouthier
+
+================================================================================
+                              OGGETTO
+================================================================================
+
+Il progetto consiste nell'implementazione di un programma Python che genera dati 
+di studenti casuali, salva i dati su file CSV, li converte in formato JSON, 
+valida i dati utilizzando regex, calcola statistiche sui voti, produce un report 
+finale (JSON + TXT) e gestisce cartelle e log temporali. 
+Il software deve essere compatibile con distribuzioni GNU/Linux.
+
+================================================================================
+                              SCOPO
+================================================================================
+
+L'applicazione si prefigge di automatizzare la generazione e l'analisi di dati 
+studenti per scopi didattici e di test. Risolve la problematica della necessità 
+di creare rapidamente dataset realistici di studenti con voti validati, fornendo 
+al contempo statistiche dettagliate e report strutturati per analisi successive. 
+Questo strumento è utile per testing di sistemi, dimostrazioni didattiche e 
+simulazioni di gestione dati scolastici.
+
+================================================================================
+                        MODALITÀ OPERATIVE
+================================================================================
+
+Il progetto sarà implementato utilizzando:
+
+LINGUAGGIO DI PROGRAMMAZIONE:
+  • Python 3.11-3.13
+
+LIBRERIE PRINCIPALI:
+  • pandas        - Manipolazione dati e salvataggio CSV
+  • json          - Conversione e creazione file JSON
+  • re            - Validazione dati con regex
+  • random        - Generazione dati casuali
+  • datetime      - Log temporali e timestamp
+  • os            - Gestione cartelle e file system
+  • path          - Gestione cartelle e file system
+  • math          - Gestione e validazione dei voti
+
+
+AMBIENTE DI SVILUPPO:
+  • Editor: VS Code o PyCharm
+  • Sistema operativo: GNU/Linux (Ubuntu, Debian, o distribuzioni simili)
+  • Python environment: virtualenv o pipenv per gestione dependencies
+
+IMPLEMENTAZIONE DETTAGLIATA:
+  1. Generazione di dati studenti casuali (nome, età, corso, voti)
+  2. Salvataggio dati su file CSV strutturato
+  3. Conversione CSV → JSON con formattazione appropriata
+  4. Validazione di tutti i campi data tramite regex (età, voti, nomi)
+  5. Calcolo statistiche voti (media, mediana, minimo, massimo, 
+     deviazione standard)
+  6. Produzione report finale in formato JSON (dati strutturati) e 
+     TXT (report leggibile)
+  7. Gestione cartelle di output e log temporali con timestamp
+
+================================================================================
+                              NOTE
+================================================================================
+
+• Il software è progettato per essere compatibile con distribuzioni GNU/Linux
+• Tutte le librerie utilizzate sono open-source e disponibili su PyPI
+• Il codice sarà strutturato in modo modulare per facilitare testing e 
+  manutenzione
+• Sarà implementata documentazione inline per ogni funzione
+
+--------------------------------------------------------------------------------
+Documento redatto per la prova finale del corso - 2026
+Studente: Riccardo Gouthier - Turin, Piemonte, IT
+--------------------------------------------------------------------------------
