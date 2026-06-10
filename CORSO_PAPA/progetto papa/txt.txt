@@ -1,6 +1,9 @@
 
 
-
+vuoi aggiungere più materie in modo che sia più simile possibile alla realtà 
+e vuoi anche fare in modo che l'utente nella zona di record possa decidere i criteri sempre tramite cli:
+in pratica con report si ha la possibilità di generarne uno diverso in base alle esigenze
+aggiungi anche un comando che faccia generate_csv + validate insieme
 
 
 """
