@@ -58,12 +58,12 @@ def main():
 
         print(f"Credito residuo {credits} crediti")
 
-        play_again = input("Vuoi uscire?").upper()
+        play_again = input("Vuoi uscire? (y/N) ").upper()
 
         if play_again == 'Y':
+            print("Game Over!")
             break
 
-print("Game Over!")
 
 if __name__=="__main__":
     main()
