@@ -21,7 +21,7 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/api/v2/canzoni": {
+    "/api/canzoni": {
       "get": {
         "tags": ["Canzoni"],
         "summary": "Recupera l'intero catalogo delle canzoni",
@@ -50,7 +50,7 @@
         }
       }
     },
-    "/api/v2/canzoni/search": {
+    "/api/canzoni/search": {
       "get": {
         "tags": ["Canzoni"],
         "summary": "Ricerca canzoni per titolo",
@@ -67,7 +67,7 @@
         }
       }
     },
-    "/api/v2/canzoni/{id}": {
+    "/api/canzoni/{id}": {
       "get": {
         "tags": ["Canzoni"],
         "summary": "Recupera il dettaglio di una canzone",
@@ -107,68 +107,68 @@
         }
       }
     },
-    "/api/v2/clienti": {
+    "/api/playlist": {
       "get": {
-        "tags": ["Clienti"],
-        "summary": "Recupera l'elenco di tutti i clienti",
+        "tags": ["Playlists"],
+        "summary": "Recupera l'elenco di tutte le playlist",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Elenco clienti recuperato con successo",
-            "schema": { "type": "array", "items": { "$ref": "#/definitions/Cliente" } }
+            "description": "Elenco playlist recuperato con successo",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/Playlist" } }
           },
           "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
         }
       },
       "post": {
-        "tags": ["Clienti"],
-        "summary": "Aggiunge un nuovo cliente",
+        "tags": ["Playlists"],
+        "summary": "Aggiunge una nuova playlist",
         "parameters": [
-          { "name": "body", "in": "body", "required": true, "schema": { "$ref": "#/definitions/NuovoCliente" } }
+          { "name": "body", "in": "body", "required": true, "schema": { "$ref": "#/definitions/NuovaPlaylist" } }
         ],
         "responses": {
-          "201": { "description": "Cliente creato con successo", "schema": { "$ref": "#/definitions/Messaggio" } },
+          "201": { "description": "Playlist creata con successo", "schema": { "$ref": "#/definitions/Messaggio" } },
           "400": { "description": "Dati non validi", "schema": { "$ref": "#/definitions/Errore" } },
           "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
         }
       }
     },
-    "/api/v2/clienti/{id}": {
+    "/api/playlist/{id}": {
       "get": {
-        "tags": ["Clienti"],
-        "summary": "Recupera il dettaglio di un cliente",
+        "tags": ["Playlists"],
+        "summary": "Recupera il dettaglio di una playlist",
         "parameters": [
           { "name": "id", "in": "path", "required": true, "type": "integer", "example": 1 }
         ],
         "responses": {
-          "200": { "description": "Cliente trovato", "schema": { "$ref": "#/definitions/Cliente" } },
-          "404": { "description": "Cliente non trovato", "schema": { "$ref": "#/definitions/Errore" } },
+          "200": { "description": "Playlist trovata", "schema": { "$ref": "#/definitions/Playlist" } },
+          "404": { "description": "Playlist non trovata", "schema": { "$ref": "#/definitions/Errore" } },
           "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
         }
       },
       "put": {
-        "tags": ["Clienti"],
-        "summary": "Aggiorna un cliente esistente",
+        "tags": ["Playlists"],
+        "summary": "Aggiorna una playlist esistente",
         "parameters": [
           { "name": "id", "in": "path", "required": true, "type": "integer", "example": 1 },
-          { "name": "body", "in": "body", "required": true, "schema": { "$ref": "#/definitions/NuovoCliente" } }
+          { "name": "body", "in": "body", "required": true, "schema": { "$ref": "#/definitions/NuovaPlaylist" } }
         ],
         "responses": {
-          "200": { "description": "Cliente aggiornato con successo", "schema": { "$ref": "#/definitions/Messaggio" } },
+          "200": { "description": "Playlist aggiornata con successo", "schema": { "$ref": "#/definitions/Messaggio" } },
           "400": { "description": "Dati non validi", "schema": { "$ref": "#/definitions/Errore" } },
-          "404": { "description": "Cliente non trovato", "schema": { "$ref": "#/definitions/Errore" } },
+          "404": { "description": "Playlist non trovata", "schema": { "$ref": "#/definitions/Errore" } },
           "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
         }
       },
       "delete": {
-        "tags": ["Clienti"],
-        "summary": "Elimina un cliente esistente",
+        "tags": ["Playlists"],
+        "summary": "Elimina una playlist esistente",
         "parameters": [
           { "name": "id", "in": "path", "required": true, "type": "integer", "example": 1 }
         ],
         "responses": {
-          "200": { "description": "Cliente eliminato con successo", "schema": { "$ref": "#/definitions/Messaggio" } },
-          "404": { "description": "Cliente non trovato", "schema": { "$ref": "#/definitions/Errore" } },
+          "200": { "description": "Playlist eliminata con successo", "schema": { "$ref": "#/definitions/Messaggio" } },
+          "404": { "description": "Playlist non trovata", "schema": { "$ref": "#/definitions/Errore" } },
           "500": { "description": "Errore interno del server", "schema": { "$ref": "#/definitions/Errore" } }
         }
       }
@@ -207,14 +207,12 @@
         "telefono": { "type": "string",  "example": "3401234567" }
       }
     },
-    "NuovoCliente": {
+    "NuovaPlaylist": {
       "type": "object",
-      "required": ["nome", "cognome", "email"],
+      "required": ["nome"],
       "properties": {
-        "nome":     { "type": "string", "example": "Giovanni" },
-        "cognome":  { "type": "string", "example": "Ferrari" },
-        "email":    { "type": "string", "example": "giovanni.ferrari@email.it" },
-        "telefono": { "type": "string", "example": "3401234567" }
+        "nome":         { "type": "string",  "example": "My Playlist" },
+        "descrizione":  { "type": "string",  "example": "Una playlist di canzoni preferite" }
       }
     },
     "Messaggio": {
