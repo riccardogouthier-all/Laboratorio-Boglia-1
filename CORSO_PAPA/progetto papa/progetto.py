@@ -428,10 +428,10 @@ def help():           # STEP 10 — Gestione CLI con sys.argv
         Uso:  python main.py <comando>
         
         Comandi disponibili:
-          generate   Genera studenti casuali e salva il CSV in data/input/
-          validate   Valida il CSV e produce JSON in data/output/
-          report     Calcola statistiche e genera il report in report/
-          all        Esegue l'intera pipeline dall'inizio alla fine
+            generate - Genera studenti casuali e salva il CSV in data/input/
+            validate - Valida il CSV e produce JSON in data/output/
+            report   - Calcola statistiche e genera il report in report/
+            all      - Esegue l'intera pipeline dall'inizio alla fine
         """)
 ##################################################################################################################################################
 ##################################################################################################################################################
