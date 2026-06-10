@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Libreria Online</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <style>
+        body { background-color: #f8f9fa; }
+        .section-card { border-radius: 12px; }
+        .table-responsive { max-height: 400px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container">
+            <span class="navbar-brand fw-bold fs-4"><i class="bi bi-book-half me-2"></i>Libreria Online</span>
+            <div>
+                <a href="#section-libri" class="btn btn-outline-light btn-sm me-2">Libri</a>
+                <a href="#section-clienti" class="btn btn-outline-light btn-sm">Clienti</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+
+        <!-- ===== LIBRI ===== -->
+        <div id="section-libri" class="card shadow-sm section-card mb-5">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0"><i class="bi bi-journals me-2"></i>Libri</h5>
+                <button class="btn btn-light btn-sm" onclick="openLibroModal()">
+                    <i class="bi bi-plus-lg me-1"></i>Nuovo libro
+                </button>
+            </div>
+            <div class="card-body">
+                <!-- Search -->
+                <div class="input-group mb-3" style="max-width:360px;">
+                    <input id="searchTitolo" type="text" class="form-control" placeholder="Cerca per titolo…" />
+                    <button class="btn btn-outline-primary" onclick="searchLibri()"><i class="bi bi-search"></i></button>
+                    <button class="btn btn-outline-secondary" onclick="loadLibri()"><i class="bi bi-x-lg"></i></button>
+                </div>
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle mb-0">
+                        <thead class="table-primary sticky-top">
+                            <tr>
+                                <th>#</th>
+                                <th>Titolo</th>
+                                <th>Autore</th>
+                                <th>Editore</th>
+                                <th>Genere</th>
+                                <th>Pagine</th>
+                                <th class="text-center">Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="libriTableBody">
+                            <tr><td colspan="7" class="text-center text-muted py-4">Caricamento…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CLIENTI ===== -->
+        <div id="section-clienti" class="card shadow-sm section-card mb-5">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Clienti</h5>
+                <button class="btn btn-light btn-sm" onclick="openClienteModal()">
+                    <i class="bi bi-plus-lg me-1"></i>Nuovo cliente
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle mb-0">
+                        <thead class="table-success sticky-top">
+                            <tr>
+                                <th>#</th>
+                                <th>Nome</th>
+                                <th>Cognome</th>
+                                <th>Email</th>
+                                <th>Telefono</th>
+                                <th class="text-center">Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientiTableBody">
+                            <tr><td colspan="6" class="text-center text-muted py-4">Caricamento…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL LIBRO ===== -->
+    <div class="modal fade" id="libroModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="libroModalTitle">Libro</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="libroId" />
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Titolo <span class="text-danger">*</span></label>
+                        <input id="libroTitolo" type="text" class="form-control" placeholder="Titolo del libro" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Autore <span class="text-danger">*</span></label>
+                        <input id="libroAutore" type="text" class="form-control" placeholder="Nome autore" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Editore <span class="text-danger">*</span></label>
+                        <input id="libroEditore" type="text" class="form-control" placeholder="Nome editore" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Genere</label>
+                        <input id="libroGenere" type="text" class="form-control" placeholder="Es. Fantasy, Thriller…" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Numero pagine</label>
+                        <input id="libroNumeroPagine" type="number" min="1" class="form-control" placeholder="Es. 320" />
+                    </div>
+                    <div id="libroError" class="alert alert-danger d-none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-primary" onclick="saveLibro()">
+                        <i class="bi bi-floppy me-1"></i>Salva
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL CLIENTE ===== -->
+    <div class="modal fade" id="clienteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="clienteModalTitle">Cliente</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="clienteId" />
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nome <span class="text-danger">*</span></label>
+                        <input id="clienteNome" type="text" class="form-control" placeholder="Nome" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Cognome <span class="text-danger">*</span></label>
+                        <input id="clienteCognome" type="text" class="form-control" placeholder="Cognome" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                        <input id="clienteEmail" type="email" class="form-control" placeholder="email@esempio.it" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Telefono</label>
+                        <input id="clienteTelefono" type="tel" class="form-control" placeholder="Es. 3401234567" />
+                    </div>
+                    <div id="clienteError" class="alert alert-danger d-none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-success" onclick="saveCliente()">
+                        <i class="bi bi-floppy me-1"></i>Salva
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONFIRM DELETE MODAL ===== -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Conferma eliminazione</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmDeleteMessage">Sei sicuro di voler eliminare questo elemento?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="bi bi-trash me-1"></i>Elimina
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toastMsg" class="toast align-items-center text-white border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body fw-semibold" id="toastText"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API = 'http://localhost:3000/api/v2';
+
+        /* ── Utilities ─────────────────────────────────────────────── */
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toastMsg');
+            toast.className = `toast align-items-center text-white border-0 bg-${type}`;
+            document.getElementById('toastText').textContent = message;
+            bootstrap.Toast.getOrCreateInstance(toast, { delay: 3000 }).show();
+        }
+
+        function confirmDelete(message, onConfirm) {
+            document.getElementById('confirmDeleteMessage').textContent = message;
+            const btn = document.getElementById('confirmDeleteBtn');
+            const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('confirmDeleteModal'));
+            btn.onclick = () => { modal.hide(); onConfirm(); };
+            modal.show();
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           LIBRI
+        ══════════════════════════════════════════════════════════════ */
+        async function loadLibri() {
+            document.getElementById('searchTitolo').value = '';
+            try {
+                const res = await fetch(`${API}/libri`);
+                const data = await res.json();
+                renderLibri(data);
+            } catch {
+                showToast('Errore nel caricamento dei libri', 'danger');
+            }
+        }
+
+        async function searchLibri() {
+            const titolo = document.getElementById('searchTitolo').value.trim();
+            if (!titolo) { loadLibri(); return; }
+            try {
+                const res = await fetch(`${API}/libri/search?titolo=${encodeURIComponent(titolo)}`);
+                const data = await res.json();
+                renderLibri(data);
+            } catch {
+                showToast('Errore nella ricerca', 'danger');
+            }
+        }
+
+        function renderLibri(rows) {
+            const tbody = document.getElementById('libriTableBody');
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">Nessun libro trovato.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = rows.map(l => `
+                <tr>
+                    <td>${l.id}</td>
+                    <td>${escHtml(l.titolo)}</td>
+                    <td>${escHtml(l.autore)}</td>
+                    <td>${escHtml(l.editore)}</td>
+                    <td>${escHtml(l.genere ?? '—')}</td>
+                    <td>${l.numero_pagine ?? '—'}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary me-1" title="Modifica" onclick="openLibroModal(${l.id})">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" title="Elimina" onclick="deleteLibro(${l.id}, '${escHtml(l.titolo)}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>`).join('');
+        }
+
+        let libroModalInstance;
+        function openLibroModal(id = null) {
+            document.getElementById('libroId').value = '';
+            document.getElementById('libroTitolo').value = '';
+            document.getElementById('libroAutore').value = '';
+            document.getElementById('libroEditore').value = '';
+            document.getElementById('libroGenere').value = '';
+            document.getElementById('libroNumeroPagine').value = '';
+            document.getElementById('libroError').classList.add('d-none');
+
+            if (id) {
+                document.getElementById('libroModalTitle').textContent = 'Modifica libro';
+                fetch(`${API}/libri/${id}`)
+                    .then(r => r.json())
+                    .then(l => {
+                        document.getElementById('libroId').value = l.id;
+                        document.getElementById('libroTitolo').value = l.titolo;
+                        document.getElementById('libroAutore').value = l.autore;
+                        document.getElementById('libroEditore').value = l.editore;
+                        document.getElementById('libroGenere').value = l.genere ?? '';
+                        document.getElementById('libroNumeroPagine').value = l.numero_pagine ?? '';
+                    });
+            } else {
+                document.getElementById('libroModalTitle').textContent = 'Nuovo libro';
+            }
+            libroModalInstance = bootstrap.Modal.getOrCreateInstance(document.getElementById('libroModal'));
+            libroModalInstance.show();
+        }
+
+        async function saveLibro() {
+            const id = document.getElementById('libroId').value;
+            const body = {
+                titolo: document.getElementById('libroTitolo').value.trim(),
+                autore: document.getElementById('libroAutore').value.trim(),
+                editore: document.getElementById('libroEditore').value.trim(),
+                genere: document.getElementById('libroGenere').value.trim() || null,
+                numero_pagine: document.getElementById('libroNumeroPagine').value || null
+            };
+
+            if (!body.titolo || !body.autore || !body.editore) {
+                showFieldError('libroError', 'Titolo, autore ed editore sono obbligatori.');
+                return;
+            }
+
+            const url = id ? `${API}/libri/${id}` : `${API}/libri`;
+            const method = id ? 'PUT' : 'POST';
+            try {
+                const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const data = await res.json();
+                if (!res.ok) { showFieldError('libroError', data.error ?? 'Errore'); return; }
+                bootstrap.Modal.getInstance(document.getElementById('libroModal')).hide();
+                showToast(id ? 'Libro aggiornato con successo' : data.message);
+                loadLibri();
+            } catch {
+                showFieldError('libroError', 'Errore di rete.');
+            }
+        }
+
+        function deleteLibro(id, titolo) {
+            confirmDelete(`Eliminare il libro "${titolo}"?`, async () => {
+                try {
+                    const res = await fetch(`${API}/libri/${id}`, { method: 'DELETE' });
+                    const data = await res.json();
+                    if (!res.ok) { showToast(data.error ?? 'Errore', 'danger'); return; }
+                    showToast(data.message);
+                    loadLibri();
+                } catch {
+                    showToast('Errore di rete.', 'danger');
+                }
+            });
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           CLIENTI
+        ══════════════════════════════════════════════════════════════ */
+        async function loadClienti() {
+            try {
+                const res = await fetch(`${API}/clienti`);
+                const data = await res.json();
+                renderClienti(data);
+            } catch {
+                showToast('Errore nel caricamento dei clienti', 'danger');
+            }
+        }
+
+        function renderClienti(rows) {
+            const tbody = document.getElementById('clientiTableBody');
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">Nessun cliente trovato.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = rows.map(c => `
+                <tr>
+                    <td>${c.id}</td>
+                    <td>${escHtml(c.nome)}</td>
+                    <td>${escHtml(c.cognome)}</td>
+                    <td>${escHtml(c.email)}</td>
+                    <td>${escHtml(c.telefono ?? '—')}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-success me-1" title="Modifica" onclick="openClienteModal(${c.id})">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" title="Elimina" onclick="deleteCliente(${c.id}, '${escHtml(c.nome)} ${escHtml(c.cognome)}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>`).join('');
+        }
+
+        function openClienteModal(id = null) {
+            document.getElementById('clienteId').value = '';
+            document.getElementById('clienteNome').value = '';
+            document.getElementById('clienteCognome').value = '';
+            document.getElementById('clienteEmail').value = '';
+            document.getElementById('clienteTelefono').value = '';
+            document.getElementById('clienteError').classList.add('d-none');
+
+            if (id) {
+                document.getElementById('clienteModalTitle').textContent = 'Modifica cliente';
+                fetch(`${API}/clienti/${id}`)
+                    .then(r => r.json())
+                    .then(c => {
+                        document.getElementById('clienteId').value = c.id;
+                        document.getElementById('clienteNome').value = c.nome;
+                        document.getElementById('clienteCognome').value = c.cognome;
+                        document.getElementById('clienteEmail').value = c.email;
+                        document.getElementById('clienteTelefono').value = c.telefono ?? '';
+                    });
+            } else {
+                document.getElementById('clienteModalTitle').textContent = 'Nuovo cliente';
+            }
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('clienteModal')).show();
+        }
+
+        async function saveCliente() {
+            const id = document.getElementById('clienteId').value;
+            const body = {
+                nome: document.getElementById('clienteNome').value.trim(),
+                cognome: document.getElementById('clienteCognome').value.trim(),
+                email: document.getElementById('clienteEmail').value.trim(),
+                telefono: document.getElementById('clienteTelefono').value.trim() || null
+            };
+
+            if (!body.nome || !body.cognome || !body.email) {
+                showFieldError('clienteError', 'Nome, cognome ed email sono obbligatori.');
+                return;
+            }
+
+            const url = id ? `${API}/clienti/${id}` : `${API}/clienti`;
+            const method = id ? 'PUT' : 'POST';
+            try {
+                const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const data = await res.json();
+                if (!res.ok) { showFieldError('clienteError', data.error ?? 'Errore'); return; }
+                bootstrap.Modal.getInstance(document.getElementById('clienteModal')).hide();
+                showToast(id ? 'Cliente aggiornato con successo' : data.message);
+                loadClienti();
+            } catch {
+                showFieldError('clienteError', 'Errore di rete.');
+            }
+        }
+
+        function deleteCliente(id, nome) {
+            confirmDelete(`Eliminare il cliente "${nome}"?`, async () => {
+                try {
+                    const res = await fetch(`${API}/clienti/${id}`, { method: 'DELETE' });
+                    const data = await res.json();
+                    if (!res.ok) { showToast(data.error ?? 'Errore', 'danger'); return; }
+                    showToast(data.message);
+                    loadClienti();
+                } catch {
+                    showToast('Errore di rete.', 'danger');
+                }
+            });
+        }
+
+        /* ── Shared helpers ─────────────────────────────────────────── */
+        function showFieldError(elemId, msg) {
+            const el = document.getElementById(elemId);
+            el.textContent = msg;
+            el.classList.remove('d-none');
+        }
+
+        function escHtml(str) {
+            return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        /* ── Init ───────────────────────────────────────────────────── */
+        loadLibri();
+        loadClienti();
+
+        // Allow pressing Enter in the search field
+        document.getElementById('searchTitolo').addEventListener('keydown', e => {
+            if (e.key === 'Enter') searchLibri();
+        });
+    </script>
+</body>
+</html>
