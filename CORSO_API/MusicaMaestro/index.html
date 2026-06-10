@@ -260,9 +260,8 @@ document.getElementById('patchSongBtn').style.display = isPatch ? 'inline-block'
 document.getElementById('saveSongBtn').dataset.method = song && !isPatch ? 'PUT' : 'POST';
 document.getElementById('saveSongBtn').style.display  = isPatch ? 'none' : 'inline-block';
 
-new bootstrap.Modal(document.getElementById('songModal')).show();
-// bootstrap.Modal.getOrCreateInstance(document.getElementById('songModal')).show();
-
+// new bootstrap.Modal(document.getElementById('songModal')).show();
+bootstrap.Modal.getOrCreateInstance(document.getElementById('songModal')).show();
 }
 
 async function editSong(id) {
@@ -388,7 +387,8 @@ document.getElementById('patchPlaylistBtn').style.display  = isPatch ? 'inline-b
 document.getElementById('savePlaylistBtn').dataset.method  = playlist && !isPatch ? 'PUT' : 'POST';
 document.getElementById('savePlaylistBtn').style.display   = isPatch ? 'none' : 'inline-block';
 
-new bootstrap.Modal(document.getElementById('playlistModal')).show();
+// new bootstrap.Modal(document.getElementById('playlistModal')).show();
+bootstrap.Modal.getOrCreateInstance(document.getElementById('PlaylistModal')).show();
 }
 
 function editPlaylist(id) {
@@ -474,7 +474,8 @@ try {
         </div>` : '<p class="text-muted">Nessuna canzone in questa playlist.</p>'}
     </div>`;
 
-    new bootstrap.Modal(document.getElementById('playlistDetailModal')).show();
+    // new bootstrap.Modal(document.getElementById('playlistDetailModal')).show();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('PlaylistModal')).show();
 } catch { toast('Errore nel caricamento playlist', 'danger'); }
 }
 
@@ -485,7 +486,8 @@ sel.innerHTML = '<option value="">-- Seleziona --</option>';
 sel.innerHTML += allSongs.map(s =>
     `<option value="${s.id}">${esc(s.titolo)} – ${esc(s.artista)}</option>`
 ).join('');
-new bootstrap.Modal(document.getElementById('addSongModal')).show();
+// new bootstrap.Modal(document.getElementById('addSongModal')).show();
+bootstrap.Modal.getOrCreateInstance(document.getElementById('songModal')).show();
 }
 
 async function addSongToPlaylist() {
