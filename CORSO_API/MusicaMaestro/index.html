@@ -475,7 +475,7 @@ try {
     </div>`;
 
     // new bootstrap.Modal(document.getElementById('playlistDetailModal')).show();
-    bootstrap.Modal.getOrCreateInstance(document.getElementById('PlaylistModal')).show();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('playlistDetailModal')).show();
 } catch { toast('Errore nel caricamento playlist', 'danger'); }
 }
 
@@ -487,7 +487,7 @@ sel.innerHTML += allSongs.map(s =>
     `<option value="${s.id}">${esc(s.titolo)} – ${esc(s.artista)}</option>`
 ).join('');
 // new bootstrap.Modal(document.getElementById('addSongModal')).show();
-bootstrap.Modal.getOrCreateInstance(document.getElementById('songModal')).show();
+bootstrap.Modal.getOrCreateInstance(document.getElementById('addSongModal')).show();
 }
 
 async function addSongToPlaylist() {
