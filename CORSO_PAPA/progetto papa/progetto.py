@@ -63,14 +63,14 @@ def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
         config = json.load(f)
     return config       # dizionario impostazioni
-
+'''
 def genera_data_nascita() -> str:         # STEP 2 - stringa con la data
     """Genera una data di nascita casuale tra il 2004 e il 2009."""
     inizio = date(2004, 1, 1).toordinal()
     fine   = date(2009, 12, 31).toordinal()
     giorno_casuale = random.randint(inizio, fine)
     return date.fromordinal(giorno_casuale).isoformat()         #stringa con la data
-'''GENERAZIONE STUDENTI'''
+    # GENERAZIONE STUDENTI TRAMITE CODICE PYTHON
 def genera_studenti(config: dict) -> list[dict]:        # STEP 2 - lista di studenti in python
     NOMI = [
     "Luca", "Marco", "Andrea", "Giulia", "Sofia", "Elena",
@@ -99,7 +99,7 @@ def genera_studenti(config: dict) -> list[dict]:        # STEP 2 - lista di stud
         }
         # Extra C — campo assenze
         assenze = random.randint(0, 20)
- 
+
         studente = {
             "id":           i,
             "nome":         nome,
@@ -110,10 +110,11 @@ def genera_studenti(config: dict) -> list[dict]:        # STEP 2 - lista di stud
             "assenze":      assenze,
         }
         studenti.append(studente)
- 
+
     print(f"[Step 2] Generati {len(studenti)} studenti.")
     return studenti         #lista di studenti in python
-'''GENERAZIONE STUDENTI'''
+    # GENERAZIONE STUDENTI TRAMITE CODICE PYTHON
+'''
 def salva_su_csv(studenti: list[dict], config:dict) -> Path:       # STEP 3 - SALVATAGGIO SU CSV - path sistema x la lista python
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -409,6 +410,13 @@ def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
     classifica = classifica_studenti(validi, top_n=5)            # STEP 7
     genera_report(config, validi, scartati, statistica_per_materia, classifica)            # STEP 8
 ##################################################################################################################################################
+def cmd_aggregate_generate_validate(config):           # STEP 10 — Gestione CLI con sys.argv
+    print("\n FASE 1 — Generazione dati")
+    cmd_generate(config)
+
+    print("\n FASE 2 — Validazione e conversione")
+    cmd_validate(config)
+
 def cmd_all(config):           # STEP 10 — Gestione CLI con sys.argv
     print("\n FASE 1 — Generazione dati")
     cmd_generate(config)
@@ -428,9 +436,10 @@ def help():           # STEP 10 — Gestione CLI con sys.argv
         Uso:  python progetto.py <comando>
         
         Comandi disponibili:
-            generate - Genera studenti casuali e salva il CSV in data/input/
+            generate - Genera in base a una lista di studenti inserita in input un file CSV in data/input/
             validate - Valida il CSV e produce JSON in data/output/
-            report   - Calcola statistiche e genera il report in report/
+            generate and validate - Esegue la generazione e la validazione in sequenza (senza report)
+            report   - Calcola statistiche su un file CSV esistente e genera il report in report/
             all      - Esegue l'intera pipeline dall'inizio alla fine
         """)
 ##################################################################################################################################################
@@ -453,6 +462,8 @@ if __name__ == "__main__":
         cmd_validate(config)
     elif comando == "report":
         cmd_report(config)
+    elif comando == "generate and validate":
+        cmd_aggregate_generate_validate(config)
     elif comando == "all":
         cmd_all(config)
     else:

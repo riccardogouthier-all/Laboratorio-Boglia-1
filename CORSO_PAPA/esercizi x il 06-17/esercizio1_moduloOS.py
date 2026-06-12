@@ -16,6 +16,7 @@ def elencare_directories(percorso):
         lista di nomi delle directory trovate
     """
     # Verifica che il percorso esiste e è una directory
+    # if not Path(percorso).exists:
     if not os.path.exists(percorso):
         print(f"Errore: il percorso '{percorso}' non esiste.")
         return []
