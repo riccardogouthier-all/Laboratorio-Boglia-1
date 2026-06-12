@@ -14,7 +14,7 @@ import os            # Step 0, 9 — cartelle e backup
 import json          # Step 1, 5, 6 — config e JSON
 import csv           # Step 3, 4 — lettura/scrittura CSV
 import re            # Step 4 — validazione con espressioni regolari
-import random        # Step 2 — generazione dati casuali
+# import random        # Step 2 — generazione dati casuali
 import math          # Step 6 — arrotondamenti
 import statistics    # Step 6 — media, mediana, stdev
 import shutil        # Step 9 — copia file (backup)
@@ -48,7 +48,8 @@ def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
         "numero_studenti": 50,
         "voto_min": 2,
         "voto_max": 10,
-        "materie": ["Matematica", "Informatica", "Italiano"],
+        # "materie": ["Matematica", "Informatica", "Italiano"],
+        "materie": ["Matematica", "Informatica", "Italiano", "Storia", "Inglese", "Educazione Fisica"],
         "classe": "5A"
         }
 
@@ -335,13 +336,15 @@ def genera_report(config, validi, scartati, stats, top5) -> Path:           # ST
         righe.append("  CORRELAZIONE ASSENZE SU STUDENTI VALIDI")
         righe.append("-" * 60)
         alta_ass   = [s for s in validi if s["assenze"] >= 10]
+        nomi_alta = [f"\n       {s['nome']} {s['cognome']} \n" for s in alta_ass]
         bassa_ass  = [s for s in validi if s["assenze"] <  10]
-
-        if alta_ass and bassa_ass:
+        nomi_bassa = [f"\n      {s['nome']} {s['cognome']}" for s in bassa_ass]
+        if alta_ass and nomi_alta:
             # media_alta  = round(statistics.mean(s["media_personale"] for s in alta_ass), 2)
             # media_bassa = round(statistics.mean(s["media_personale"] for s in bassa_ass), 2)
-            righe.append(f"  Studenti con ≥10 assenze ({len(alta_ass)})")#: media voti = {media_alta}")
-            righe.append(f"  Studenti con <10 assenze ({len(bassa_ass)})")#): media voti = {media_bassa}")
+            righe.append(f"  Studenti con ≥10 assenze ({len(alta_ass)}): {', '.join(nomi_alta)}")#: media voti = {media_alta}")
+        if bassa_ass and nomi_bassa:
+            righe.append(f"  Studenti con <10 assenze ({len(bassa_ass)}): {', '.join(nomi_bassa)}")#): media voti = {media_bassa}")
 
     righe.append("")
     righe.append("=" * 60)
