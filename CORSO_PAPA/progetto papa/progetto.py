@@ -371,7 +371,9 @@ def cmd_generate(config):           # STEP 10 — Gestione CLI con sys.argv
     # studenti = genera_studenti(config)        # STEP 2
     # path = Path("studenti.txt")        # input tramite file per permettere all'utente di scrivere in input i propri studenti (opzionale).
     # studenti = path.read_text().splitlines()       # se il file esiste, lo legge e genera la lista studenti da lì, altrimenti genera studenti casuali
+
     # lidea è che vuoi collegare un database che con cursor stampa in studenti txt e da li continui col programma
+    
     with open("studenti.txt", encoding="utf-8") as f:
         contenuto = f.read()
     studenti = ast.literal_eval("[" + contenuto + "]")    
