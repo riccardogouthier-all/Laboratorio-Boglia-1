@@ -1,4 +1,3 @@
-27, Aurora,     Pellegrini, 2008-11-29, aurora.pellegrini@scuola.it,  8,7,6,9,7,8,5
 1, Luca,        Barbieri,   2004-09-21, luca.barbieri8@scuola.it,     7,7,7,7,7,7,8
 2, Giulia,      Rossi,      2008-03-15, giulia.rossi@scuola.it,       5,8,3,9,6,4,7
 3, Marco,       Bianchi,    2006-11-22, marco.bianchi@scuola.it,      7,4,8,5,9,6,12

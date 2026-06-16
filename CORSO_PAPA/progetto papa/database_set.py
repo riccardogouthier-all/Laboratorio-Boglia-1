@@ -175,25 +175,25 @@ def leggi_studenti_da_file(config: dict) -> list[dict]:
 
     return studenti
 
-def crea_database_e_tabelle(cursor, config):
+def crea_database_e_tabelle(cursor):
     # studenti
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS studenti (
-            id INT PRIMARY KEY,
-            nome VARCHAR(50) NOT NULL,
-            cognome VARCHAR(50) NOT NULL,
-            data_nascita DATE NOT NULL,
-            email VARCHAR(100) NOT NULL UNIQUE,
-            assenze INT NOT NULL DEFAULT 0
+            id INTEGER PRIMARY KEY,
+            nome TEXT NOT NULL,
+            cognome TEXT NOT NULL,
+            data_nascita TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            assenze INTEGER NOT NULL DEFAULT 0
         )
-    """)
+    """) # no formato DATE in sqlite, usiamo TEXT e validiamo il formato a livello codice Python
     # voti
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS voti (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            studente_id INT NOT NULL,
-            materia VARCHAR(50) NOT NULL,
-            voto INT NOT NULL,
+            studente_id INTEGER NOT NULL,
+            materia TEXT NOT NULL,
+            voto INTEGER NOT NULL,
             FOREIGN KEY (studente_id) REFERENCES studenti(id)
                 ON DELETE CASCADE,
             UNIQUE (studente_id, materia)
@@ -245,7 +245,7 @@ def main():
     cursor = connessione.cursor()
     cursor.execute("PRAGMA foreign_keys = ON")     # senza, SQLite ignora i vincoli FOREIGN KEY e l'ON DELETE CASCADE non funzionerebbe.
 
-    crea_database_e_tabelle(cursor, config)
+    crea_database_e_tabelle(cursor)
     inserisci_studenti(cursor, studenti)
 
     connessione.commit()
