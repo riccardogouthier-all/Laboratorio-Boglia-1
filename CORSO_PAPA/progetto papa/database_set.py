@@ -30,43 +30,71 @@ se necessario, il percorso del file in PERCORSO_FILE.
 """
 
 import datetime
+import json
+from pathlib import Path
 import re
 import mysql.connector
 
 # ---------------------------------------------------------------------
 # CONFIGURAZIONE (modifica con i tuoi dati)
 # ---------------------------------------------------------------------
+def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
+    path = Path.cwd()                       #("PROGETTO-Student Analytics Pipeline")    #"CORSO_BOGLIA","basi di programmazione",
+    CONFIG_PATH = path / "configdb.json"
+
+    NOME_DATABASE = "scuola_db"
+# PERCORSO_FILE = "studenti.txt"
+    PERCORSO_FILE = input("Inserisci il percorso del file studenti.txt (default: studenti.txt): ") or "studenti.txt"
+
+    MATERIE = [
+        "Matematica",
+        "Informatica",
+        "Italiano",
+        "Storia",
+        "Inglese",
+        "Educazione Fisica",
+    ]
+
+# Numero di campi attesi per riga: id, nome, cognome, data_nascita, email,
+# 6 voti, assenze
+    NUMERO_CAMPI_ATTESI = 5 + len(MATERIE) + 1
+
+    REGEX_DATA = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    REGEX_EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+
+    """Crea configdb.json con valori di nome database, percorso file, materie, campi attesi, data e email se non esiste, poi lo legge."""
+    if not CONFIG_PATH.exists():
+        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+            json.dump({
+                "NOME_DATABASE": NOME_DATABASE,
+                "PERCORSO_FILE": PERCORSO_FILE,
+                "MATERIE": MATERIE,
+                "NUMERO_CAMPI_ATTESI": NUMERO_CAMPI_ATTESI,
+                "REGEX_DATA": REGEX_DATA.pattern,
+                "REGEX_EMAIL": REGEX_EMAIL.pattern
+            }, f, indent=2, ensure_ascii=False)
+        print("[Step 1] configdb.json creato con valori di default.")
+    else:
+        print("[Step 1] configdb.json trovato, caricamento in corso.")
+
+    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+        config = json.load(f)
+    return config       # dizionario impostazioni
+
+
 CONFIG_DB = {
     "host": "localhost",
     "user": "root",
     "password": "password",
 }
 
-NOME_DATABASE = "scuola_db"
-PERCORSO_FILE = "studenti.txt"
 
-MATERIE = [
-    "Matematica",
-    "Informatica",
-    "Italiano",
-    "Storia",
-    "Inglese",
-    "Educazione Fisica",
-]
-
-# Numero di campi attesi per riga: id, nome, cognome, data_nascita, email,
-# 6 voti, assenze
-NUMERO_CAMPI_ATTESI = 5 + len(MATERIE) + 1
-
-REGEX_DATA = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-REGEX_EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-
-
-def valida_studente(studente: dict, numero_riga: int):
+def valida_studente(studente: dict, numero_riga: int, config: dict):
     """Controlla che i dati di uno studente siano coerenti, altrimenti
     solleva un errore chiaro che indica la riga problematica."""
 
-    if not REGEX_DATA.match(studente["data_nascita"]):
+    if not config["REGEX_DATA"].match(studente["data_nascita"]):
         raise ValueError(
             f"Riga {numero_riga}: data di nascita non valida "
             f"'{studente['data_nascita']}' (formato richiesto AAAA-MM-GG)"
@@ -80,7 +108,7 @@ def valida_studente(studente: dict, numero_riga: int):
             f"'{studente['data_nascita']}'"
         )
 
-    if not REGEX_EMAIL.match(studente["email"]):
+    if not config["REGEX_EMAIL"].match(studente["email"]):
         raise ValueError(
             f"Riga {numero_riga}: email non valida '{studente['email']}'"
         )
@@ -97,7 +125,7 @@ def valida_studente(studente: dict, numero_riga: int):
         )
 
 
-def leggi_studenti_da_file(percorso: str) -> list[dict]:
+def leggi_studenti_da_file(percorso: str, config: dict) -> list[dict]:
     """Legge il file txt e restituisce una lista di dizionari studente."""
     studenti = []
 
@@ -110,19 +138,19 @@ def leggi_studenti_da_file(percorso: str) -> list[dict]:
 
             campi = [c.strip() for c in riga.split(",")]
 
-            if len(campi) != NUMERO_CAMPI_ATTESI:
+            if len(campi) != config["NUMERO_CAMPI_ATTESI"]:
                 raise ValueError(
                     f"Riga {numero_riga}: trovati {len(campi)} campi invece di "
-                    f"{NUMERO_CAMPI_ATTESI} attesi -> '{riga}'"
+                    f"{config['NUMERO_CAMPI_ATTESI']} attesi -> '{riga}'"
                 )
 
             id_studente, nome, cognome, data_nascita, email, *resto = campi
-            voti_grezzi, assenze_grezza = resto[:len(MATERIE)], resto[len(MATERIE)]
+            voti_grezzi, assenze_grezza = resto[:len(config["MATERIE"])], resto[len(config["MATERIE"]):]
 
             try:
                 voti = {
                     materia: int(voto)
-                    for materia, voto in zip(MATERIE, voti_grezzi)
+                    for materia, voto in zip(config["MATERIE"], voti_grezzi)
                 }
             except ValueError:
                 raise ValueError(
@@ -147,15 +175,15 @@ def leggi_studenti_da_file(percorso: str) -> list[dict]:
                 "assenze": assenze,
             }
 
-            valida_studente(studente, numero_riga)
+            valida_studente(studente, numero_riga, config=config)
             studenti.append(studente)
 
     return studenti
 
 
-def crea_database_e_tabelle(cursor):
-    cursor.execute(f"CREATE DATABASE IF NOT EXISTS {NOME_DATABASE}")
-    cursor.execute(f"USE {NOME_DATABASE}")
+def crea_database_e_tabelle(cursor, config):
+    cursor.execute(f"CREATE DATABASE IF NOT EXISTS {config['NOME_DATABASE']}")
+    cursor.execute(f"USE {config['NOME_DATABASE']}")
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS studenti (
@@ -212,27 +240,28 @@ def inserisci_studenti(cursor, studenti: list[dict]):
 
 
 def main():
-    studenti = leggi_studenti_da_file(PERCORSO_FILE)
+    config = carica_config()
+    studenti = leggi_studenti_da_file(config["PERCORSO_FILE"], config)
 
     if not studenti:
-        print(f"Nessuno studente trovato in '{PERCORSO_FILE}'.")
+        print(f"Nessuno studente trovato in '{config['PERCORSO_FILE']}'.")
         return
 
-    print(f"Letti {len(studenti)} studenti da '{PERCORSO_FILE}'.")
+    print(f"Letti {len(studenti)} studenti da '{config['PERCORSO_FILE']}'.")
     print("Esempio:")
     print(studenti[0])
 
-    connessione = mysql.connector.connect(**CONFIG_DB)
+    connessione = mysql.connector.connect(**config["CONFIG_DB"])
     cursor = connessione.cursor()
 
-    crea_database_e_tabelle(cursor)
+    crea_database_e_tabelle(cursor, config)
     inserisci_studenti(cursor, studenti)
 
     connessione.commit()
     cursor.close()
     connessione.close()
 
-    print(f"Database '{NOME_DATABASE}' popolato con {len(studenti)} studenti.")
+    print(f"Database '{config['NOME_DATABASE']}' popolato con {len(studenti)} studenti.")
 
 
 if __name__ == "__main__":
