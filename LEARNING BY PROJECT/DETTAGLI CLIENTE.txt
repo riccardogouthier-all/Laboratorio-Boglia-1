@@ -1,0 +1,68 @@
+--------------------------------------------------------------
+dettagli cliente ronco
+--------------------------------------------------------------
+
+chi è 
+nome azienda
+logo / grafica / marchio
+
+--------------------------------------------------------------
+
+ruolo
+business
+target [ b2b , b2c , b2g ]
+dimensione
+mission
+anagrafica aziendale
+sito
+contatti
+
+--------------------------------------------------------------
+
+strumenti / linguaggio di programmazione
+piattaforma di lavoro
+maturità tecnologica
+licenze
+
+--------------------------------------------------------------
+
+NDA
+
+--------------------------------------------------------------
+
+
+
+--------------------------------------------------------------
+dettagli prodotto
+--------------------------------------------------------------
+
+quale prodotto
+budget
+tempistiche
+target 
+tecnologie utilizzate / integrazione con nuovi sistemi
+mezzi di comunicazione
+devices inclusi per il lavoro (laptop aziendale ecc)
+storico
+cosa vuole / cosa non vuole
+obiettivi 
+metodo di lavoro 
+benchmark (prodotto di riferimento)
+manutenzione / aggiornamenti / formazione
+
+--------------------------------------------------------------
+
+
+--------------------------------------------------------------
+
+budget
+strumenti
+ricavo
+assistenza
+fondo imprevisti
+aggiornamenti 
+formazione
+
+
+
+=============================================================

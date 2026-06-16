@@ -106,3 +106,5 @@ Una formulazione ragionevole è presentare un preventivo modulare: fase di asses
 Nel Gantt puoi inserire queste fasi: analisi, progettazione, procurement, installazione, migrazione, test, go-live e supporto.
 Nel RACI puoi assegnare responsabilità a: project manager, sistemista, referente aziendale, team sicurezza e eventuale fornitore cloud/hosting.
 Queste due sezioni sono “nice to have”, quindi possono rafforzare molto la qualità del lavoro finale.
+
+MOSAIC GROUP
