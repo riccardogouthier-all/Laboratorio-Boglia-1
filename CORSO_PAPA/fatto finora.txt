@@ -19,5 +19,9 @@ x il 06-03
 esercizi OOP ereditarietà
 x il 06-10
 esercizi files
-x il 06-12
+x il 06-17
 esercizi OS/Path
+
+
+x il 08-10
+progetto python 
