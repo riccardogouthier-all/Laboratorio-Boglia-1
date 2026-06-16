@@ -10,8 +10,7 @@ e popola un database MySQL "scuola_db", nello stile:
 
 FORMATO DEL FILE TXT (una riga per studente, valori separati da virgola):
 
-    id,nome,cognome,data_nascita,email,voto_matematica,voto_informatica,
-    voto_italiano,voto_storia,voto_inglese,voto_edfisica,assenze
+    id,nome,cognome,data_nascita,email, voto_matematica,voto_informatica,voto_italiano,voto_storia,voto_inglese,voto_edfisica,assenze
 
 Esempio di riga:
     27,Aurora,Pellegrini,2008-11-29,aurora.pellegrini@scuola.it,8,7,6,9,7,8,5
@@ -33,18 +32,19 @@ import datetime
 import json
 from pathlib import Path
 import re
-import mysql.connector
+import sqlite3
 
 # ---------------------------------------------------------------------
 # CONFIGURAZIONE (modifica con i tuoi dati)
 # ---------------------------------------------------------------------
 def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
+    """Crea configdb.json con valori di nome database, percorso file, materie, campi attesi, data e email se non esiste, poi lo legge."""
     path = Path.cwd()                       #("PROGETTO-Student Analytics Pipeline")    #"CORSO_BOGLIA","basi di programmazione",
     CONFIG_PATH = path / "configdb.json"
 
     NOME_DATABASE = "scuola_db"
-# PERCORSO_FILE = "studenti.txt"
-    PERCORSO_FILE = input("Inserisci il percorso del file studenti.txt (default: studenti.txt): ") or "studenti.txt"
+    PERCORSO_FILE = "studenti.txt"
+    # PERCORSO_FILE = input("Inserisci il percorso del file studenti.txt (default: studenti.txt): ") or "studenti.txt"
 
     MATERIE = [
         "Matematica",
@@ -55,22 +55,17 @@ def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
         "Educazione Fisica",
     ]
 
-# Numero di campi attesi per riga: id, nome, cognome, data_nascita, email,
-# 6 voti, assenze
-    NUMERO_CAMPI_ATTESI = 5 + len(MATERIE) + 1
-
     REGEX_DATA = re.compile(r"^\d{4}-\d{2}-\d{2}$")
     REGEX_EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
-    """Crea configdb.json con valori di nome database, percorso file, materie, campi attesi, data e email se non esiste, poi lo legge."""
     if not CONFIG_PATH.exists():
         with open(CONFIG_PATH, "w", encoding="utf-8") as f:
             json.dump({
                 "NOME_DATABASE": NOME_DATABASE,
                 "PERCORSO_FILE": PERCORSO_FILE,
                 "MATERIE": MATERIE,
-                "NUMERO_CAMPI_ATTESI": NUMERO_CAMPI_ATTESI,
+                # "NUMERO_CAMPI_ATTESI": NUMERO_CAMPI_ATTESI,
                 "REGEX_DATA": REGEX_DATA.pattern,
                 "REGEX_EMAIL": REGEX_EMAIL.pattern
             }, f, indent=2, ensure_ascii=False)
@@ -80,21 +75,18 @@ def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
 
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
         config = json.load(f)
+    config["NUMERO_CAMPI_ATTESI"] = 5 + len(config["MATERIE"]) + 1  # non serve salvarlo nel file come numero fisso perché dipende da quante materie ci sono, quindi lo calcoliamo
+
     return config       # dizionario impostazioni
-
-
-CONFIG_DB = {
-    "host": "localhost",
-    "user": "root",
-    "password": "password",
-}
-
 
 def valida_studente(studente: dict, numero_riga: int, config: dict):
     """Controlla che i dati di uno studente siano coerenti, altrimenti
     solleva un errore chiaro che indica la riga problematica."""
+    regex_data = re.compile(config["REGEX_DATA"])
+    regex_email = re.compile(config["REGEX_EMAIL"])
 
-    if not config["REGEX_DATA"].match(studente["data_nascita"]):
+
+    if not regex_data.match(studente["data_nascita"]):
         raise ValueError(
             f"Riga {numero_riga}: data di nascita non valida "
             f"'{studente['data_nascita']}' (formato richiesto AAAA-MM-GG)"
@@ -108,7 +100,7 @@ def valida_studente(studente: dict, numero_riga: int, config: dict):
             f"'{studente['data_nascita']}'"
         )
 
-    if not config["REGEX_EMAIL"].match(studente["email"]):
+    if not regex_email.match(studente["email"]):
         raise ValueError(
             f"Riga {numero_riga}: email non valida '{studente['email']}'"
         )
@@ -124,9 +116,9 @@ def valida_studente(studente: dict, numero_riga: int, config: dict):
             f"Riga {numero_riga}: numero di assenze negativo: {studente['assenze']}"
         )
 
-
-def leggi_studenti_da_file(percorso: str, config: dict) -> list[dict]:
+def leggi_studenti_da_file(config: dict) -> list[dict]:
     """Legge il file txt e restituisce una lista di dizionari studente."""
+    percorso = config["PERCORSO_FILE"]
     studenti = []
 
     with open(percorso, "r", encoding="utf-8") as file:
@@ -144,7 +136,10 @@ def leggi_studenti_da_file(percorso: str, config: dict) -> list[dict]:
                     f"{config['NUMERO_CAMPI_ATTESI']} attesi -> '{riga}'"
                 )
 
+
+            # Numero di campi attesi per riga: id, nome, cognome, data_nascita, email,
             id_studente, nome, cognome, data_nascita, email, *resto = campi
+            # 6 voti, assenze
             voti_grezzi, assenze_grezza = resto[:len(config["MATERIE"])], resto[len(config["MATERIE"]):]
 
             try:
@@ -154,12 +149,12 @@ def leggi_studenti_da_file(percorso: str, config: dict) -> list[dict]:
                 }
             except ValueError:
                 raise ValueError(
-                    f"Riga {numero_riga}: uno dei voti non e' un numero intero -> '{riga}'"
+                    f"Riga {numero_riga}: uno dei voti non e' un numero intero valido -> '{riga}'"
                 )
 
             try:
                 id_studente = int(id_studente)
-                assenze = int(assenze_grezza)
+                assenze = int(assenze_grezza[0])
             except ValueError:
                 raise ValueError(
                     f"Riga {numero_riga}: id o assenze non sono numeri interi -> '{riga}'"
@@ -180,11 +175,8 @@ def leggi_studenti_da_file(percorso: str, config: dict) -> list[dict]:
 
     return studenti
 
-
 def crea_database_e_tabelle(cursor, config):
-    cursor.execute(f"CREATE DATABASE IF NOT EXISTS {config['NOME_DATABASE']}")
-    cursor.execute(f"USE {config['NOME_DATABASE']}")
-
+    # studenti
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS studenti (
             id INT PRIMARY KEY,
@@ -195,35 +187,34 @@ def crea_database_e_tabelle(cursor, config):
             assenze INT NOT NULL DEFAULT 0
         )
     """)
-
+    # voti
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS voti (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             studente_id INT NOT NULL,
             materia VARCHAR(50) NOT NULL,
             voto INT NOT NULL,
             FOREIGN KEY (studente_id) REFERENCES studenti(id)
                 ON DELETE CASCADE,
-            UNIQUE KEY uniq_studente_materia (studente_id, materia)
+            UNIQUE (studente_id, materia)
         )
     """)
-
 
 def inserisci_studenti(cursor, studenti: list[dict]):
     sql_studente = """
         INSERT INTO studenti (id, nome, cognome, data_nascita, email, assenze)
-        VALUES (%s, %s, %s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE
-            nome = VALUES(nome),
-            cognome = VALUES(cognome),
-            data_nascita = VALUES(data_nascita),
-            email = VALUES(email),
-            assenze = VALUES(assenze)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+            nome = excluded.nome,
+            cognome = excluded.cognome,
+            data_nascita = excluded.data_nascita,
+            email = excluded.email,
+            assenze = excluded.assenze
     """
     sql_voto = """
         INSERT INTO voti (studente_id, materia, voto)
-        VALUES (%s, %s, %s)
-        ON DUPLICATE KEY UPDATE voto = VALUES(voto)
+        VALUES (?, ?, ?)
+        ON CONFLICT(studente_id, materia) DO UPDATE SET voto = excluded.voto
     """
 
     for studente in studenti:
@@ -238,21 +229,21 @@ def inserisci_studenti(cursor, studenti: list[dict]):
         for materia, voto in studente["voti"].items():
             cursor.execute(sql_voto, (studente["id"], materia, voto))
 
-
 def main():
     config = carica_config()
-    studenti = leggi_studenti_da_file(config["PERCORSO_FILE"], config)
+    studenti = leggi_studenti_da_file(config)
 
     if not studenti:
         print(f"Nessuno studente trovato in '{config['PERCORSO_FILE']}'.")
         return
 
     print(f"Letti {len(studenti)} studenti da '{config['PERCORSO_FILE']}'.")
-    print("Esempio:")
-    print(studenti[0])
+    # print("Esempio:")
+    # print(studenti[0])
 
-    connessione = mysql.connector.connect(**config["CONFIG_DB"])
+    connessione = sqlite3.connect(f"{config['NOME_DATABASE']}.db")
     cursor = connessione.cursor()
+    cursor.execute("PRAGMA foreign_keys = ON")     # senza, SQLite ignora i vincoli FOREIGN KEY e l'ON DELETE CASCADE non funzionerebbe.
 
     crea_database_e_tabelle(cursor, config)
     inserisci_studenti(cursor, studenti)
@@ -262,7 +253,6 @@ def main():
     connessione.close()
 
     print(f"Database '{config['NOME_DATABASE']}' popolato con {len(studenti)} studenti.")
-
 
 if __name__ == "__main__":
     main()
