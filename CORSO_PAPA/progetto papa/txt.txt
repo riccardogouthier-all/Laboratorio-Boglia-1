@@ -1,9 +1,11 @@
 
 
-vuoi aggiungere più materie in modo che sia più simile possibile alla realtà                FATTO 
+        vuoi aggiungere più materie in modo che sia più simile possibile alla realtà                FATTO 
 e vuoi anche fare in modo che l'utente nella zona di record possa decidere i criteri sempre tramite cli:
 in pratica con report si ha la possibilità di generarne uno diverso in base alle esigenze
-aggiungi anche un comando che faccia generate_csv + validate insieme                 FATTO
+        aggiungi anche un comando che faccia generate_csv + validate insieme                 FATTO
+lidea è che vuoi collegare un database che con cursor stampa in studenti txt e da li continui col programma
+
 
 
 """
