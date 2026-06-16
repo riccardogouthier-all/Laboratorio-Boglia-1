@@ -8,7 +8,6 @@ python main.py report     → calcola statistiche e produce il report
 python main.py all        → esegue tutto in sequenza
 """
 
-
 import sys           # Step 10 — CLI
 import os            # Step 0, 9 — cartelle e backup
 import json          # Step 1, 5, 6 — config e JSON
@@ -19,10 +18,12 @@ import math          # Step 6 — arrotondamenti
 import statistics    # Step 6 — media, mediana, stdev
 import shutil        # Step 9 — copia file (backup)
 from pathlib  import Path      # Step 0, 3 — gestione percorsi
-from datetime import datetime, date  # Step 2, 3, 8 — date e timestamp
+from datetime import datetime #, date # usato per generare studenti hardcoded //  # Step 2, 3, 8 — date e timestamp
 from collections import Counter      # Step 4, 7 — conteggio errori
 import ast
+# from database_set import main as database_main
 
+# database_main()
 
 def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartelle di progetto
     """Crea la struttura di cartelle del progetto se non esistono."""
