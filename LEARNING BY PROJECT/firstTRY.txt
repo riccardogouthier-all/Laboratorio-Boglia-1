@@ -1,0 +1,77 @@
+
+                 Titolo
+Offerta tecnico/economica per la convergenza e il potenziamento dell’infrastruttura IT di TP Group.
+
+                 Indice
+1. Presentazione del proponente  
+2. Introduzione  
+3. Assunzioni  
+4. Proposta tecnica  
+5. Fornitura hardware e software  
+6. Attività progettuali  
+7. Documentazione e consegna  
+8. Termini e condizioni  
+9. Quotazione economica  
+10. Gantt e RACI  
+
+                 Presentazione del proponente
+Il proponente è un team tecnico specializzato in cloud computing, sistemi Linux, sicurezza IT e integrazione infrastrutturale, con esperienza in progettazione di soluzioni on-premise, cloud e ibride.
+L’obiettivo dell’offerta è accompagnare TP Group nella fusione dei sistemi di Thema Consulting e Pro Studio, garantendo continuità operativa, sicurezza e capacità di crescita futura.
+
+                 Introduzione
+La presente offerta propone una soluzione per integrare i servizi informatici delle due aziende, trasferire gli utenti di Pro Studio nella sede di Thema Consulting e rafforzare la piattaforma necessaria a supportare Pondus e il cluster HPC.
+La proposta privilegia una architettura ibrida: servizi collaborativi e gestione utenti in cloud o in modalità centralizzata sicura, mentre il calcolo ad alte prestazioni resta su infrastruttura fisica dedicata.
+Questa scelta è coerente con i vincoli tecnici del progetto, in particolare con il divieto di usare VM o container per il cluster HPC e con i requisiti di business continuity e disaster recovery.
+
+                 Assunzioni
+Si assume che TP Group possa fornire accesso amministrativo ai sistemi esistenti e che sia disponibile connettività sicura tra le sedi durante la fase di transizione.
+Si assume inoltre che la nuova sede unica disponga di spazio, alimentazione e cablaggio adeguati per l’integrazione delle postazioni e delle componenti di rete.
+Per i servizi in remoto o cloud, si assume l’uso di VPN e protocolli cifrati conformi ai requisiti di sicurezza indicati nel capitolato.
+
+                 Proposta tecnica
+La soluzione proposta prevede quattro blocchi principali: identità e accessi, servizi di collaborazione, protezione dati e piattaforma HPC.
+Per l’identità, si consiglia la convergenza verso un sistema centralizzato con autenticazione sicura, policy di accesso e MFA.
+Per i servizi collaborativi, si propone di mantenere o migrare i servizi non critici verso piattaforme cloud o SaaS, così da ridurre il carico del data center esistente.
+Per il disaster recovery, si propone backup cifrato offsite, replica dei dati e test periodici di ripristino.
+Per il cluster HPC, si propone l’acquisto o l’hosting di nodi fisici dedicati, con Linux, doppia rete Ethernet/Infiniband e storage scratch locale adeguato.
+
+                 Soluzione proposta
+| Area | Scelta proposta | Motivazione |
+|---|---|---|
+| Posta, collaboration, office | Cloud / SaaS | Riduce manutenzione e carico locale.  |
+| Identità e accessi | Centralizzato con VPN e MFA | Supporta sicurezza e controllo accessi.  |
+| File e documentazione | Repository centralizzato con backup offsite | Favorisce continuità operativa e DR.  |
+| Pondus | Evoluzione applicativa su infrastruttura sicura e scalabile | Serve per ampliare l’utenza futura.  |
+| Cluster HPC | Nodi fisici on-premise o hosting dedicato | Rispetta i vincoli prestazionali.  |
+
+                 Fornitura
+La fornitura hardware, se inclusa nella versione finale, dovrebbe riguardare i nuovi nodi HPC, componenti di rete ad alta velocità, storage locale per scratch e dispositivi di backup o replica secondo l’architettura scelta.
+Sono da considerare escluse le postazioni laptop già in dotazione agli utenti e i servizi SaaS già presenti, salvo eventuali migrazioni o riconfigurazioni.
+Sul piano software, sono inclusi sistemi operativi Linux, strumenti di gestione del cluster, configurazione sicurezza, backup e monitoraggio.
+
+                 Attività progettuali
+1. Analisi dell’infrastruttura esistente e definizione della target architecture.
+2. Progettazione rete, sicurezza e connettività VPN.
+3. Installazione e configurazione dei sistemi previsti.
+4. Migrazione dei servizi selezionati e integrazione degli accessi.
+5. Test funzionali, test di sicurezza e verifica disaster recovery.
+6. Documentazione tecnica e formazione minima agli amministratori interni.
+
+                 Documentazione
+La consegna finale dovrebbe includere schema architetturale, inventario dei componenti, procedure operative, piano di backup e restore, procedure di accesso sicuro e report dei test eseguiti.
+È utile aggiungere anche un piano di manutenzione triennale, in linea con i criteri di valutazione del progetto.
+
+                 Termini e condizioni
+L’offerta può essere formulata con validità limitata e con manutenzione inclusa per almeno 3 anni, come richiesto dal testo.
+Per i servizi erogati da remoto, è opportuno specificare che l’accesso sarà possibile solo tramite canali cifrati e autorizzati.
+Eventuali variazioni di scope, quantità di nodi o requisiti di licenza dovranno essere approvate come change request.
+
+                 Quotazione economica
+Il documento fornisce due riferimenti di budget per il cluster: 250k + IVA per la soluzione on-premise/hosting e 220k + IVA per la soluzione cloud.
+Per una stima più completa dell’offerta, vanno aggiunti i costi di progettazione e delivery, usando i valori indicati: 500 euro/giorno per il sistemista e 650 euro/giorno per il project manager.
+Una formulazione ragionevole è presentare un preventivo modulare: fase di assessment, fase di implementazione, fase di migrazione e fase di supporto triennale.
+
+                 Gantt e RACI
+Nel Gantt puoi inserire queste fasi: analisi, progettazione, procurement, installazione, migrazione, test, go-live e supporto.
+Nel RACI puoi assegnare responsabilità a: project manager, sistemista, referente aziendale, team sicurezza e eventuale fornitore cloud/hosting.
+Queste due sezioni sono “nice to have”, quindi possono rafforzare molto la qualità del lavoro finale.
