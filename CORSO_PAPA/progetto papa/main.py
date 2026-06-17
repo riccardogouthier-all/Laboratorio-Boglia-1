@@ -20,8 +20,11 @@ import shutil        # Step 9 — copia file (backup)
 from pathlib  import Path      # Step 0, 3 — gestione percorsi
 from datetime import datetime #, date # usato per generare studenti hardcoded //  # Step 2, 3, 8 — date e timestamp
 from collections import Counter      # Step 4, 7 — conteggio errori
-import ast
-# from database_set import main as database_main
+# import ast
+from database_set import carica_configdb
+from database_set import main as database_main
+from database_reader import leggi_studenti_da_db
+
 
 # database_main()
 
@@ -368,15 +371,13 @@ def backup_csv(percorso_csv : Path) -> Path:            # STEP 9 - Backup automa
     return destinazione
 ##################################################################################################################################################
 ##################################################################################################################################################
+def cmd_gendb():           # STEP 10 — Gestione CLI con sys.argv
+    database_main()         # STEP 1 - caricamento configdb.json e generazione db
+    print("[Step Alpha] Database generato con successo.")
+
 def cmd_generate(config):           # STEP 10 — Gestione CLI con sys.argv
-    # studenti = genera_studenti(config)        # STEP 2
-    # path = Path("studenti.txt")        # input tramite file per permettere all'utente di scrivere in input i propri studenti (opzionale).
-    # studenti = path.read_text().splitlines()       # se il file esiste, lo legge e genera la lista studenti da lì, altrimenti genera studenti casuali
-    
-    with open("studenti.txt", encoding="utf-8") as f:
-        contenuto = f.read()
-    studenti = ast.literal_eval("[" + contenuto + "]")    
-    # print(studenti)
+    config_db = carica_configdb()       # STEP 1 - caricamento configdb.json
+    studenti = leggi_studenti_da_db(config_db["NOME_DATABASE"] + ".db")       # STEP 2 - Generazione studenti tramite database
     lista_csv = salva_su_csv(studenti= studenti ,config= config)       # STEP 3
     aggiungi_errori(lista_csv, config)         # STEP 2B
     backup_csv(lista_csv)         # STEP 9
@@ -423,6 +424,9 @@ def cmd_aggregate_generate_validate(config):           # STEP 10 — Gestione CL
     cmd_validate(config)
 
 def cmd_all(config):           # STEP 10 — Gestione CLI con sys.argv
+    print("\n FASE Alpha — Generazione database")
+    cmd_gendb()         # STEP 1 - caricamento configdb.json e generazione db
+
     print("\n FASE 1 — Generazione dati")
     cmd_generate(config)
 
@@ -441,6 +445,7 @@ def help():           # STEP 10 — Gestione CLI con sys.argv
         Uso:  python progetto.py <comando>
         
         Comandi disponibili:
+            gendb    - Genera il database SQLite con studenti che arrivano dal percorso selezionato in input
             generate - Genera in base a una lista di studenti inserita in input un file CSV in data/input/
             validate - Valida il CSV e produce JSON in data/output/
             generate and validate - Esegue la generazione e la validazione in sequenza (senza report)
@@ -460,8 +465,9 @@ if __name__ == "__main__":
 
     # comando = input().lower()
     comando = sys.argv[1].lower()
-
-    if comando == "generate":
+    if comando == "gendb":
+        cmd_gendb()
+    elif comando == "generate":
         cmd_generate(config)
     elif comando == "validate":
         cmd_validate(config)

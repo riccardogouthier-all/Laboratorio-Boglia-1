@@ -28,13 +28,14 @@ from pathlib import Path
 import re
 import sqlite3
 
-def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
+def carica_configdb() -> dict:       # STEP 1 - dizionario impostazioni
     """Crea configdb.json con valori di nome database, percorso file, materie, campi attesi, data e email se non esiste, poi lo legge."""
     path = Path.cwd()                       #("PROGETTO-Student Analytics Pipeline")    #"CORSO_BOGLIA","basi di programmazione",
     CONFIG_PATH = path / "configdb.json"
 
     NOME_DATABASE = "scuola_db"
-    PERCORSO_FILE = "studenti.txt"
+    PERCORSO_FILE = input("Inserisci il percorso del file studenti.txt (default: studenti.txt): ") or "studenti.txt"
+    # PERCORSO_FILE = "studenti.txt"
     # PERCORSO_FILE = input("Inserisci il percorso del file studenti.txt (default: studenti.txt): ") or "studenti.txt"
 
     MATERIE = [
@@ -221,7 +222,7 @@ def inserisci_studenti(cursor, studenti: list[dict]):
             cursor.execute(sql_voto, (studente["id"], materia, voto))
 
 def main():
-    config = carica_config()
+    config = carica_configdb()
     studenti = leggi_studenti_da_file(config)
 
     if not studenti:
@@ -244,6 +245,7 @@ def main():
     connessione.close()
 
     print(f"Database '{config['NOME_DATABASE']}' popolato con {len(studenti)} studenti.")
+    return config['NOME_DATABASE']
 
 if __name__ == "__main__":
     main()
