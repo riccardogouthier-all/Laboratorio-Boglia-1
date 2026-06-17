@@ -33,25 +33,24 @@ def carica_configdb() -> dict:       # STEP 1 - dizionario impostazioni
     path = Path.cwd()                       #("PROGETTO-Student Analytics Pipeline")    #"CORSO_BOGLIA","basi di programmazione",
     CONFIG_PATH = path / "configdb.json"
 
-    NOME_DATABASE = "scuola_db"
-    PERCORSO_FILE = input("Inserisci il percorso del file studenti.txt (default: studenti.txt): ") or "studenti.txt"
-    # PERCORSO_FILE = "studenti.txt"
-    # PERCORSO_FILE = input("Inserisci il percorso del file studenti.txt (default: studenti.txt): ") or "studenti.txt"
-
-    MATERIE = [
-        "Matematica",
-        "Informatica",
-        "Italiano",
-        "Storia",
-        "Inglese",
-        "Educazione Fisica",
-    ]
-
-    REGEX_DATA = re.compile(r"^\d{4}-\d{2}-\d{2}$")
-    REGEX_EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-
-
     if not CONFIG_PATH.exists():
+        NOME_DATABASE = "scuola_db"
+        PERCORSO_FILE = input("Inserisci il percorso del file studenti.txt (default: studenti.txt): ") or "studenti.txt"
+        # PERCORSO_FILE = "studenti.txt"
+        
+        MATERIE = [
+            "Matematica",
+            "Informatica",
+            "Italiano",
+            "Storia",
+            "Inglese",
+            "Educazione Fisica",
+        ]
+
+        REGEX_DATA = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+        REGEX_EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+
         with open(CONFIG_PATH, "w", encoding="utf-8") as f:
             json.dump({
                 "NOME_DATABASE": NOME_DATABASE,
