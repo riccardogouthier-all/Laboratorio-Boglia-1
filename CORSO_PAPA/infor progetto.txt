@@ -1,0 +1,119 @@
+Nome del Progetto: Student Data Generator & Analyzer
+Nome della Scuola: ITS ICT Piemonte
+Anno: 2026
+Materia: Programmazione - Python
+Nome del Docente: Prof. Massimo Papa
+Nome dello Studente: Riccardo Gouthier
+
+oggetto = 
+Il progetto consiste nello sviluppo di una pipeline Python, suddivisa in tre
+moduli (database_set.py, database_reader.py, main.py), che gestisce in modo
+automatizzato l'intero ciclo di vita dei dati di una classe di studenti:
+importazione e validazione dei dati da file di testo, popolamento di un
+database relazionale SQLite, lettura del database ed esportazione dei dati
+in formato CSV, validazione tramite espressioni regolari, conversione in
+formato JSON, calcolo di statistiche sui voti e produzione di un report
+finale testuale. Il software utilizza esclusivamente librerie della libreria
+standard di Python ed è pertanto eseguibile su qualsiasi sistema operativo
+compatibile con Python 3 (Windows, GNU/Linux, macOS).
+
+scopo = 
+L'applicazione si prefigge di automatizzare la gestione e l'analisi dei dati
+di una classe scolastica, a partire da un'origine dati persistente (database
+SQLite) anziché da dati generati casualmente a ogni esecuzione. Risolve la
+problematica di dover validare manualmente grandi quantità di record
+(formato della data di nascita, indirizzo email, range dei voti, numero di
+assenze) e di dover ricalcolare a mano statistiche e classifiche. Il
+programma integra inoltre un meccanismo di test che inserisce
+automaticamente record intenzionalmente non validi, utile per verificare il
+corretto funzionamento delle procedure di validazione. Lo strumento è
+pensato per scopi didattici, di testing di sistemi e di simulazione della
+gestione dei dati scolastici.
+
+modalita = 
+Il progetto è stato implementato utilizzando:
+
+LINGUAGGIO DI PROGRAMMAZIONE:
+  • Python 3.9 o superiore (richiesto dall'uso di annotazioni di tipo
+    generiche come list[dict] e tuple[list, list, Counter])
+
+LIBRERIE PRINCIPALI (tutte appartenenti alla libreria standard):
+  • sqlite3              - Creazione e interrogazione del database
+                            relazionale (tabelle studenti e voti)
+  • csv                  - Lettura/scrittura dei file CSV
+  • json                 - Lettura/scrittura dei file di configurazione e
+                            dei file JSON di output
+  • re                   - Validazione di email e data di nascita tramite
+                            espressioni regolari
+  • datetime             - Generazione di timestamp per file, backup e
+                            report; validazione dell'effettiva esistenza
+                            di una data
+  • statistics           - Calcolo di media, mediana e deviazione
+                            standard dei voti
+  • math                 - Calcolo della soglia minima (floor della
+                            media) nelle statistiche per materia
+  • shutil               - Backup automatico dei file CSV generati
+  • pathlib (Path)       - Gestione portabile di percorsi e cartelle
+  • collections.Counter  - Conteggio degli errori di validazione per
+                            tipologia
+  • sys, os              - Gestione degli argomenti da riga di comando e
+                            del file system
+
+AMBIENTE DI SVILUPPO:
+  • Editor: Visual Studio Code
+  • Sistema operativo di sviluppo: Windows (essendo basato unicamente su
+    librerie standard, il codice è comunque compatibile anche con
+    GNU/Linux e macOS)
+  • Python environment: nessuna dipendenza esterna da installare tramite
+    pip; non è necessario un ambiente virtuale dedicato
+
+IMPLEMENTAZIONE DETTAGLIATA:
+  1.  Creazione della struttura di cartelle del progetto (data/input,
+      data/output, data/backup, report, configurations)
+  2.  Caricamento (o creazione, se assente) dei file di configurazione
+      config.json e configdb.json
+  3.  Lettura e validazione di un elenco di studenti da file di testo,
+      con controlli su formato della data, email, range dei voti e
+      numero di assenze
+  4.  Popolamento di un database relazionale SQLite, con due tabelle
+      collegate da chiave esterna (studenti e voti)
+  5.  Lettura del database SQLite e ricostruzione della struttura a
+      dizionari tramite una LEFT JOIN tra le due tabelle
+  6.  Esportazione dei dati letti dal database in un file CSV con
+      timestamp
+  7.  Inserimento controllato di record intenzionalmente non validi, per
+      verificare il corretto funzionamento della successiva validazione
+  8.  Backup automatico del file CSV generato
+  9.  Validazione dei dati del CSV tramite espressioni regolari (email,
+      data di nascita) e controlli numerici sui voti, con conteggio
+      degli errori per tipologia
+  10. Separazione e conversione dei risultati in due file JSON
+      (studenti validi e studenti scartati)
+  11. Calcolo di statistiche per materia (media, mediana, deviazione
+      standard, minimo, massimo)
+  12. Calcolo della classifica dei migliori studenti in base alla media
+      personale
+  13. Generazione di un report finale testuale, con intestazione,
+      statistiche per materia, classifica e analisi della correlazione
+      tra assenze e rendimento
+  14. Interfaccia a riga di comando (CLI) tramite sys.argv, con i comandi
+      gendb, generate, validate, report e all (pipeline completa)
+
+
+note =
+  • Tutte le librerie utilizzate appartengono alla libreria standard di
+    Python: non sono richieste dipendenze esterne installabili tramite pip.
+  • Il codice è organizzato in tre moduli separati (database_set.py,
+    database_reader.py, main.py) per favorire la manutenibilità e la
+    possibilità di testare singolarmente le diverse fasi della pipeline.
+  • I file di configurazione (config.json e configdb.json) vengono creati
+    automaticamente al primo avvio e successivamente solo letti, evitando
+    di richiedere più volte gli stessi parametri all'utente.
+  • Sarà opportuno completare la documentazione inline (docstring) per le
+    funzioni non ancora commentate e gestire eventuali eccezioni non
+    ancora previste (es. assenza di file CSV in fase di backup).
+
+--------------------------------------------------------------------------------
+Documento redatto per la prova finale del corso - 2026
+Studente: Riccardo Gouthier - Turin, Piemonte, IT
+--------------------------------------------------------------------------------

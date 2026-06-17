@@ -31,13 +31,13 @@ import sqlite3
 def carica_configdb() -> dict:       # STEP 1 - dizionario impostazioni
     """Crea configdb.json con valori di nome database, percorso file, materie, campi attesi, data e email se non esiste, poi lo legge."""
     path = Path.cwd()                       #("PROGETTO-Student Analytics Pipeline")    #"CORSO_BOGLIA","basi di programmazione",
-    CONFIG_PATH = path / "configdb.json"
+    CONFIG_PATH = path /"configurations"/ "configdb.json"
 
     if not CONFIG_PATH.exists():
         NOME_DATABASE = "scuola_db"
         PERCORSO_FILE = input("Inserisci il percorso del file studenti.txt (default: studenti.txt): ") or "studenti.txt"
         # PERCORSO_FILE = "studenti.txt"
-        
+
         MATERIE = [
             "Matematica",
             "Informatica",

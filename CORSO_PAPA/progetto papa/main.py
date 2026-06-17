@@ -38,6 +38,7 @@ def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartell
         base_path / "data/output",
         base_path / "data/backup",
         base_path / "report",
+        base_path / "configurations"
     ]
     for cartella in cartelle:
         cartella.mkdir(parents=True, exist_ok=True)
@@ -45,7 +46,7 @@ def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartell
 
 def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
     path = Path.cwd()                       #("PROGETTO-Student Analytics Pipeline")    #"CORSO_BOGLIA","basi di programmazione",
-    CONFIG_PATH = path / "config.json"
+    CONFIG_PATH = path /"configurations"/ "config.json"
     
 
     DEFAULT_CONFIG = {
