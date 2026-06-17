@@ -3,10 +3,10 @@ Legge un elenco di studenti da un file di testo (campi separati da virgola)
 e popola un database MySQL "scuola_db", nello stile:
 
 {'id': 27, 'nome': 'Aurora', 'cognome': 'Pellegrini', 'data_nascita': '2008-11-29',
- 'email': 'aurora.pellegrini@scuola.it',
- 'voti': {'Matematica': 8, 'Informatica': 7, 'Italiano': 6, 'Storia': 9,
-          'Inglese': 7, 'Educazione Fisica': 8},
- 'assenze': 5}
+    'email': 'aurora.pellegrini@scuola.it',
+    'voti': {'Matematica': 8, 'Informatica': 7, 'Italiano': 10, 'Storia': 9,
+        'Inglese': 7, 'Educazione Fisica': 8},
+    'assenze': 5}
 
 FORMATO DEL FILE TXT (una riga per studente, valori separati da virgola):
 
@@ -18,14 +18,8 @@ Esempio di riga:
 Note sul file:
     - data_nascita deve essere nel formato AAAA-MM-GG
     - i 6 voti vanno indicati nell'ordine: Matematica, Informatica, Italiano,
-      Storia, Inglese, Educazione Fisica
+        Storia, Inglese, Educazione Fisica
     - le righe vuote o che iniziano con "#" vengono ignorate (utile per commenti)
-
-Requisiti:
-    pip install mysql-connector-python
-
-Prima di eseguire, modifica i parametri di connessione in CONFIG_DB e,
-se necessario, il percorso del file in PERCORSO_FILE.
 """
 
 import datetime
@@ -34,9 +28,6 @@ from pathlib import Path
 import re
 import sqlite3
 
-# ---------------------------------------------------------------------
-# CONFIGURAZIONE (modifica con i tuoi dati)
-# ---------------------------------------------------------------------
 def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
     """Crea configdb.json con valori di nome database, percorso file, materie, campi attesi, data e email se non esiste, poi lo legge."""
     path = Path.cwd()                       #("PROGETTO-Student Analytics Pipeline")    #"CORSO_BOGLIA","basi di programmazione",
