@@ -2,11 +2,7 @@
 Legge un elenco di studenti da un file di testo (campi separati da virgola)
 e popola un database MySQL "scuola_db", nello stile:
 
-{'id': 27, 'nome': 'Aurora', 'cognome': 'Pellegrini', 'data_nascita': '2008-11-29',
-    'email': 'aurora.pellegrini@scuola.it',
-    'voti': {'Matematica': 8, 'Informatica': 7, 'Italiano': 10, 'Storia': 9,
-        'Inglese': 7, 'Educazione Fisica': 8},
-    'assenze': 5}
+{'id': 27, 'nome': 'Aurora', 'cognome': 'Pellegrini', 'data_nascita': '2008-11-29','email': 'aurora.pellegrini@scuola.it','voti': {'Matematica': 8, 'Informatica': 7, 'Italiano': 10, 'Storia': 9, 'Inglese': 7, 'Educazione Fisica': 8}, 'assenze': 5}
 
 FORMATO DEL FILE TXT (una riga per studente, valori separati da virgola):
 
