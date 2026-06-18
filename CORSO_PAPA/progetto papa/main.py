@@ -9,24 +9,27 @@ python main.py all        → esegue tutto in sequenza
 """
 
 # import librerire standard
-import sys           # Step 10 — CLI
 # import os            # Step 0, 9 — cartelle e backup
+# import random        # Step 2 — generazione dati casuali
+# import math          # Step 6 — arrotondamenti
+# import statistics    # Step 6 — media, mediana, stdev
+import sys           # Step 10 — CLI
 import json          # Step 1, 5, 6 — config e JSON
 import csv           # Step 3, 4 — lettura/scrittura CSV
 import re            # Step 4 — validazione con espressioni regolari
-# import random        # Step 2 — generazione dati casuali
-import math          # Step 6 — arrotondamenti
-import statistics    # Step 6 — media, mediana, stdev
 import shutil        # Step 9 — copia file (backup)
 from pathlib  import Path      # Step 0, 3 — gestione percorsi
 from datetime import datetime #, date # usato per generare studenti hardcoded //  # Step 2, 3, 8 — date e timestamp
 from collections import Counter      # Step 4, 7 — conteggio errori
+
 # import dai file py del progetto
 from database_set import (
     carica_configdb,
     main as database_main,
 )
+
 from database_reader import leggi_studenti_da_db
+
 from student_logic import (
     calcola_media_e_voto_finale,
     assegna_debiti_formativi,
@@ -34,6 +37,14 @@ from student_logic import (
     raggruppa_per_fascia_rendimento,
     bubble_sort_studenti,
     quick_sort_studenti,
+)
+
+from student_stats import (
+    media_per_materia,       # sostituisce calcola_statistica  (Step 6)
+    classifica_studenti,     # sostituisce classifica_studenti (Step 7)
+    peggiori_per_materia,    # nuovo — peggiori N studenti per ogni materia
+    distribuzione_voti,      # nuovo — quanti 6, 7, 8… per materia o globale
+    studenti_a_rischio,      # nuovo — media < soglia o assenze > soglia
 )
 
 
@@ -274,7 +285,7 @@ def salva_json_scartati(scartati: list[dict]) -> Path:          # STEP 5 - Conve
         json.dump(scartati, f, indent=2, ensure_ascii=False)
     print(f"[Step 5] JSON scartati salvati in: {percorso} | ({len(scartati)} record)")
     return percorso         # percorso json_scartati
-
+'''
 def calcola_statistica(studenti: list[dict], config: dict) -> dict:         # STEP 6 - Calcolo statistiche per materia - ritorna dizionario di materie con le loro statistiche
     stats = {}
     for materia in config["materie"]:
@@ -302,8 +313,8 @@ def classifica_studenti(studenti, top_n):            # STEP 7 - Classifica migli
     ]
     top = sorted(arricchiti, key=lambda s: s["media_personale"], reverse=True)[:top_n]
     return top
-
-def genera_report(config, validi, scartati, stats, top5, fasce=None, classifica_media=None, classifica_assenze=None) -> Path:            # STEP 8 - Report finale - crea file txt in report/reportXXX.txt e ritorna il percorso
+'''
+'''def genera_report(config, validi, scartati, stats, top5, fasce=None, classifica_media=None, classifica_assenze=None) -> Path:            # STEP 8 - Report finale - crea file txt in report/reportXXX.txt e ritorna il percorso
     oggi= datetime.now()
     nome_file = f"report_{oggi.strftime('%Y%m%d')}.txt"
 
@@ -429,6 +440,175 @@ def genera_report(config, validi, scartati, stats, top5, fasce=None, classifica_
         f.write("\n".join(righe))
 
     print(f"[Step 8] Report salvato in: {percorso}")
+    return percorso'''
+
+def genera_report(
+    config: dict,
+    validi: list[dict],
+    scartati: list[dict],
+    stats: dict,              # da student_stats.media_per_materia   → {materia: {media, mediana, stdev, min, max, soglia_floor}}
+    top5: list[dict],         # da student_stats.classifica_studenti → lista dal campo "migliori"
+    fasce: dict | None = None,
+    classifica_media: list[dict] | None = None,
+    classifica_assenze: list[dict] | None = None,
+) -> Path:
+    """Genera il file di testo del report completo in report/."""
+    oggi     = datetime.now()
+    percorso = Path("report") / f"report_{oggi.strftime('%Y%m%d')}.txt"
+    percorso.parent.mkdir(parents=True, exist_ok=True)
+
+    righe = []
+    righe.append("=" * 60)
+    righe.append("  REPORT STUDENTI — PIPELINE PYTHON")
+    righe.append("=" * 60)
+    righe.append(f"Classe:              {config['classe']}")
+    righe.append(f"Data generazione:    {oggi.strftime('%d/%m/%Y %H:%M:%S')}")
+    righe.append(f"Studenti totali:     {len(validi) + len(scartati)}")
+    righe.append(f"Studenti validi:     {len(validi)}")
+    righe.append(f"Studenti scartati:   {len(scartati)}")
+
+    # ── STATISTICHE PER MATERIA  (student_stats.media_per_materia) ───────────────
+    righe.append("")
+    righe.append("-" * 60)
+    righe.append("  STATISTICHE PER MATERIA")
+    righe.append("-" * 60)
+    for materia, s in stats.items():
+        righe.append(f"\n  {materia}")
+        righe.append(f"    Media:            {s['media']}")
+        righe.append(f"    Mediana:          {s['mediana']}")
+        righe.append(f"    Dev. standard:    {s['stdev']}")
+        righe.append(f"    Voto minimo:      {s['min']}")
+        righe.append(f"    Voto massimo:     {s['max']}")
+
+    # ── DISTRIBUZIONE VOTI  (student_stats.distribuzione_voti) ───────────────────
+    righe.append("")
+    righe.append("-" * 60)
+    righe.append("  DISTRIBUZIONE VOTI (globale)")
+    righe.append("-" * 60)
+    dist = distribuzione_voti(studenti=validi)
+    totale_voti = sum(dist.values())
+    for voto, conteggio in dist.items():
+        barra = "█" * conteggio
+        pct   = round(conteggio / totale_voti * 100, 1) if totale_voti else 0
+        righe.append(f"  {voto:>2}: {barra:<52} {conteggio:>3}  ({pct:>4}%)")
+
+    # ── PEGGIORI PER MATERIA  (student_stats.peggiori_per_materia) ───────────────
+    righe.append("")
+    righe.append("-" * 60)
+    righe.append("  PEGGIORI PER MATERIA (top 3)")
+    righe.append("-" * 60)
+    for materia, lista in peggiori_per_materia(studenti=validi, top_n=3).items():
+        righe.append(f"\n  {materia}")
+        for pos, s in enumerate(lista, 1):
+            righe.append(f"    {pos}. {s['nome']:<12} {s['cognome']:<15} voto: {s['voto']}")
+
+    # ── STUDENTI A RISCHIO  (student_stats.studenti_a_rischio) ───────────────────
+    rischio = studenti_a_rischio(
+        studenti=validi,
+        soglia_voto=float(config.get("soglia_voto", 6.0)),
+        soglia_assenze=int(config.get("soglia_assenze", 15)),
+    )
+    righe.append("")
+    righe.append("-" * 60)
+    righe.append("  STUDENTI A RISCHIO")
+    righe.append("-" * 60)
+    righe.append(f"  Media insufficiente (<{config.get('soglia_voto', 6.0)}):  {len(rischio['media_insufficiente'])} studenti")
+    righe.append(f"  Troppe assenze (>{config.get('soglia_assenze', 15)}):       {len(rischio['troppe_assenze'])} studenti")
+    righe.append(f"  Entrambi i problemi:          {len(rischio['entrambi'])} studenti")
+    if rischio["entrambi"]:
+        righe.append("")
+        righe.append("  Dettaglio (entrambi i problemi):")
+        for s in rischio["entrambi"]:
+            righe.append(
+                f"    ⚠  {s['nome']:<12} {s['cognome']:<15} "
+                f"media: {s['media']:<5}  assenze: {s['assenze']}"
+            )
+
+    # ── TOP 5 STUDENTI  (student_stats.classifica_studenti → "migliori") ─────────
+    righe.append("")
+    righe.append("-" * 60)
+    righe.append("  TOP 5 STUDENTI")
+    righe.append("-" * 60)
+    for i, s in enumerate(top5, 1):
+        righe.append(
+            f"  {i}. {s['nome']:<12} {s['cognome']:<15} "
+            f"media: {s.get('media', s.get('media_personale', '—'))}  assenze: {s['assenze']}"
+        )
+
+    # ── ESITI FINALI  (da student_logic via cmd_logica) ──────────────────────
+    ha_esito = validi and "esito" in validi[0]
+    if ha_esito:
+        n_promossi = sum(1 for s in validi if s["esito"] == "Promosso")
+        n_bocciati = len(validi) - n_promossi
+        righe.append("")
+        righe.append("-" * 60)
+        righe.append("  ESITI FINALI")
+        righe.append("-" * 60)
+        righe.append(f"  Promossi:   {n_promossi}")
+        righe.append(f"  Bocciati:   {n_bocciati}")
+        bocciati = [s for s in validi if s["esito"] == "Bocciato"]
+        if bocciati:
+            righe.append("")
+            righe.append("  Dettaglio bocciati:")
+            for s in bocciati:
+                motivi_str = "; ".join(s.get("motivi_esito", []))
+                righe.append(
+                    f"    • {s['nome']:<12} {s['cognome']:<15} "
+                    f"voto finale: {s.get('voto_finale', '—')}  "
+                    f"debiti: {len(s.get('debiti', []))}  "
+                    f"[{motivi_str}]"
+                )
+
+    # ── FASCE DI RENDIMENTO  (da student_logic via cmd_logica) ───────────────
+    if fasce:
+        righe.append("")
+        righe.append("-" * 60)
+        righe.append("  FASCE DI RENDIMENTO")
+        righe.append("-" * 60)
+        for nome_fascia, lista_fascia in fasce.items():
+            righe.append(f"  {nome_fascia:<15} {len(lista_fascia):>3} studenti")
+            for s in lista_fascia:
+                debiti_str = ", ".join(s.get("debiti", [])) or "nessuno"
+                righe.append(
+                    f"      {s['nome']:<12} {s['cognome']:<15} "
+                    f"media: {s.get('media_personale', '—'):<6} "
+                    f"voto: {s.get('voto_finale', '—'):<4} "
+                    f"debiti: {debiti_str}"
+                )
+
+    # ── CLASSIFICA PER MEDIA  (da student_logic → bubble_sort) ──────────────
+    if classifica_media:
+        righe.append("")
+        righe.append("-" * 60)
+        righe.append("  CLASSIFICA PER MEDIA (bubble sort)")
+        righe.append("-" * 60)
+        for pos, s in enumerate(classifica_media, 1):
+            righe.append(
+                f"  {pos:>3}. {s['nome']:<12} {s['cognome']:<15} "
+                f"media: {s.get('media_personale', '—'):<6} "
+                f"esito: {s.get('esito', '—')}"
+            )
+
+    # ── CLASSIFICA PER ASSENZE  (da student_logic → quick_sort) ─────────────
+    if classifica_assenze:
+        righe.append("")
+        righe.append("-" * 60)
+        righe.append("  CLASSIFICA PER ASSENZE (quick sort, crescente)")
+        righe.append("-" * 60)
+        for pos, s in enumerate(classifica_assenze, 1):
+            righe.append(
+                f"  {pos:>3}. {s['nome']:<12} {s['cognome']:<15} "
+                f"assenze: {s['assenze']:<4} "
+                f"media: {s.get('media_personale', '—')}"
+            )
+
+    righe.append("")
+    righe.append("=" * 60)
+
+    with open(percorso, "w", encoding="utf-8") as f:
+        f.write("\n".join(righe))
+
+    print(f"[Step 8] Report salvato in: {percorso}")
     return percorso
 
 def backup_csv(percorso_csv : Path) -> Path:            # STEP 9 - Backup automatico
@@ -489,6 +669,7 @@ def cmd_logica(config):           # STEP 10 — Gestione CLI con sys.argv
 ##################################################################################################################################################
 def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
     directory = Path("data/output")
+
     json_path = directory / "studenti_validi.json"
     if not json_path.exists():
         print("[ERRORE] studenti_validi.json non trovato. Esegui prima 'validate'.")
@@ -502,8 +683,8 @@ def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
         with open(scartati_path, "r", encoding="utf-8") as f:
             scartati = json.load(f)
 
-    statistica_per_materia = calcola_statistica(validi, config)         # STEP 6
-    classifica = classifica_studenti(validi, top_n=5)                   # STEP 7
+    statistica_per_materia = media_per_materia(validi)         # STEP 6
+    classifica = classifica_studenti(validi, top_n=5)["migliori"]                   # STEP 7
 
     validilog, fasce, classifica_media, classifica_assenze = cmd_logica(config)   # STEP 11-16
 
@@ -512,9 +693,9 @@ def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
                     classifica_assenze=classifica_assenze)
 ##################################################################################################################################################
 def cmd_aggregate_generate_validate(config):           # STEP 10 — Gestione CLI con sys.argv
+    """Esegue generate + validate in sequenza (senza report)."""
     print("\n FASE 1 — Generazione dati")
     cmd_generate(config)
-
     print("\n FASE 2 — Validazione e conversione")
     cmd_validate(config)
 ##################################################################################################################################################
@@ -530,8 +711,9 @@ def cmd_all(config):           # STEP 10 — Gestione CLI con sys.argv
 
     print("\n FASE 3 — Statistiche e report")
     validilog, fasce, classifica_media, classifica_assenze = cmd_logica(config)
-    statistica_per_materia = calcola_statistica(validi, config)         # STEP 6
-    classifica = classifica_studenti(validi, top_n=5)             # STEP 7
+    statistica_per_materia = media_per_materia(validi)         # STEP 6
+    classifica = classifica_studenti(validi, top_n=5)["migliori"]                   # STEP 7
+
     genera_report(config, validilog, scartati, statistica_per_materia, classifica,      # STEP 8
                 fasce=fasce, classifica_media=classifica_media,
                 classifica_assenze=classifica_assenze)
@@ -543,13 +725,13 @@ def mosta_aiuto():           # STEP 10 — Gestione CLI con sys.argv
         Uso:  python progetto.py <comando>
         
         Comandi disponibili:
-            gendb    - Genera il database SQLite con studenti che arrivano dal percorso selezionato in input
-            generate - Genera in base a una lista di studenti inserita in input un file CSV in data/input/
-            validate - Valida il CSV e produce JSON in data/output/
-            generate-validate, gv - Esegue la generazione e la validazione in sequenza (senza report)
-            logica - Calcola media, debiti, esito e classifiche su studenti_validi.json
-            report   - Calcola statistiche su un file CSV esistente e genera il report in report/
-            all      - Esegue l'intera pipeline dall'inizio alla fine
+            gendb                   - Genera il database SQLite con studenti che arrivano dal percorso selezionato in input
+            generate                - Genera in base a una lista di studenti inserita in input un file CSV in data/input/
+            validate                - Valida il CSV e produce JSON in data/output/
+            gv / generate-validate  - Esegue la generazione e la validazione in sequenza (senza report)
+            logica                  - Calcola media, debiti, esito e classifiche su studenti_validi.json
+            report                  - Calcola statistiche su un file CSV esistente e genera il report in report/
+            all                     - Esegue l'intera pipeline dall'inizio alla fine
         """)
 ##################################################################################################################################################
 ##################################################################################################################################################

@@ -104,32 +104,47 @@ def media_per_studente(
 def media_per_materia(
     studenti: list[dict] | None = None,
     percorso_db: str | None = None
-) -> dict[str, float]:
-    """Calcola la media della classe per ciascuna materia.
+) -> dict[str, dict]:
+    """Calcola le statistiche della classe per ciascuna materia.
 
     Returns:
-        Dizionario { materia: media_arrotondata } ordinato per media decrescente.
-        Esempio:
+        Dizionario ordinato per media decrescente:
         {
-            "Educazione Fisica": 7.84,
-            "Matematica":        6.92,
+            "Educazione Fisica": {
+                "media":        7.84,
+                "mediana":      8,
+                "stdev":        1.23,
+                "min":          4,
+                "max":          10,
+                "soglia_floor": 7   ← math.floor(media), usato in genera_report
+            },
+            "Matematica": { ... },
             ...
         }
+        Le materie con meno di 2 studenti vengono saltate (stdev non calcolabile).
     """
     studenti = _risolvi_studenti(studenti, percorso_db)
 
     voti_per_materia: dict[str, list[int]] = {}
-
     for s in studenti:
         for materia, voto in s["voti"].items():
             voti_per_materia.setdefault(materia, []).append(voto)
 
-    medie = {
-        materia: round(statistics.mean(voti), 2)
-        for materia, voti in voti_per_materia.items()
-    }
+    stats = {}
+    for materia, voti in voti_per_materia.items():
+        if len(voti) < 2:
+            continue
+        media = round(statistics.mean(voti), 2)
+        stats[materia] = {
+            "media":        media,
+            "mediana":      statistics.median(voti),
+            "stdev":        round(statistics.stdev(voti), 2),
+            "min":          min(voti),
+            "max":          max(voti),
+            "soglia_floor": math.floor(media),
+        }
 
-    return dict(sorted(medie.items(), key=lambda kv: kv[1], reverse=True))
+    return dict(sorted(stats.items(), key=lambda kv: kv[1]["media"], reverse=True))
 
 
 # ─────────────────────────────────────────────
@@ -148,16 +163,30 @@ def classifica_studenti(
 
     Returns:
         {
-            "migliori": [ {id, nome, cognome, media, assenze}, ... ],   # i primi top_n
-            "peggiori": [ {id, nome, cognome, media, assenze}, ... ],   # gli ultimi top_n
+            "migliori": [ {id, nome, cognome, media, media_personale, assenze}, ... ],
+            "peggiori": [ {id, nome, cognome, media, media_personale, assenze}, ... ],
         }
+        Ogni dizionario include:
+            "media"           → float arrotondato a 2 decimali  (es. 7.83)
+            "media_personale" → int  math.floor(media)          (es. 7)
+              ↑ compatibile con genera_report e student_logic
     """
     studenti = _risolvi_studenti(studenti, percorso_db)
-    classifica = media_per_studente(studenti=studenti)
+
+    arricchiti = []
+    for s in studenti:
+        media = _media_voti(s)
+        arricchiti.append({
+            **s,                                      # mantiene tutti i campi originali
+            "media":            media,
+            "media_personale":  math.floor(media),   # compatibilità con genera_report
+        })
+
+    ordinati = sorted(arricchiti, key=lambda s: s["media"], reverse=True)
 
     return {
-        "migliori": classifica[:top_n],
-        "peggiori": classifica[-top_n:][::-1],   # ultimi top_n dal peggiore al meno peggiore
+        "migliori": ordinati[:top_n],
+        "peggiori": ordinati[-top_n:][::-1],
     }
 
 
@@ -402,8 +431,8 @@ if __name__ == "__main__":
 
     # 2. Media per materia
     print("\n── Media per materia ──")
-    for materia, media in media_per_materia(studenti=studenti).items():
-        print(f"  {materia:<22} {media}")
+    for materia, s in media_per_materia(studenti=studenti).items():
+        print(f"  {materia:<22} media: {s['media']}  mediana: {s['mediana']}  stdev: {s['stdev']}  [{s['min']}–{s['max']}]")
 
     # 3. Classifica top 3
     print("\n── Classifica (top 3 / peggiori 3) ──")
