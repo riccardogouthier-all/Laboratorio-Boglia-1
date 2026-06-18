@@ -751,6 +751,12 @@ def mosta_aiuto():           # STEP 10 — Gestione CLI con sys.argv
     print("""
         Uso:  python progetto.py <comando>
         
+        E' necessario avere la libreria DOCX per far girare il programma, 
+
+                                -----------
+        lancia il comando :     | getDOCX |       per installare la libreria automaticamente
+                                -----------
+        
         Comandi disponibili:
             gendb                   - Genera il database SQLite con studenti che arrivano dal percorso selezionato in input
             generate                - Genera in base a una lista di studenti inserita in input un file CSV in data/input/
@@ -768,12 +774,15 @@ if __name__ == "__main__":
     config = carica_config()       # STEP 1
     
     if len(sys.argv) <2:
-        help()
+        mosta_aiuto()
         sys.exit(0)
 
     # comando = input().lower()
     comando = sys.argv[1].lower()
-    if comando == "gendb":
+
+    if comando == "":
+        mosta_aiuto()
+    elif comando == "gendb":
         cmd_gendb()
     elif comando == "generate":
         cmd_generate(config)
@@ -787,6 +796,8 @@ if __name__ == "__main__":
         cmd_aggregate_generate_validate(config)
     elif comando == "all":
         cmd_all(config)
+    # elif comando == "getDOCX":
+        # installer_DOCX
     else:
         print(f"[ERRORE] Comando sconosciuto: '{comando}'")
         mosta_aiuto()
