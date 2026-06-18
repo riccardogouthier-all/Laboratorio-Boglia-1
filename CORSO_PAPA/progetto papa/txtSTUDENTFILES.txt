@@ -1,0 +1,31 @@
+
+1. LOGICA & ALGORITMI 
+Calcolo automatico della media e del voto finale 
+Promozione/bocciatura con regole personalizzabili 
+Assegnazione debiti formativi per materia 
+Ordinamento (bubble sort, quick sort applicati agli studenti) 
+Raggruppamento per fasce di rendimento 
+
+--  calcola_media_e_voto_finale (STEP 11) calcola media_personale e voto_finale per ogni studente; 
+    se metti in config un dizionario pesi_materie (es. {"Matematica": 2}) usa la media pesata, 
+    altrimenti la media semplice. 
+--  assegna_debiti_formativi (STEP 12) marca le materie sotto la soglia_debito (default 6). 
+--  determina_esito (STEP 13) decide Promosso/Bocciato incrociando media minima, numero di debiti tollerati e 
+    assenze massime — tutte soglie configurabili, e richiede che gli STEP 11 e 12 siano già stati eseguiti. 
+--  raggruppa_per_fascia_rendimento (STEP 14) smista gli studenti in fasce personalizzabili via fasce_rendimento. 
+--  Poi bubble_sort_studenti e quick_sort_studenti (STEP 15-16) sono implementazioni vere e proprie degli algoritmi (non sorted()), 
+    generiche su qualsiasi chiave del dizionario studente, e non modificano la lista originale.
+
+2. STATISTICHE & ANALISI 
+Media voti per studente e per materia 
+Classifiche (top 10 studenti, peggiori per materia) 
+Distribuzione voti (quanti 6, quanti 7, quanti 8…) 
+Correlazioni (es. chi va bene in Matematica va bene anche in Informatica?) 
+Studenti a rischio (media < 6 o assenze > soglia) 
+
+3. VISUALIZZAZIONE GRAFICA (matplotlib / seaborn) 
+Istogrammi dei voti per materia 
+Grafici a barre comparativi tra materie 
+Scatter plot (correlazione tra due materie) 
+Pie chart (% promossi vs bocciati) 
+Heatmap voti per studente 

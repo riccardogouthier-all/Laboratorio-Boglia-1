@@ -39,7 +39,7 @@ def calcola_media_e_voto_finale(studenti: list[dict], config: dict) -> None:    
         else:
             media = statistics.mean(voti.values())
 
-        studente["media_personale"] = math.floor(media + 0.5, 2)          # arrotondamento standard a due decimali
+        studente["media_personale"] = math.floor(media + 0.5)          # arrotondamento standard a due decimali
         studente["voto_finale"] = math.floor(media + 0.5)          # arrotondamento con math perchè round() arrotonda all'intero pari più vicino
 
     print(f"[Step 11] Media e voto finale calcolati per {len(studenti)} studenti.")

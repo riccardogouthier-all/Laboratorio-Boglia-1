@@ -10,7 +10,7 @@ python main.py all        → esegue tutto in sequenza
 
 # import librerire standard
 import sys           # Step 10 — CLI
-import os            # Step 0, 9 — cartelle e backup
+# import os            # Step 0, 9 — cartelle e backup
 import json          # Step 1, 5, 6 — config e JSON
 import csv           # Step 3, 4 — lettura/scrittura CSV
 import re            # Step 4 — validazione con espressioni regolari
@@ -54,6 +54,7 @@ def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartell
     print("[Step 0] Cartelle create/verificate.")
 
 def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
+    """Crea config.json con valori di default se non esiste, poi lo legge."""
     path = Path.cwd()                       #("PROGETTO-Student Analytics Pipeline")    #"CORSO_BOGLIA","basi di programmazione",
     CONFIG_PATH = path /"configurations"/ "config.json"
     
@@ -68,7 +69,6 @@ def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
         "pesi_materie": {"Matematica": 1, "Informatica": 1, "Italiano": 1, "Storia": 1, "Inglese": 1, "Educazione Fisica": 1}
         }
 
-    """Crea config.json con valori di default se non esiste, poi lo legge."""
     if not CONFIG_PATH.exists():
         with open(CONFIG_PATH, "w", encoding="utf-8") as f:
             json.dump(DEFAULT_CONFIG, f, indent=2, ensure_ascii=False)
@@ -295,24 +295,17 @@ def calcola_statistica(studenti: list[dict], config: dict) -> dict:         # ST
     print(f"[Step 6] Statistiche calcolate per {len(stats)} materie.")
     return stats
 
-def classifica_studenti(studenti: list[dict], top_n: int) -> list[dict]:            # STEP 7 - Classifica migliori studenti - ritorna dizionario di studenti con le loro statistiche
-    for studente in studenti:
-        voti_lista = list(studente["voti"].values())
-        studente["media_personale"] = round(statistics.mean(voti_lista), 2)
-
-    classifica = sorted(studenti,key=lambda s:s["media_personale"], reverse=True)
-    top = classifica[:top_n]
-
-    print(f"[Step 7] Top {top_n} studenti calcolati.")
-    for i, s in enumerate(top, 5):
-        print(f"L'alunno con la media più alta è il numero {i}: {s['nome']} {s['cognome']} con una media di: {s['media_personale']}")
+def classifica_studenti(studenti, top_n):            # STEP 7 - Classifica migliori studenti - ritorna dizionario di studenti con le loro statistiche
+    arricchiti = [
+        {**s, "media_personale": math.floor(statistics.mean(list(s["voti"].values())))}
+        for s in studenti
+    ]
+    top = sorted(arricchiti, key=lambda s: s["media_personale"], reverse=True)[:top_n]
     return top
 
-def genera_report(config, validi, scartati, stats, top5) -> Path:           # STEP 8 - Report finale - crea file txt in report/reportXXX.txt e ritorna il percorso
+def genera_report(config, validi, scartati, stats, top5, fasce=None, classifica_media=None, classifica_assenze=None) -> Path:            # STEP 8 - Report finale - crea file txt in report/reportXXX.txt e ritorna il percorso
     oggi= datetime.now()
     nome_file = f"report_{oggi.strftime('%Y%m%d')}.txt"
-    path = Path("report")
-    percorso  = path / nome_file
 
     righe = []
     righe.append("=" * 60)
@@ -361,12 +354,78 @@ def genera_report(config, validi, scartati, stats, top5) -> Path:           # ST
         if bassa_ass and nomi_bassa:
             righe.append(f"\n  Studenti con <10 assenze ({len(bassa_ass)}): {', '.join(nomi_bassa)}")#): media voti = {media_bassa}")
 
+    # ── SEZIONE ESITI (richiede cmd_logica eseguito prima) ────────────────────
+    ha_esito = validi and "esito" in validi[0]
+    if ha_esito:
+        n_promossi = sum(1 for s in validi if s["esito"] == "Promosso")
+        n_bocciati  = len(validi) - n_promossi
+        righe.append("")
+        righe.append("-" * 60)
+        righe.append("  ESITI FINALI")
+        righe.append("-" * 60)
+        righe.append(f"  Promossi:   {n_promossi}")
+        righe.append(f"  Bocciati:   {n_bocciati}")
+        bocciati = [s for s in validi if s["esito"] == "Bocciato"]
+        if bocciati:
+            righe.append("")
+            righe.append("  Dettaglio bocciati:")
+            for s in bocciati:
+                motivi_str = "; ".join(s.get("motivi_esito", []))
+                righe.append(
+                    f"    • {s['nome']:<12} {s['cognome']:<15} "
+                    f"voto finale: {s.get('voto_finale', '—')}  "
+                    f"debiti: {len(s.get('debiti', []))}  "
+                    f"[{motivi_str}]"
+                )
+
+    # ── SEZIONE FASCE DI RENDIMENTO ───────────────────────────────────────────
+    if fasce:
+        righe.append("")
+        righe.append("-" * 60)
+        righe.append("  FASCE DI RENDIMENTO")
+        righe.append("-" * 60)
+        for nome_fascia, lista_fascia in fasce.items():
+            righe.append(f"  {nome_fascia:<15} {len(lista_fascia):>3} studenti")
+            for s in lista_fascia:
+                debiti_str = ", ".join(s.get("debiti", [])) or "nessuno"
+                righe.append(
+                    f"      {s['nome']:<12} {s['cognome']:<15} "
+                    f"media: {s.get('media_personale', '—'):<6} "
+                    f"voto: {s.get('voto_finale', '—'):<4} "
+                    f"debiti: {debiti_str}"
+                )
+
+    # ── SEZIONE CLASSIFICHE ───────────────────────────────────────────────────
+    if classifica_media:
+        righe.append("")
+        righe.append("-" * 60)
+        righe.append("  CLASSIFICA PER MEDIA (bubble sort)")
+        righe.append("-" * 60)
+        for pos, s in enumerate(classifica_media, 1):
+            righe.append(
+                f"  {pos:>3}. {s['nome']:<12} {s['cognome']:<15} "
+                f"media: {s.get('media_personale', '—'):<6} "
+                f"esito: {s.get('esito', '—')}"
+            )
+
+    if classifica_assenze:
+        righe.append("")
+        righe.append("-" * 60)
+        righe.append("  CLASSIFICA PER ASSENZE (quick sort, crescente)")
+        righe.append("-" * 60)
+        for pos, s in enumerate(classifica_assenze, 1):
+            righe.append(
+                f"  {pos:>3}. {s['nome']:<12} {s['cognome']:<15} "
+                f"assenze: {s['assenze']:<4} "
+                f"media: {s.get('media_personale', '—')}"
+            )
+
     righe.append("")
     righe.append("=" * 60)
 
-    directory = Path("report")    
-    percorso_completo = os.path.join(directory, nome_file)
-    with open(percorso_completo, "w", encoding="utf-8") as f:
+    percorso = Path("report") / nome_file
+    percorso.parent.mkdir(parents=True, exist_ok=True)
+    with open(percorso, "w", encoding="utf-8") as f:
         f.write("\n".join(righe))
 
     print(f"[Step 8] Report salvato in: {percorso}")
@@ -408,6 +467,26 @@ def cmd_validate(config):           # STEP 10 — Gestione CLI con sys.argv
     salva_json_scartati(scartati)            # STEP 5
     return validi, scartati
 ##################################################################################################################################################
+def cmd_logica(config):           # STEP 10 — Gestione CLI con sys.argv
+    """Esegue la pipeline di logica (STEP 11-16) su studenti_validi.json."""
+    directory = Path("data/output")
+    json_path = directory / "studenti_validi.json"
+    if not json_path.exists():
+        print("[ERRORE] studenti_validi.json non trovato. Esegui prima 'validate'.")
+        sys.exit(1)
+    with open(json_path, "r", encoding="utf-8") as f:
+        validilog = json.load(f)
+
+    calcola_media_e_voto_finale(validilog, config)              # STEP 11
+    assegna_debiti_formativi(validilog, config)                 # STEP 12
+    determina_esito(validilog, config)                          # STEP 13
+    fasce = raggruppa_per_fascia_rendimento(validilog, config)  # STEP 14
+
+    classifica_media   = bubble_sort_studenti(validilog, "media_personale")               # STEP 15
+    classifica_assenze = quick_sort_studenti(validilog, "assenze", decrescente=False)     # STEP 16
+
+    return validilog, fasce, classifica_media, classifica_assenze
+##################################################################################################################################################
 def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
     directory = Path("data/output")
     json_path = directory / "studenti_validi.json"
@@ -424,8 +503,13 @@ def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
             scartati = json.load(f)
 
     statistica_per_materia = calcola_statistica(validi, config)         # STEP 6
-    classifica = classifica_studenti(validi, top_n=5)            # STEP 7
-    genera_report(config, validi, scartati, statistica_per_materia, classifica)            # STEP 8
+    classifica = classifica_studenti(validi, top_n=5)                   # STEP 7
+
+    validilog, fasce, classifica_media, classifica_assenze = cmd_logica(config)   # STEP 11-16
+
+    genera_report(config, validilog, scartati, statistica_per_materia, classifica,    # STEP 8
+                    fasce=fasce, classifica_media=classifica_media,
+                    classifica_assenze=classifica_assenze)
 ##################################################################################################################################################
 def cmd_aggregate_generate_validate(config):           # STEP 10 — Gestione CLI con sys.argv
     print("\n FASE 1 — Generazione dati")
@@ -445,13 +529,16 @@ def cmd_all(config):           # STEP 10 — Gestione CLI con sys.argv
     validi, scartati = cmd_validate(config)
 
     print("\n FASE 3 — Statistiche e report")
+    validilog, fasce, classifica_media, classifica_assenze = cmd_logica(config)
     statistica_per_materia = calcola_statistica(validi, config)         # STEP 6
-    classifica = classifica_studenti(validi, top_n=5)            # STEP 7
-    genera_report(config, validi, scartati, statistica_per_materia, classifica)            # STEP 8
+    classifica = classifica_studenti(validi, top_n=5)             # STEP 7
+    genera_report(config, validilog, scartati, statistica_per_materia, classifica,      # STEP 8
+                fasce=fasce, classifica_media=classifica_media,
+                classifica_assenze=classifica_assenze)
 
     print("\n Pipeline completata con successo.")
 ##################################################################################################################################################
-def help():           # STEP 10 — Gestione CLI con sys.argv
+def mosta_aiuto():           # STEP 10 — Gestione CLI con sys.argv
     print("""
         Uso:  python progetto.py <comando>
         
@@ -459,7 +546,8 @@ def help():           # STEP 10 — Gestione CLI con sys.argv
             gendb    - Genera il database SQLite con studenti che arrivano dal percorso selezionato in input
             generate - Genera in base a una lista di studenti inserita in input un file CSV in data/input/
             validate - Valida il CSV e produce JSON in data/output/
-            generate and validate - Esegue la generazione e la validazione in sequenza (senza report)
+            generate-validate, gv - Esegue la generazione e la validazione in sequenza (senza report)
+            logica - Calcola media, debiti, esito e classifiche su studenti_validi.json
             report   - Calcola statistiche su un file CSV esistente e genera il report in report/
             all      - Esegue l'intera pipeline dall'inizio alla fine
         """)
@@ -482,13 +570,15 @@ if __name__ == "__main__":
         cmd_generate(config)
     elif comando == "validate":
         cmd_validate(config)
+    elif comando == "logica":
+        cmd_logica(config)    
     elif comando == "report":
         cmd_report(config)
-    elif comando == "generate and validate":
+    elif comando in ("generate-validate", "gv"):
         cmd_aggregate_generate_validate(config)
     elif comando == "all":
         cmd_all(config)
     else:
         print(f"[ERRORE] Comando sconosciuto: '{comando}'")
-        help()
+        mosta_aiuto()
         sys.exit(1)

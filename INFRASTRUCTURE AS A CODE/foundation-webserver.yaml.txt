@@ -1,0 +1,69 @@
+# =====================================================================
+# ITS ICT Piemonte Foundation — Web server (UF2 · L01 · primo stack IaC)
+# ---------------------------------------------------------------------
+# Ricrea con CloudFormation LO STESSO server che nel LAB di Disaster
+# Recovery avevate creato a mano, cliccando. Qui sono ~20 righe di testo.
+# Deploy: console -> CloudFormation -> Create stack -> Upload questo file.
+# Richiede la "default VPC" (presente nel Learner Lab). Region: us-east-1.
+# NON crea ruoli IAM -> gira nel Learner Lab senza problemi.
+# =====================================================================
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Foundation web server creato come Infrastructure as Code.
+  1 security group (porta 80) + 1 istanza EC2 con una pagina web.
+
+# ---- PARAMETERS: i valori che puoi cambiare al volo -----------------
+Parameters:
+  LatestAmiId:
+    Description: AMI Amazon Linux 2023 piu recente (presa da SSM, niente ID copiati a mano)
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
+
+  InstanceType:
+    Description: Tipo di istanza (nel Learner Lab resta su t2.micro o t3.micro)
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t3.micro
+
+# ---- RESOURCES: COSA creare (l'unica sezione obbligatoria) ----------
+Resources:
+
+  # Il "firewall": apre la porta 80 (HTTP) a chiunque
+  WebSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Foundation - apre la porta 80 (HTTP)
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  # Il server: t2.micro + lo user-data che scrive la pagina della Foundation
+  WebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds:
+        - !Ref WebSG
+      Tags:
+        - Key: Name
+          Value: ITS-ICT-Piemonte-Foundation
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          dnf install -y httpd
+          systemctl enable --now httpd
+          echo "<h1>ITS ICT Piemonte Foundation</h1><p>Questo server e' nato da un file. Infrastructure as Code.</p>" > /var/www/html/index.html
+
+# ---- OUTPUTS: i risultati utili (qui: l'URL gia pronto) -------------
+Outputs:
+  URL:
+    Description: Apri questo indirizzo nel browser per vedere la Foundation
+    Value: !Sub "http://${WebServer.PublicDnsName}"
+  PublicIP:
+    Description: IP pubblico del server (lo stesso concetto del LAB DR)
+    Value: !GetAtt WebServer.PublicIp
