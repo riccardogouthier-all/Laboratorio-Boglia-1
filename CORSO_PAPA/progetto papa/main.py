@@ -8,11 +8,6 @@ python main.py report     → calcola statistiche e produce il report
 python main.py all        → esegue tutto in sequenza
 """
 
-# import librerire standard
-# import os            # Step 0, 9 — cartelle e backup
-# import random        # Step 2 — generazione dati casuali
-# import math          # Step 6 — arrotondamenti
-# import statistics    # Step 6 — media, mediana, stdev
 import sys           # Step 10 — CLI
 import json          # Step 1, 5, 6 — config e JSON
 import csv           # Step 3, 4 — lettura/scrittura CSV
@@ -22,13 +17,15 @@ from pathlib  import Path      # Step 0, 3 — gestione percorsi
 from datetime import datetime #, date # usato per generare studenti hardcoded //  # Step 2, 3, 8 — date e timestamp
 from collections import Counter      # Step 4, 7 — conteggio errori
 
+# import installer_DOCX
+from docx import Document
+
 # import dai file py del progetto
 from installer_DOCX import install_procedure
 
 from database_set import (
     carica_configdb,
-    main as database_main,
-)
+    main as database_main)
 
 from database_reader import (leggi_studenti_da_db)
 
@@ -46,13 +43,7 @@ from student_stats import (
     classifica_studenti,     # sostituisce classifica_studenti (Step 7)
     peggiori_per_materia,    # nuovo — peggiori N studenti per ogni materia
     distribuzione_voti,      # nuovo — quanti 6, 7, 8… per materia o globale
-    studenti_a_rischio,      # nuovo — media < soglia o assenze > soglia
-)
-
-# import installer_DOCX
-from docx import Document
-
-
+    studenti_a_rischio)       # nuovo — media < soglia o assenze > soglia
 
 def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartelle di progetto
     """Crea la struttura di cartelle del progetto se non esistono."""
@@ -241,16 +232,9 @@ def salva_json_scartati(scartati: list[dict]) -> Path:          # STEP 5 - Conve
     print(f"[Step 5] JSON scartati salvati in: {percorso} | ({len(scartati)} record)")
     return percorso         # percorso json_scartati
 
-def genera_report(
-    config: dict,
-    validi: list[dict],
-    scartati: list[dict],
-    stats: dict,              # da student_stats.media_per_materia   → {materia: {media, mediana, stdev, min, max, soglia_floor}}
-    top5: list[dict],         # da student_stats.classifica_studenti → lista dal campo "migliori"
-    fasce: dict | None = None,
-    classifica_media: list[dict] | None = None,
-    classifica_assenze: list[dict] | None = None,
-) -> Path:
+def genera_report(config: dict, validi: list[dict], scartati: list[dict], stats: dict, top5: list[dict], fasce: dict | None = None, classifica_media: list[dict] | None = None, classifica_assenze: list[dict] | None = None) -> Path:
+    # |stats| da student_stats.media_per_materia   → {materia: {media, mediana, stdev, min, max, soglia_floor}}
+    # |top5| da student_stats.classifica_studenti → lista dal campo "migliori"
     """Genera il file di testo del report completo in report/."""
     oggi     = datetime.now()
     percorso = Path("report") / f"report_{oggi.strftime('%Y%m%d')}.txt"
