@@ -13,7 +13,7 @@ File di Testo (`studenti.txt`): Formato CSV (valori separati da virgola), una ri
 Configurazioni JSON: `config.json` (soglie e parametri didattici) e `configdb.json` (impostazioni database).
 
 3. Output e Reportistica
-Report in formato PDF: Documento finale generato in formato PDF con timestamp (es. report_20260618.pdf) che include:
+Report in formato DOCX: Documento finale generato in formato DOCX con timestamp (es. report_20260618.docx) che include:
     Riepilogo validazione (record validi vs scartati con tipologia errore).
     Indicatori di classe: medie, mediane e deviazione standard per materia.
     Classifiche: Top N studenti per media e Peggiori N per materia.

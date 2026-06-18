@@ -23,12 +23,14 @@ from datetime import datetime #, date # usato per generare studenti hardcoded //
 from collections import Counter      # Step 4, 7 — conteggio errori
 
 # import dai file py del progetto
+from installer_DOCX import install_procedure
+
 from database_set import (
     carica_configdb,
     main as database_main,
 )
 
-from database_reader import leggi_studenti_da_db
+from database_reader import (leggi_studenti_da_db)
 
 from student_logic import (
     calcola_media_e_voto_finale,
@@ -410,20 +412,22 @@ def genera_report(
 
 
 
-    # # 1. Crea un'istanza del documento
+    # 1. Crea un'istanza del documento
+    # 2. Aggiungi un titolo (livello 0 è il più grande, poi 1, 2...)
+    # 3. Aggiungi un paragrafo normale
+    # 4. Aggiungi testo formattato (grassetto) all'interno dello stesso paragrafo
+    # 5. Salva il documento
+
+
+
     # doc = Document()
-
-    # # 2. Aggiungi un titolo (livello 0 è il più grande, poi 1, 2...)
     # doc.add_heading('Titolo del Documento', level=0)
-
-    # # 3. Aggiungi un paragrafo normale
     # paragrafo = doc.add_paragraph('Questo è un semplice paragrafo scritto con Python.')
-
-    # # 4. Aggiungi testo formattato (grassetto) all'interno dello stesso paragrafo
     # paragrafo.add_run(' Questo testo è in grassetto.').bold = True
-
-    # # 5. Salva il documento
     # doc.save('documento.docx')
+
+
+
 
 
 
@@ -547,7 +551,7 @@ def mosta_aiuto():           # STEP 10 — Gestione CLI con sys.argv
         E' necessario avere la libreria DOCX per far girare il programma, 
 
                                 -----------
-        lancia il comando :     | getDOCX |       per installare la libreria automaticamente
+        LANCIA IL COMANDO :     | getDOCX |       per avviare il processo di installazione
                                 -----------
         
         Comandi disponibili:
@@ -575,6 +579,8 @@ if __name__ == "__main__":
 
     if comando == "":
         mosta_aiuto()
+    elif comando == "getdocx":
+        install_procedure()
     elif comando == "gendb":
         cmd_gendb()
     elif comando == "generate":
@@ -589,8 +595,6 @@ if __name__ == "__main__":
         cmd_aggregate_generate_validate(config)
     elif comando == "all":
         cmd_all(config)
-    # elif comando == "getDOCX":
-        # installer_DOCX
     else:
         print(f"[ERRORE] Comando sconosciuto: '{comando}'")
         mosta_aiuto()
