@@ -22,6 +22,7 @@ Note sul file:
     - le righe vuote o che iniziano con "#" vengono ignorate (utile per commenti)
 """
 
+# import librerire standard
 import datetime
 import json
 from pathlib import Path

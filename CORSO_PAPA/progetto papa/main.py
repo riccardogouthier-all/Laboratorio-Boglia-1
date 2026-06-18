@@ -8,6 +8,7 @@ python main.py report     → calcola statistiche e produce il report
 python main.py all        → esegue tutto in sequenza
 """
 
+# import librerire standard
 import sys           # Step 10 — CLI
 import os            # Step 0, 9 — cartelle e backup
 import json          # Step 1, 5, 6 — config e JSON
@@ -20,13 +21,21 @@ import shutil        # Step 9 — copia file (backup)
 from pathlib  import Path      # Step 0, 3 — gestione percorsi
 from datetime import datetime #, date # usato per generare studenti hardcoded //  # Step 2, 3, 8 — date e timestamp
 from collections import Counter      # Step 4, 7 — conteggio errori
-# import ast
-from database_set import carica_configdb
-from database_set import main as database_main
+# import dai file py del progetto
+from database_set import (
+    carica_configdb,
+    main as database_main,
+)
 from database_reader import leggi_studenti_da_db
+from student_logic import (
+    calcola_media_e_voto_finale,
+    assegna_debiti_formativi,
+    determina_esito,
+    raggruppa_per_fascia_rendimento,
+    bubble_sort_studenti,
+    quick_sort_studenti,
+)
 
-
-# database_main()
 
 def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartelle di progetto
     """Crea la struttura di cartelle del progetto se non esistono."""
@@ -55,7 +64,8 @@ def carica_config() -> dict:       # STEP 1 - dizionario impostazioni
         "voto_max": 10,
         # "materie": ["Matematica", "Informatica", "Italiano"],
         "materie": ["Matematica", "Informatica", "Italiano", "Storia", "Inglese", "Educazione Fisica"],
-        "classe": "5A"
+        "classe": "5A",
+        "pesi_materie": {"Matematica": 1, "Informatica": 1, "Italiano": 1, "Storia": 1, "Inglese": 1, "Educazione Fisica": 1}
         }
 
     """Crea config.json con valori di default se non esiste, poi lo legge."""
@@ -296,7 +306,7 @@ def classifica_studenti(studenti: list[dict], top_n: int) -> list[dict]:        
     print(f"[Step 7] Top {top_n} studenti calcolati.")
     for i, s in enumerate(top, 5):
         print(f"L'alunno con la media più alta è il numero {i}: {s['nome']} {s['cognome']} con una media di: {s['media_personale']}")
-        return top
+    return top
 
 def genera_report(config, validi, scartati, stats, top5) -> Path:           # STEP 8 - Report finale - crea file txt in report/reportXXX.txt e ritorna il percorso
     oggi= datetime.now()
@@ -375,7 +385,7 @@ def backup_csv(percorso_csv : Path) -> Path:            # STEP 9 - Backup automa
 def cmd_gendb():           # STEP 10 — Gestione CLI con sys.argv
     database_main()         # STEP 1 - caricamento configdb.json e generazione db
     print("[Step Alpha] Database generato con successo.")
-
+##################################################################################################################################################
 def cmd_generate(config):           # STEP 10 — Gestione CLI con sys.argv
     config_db = carica_configdb()       # STEP 1 - caricamento configdb.json
     studenti = leggi_studenti_da_db(config_db["NOME_DATABASE"] + ".db")       # STEP 2 - Generazione studenti tramite database
@@ -407,7 +417,7 @@ def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
     with open(json_path, "r", encoding="utf-8") as f:
         validi = json.load(f)
 
-    scartati_path = directory / "scartati."
+    scartati_path = directory / "studenti_scartati.json"
     scartati = []
     if scartati_path.exists():
         with open(scartati_path, "r", encoding="utf-8") as f:
@@ -423,7 +433,7 @@ def cmd_aggregate_generate_validate(config):           # STEP 10 — Gestione CL
 
     print("\n FASE 2 — Validazione e conversione")
     cmd_validate(config)
-
+##################################################################################################################################################
 def cmd_all(config):           # STEP 10 — Gestione CLI con sys.argv
     print("\n FASE Alpha — Generazione database")
     cmd_gendb()         # STEP 1 - caricamento configdb.json e generazione db

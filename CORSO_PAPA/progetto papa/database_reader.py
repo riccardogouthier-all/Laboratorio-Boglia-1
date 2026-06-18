@@ -1,3 +1,5 @@
+
+# import librerire standard
 import sqlite3
 
 def leggi_studenti_da_db(percorso_db: str) -> list[dict]:
