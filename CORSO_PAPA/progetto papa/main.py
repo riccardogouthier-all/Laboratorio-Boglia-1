@@ -47,8 +47,8 @@ from student_stats import (
     studenti_a_rischio,      # nuovo — media < soglia o assenze > soglia
 )
 
-import installer_DOCX
-from docx import Document
+# import installer_DOCX
+# from docx import Document
 
 
 
@@ -617,20 +617,20 @@ def genera_report(
 
 
 
-    # 1. Crea un'istanza del documento
-    doc = Document()
+    # # 1. Crea un'istanza del documento
+    # doc = Document()
 
-    # 2. Aggiungi un titolo (livello 0 è il più grande, poi 1, 2...)
-    doc.add_heading('Titolo del Documento', level=0)
+    # # 2. Aggiungi un titolo (livello 0 è il più grande, poi 1, 2...)
+    # doc.add_heading('Titolo del Documento', level=0)
 
-    # 3. Aggiungi un paragrafo normale
-    paragrafo = doc.add_paragraph('Questo è un semplice paragrafo scritto con Python.')
+    # # 3. Aggiungi un paragrafo normale
+    # paragrafo = doc.add_paragraph('Questo è un semplice paragrafo scritto con Python.')
 
-    # 4. Aggiungi testo formattato (grassetto) all'interno dello stesso paragrafo
-    paragrafo.add_run(' Questo testo è in grassetto.').bold = True
+    # # 4. Aggiungi testo formattato (grassetto) all'interno dello stesso paragrafo
+    # paragrafo.add_run(' Questo testo è in grassetto.').bold = True
 
-    # 5. Salva il documento
-    doc.save('documento.docx')
+    # # 5. Salva il documento
+    # doc.save('documento.docx')
 
 
 
