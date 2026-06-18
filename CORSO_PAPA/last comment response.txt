@@ -1,0 +1,29 @@
+1. Funzionalità (Misurabili)
+Gestione DB Relazionale: Creazione database SQLite con 2 tabelle (`studenti`, `voti`) collegate da chiavi esterne.
+Validazione Automatica: Controllo record tramite Regex per email e date (AAAA-MM-GG) e verifica range per voti (1-10) e assenze.
+Motore di Calcolo: Calcolo media (semplice/pesata), assegnazione debiti formativi e determinazione esito (Promosso/Bocciato) secondo parametri di configurazione.
+Algoritmi di Ordinamento: Implementazione di Bubble Sort e Quick Sort per media, assenze o cognome.
+Analisi Statistica: Calcolo di media, mediana, deviazione standard, minimo e massimo per ciascuna materia.
+Classificazione: Raggruppamento automatico in 4 fasce di rendimento (Eccellente, Buono, Sufficiente, Insufficiente).
+Interfaccia CLI: Controllo totale tramite 5 comandi principali: `gendb`, `generate`, `validate`, `logica`, `report`, `all`.
+
+2. Input e Tracciato Record
+File di Testo (`studenti.txt`): Formato CSV (valori separati da virgola), una riga per record.
+    Tracciato: `ID, Nome, Cognome, Data_Nascita (AAAA-MM-GG), Email, Voto_Matematica, Voto_Informatica, Voto_Italiano, Voto_Storia, Voto_Inglese, Voto_Educazione_Fisica, Numero_Assenze`.
+Configurazioni JSON: `config.json` (soglie e parametri didattici) e `configdb.json` (impostazioni database).
+
+3. Output e Reportistica
+Report in formato PDF: Documento finale generato in formato PDF con timestamp (es. report_20260618.pdf) che include:
+    Riepilogo validazione (record validi vs scartati con tipologia errore).
+    Indicatori di classe: medie, mediane e deviazione standard per materia.
+    Classifiche: Top N studenti per media e Peggiori N per materia.
+    Analisi Rischi: Studenti con media < 6 o assenze > 15 (soglie variabili).
+    Analisi di correlazione tra assenze e rendimento.
+Visualizzazioni Grafiche: Istogrammi (distribuzione voti), Bar charts (confronto materie), Scatter plot (correlazioni), Pie chart (% promossi/bocciati), Heatmap (voti globali).
+Persistenza: File `.db` SQLite, `studenti_validi.json`, `studenti_scartati.json` e backup `.csv`.
+
+4. Funzione Selezione Dinamica Report
+Durante l'esecuzione dei comandi `report` o `all`, il sistema implementa una scelta dinamica dei contenuti:
+Interazione: Presentazione di un elenco numerato delle sezioni del report.
+Input Utente: Selezione singola o multipla tramite inserimento di numeri separati da virgola (es: `1,2,5`).
+Risultato: Generazione di un record finale personalizzato che include esclusivamente le funzionalità analitiche selezionate dall'utente in fase di input.

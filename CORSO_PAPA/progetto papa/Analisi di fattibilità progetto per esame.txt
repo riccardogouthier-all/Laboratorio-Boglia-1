@@ -1,0 +1,38 @@
+Analisi di fattibilità progetto per esame finale
+Scadenza lunedì, 8 giugno 2026, 20:00
+Consegnare una sorta di studio di fattibilità del progetto che si vuole implementare per la prova finale del corso.
+
+Il progetto deve essere redatto seguendo i punti di seguito riportati:
+
+Oggetto (Massimo 2-3 frasi che descrivono il progetto)
+Scopo (Cosa si prefigge l'applicazione che andrete a implementare, che problematica vuole risolvere)
+Modalità operative (come implementerete il progetto, che librerie userete, che ambiente di sviluppo, etc,etc)
+Tempistiche (in quanto tempo prevedete di portare a termine il progetto)
+Create un frontespizio al vostro documento, tale frontespizio deve indicare il nome del progetto, il nome della scuola, l'anno, la materia , il nome del docente e il vostro nome.
+
+Create il documento in formato pdf e chiamatelo COGNOMENOME.pdf
+
+N.B. Il software deve girare su distribuzioni GNU/Linux.
+
+Commento
+
+Commenti
+10/6/2026
+
+CLI
+
+INPUT: Popolazione di studenti
+
+OUTPUT: selezione di sottoinsieme che segue determinate caratteristiche inserite in input
+
+Aspetto variazione 
+
+17/6/26
+
+Scrivi chiaramente un elenco di funzionalità del tuo programma , elenco che possa essere valutato quantitativamente.
+
+Inserisci , per chiarire e aiutarti, un elenco degli input ( se lgli input sono solo dei file di testo indica il traccaito record)
+
+e un elenco di output:
+
+quale reportistica (dettaglia) indicatori, grafici
