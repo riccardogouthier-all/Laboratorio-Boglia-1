@@ -27,3 +27,92 @@ Durante l'esecuzione dei comandi `report` o `all`, il sistema implementa una sce
 Interazione: Presentazione di un elenco numerato delle sezioni del report.
 Input Utente: Selezione singola o multipla tramite inserimento di numeri separati da virgola (es: `1,2,5`).
 Risultato: Generazione di un record finale personalizzato che include esclusivamente le funzionalità analitiche selezionate dall'utente in fase di input.
+
+
+1. Funzionalità (Misurabili)
+La pipeline implementa un sistema completo per la gestione, validazione e analisi dei dati degli studenti con le seguenti funzionalità chiave:
+
+Funzionalità	
+Gestione DB Relazionale:	Creazione database SQLite con 2 tabelle (studenti, voti) collegati da chiavi esterne tramite database_set.py
+Validazione Automatica:	Regex per email ([\w.\-]+@[\w.\-]+\.\w{2,}) e date (YYYY-MM-DD), verifica range voti (2-10) e assenze tramite valida_studenti()
+Motore di Calcolo:	Media semplice/pesata, debiti formativi, esito (Promosso/Bocciato) tramite student_logic.py (STEP 11-13)
+Algoritmi di Ordinamento:	Bubble Sort per media (bubble_sort_studenti) e Quick Sort per assenze (quick_sort_studenti) - STEP 15-16
+Analisi Statistica:	Media, mediana, deviazione standard, min/max per materia tramite media_per_materia() (STEP 6)
+Classificazione:	Raggruppamento in 4 fasce (Eccellente, Buono, Sufficiente, Insufficiente) tramite raggruppa_per_fascia_rendimento() (STEP 14)
+Interfaccia CLI	7 comandi: gendb, generate, validate, logica, report, gv, all gestiti da sys.argv (STEP 10)
+
+2. Input e Tracciato Record
+File di Testo (CSV)
+Formato: CSV con valori separati da virgola, una riga per record
+Percorso: data/input/studenti_<timestamp>.csv
+
+Tracciato Record:
+
+text
+ID, Nome, Cognome, Data_Nascita (YYYY-MM-DD), Email, 
+Voto_Matematica, Voto_Informatica, Voto_Italiano, Voto_Storia, 
+Voto_Inglese, Voto_Educazione_Fisica, Numero_Assenze
+Configurazioni JSON
+configurations/config.json: Parametri didattici (numero studenti, range voti, materie, pesi, classe)
+
+json
+{
+  "numero_studenti": 50,
+  "voto_min": 2,
+  "voto_max": 10,
+  "materie": ["Matematica", "Informatica", "Italiano", "Storia", "Inglese", "Educazione Fisica"],
+  "classe": "5A",
+  "pesi_materie": {...}
+}
+configdb.json: Impostazioni database SQLite (gestito da database_set.py)
+
+Dati di Input Alternativi
+Database SQLite: Studenti generati da database_set.py tramite leggi_studenti_da_db()
+
+Studenti non validi: 2 record di errore aggiunti automaticamente in aggiunta_errori() per testare validazione
+
+3. Output e Reportistica
+File Generati
+File	Percorso	Formato	Descrizione
+studenti_<timestamp>.csv	data/input/	CSV	Dati studenti generati + errori di test
+studenti_validi.json	data/output/	JSON	Record validati (STEP 5)
+studenti_scartati.json	data/output/	JSON	Record scartati con errori (STEP 5)
+backup_studenti_<timestamp>.csv	data/backup/	CSV	Backup automatico (STEP 9)
+report_<YYYYMMDD>.txt	report/	TXT	Report completo statistiche (STEP 8)
+Grafici	report/charts/	PNG	Istogrammi, bar charts, scatter plot, pie chart, heatmap
+Contenuto Report TXT
+Il report generato da genera_report() include:
+
+Riepilogo Validazione:
+Studenti totali, validi, scartati
+Tipologia errori (email_non_valida, data_nascita_non_valida, voto_fuori_range, voto_non_numerico)
+Indicatori di Classe (per materia):
+Media, mediana, deviazione standard, minimo, massimo
+
+Classifiche:
+Top 5 studenti per media personale
+Peggiori 3 studenti per ogni materia
+
+Analisi Rischi:
+Studenti con media < 6.0 (soglia configurabile)
+Studenti con assenze > 15 (soglia configurabile)
+Dettaglio studenti con entrambi i problemi
+
+Esiti Finali:
+Count promossi/bocciati
+Dettaglio bocciati con voti finali, debiti formativi, motivi
+
+Fasce di Rendimento:
+Eccellente, Buono, Sufficiente, Insufficiente con listato studenti
+
+Classifiche Ordinate:
+Bubble sort per media (crescente)
+Quick sort per assenze (crescente)
+
+Visualizzazioni Grafiche (student_charts.py)
+
+Istogrammi: Distribuzione voti globale (6, 7, 8...)
+Bar charts: Confronto medie per materia
+Scatter plot: Correlazione assenze vs rendimento
+Pie chart: Percentuale promossi/bocciati
+Heatmap: Voti globali per studente/materia

@@ -22,7 +22,7 @@ def detect_os(system, version, architecture, processor):
 def install_python_docx(system):
     # --- Conferma installazione ---
     risposta = input(
-        "E' necessaria l'installazione della libreria python-docx "
+        "E' necessaria l'installazione delle librerie python-docx per un report testuale e matplotlib, seaborn, pandas, numpy per la produzione di grafici"
         "per il funzionamento del programma, premere y per procedere (Y/n): "
     ).strip().upper() or "Y"  # maiuscola predefinita
 
@@ -39,14 +39,14 @@ def install_python_docx(system):
     if not in_venv and system == "Windows":
         os.system("pip install python-docx")  # windows
     elif not in_venv and system == "Linux":
-        os.system("pip install python-docx --break-system-packages")  # linux
+        os.system("pip install python-docx matplotlib seaborn pandas numpy --break-system-packages")  # linux
     elif not in_venv and system == "Darwin":
-        os.system("pip3 install python-docx --user")  # mac
+        os.system("pip3 install python-docx matplotlib seaborn pandas numpy --user")  # mac
 
     elif in_venv and system == "Windows":
-        os.system("python -m pip install python-docx")  # w
+        os.system("python -m pip install python-docx matplotlib seaborn pandas numpy")  # w
     elif in_venv and (system == "Linux" or system == "Darwin"):
-        os.system("python3 -m pip install python-docx")  # l, m
+        os.system("python3 -m pip install python-docx matplotlib seaborn pandas numpy")  # l, m
     else:
         print(f"Sistema operativo non riconosciuto: {system}")
 

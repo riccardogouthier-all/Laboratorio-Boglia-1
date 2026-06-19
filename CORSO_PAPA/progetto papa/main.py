@@ -17,11 +17,10 @@ from pathlib  import Path      # Step 0, 3 — gestione percorsi
 from datetime import datetime #, date # usato per generare studenti hardcoded //  # Step 2, 3, 8 — date e timestamp
 from collections import Counter      # Step 4, 7 — conteggio errori
 
-# import installer_DOCX
 from docx import Document
 
 # import dai file py del progetto
-from installer_DOCX import install_procedure
+from installer_dependencies import install_procedure
 
 from database_set import (
     carica_configdb,
@@ -45,6 +44,10 @@ from student_stats import (
     distribuzione_voti,      # nuovo — quanti 6, 7, 8… per materia o globale
     studenti_a_rischio)       # nuovo — media < soglia o assenze > soglia
 
+from student_charts import genera_tutti_i_grafici
+
+from genera_report import genera_report_docx
+
 def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartelle di progetto
     """Crea la struttura di cartelle del progetto se non esistono."""
     path = Path.cwd()#("PROGETTO-Student Analytics Pipeline")      #"CORSO_BOGLIA","basi di programmazione",
@@ -55,6 +58,7 @@ def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartell
         base_path / "data/output",
         base_path / "data/backup",
         base_path / "report",
+        base_path / "report/charts",  # ← AGGIUNTO per i grafici
         base_path / "configurations"
     ]
     for cartella in cartelle:
@@ -232,7 +236,11 @@ def salva_json_scartati(scartati: list[dict]) -> Path:          # STEP 5 - Conve
     print(f"[Step 5] JSON scartati salvati in: {percorso} | ({len(scartati)} record)")
     return percorso         # percorso json_scartati
 
-def genera_report(config: dict, validi: list[dict], scartati: list[dict], stats: dict, top5: list[dict], fasce: dict | None = None, classifica_media: list[dict] | None = None, classifica_assenze: list[dict] | None = None) -> Path:
+
+
+
+'''
+def genera_report(config: dict, validi: list[dict], scartati: list[dict], stats: dict, top5: list[dict], fasce: dict | None = None, classifica_media: list[dict] | None = None, classifica_assenze: list[dict] | None = None, genera_grafici: bool = True) -> Path:
     # |stats| da student_stats.media_per_materia   → {materia: {media, mediana, stdev, min, max, soglia_floor}}
     # |top5| da student_stats.classifica_studenti → lista dal campo "migliori"
     """Genera il file di testo del report completo in report/."""
@@ -385,14 +393,22 @@ def genera_report(config: dict, validi: list[dict], scartati: list[dict], stats:
                 f"media: {s.get('media_personale', '—')}"
             )
 
+    # STEP 17 — GENERAZIONE GRAFICI (integrato nel report)
+    if genera_grafici and validi and ha_esito:
+        print("\n" + "─" * 60)
+        print("  Generazione grafici in corso...")
+        print("─" * 60)
+        try:
+            genera_tutti_i_grafici(validi, config)
+            print("[Step 17] ✅ Grafici generati con successo in report/charts/")
+        except Exception as e:
+            print(f"[Step 17] ⚠  Avvertimento: impossibile generare grafici: {e}")
+
     righe.append("")
     righe.append("=" * 60)
 
     with open(percorso, "w", encoding="utf-8") as f:
         f.write("\n".join(righe))
-
-
-
 
 
 
@@ -412,12 +428,13 @@ def genera_report(config: dict, validi: list[dict], scartati: list[dict], stats:
 
 
 
-
-
-
-
     print(f"[Step 8] Report salvato in: {percorso}")
     return percorso
+'''
+
+
+
+
 
 def backup_csv(percorso_csv : Path) -> Path:            # STEP 9 - Backup automatico
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -475,6 +492,25 @@ def cmd_logica(config):           # STEP 10 — Gestione CLI con sys.argv
 
     return validilog, fasce, classifica_media, classifica_assenze
 ##################################################################################################################################################
+def cmd_charts(config):
+    """Genera solo i grafici (senza rigenerare il report)."""
+    directory = Path("data/output")
+    json_path = directory / "studenti_validi.json"
+    
+    # Carica studenti
+    with open(json_path, "r", encoding="utf-8") as f:
+        validi = json.load(f)
+
+    # Se non hanno esito, esegui logica
+    ha_esito = validi and "esito" in validi[0]
+    if not ha_esito:
+        print("[AVVISO] I dati non hanno ancora l'esito calcolato. Eseguo logica...")
+        validi, _, _, _ = cmd_logica(config)
+
+    # Genera grafici
+    genera_tutti_i_grafici(validi, config)
+    print("\n[Step 17] Grafici generati con successo in report/charts/")
+##################################################################################################################################################
 def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
     directory = Path("data/output")
 
@@ -483,7 +519,7 @@ def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
         print("[ERRORE] studenti_validi.json non trovato. Esegui prima 'validate'.")
         sys.exit(1)
     with open(json_path, "r", encoding="utf-8") as f:
-        validi = json.load(f)
+        validimedia = json.load(f)
 
     scartati_path = directory / "studenti_scartati.json"
     scartati = []
@@ -491,12 +527,12 @@ def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
         with open(scartati_path, "r", encoding="utf-8") as f:
             scartati = json.load(f)
 
-    statistica_per_materia = media_per_materia(validi)         # STEP 6
-    classifica = classifica_studenti(validi, top_n=5)["migliori"]                   # STEP 7
+    statistica_per_materia = media_per_materia(validimedia)         # STEP 6
+    classifica = classifica_studenti(validimedia, top_n=5)["migliori"]                   # STEP 7
 
     validilog, fasce, classifica_media, classifica_assenze = cmd_logica(config)   # STEP 11-16
 
-    genera_report(config, validilog, scartati, statistica_per_materia, classifica,    # STEP 8
+    genera_report_docx(config, validilog, scartati, statistica_per_materia, classifica,    # STEP 8
                     fasce=fasce, classifica_media=classifica_media,
                     classifica_assenze=classifica_assenze)
 ##################################################################################################################################################
@@ -515,14 +551,14 @@ def cmd_all(config):           # STEP 10 — Gestione CLI con sys.argv
     cmd_generate(config)
 
     print("\n FASE 2 — Validazione e conversione")
-    validi, scartati = cmd_validate(config)
+    validimedia, scartati = cmd_validate(config)
 
     print("\n FASE 3 — Statistiche e report")
     validilog, fasce, classifica_media, classifica_assenze = cmd_logica(config)
-    statistica_per_materia = media_per_materia(validi)         # STEP 6
-    classifica = classifica_studenti(validi, top_n=5)["migliori"]                   # STEP 7
+    statistica_per_materia = media_per_materia(validimedia)         # STEP 6
+    classifica = classifica_studenti(validimedia, top_n=5)["migliori"]                   # STEP 7
 
-    genera_report(config, validilog, scartati, statistica_per_materia, classifica,      # STEP 8
+    genera_report_docx(config, validilog, scartati, statistica_per_materia, classifica,      # STEP 8
                 fasce=fasce, classifica_media=classifica_media,
                 classifica_assenze=classifica_assenze)
 
