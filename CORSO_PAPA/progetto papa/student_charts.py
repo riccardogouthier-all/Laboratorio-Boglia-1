@@ -460,7 +460,8 @@ def genera_tutti_i_grafici(
     print("\n" + "="*60)
     print("  GENERAZIONE GRAFICI")
     print("="*60 + "\n")
-    
+    print("Generazione grafici in corso...\n")
+
     risultati = {}
     
     try:

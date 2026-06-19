@@ -1,14 +1,17 @@
 1. Funzionalità (Misurabili)
+Installazione librerie e aggiornamento pip/ pip3
 Gestione DB Relazionale: Creazione database SQLite con 2 tabelle (`studenti`, `voti`) collegate da chiavi esterne.
 Validazione Automatica: Controllo record tramite Regex per email e date (AAAA-MM-GG) e verifica range per voti (1-10) e assenze.
 Motore di Calcolo: Calcolo media (semplice/pesata), assegnazione debiti formativi e determinazione esito (Promosso/Bocciato) secondo parametri di configurazione.
 Algoritmi di Ordinamento: Implementazione di Bubble Sort e Quick Sort per media, assenze o cognome.
 Analisi Statistica: Calcolo di media, mediana, deviazione standard, minimo e massimo per ciascuna materia.
 Classificazione: Raggruppamento automatico in 4 fasce di rendimento (Eccellente, Buono, Sufficiente, Insufficiente).
-Interfaccia CLI: Controllo totale tramite 5 comandi principali: `gendb`, `generate`, `validate`, `logica`, `report`, `all`.
+Interfaccia CLI: Controllo totale tramite 7 comandi principali: getdocx, gendb, generate, validate, logica, report, all.
 
 2. Input e Tracciato Record
 File di Testo (`studenti.txt`): Formato CSV (valori separati da virgola), una riga per record.
+nota: viene usato il file txt solo perchè è il modo più veloce che mi veniva in mente per creare delle tabelle con dei dati sensati,
+il programma in se lavora partendo da un database sqlit3
     Tracciato: `ID, Nome, Cognome, Data_Nascita (AAAA-MM-GG), Email, Voto_Matematica, Voto_Informatica, Voto_Italiano, Voto_Storia, Voto_Inglese, Voto_Educazione_Fisica, Numero_Assenze`.
 Configurazioni JSON: `config.json` (soglie e parametri didattici) e `configdb.json` (impostazioni database).
 

@@ -46,7 +46,7 @@ from student_stats import (
 
 from student_charts import genera_tutti_i_grafici
 
-from genera_report import genera_report_docx
+from genera_report import genera_report_docx, chiedi_sezioni
 
 def crea_cartelle():            # STEP 0 - Preparazione: creazione delle cartelle di progetto
     """Crea la struttura di cartelle del progetto se non esistono."""
@@ -332,9 +332,10 @@ def cmd_report(config):           # STEP 10 — Gestione CLI con sys.argv
 
     validilog, fasce, classifica_media, classifica_assenze = cmd_logica(config)   # STEP 11-16
 
+    sezioni = chiedi_sezioni()
     genera_report_docx(config, validilog, scartati, statistica_per_materia, classifica,    # STEP 8
                     fasce=fasce, classifica_media=classifica_media,
-                    classifica_assenze=classifica_assenze)
+                    classifica_assenze=classifica_assenze, sezioni=sezioni)
 ##################################################################################################################################################
 def cmd_aggregate_generate_validate(config):           # STEP 10 — Gestione CLI con sys.argv
     """Esegue generate + validate in sequenza (senza report)."""
@@ -358,9 +359,10 @@ def cmd_all(config):           # STEP 10 — Gestione CLI con sys.argv
     statistica_per_materia = media_per_materia(validimedia)         # STEP 6
     classifica = classifica_studenti(validimedia, top_n=5)["migliori"]                   # STEP 7
 
+    sezioni = chiedi_sezioni()
     genera_report_docx(config, validilog, scartati, statistica_per_materia, classifica,      # STEP 8
                 fasce=fasce, classifica_media=classifica_media,
-                classifica_assenze=classifica_assenze)
+                classifica_assenze=classifica_assenze, sezioni=sezioni)
 
     print("\n Pipeline completata con successo.")
 ##################################################################################################################################################
