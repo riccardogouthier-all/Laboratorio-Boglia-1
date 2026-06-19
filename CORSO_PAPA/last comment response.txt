@@ -1,38 +1,4 @@
 1. Funzionalità (Misurabili)
-Installazione librerie e aggiornamento pip/ pip3
-Gestione DB Relazionale: Creazione database SQLite con 2 tabelle (`studenti`, `voti`) collegate da chiavi esterne.
-Validazione Automatica: Controllo record tramite Regex per email e date (AAAA-MM-GG) e verifica range per voti (1-10) e assenze.
-Motore di Calcolo: Calcolo media (semplice/pesata), assegnazione debiti formativi e determinazione esito (Promosso/Bocciato) secondo parametri di configurazione.
-Algoritmi di Ordinamento: Implementazione di Bubble Sort e Quick Sort per media, assenze o cognome.
-Analisi Statistica: Calcolo di media, mediana, deviazione standard, minimo e massimo per ciascuna materia.
-Classificazione: Raggruppamento automatico in 4 fasce di rendimento (Eccellente, Buono, Sufficiente, Insufficiente).
-Interfaccia CLI: Controllo totale tramite 7 comandi principali: getdocx, gendb, generate, validate, logica, report, all.
-
-2. Input e Tracciato Record
-File di Testo (`studenti.txt`): Formato CSV (valori separati da virgola), una riga per record.
-nota: viene usato il file txt solo perchè è il modo più veloce che mi veniva in mente per creare delle tabelle con dei dati sensati,
-il programma in se lavora partendo da un database sqlit3
-    Tracciato: `ID, Nome, Cognome, Data_Nascita (AAAA-MM-GG), Email, Voto_Matematica, Voto_Informatica, Voto_Italiano, Voto_Storia, Voto_Inglese, Voto_Educazione_Fisica, Numero_Assenze`.
-Configurazioni JSON: `config.json` (soglie e parametri didattici) e `configdb.json` (impostazioni database).
-
-3. Output e Reportistica
-Report in formato DOCX: Documento finale generato in formato DOCX con timestamp (es. report_20260618.docx) che include:
-    Riepilogo validazione (record validi vs scartati con tipologia errore).
-    Indicatori di classe: medie, mediane e deviazione standard per materia.
-    Classifiche: Top N studenti per media e Peggiori N per materia.
-    Analisi Rischi: Studenti con media < 6 o assenze > 15 (soglie variabili).
-    Analisi di correlazione tra assenze e rendimento.
-Visualizzazioni Grafiche: Istogrammi (distribuzione voti), Bar charts (confronto materie), Scatter plot (correlazioni), Pie chart (% promossi/bocciati), Heatmap (voti globali).
-Persistenza: File `.db` SQLite, `studenti_validi.json`, `studenti_scartati.json` e backup `.csv`.
-
-4. Funzione Selezione Dinamica Report
-Durante l'esecuzione dei comandi `report` o `all`, il sistema implementa una scelta dinamica dei contenuti:
-Interazione: Presentazione di un elenco numerato delle sezioni del report.
-Input Utente: Selezione singola o multipla tramite inserimento di numeri separati da virgola (es: `1,2,5`).
-Risultato: Generazione di un record finale personalizzato che include esclusivamente le funzionalità analitiche selezionate dall'utente in fase di input.
-
-
-1. Funzionalità (Misurabili)
 La pipeline implementa un sistema completo per la gestione, validazione e analisi dei dati degli studenti con le seguenti funzionalità chiave:
 
 Funzionalità	
@@ -81,9 +47,9 @@ studenti_<timestamp>.csv	data/input/	CSV	Dati studenti generati + errori di test
 studenti_validi.json	data/output/	JSON	Record validati (STEP 5)
 studenti_scartati.json	data/output/	JSON	Record scartati con errori (STEP 5)
 backup_studenti_<timestamp>.csv	data/backup/	CSV	Backup automatico (STEP 9)
-report_<YYYYMMDD>.txt	report/	TXT	Report completo statistiche (STEP 8)
+report_<YYYYMMDD>_<HHMMSS>.DOCX	report/	DOCX	Report completo statistiche (STEP 8)
 Grafici	report/charts/	PNG	Istogrammi, bar charts, scatter plot, pie chart, heatmap
-Contenuto Report TXT
+Contenuto Report DOCX
 Il report generato da genera_report() include:
 
 Riepilogo Validazione:
@@ -113,9 +79,16 @@ Bubble sort per media (crescente)
 Quick sort per assenze (crescente)
 
 Visualizzazioni Grafiche (student_charts.py)
-
 Istogrammi: Distribuzione voti globale (6, 7, 8...)
 Bar charts: Confronto medie per materia
 Scatter plot: Correlazione assenze vs rendimento
 Pie chart: Percentuale promossi/bocciati
 Heatmap: Voti globali per studente/materia
+
+
+4. Funzione Selezione Dinamica Report
+
+Durante l'esecuzione dei comandi `report` o `all`, il sistema implementa una scelta dinamica dei contenuti:
+Interazione: Presentazione di un elenco numerato delle sezioni del report.
+Input Utente: Selezione singola o multipla tramite inserimento di numeri separati da virgola (es: `1,2,5`).
+Risultato: Generazione di un record finale personalizzato che include esclusivamente le funzionalità analitiche selezionate dall'utente in fase di input.
