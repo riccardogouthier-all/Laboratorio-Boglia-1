@@ -17,6 +17,7 @@ Ogni grafico:
 
 # import librerie standard
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 import seaborn as sns
 import pandas as pd
 import numpy as np
@@ -410,7 +411,6 @@ def scatter_media_vs_assenze(studenti: list[dict]) -> Path:
     ax.grid(alpha=0.3)
     
     # Legenda
-    from matplotlib.patches import Patch
     legenda = [
         Patch(facecolor='#2ecc71', edgecolor='black', label='Promosso'),
         Patch(facecolor='#e74c3c', edgecolor='black', label='Bocciato'),
