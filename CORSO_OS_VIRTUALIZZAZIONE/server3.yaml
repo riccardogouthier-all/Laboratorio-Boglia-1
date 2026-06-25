@@ -1,0 +1,91 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ACA esercizio completo
+
+Resources:
+
+  ACAVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+
+  ACAIGW:
+    Type: AWS::EC2::InternetGateway
+
+  ACAAttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref ACAVPC
+      InternetGatewayId: !Ref ACAIGW
+
+  ACAPrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ACAVPC
+      CidrBlock: 10.0.2.0/24
+  
+  ACAPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ACAVPC
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+
+  ACARouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref ACAVPC
+
+  ACARouteInternet:
+    Type: AWS::EC2::Route
+    DependsOn: ACAAttachGateway
+    Properties:
+      RouteTableId: !Ref ACARouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref ACAIGW
+
+  ACASubnetAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref ACAPublicSubnet
+      RouteTableId: !Ref ACARouteTable
+
+  ACASG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ACA HTTP
+      VpcId: !Ref ACAVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  ACAInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.micro
+      ImageId: ami-0c02fb55956c7d316
+      SubnetId: !Ref ACAPrivateSubnet
+      SecurityGroupIds:
+        - !Ref ACASG
+
+      Tags:
+        - Key: Name
+          Value: ACA_Server
+
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          yum install -y httpd curl
+
+          systemctl start httpd
+          systemctl enable httpd
+
+          ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+
+          echo "ESERCIZIO_COMPLETATO<br>" > /var/www/html/index.html
+          echo "ACA-$ID" >> /var/www/html/index.html
+
+Outputs:
+  ACAURL:
+    Value: !Sub "http://${ACAInstance.PublicIp}"
