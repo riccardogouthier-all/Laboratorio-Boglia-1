@@ -1,0 +1,74 @@
+Sezione A – Conoscenze di base
+
+- Che cosa significa il concetto di parità di trattamento nel mondo del lavoro?
+Parità di trattamento significa che tutte le persone devono avere uguali opportunità, diritti e condizioni di lavoro (assunzione, retribuzione, formazione, promozione, condizioni contrattuali) indipendentemente da genere, età, origine, religione, orientamento sessuale o altre caratteristiche personali.
+
+- Spiega che cosa sono gli stereotipi di genere e perché possono creare problemi nelle aziende.
+Gli stereotipi di genere sono idee generalizzate e semplificate su come uomini e donne “dovrebbero” comportarsi o quali ruoli dovrebbero occupare. Possono creare problemi perché influenzano decisioni di assunzione e promozione, riducono la diversità di idee, demotivano persone qualificate e favoriscono un ambiente di lavoro discriminatorio o non sicuro.
+
+- Che cosa si intende per discriminazione sul lavoro? Fai un esempio concreto.
+Discriminazione sul lavoro significa trattare una persona in modo svantaggioso rispetto ad altre per motivi protetti (es. genere, età, origine). Esempio: rifiutare di assumere una donna perché “potrebbe avere figli” o pagare una lavoratrice meno di un collega uomo con lo stesso ruolo e esperienza.
+
+- Perché è importante utilizzare un linguaggio rispettoso e inclusivo nella comunicazione professionale?
+Perché il linguaggio influenza percezioni e comportamenti: un linguaggio inclusivo evita di escludere o stigmatizzare persone, riduce bias impliciti, favorisce il senso di appartenenza e migliora collaborazione, produttività e immagine aziendale.
+
+- Indica due vantaggi che un ambiente di lavoro inclusivo può portare a un’azienda o a un team.
+1) Maggiore innovazione e qualità delle soluzioni grazie a prospettive diverse.  
+2) Migliore retention e motivazione dei dipendenti, con riduzione dei costi legati al turnover.
+
+- Cita almeno due riferimenti normativi che tutelano la parità di genere e la non discriminazione in Italia.
+- Costituzione della Repubblica Italiana, art. 3 (principio di uguaglianza).  
+- Codice delle pari opportunità tra uomo e donna (D. Lgs. 198/2006) e successive integrazioni.  
+(Altro riferimento utile: Direttive europee antidiscriminazione recepite in Italia, es. Direttiva 2006/54/CE.)
+
+
+
+
+Sezione B – Comprensione e rielaborazione
+
+Scelgo Testo 1 – Annuncio aziendale
+
+Testo originale:
+“Cerchiamo un giovane sviluppatore brillante, capace di guidare i colleghi con fermezza e resistere allo stress.”
+
+- Parole o espressioni non inclusive
+“giovane” (esclude per età), “sviluppatore” (termine maschile può sembrare rivolto solo a uomini), “guidare i colleghi con fermezza” (tono autoritario), “resistere allo stress” (potrebbe stigmatizzare chi ha bisogno di supporto).
+
+- Riscrivi il testo in modo neutro e inclusivo
+“Cerchiamo una persona sviluppatrice con ottime capacità tecniche, attitudine al lavoro di squadra e capacità di gestire responsabilità anche in situazioni sotto pressione.”
+
+- Perché la nuova versione è più adatta a tutti i candidati
+La versione elimina riferimenti all’età e al genere, valorizza competenze tecniche e soft skills senza promuovere uno stile autoritario, e usa un linguaggio che riconosce la gestione dello stress come competenza piuttosto che una prova di resistenza personale.
+
+
+
+
+Sezione C – Casi pratici
+
+Caso 1: Battute stereotipate durante uno stage
+- Perché questo comportamento può essere problematico?
+Perché normalizza pregiudizi, crea un clima ostile o esclusivo, sminuisce colleghi e può portare a discriminazione implicita nelle decisioni professionali.
+
+- Come potresti intervenire in modo rispettoso?
+1) Intervenire subito e con calma: dire qualcosa come “Questa battuta può risultare offensiva, preferisco che evitiamo commenti del genere.”  
+2) Offrire una breve spiegazione: “Frasi così rafforzano stereotipi e possono mettere a disagio chi lavora qui.”  
+3) Se il comportamento persiste, segnalarlo a un responsabile o alle risorse umane, proponendo eventualmente una formazione sul tema.
+
+Caso 2: Progetto digitale che non considera diversità di utenti
+- Quali rischi possono nascere?
+Prodotto non accessibile a persone con disabilità, esclusione di fasce d’età (es. anziani), scarsa adozione commerciale, problemi legali o reputazionali e bias nei dati che portano funzionalità non adatte a tutti.
+
+- Quali azioni proporresti per rendere il progetto più inclusivo?
+1) Condurre ricerca utenti diversificata (età, genere, abilità).  
+2) Applicare linee guida di accessibilità (WCAG) e test con utenti reali, incluse persone con disabilità.  
+3) Usare linguaggio e design neutri e configurazioni personalizzabili (dimensione testo, contrasto, input alternativi).  
+4) Integrare test di diversità nei requisiti di prodotto e nel processo di QA.
+
+
+
+
+Riflessione personale (facoltativa)
+Secondo te, quale ruolo possono avere i giovani nel promuovere la parità e il rispetto nel lavoro e nella società?
+I giovani possono essere agenti di cambiamento: introdurre pratiche inclusive nei team, chiedere formazione su bias e diversità, usare il loro potere di voto come consumatori e candidati per premiare ambienti rispettosi, e dare esempio con un linguaggio e comportamenti che valorizzino la pluralità.
+
+Vuoi che adatti questi testi in un formato per presentazione, poster informativo o per una breve formazione interna?
