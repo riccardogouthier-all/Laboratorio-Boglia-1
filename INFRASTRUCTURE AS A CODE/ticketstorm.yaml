@@ -1,0 +1,140 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: TicketStorm - VPC, subnet pubblica, IGW, SG porta 80, EC2 Amazon Linux 2023
+
+Parameters:
+  AmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
+  PageText:
+    Type: String
+    Default: "TicketStorm e' VIVO"
+  Owner:
+    Type: String
+    Default: Riccardo
+  Corso:
+    Type: String
+    Default: CloudFormation
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+
+Mappings:
+  InstanceTypeMap:
+    dev:
+      Type: t2.micro
+    staging:
+      Type: t3.small
+    prod:
+      Type: t3.medium
+
+Resources:
+
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Corso
+          Value: !Ref Corso
+
+  IGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Corso
+          Value: !Ref Corso
+
+  IGWAttach:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref IGW
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: us-east-1a
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Corso
+          Value: !Ref Corso
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Corso
+          Value: !Ref Corso
+
+  DefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: IGWAttach
+    Properties:
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+
+  SubnetRouteAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref RouteTable
+
+  WebSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Corso
+          Value: !Ref Corso
+
+  WebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !FindInMap [InstanceTypeMap, !Ref Environment, Type]
+      ImageId: !Ref AmiId
+      SubnetId: !Ref PublicSubnet
+      SecurityGroupIds:
+        - !Ref WebSG
+      Tags:
+        - Key: Owner
+          Value: !Ref Owner
+        - Key: Corso
+          Value: !Ref Corso
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum install -y httpd
+          cat > /var/www/html/index.html << EOF
+          <h1>${PageText}</h1>
+          EOF
+          systemctl enable --now httpd
+
+Outputs:
+  PublicURL:
+    Description: URL pubblico dell'istanza TicketStorm
+    Value: !Sub "http://${WebServer.PublicDnsName}"
