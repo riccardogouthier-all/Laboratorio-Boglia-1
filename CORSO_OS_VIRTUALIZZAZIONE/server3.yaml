@@ -59,13 +59,16 @@ Resources:
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
 
   ACAInstance:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t3.micro
       ImageId: ami-0c02fb55956c7d316
-      SubnetId: !Ref ACAPrivateSubnet
+      SubnetId: !Ref ACAPublicSubnet
       SecurityGroupIds:
         - !Ref ACASG
 
