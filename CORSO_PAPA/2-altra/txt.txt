@@ -2,4 +2,6 @@
 vuoi inserire la validazione dei campi dall'app, se inserisci uno studente non controllo la mail la data di nascita
 se inserisci un voto con una mateira a caso(non presente nella tabella materie) te lo fa mettere lo stesso
 se inserisci una materia l'id di quella materia non sarà ultimo id+1 ma un numero spropositato (vengono tenute le materie nella cache e quindi temo stackino)
-quando chiudi con la x l'app il programma non si ferma davvero
+quando chiudi con la x l'app il programma non si ferma davvero (qualche volta si qualche volta no)
+
+risolvi i problemi legati a pycache e la presenza di studenti.db, se 
