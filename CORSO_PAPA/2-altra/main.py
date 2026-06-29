@@ -131,16 +131,67 @@ class DialogStudente(tk.Toplevel):
         _btn(f, "✖  Annulla", self.destroy, bg=ACCENT).pack(side="left", padx=6)
 
     def _salva(self):
+        nome  = self.v_nome.get().strip()
+        cogn  = self.v_cogn.get().strip()
+        data  = self.v_data.get().strip()
+        email = self.v_email.get().strip()
+
+        # ── campi obbligatori ────────────────────────────────────────────────
+        if not nome:
+            messagebox.showerror("Errore", "Il campo 'Nome' è obbligatorio.", parent=self); return
+        if not cogn:
+            messagebox.showerror("Errore", "Il campo 'Cognome' è obbligatorio.", parent=self); return
+        if not data:
+            messagebox.showerror("Errore", "Il campo 'Data nascita' è obbligatorio.", parent=self); return
+        if not email:
+            messagebox.showerror("Errore", "Il campo 'Email' è obbligatorio.", parent=self); return
+
+        # ── nome/cognome: solo lettere, spazi, apostrofo e trattino ─────────
+        _nome_re = re.compile(r"^[A-Za-zÀ-ÖØ-öø-ÿ\s'\-]+$")
+        if not _nome_re.match(nome):
+            messagebox.showerror(
+                "Errore",
+                "Il Nome non può contenere numeri o caratteri speciali.",
+                parent=self
+            ); return
+        if not _nome_re.match(cogn):
+            messagebox.showerror(
+                "Errore",
+                "Il Cognome non può contenere numeri o caratteri speciali.",
+                parent=self
+            ); return
+
+        # ── data di nascita: formato YYYY-MM-DD e data reale ────────────────
+        if not re.match(r"^\d{4}-\d{2}-\d{2}$", data):
+            messagebox.showerror(
+                "Errore",
+                "Data di nascita non valida.\nFormato atteso: YYYY-MM-DD (es. 2001-03-15)",
+                parent=self
+            ); return
+        try:
+            from datetime import date as _date
+            _date.fromisoformat(data)
+        except ValueError:
+            messagebox.showerror(
+                "Errore",
+                f"Data di nascita '{data}' non è una data valida nel calendario.",
+                parent=self
+            ); return
+
+        # ── email: formato base ──────────────────────────────────────────────
+        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+            messagebox.showerror(
+                "Errore",
+                f"Email '{email}' non è valida.\nFormato atteso: nome@dominio.ext",
+                parent=self
+            ); return
+
         self.risultato = {
-            "nome": self.v_nome.get().strip(),
-            "cognome": self.v_cogn.get().strip(),
-            "data_nascita": self.v_data.get().strip(),
-            "email": self.v_email.get().strip(),
+            "nome": nome,
+            "cognome": cogn,
+            "data_nascita": data,
+            "email": email,
         }
-        for k, v in self.risultato.items():
-            if not v:
-                messagebox.showerror("Errore", f"Campo '{k}' obbligatorio.", parent=self)
-                return
         self.destroy()
 
 
@@ -175,10 +226,12 @@ class DialogVoto(tk.Toplevel):
                 if s["id"] == dati["id_studente"]:
                     self.cb_stud.current(i)
 
-        self.cb_mat = ttk.Combobox(self, values=self._materie, width=30, font=FONT)
+        self.cb_mat = ttk.Combobox(self, values=self._materie, width=30, font=FONT,
+                                   state="readonly")
         self.cb_mat.grid(row=1, column=1, sticky="ew", **pad)
         if dati.get("materia"):
-            self.cb_mat.set(dati["materia"])
+            if dati["materia"] in self._materie:
+                self.cb_mat.set(dati["materia"])
 
         self.v_voto = tk.StringVar(value=str(dati.get("voto", "")))
         _entry(self, self.v_voto, width=12).grid(row=2, column=1, sticky="w", **pad)
@@ -194,7 +247,14 @@ class DialogVoto(tk.Toplevel):
             messagebox.showerror("Errore", "Seleziona uno studente.", parent=self); return
         materia = self.cb_mat.get().strip()
         if not materia:
-            messagebox.showerror("Errore", "Seleziona una materia.", parent=self); return
+            messagebox.showerror("Errore", "Seleziona una materia dall'elenco.", parent=self); return
+        if materia not in self._materie:
+            messagebox.showerror(
+                "Errore",
+                f"La materia '{materia}' non esiste.\n"
+                "Aggiungila prima nella scheda 'Materie'.",
+                parent=self
+            ); return
         try:
             voto = float(self.v_voto.get().replace(",", "."))
             assert 0 <= voto <= 10
@@ -571,7 +631,8 @@ class TabMaterie(tk.Frame):
     def _elimina(self):
         mid, mnome = self._sel()
         if mid is None: return
-        if messagebox.askyesno("Conferma", f"Eliminare materia '{mnome}'?"):
+        if messagebox.askyesno("Conferma", f"Eliminare la materia '{mnome}'?\n"
+                               "(Tutti i voti associati a questa materia saranno eliminati)"):
             db.cancella_materia(mid)
             self.aggiorna()
             self._sv.set("Materia eliminata.")
@@ -870,7 +931,15 @@ class App(tk.Tk):
         self.configure(bg=BG)
         self.resizable(True, True)
 
+        self.protocol("WM_DELETE_WINDOW", self._on_close)
         self._build()
+
+    def _on_close(self):
+        """Chiude la finestra e termina il processo in modo pulito."""
+        try:
+            self.destroy()
+        finally:
+            os._exit(0)
 
     def _build(self):
         # Header

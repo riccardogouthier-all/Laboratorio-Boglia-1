@@ -1,7 +1,19 @@
 
-vuoi inserire la validazione dei campi dall'app, se inserisci uno studente non controllo la mail la data di nascita
-se inserisci un voto con una mateira a caso(non presente nella tabella materie) te lo fa mettere lo stesso
-se inserisci una materia l'id di quella materia non sarà ultimo id+1 ma un numero spropositato (vengono tenute le materie nella cache e quindi temo stackino)
+vuoi inserire la validazione dei campi dall'app(GUI), se inserisci uno studente non controlla la mail la data di nascita o se ci sono numeri nel nome/cognome
+se inserisci un voto con una materia a caso(non presente nella tabella materie) te lo fa mettere lo stesso, metti un controllo che lo impedisca (voti inseribili solo se la materia esiste )
+se inserisci una materia l'id di quella materia non sarà ultimo id+1 ma un numero spropositato (vengono tenute le materie nella cache temo)
 quando chiudi con la x l'app il programma non si ferma davvero (qualche volta si qualche volta no)
 
 risolvi i problemi legati a pycache e la presenza di studenti.db, se 
+
+FATTO TUTTO IL SOVRASTANTE 
+
+
+ESEGUI QUESTO PROMPT SOTTO PER AGGIUNGERE UN PAIO DI GRAFICI AL FILE grafici.py 
+
+[Caveman full] CAVEMAN MODE. Terse direct prose. No filler. No pleasantries. No hedging. Fragments OK. Keep full technical accuracy. Preserve code, commands, paths, URLs, names, numbers, errors, and technical terms exactly. Prefer compact bullets. Say only what matters.
+
+---
+ti ho dato due file per fare grafici, uno è student_charts.py, l'altro grafici.py
+
+il file student_charts.py è notevolmente più fornito di metodi e tipi di grafici prodotti nonchè parte di una vecchia versione di questo progetto, grafici.py è il file che userò per la versione attuale del progetto e vorrei che adattassi il progetto che ti ho dato nella sezione della GUI TabReport a scegliere di fare anche quei tipi di grafici oltre ai già presenti (in caso di duplicati mantieni solo il codice più efficiente)

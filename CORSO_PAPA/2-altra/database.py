@@ -20,7 +20,7 @@ def init_db():
     with get_conn() as conn:
         conn.executescript("""
             CREATE TABLE IF NOT EXISTS materie (
-                id   INTEGER PRIMARY KEY AUTOINCREMENT,
+                id   INTEGER PRIMARY KEY,
                 nome TEXT NOT NULL UNIQUE
             );
 
@@ -180,6 +180,10 @@ def modifica_materia(id_materia, nome):
 
 def cancella_materia(id_materia):
     with get_conn() as conn:
+        # Recupera il nome prima di eliminare, per cancellare i voti collegati
+        row = conn.execute("SELECT nome FROM materie WHERE id=?", (id_materia,)).fetchone()
+        if row:
+            conn.execute("DELETE FROM voti WHERE LOWER(materia)=LOWER(?)", (row["nome"],))
         conn.execute("DELETE FROM materie WHERE id=?", (id_materia,))
 
 
