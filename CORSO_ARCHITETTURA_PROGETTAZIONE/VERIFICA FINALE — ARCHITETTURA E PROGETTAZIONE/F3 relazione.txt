@@ -1,0 +1,57 @@
+
+Piano DR per progetto scenario 1
+
+ F3a · RPO, RTO e Strategia di Disaster Recovery
+
+ RPO / RTO
+
+Valore   Motivazione 
+ RPO  4 ore  Una perdita massima di 4 ore di dati è accettabile in un contesto scolastico 
+ RTO  8 ore  È sufficiente ripristinare il servizio entro la fine della giornata lavorativa 
+
+
+ Strategia scelta: Backup & Restore
+
+Motivazione:
+Il budget ridotto tipico delle istituzioni scolastiche rende il contenimento dei costi la priorità principale. Un RTO di 8 ore è compatibile con le esigenze operative, quindi non è necessario ricorrere a soluzioni più costose come il Warm Standby. Un sistema di backup su S3 con replica in un'altra region, combinato con un processo di ripristino automatizzato, è sufficiente a rispettare l'RPO di 4 ore con un costo praticamente nullo quando il sistema è inattivo.
+
+ F3b · I 6 Ingredienti del Piano DR
+
+Region primaria: `us-east-1` · Region di DR: `eu-west-1`
+
+ 1 · Obiettivi RPO/RTO documentati
+
+Gli obiettivi RPO di 4 ore e RTO di 8 ore sono formalizzati in un runbook, firmati dal responsabile IT dell'istituto e sottoposti a revisione annuale a inizio anno scolastico.
+
+ 2 · Backup fuori region
+
+- Il bucket S3 primario in `us-east-1` viene replicato automaticamente nel bucket DR in `eu-west-1` tramite S3 Cross-Region Replication
+- Gli snapshot RDS vengono eseguiti automaticamente ogni 4 ore e copiati nella region DR tramite una funzione Lambda o procedura manuale
+- Gli snapshot EBS vengono copiati in `eu-west-1` tramite AWS Backup, utilizzando un vault dedicato
+
+ 3 · Replica dei dati
+
+- S3: replica asincrona tramite CRR, con ritardo inferiore al minuto
+- Database: snapshot RDS schedulato ogni 4 ore, copiato in `eu-west-1` tramite il comando `copy-db-snapshot`
+- Secrets Manager: i segreti vengono replicati manualmente o tramite CLI nella region di DR
+
+ 4 · Infrastruttura riproducibile
+
+- L'AMI golden image dell'istanza EC2 (`lab-ec2`) viene copiata in `eu-west-1` tramite `copy-image`
+- VPC, Security Group e subnet sono ricreabili tramite un template CloudFormation versionato su CodeCommit o S3
+- I parametri di configurazione in SSM Parameter Store sono replicati nella region DR
+
+ 5 · Failover DNS con Route 53
+
+- Configurazione di un record di tipo Failover su Route 53:
+  - Primary → EC2/ALB in `us-east-1`
+  - Secondary → EC2/ALB in `eu-west-1` (spento in condizioni normali, avviato in caso di DR)
+- Health check attivo sull'endpoint `/health` del sito primario, con TTL impostato a `60s`
+- In caso di failover: viene avviato lo stack CloudFormation in `eu-west-1` e Route 53 reindirizza automaticamente il traffico
+
+ 6 · Test periodico / Game Day
+
+- Frequenza: una volta per semestre
+- Procedura: si simula un'interruzione in `us-east-1`, si esegue il ripristino dallo snapshot in `eu-west-1`, si misura l'RTO effettivo e si documenta lo scarto rispetto all'obiettivo
+- Checklist operativa: ripristino del database, avvio dell'istanza EC2 dall'AMI, verifica del failover DNS, smoke test dell'applicazione
+- Output: report con RTO misurato confrontato con il target di 8 ore

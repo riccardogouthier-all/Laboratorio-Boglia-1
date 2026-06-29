@@ -1,0 +1,13 @@
+
+VERIFICA FINALE — ARCHITETTURA E PROGETTAZIONE        Gouthier Riccardo 
+ 
+Fase 1 
+ 
+ 
+ 
+- ALB + Auto Scaling Group su due AZ → Reliability / assorbe i picchi e sopravvive alla perdita di una AZ. 
+ 
+- Amazon RDS Multi-AZ in subnet private → Reliability / riduce il downtime nel checkout e garantisce 
+                                                                                failover automatico. 
+ 
+- AWS KMS + AWS Certificate Manager → Security / cifra i dati dei clienti a riposo e in transito.  
