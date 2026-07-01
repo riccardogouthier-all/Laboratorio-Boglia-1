@@ -45,6 +45,12 @@ def init_db():
                 data        TEXT NOT NULL,
                 UNIQUE(id_studente, data)
             );
+
+            CREATE INDEX IF NOT EXISTS idx_voti_studente    ON voti(id_studente);
+            CREATE INDEX IF NOT EXISTS idx_voti_materia     ON voti(materia);
+            CREATE INDEX IF NOT EXISTS idx_assenze_studente ON assenze(id_studente);
+            CREATE INDEX IF NOT EXISTS idx_assenze_data     ON assenze(data);
+            CREATE INDEX IF NOT EXISTS idx_studenti_cognome ON studenti(cognome, nome);
         """)
 
 
@@ -70,6 +76,17 @@ def modifica_studente(id_studente, nome, cognome, data_nascita, email):
 def cancella_studente(id_studente):
     with get_conn() as conn:
         conn.execute("DELETE FROM studenti WHERE id=?", (id_studente,))
+
+
+def inserisci_studenti_batch(righe: list[tuple]) -> int:
+    """Batch insert studenti in un'unica transazione.
+    righe: list di (nome, cognome, data_nascita, email)"""
+    with get_conn() as conn:
+        cur = conn.executemany(
+            "INSERT INTO studenti (nome, cognome, data_nascita, email) VALUES (?,?,?,?)",
+            righe
+        )
+        return cur.rowcount
 
 
 def get_studente(id_studente):
@@ -100,6 +117,17 @@ def inserisci_voto(id_studente, materia, voto) -> int:
             (id_studente, materia, float(voto))
         )
         return cur.lastrowid
+
+
+def inserisci_voti_batch(righe: list[tuple]) -> int:
+    """Batch insert voti in un'unica transazione.
+    righe: list di (id_studente, materia, voto)"""
+    with get_conn() as conn:
+        cur = conn.executemany(
+            "INSERT INTO voti (id_studente, materia, voto) VALUES (?,?,?)",
+            righe
+        )
+        return cur.rowcount
 
 
 def modifica_voto(id_voto, id_studente, materia, voto):
@@ -134,6 +162,17 @@ def inserisci_assenza(id_studente, data) -> int:
             (id_studente, data)
         )
         return cur.lastrowid
+
+
+def inserisci_assenze_batch(righe: list[tuple]) -> int:
+    """Batch insert assenze (duplicati ignorati via INSERT OR IGNORE).
+    righe: list di (id_studente, data)"""
+    with get_conn() as conn:
+        cur = conn.executemany(
+            "INSERT OR IGNORE INTO assenze (id_studente, data) VALUES (?,?)",
+            righe
+        )
+        return cur.rowcount
 
 
 def modifica_assenza(id_assenza, id_studente, data):
@@ -190,6 +229,20 @@ def cancella_materia(id_materia):
 def get_tutte_materie():
     with get_conn() as conn:
         return conn.execute("SELECT * FROM materie ORDER BY nome").fetchall()
+
+
+def get_id_studenti_esistenti() -> set[int]:
+    """Set di tutti gli ID studenti esistenti, per validazione batch senza query per riga."""
+    with get_conn() as conn:
+        rows = conn.execute("SELECT id FROM studenti").fetchall()
+        return {r["id"] for r in rows}
+
+
+def get_email_esistenti() -> set[str]:
+    """Set di tutte le email esistenti (lowercase), per validazione unicità batch."""
+    with get_conn() as conn:
+        rows = conn.execute("SELECT LOWER(email) AS e FROM studenti").fetchall()
+        return {r["e"] for r in rows}
 
 
 def get_nomi_materie() -> list[str]:

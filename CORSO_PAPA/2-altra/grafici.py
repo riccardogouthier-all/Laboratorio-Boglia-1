@@ -279,6 +279,7 @@ def grafico_heatmap_voti(
     studenti: list[dict],
     materie: list[str],
     path: str | None = None,
+    max_righe: int = 40,
 ) -> bytes | None:
     """Heatmap matrice studenti (righe) × materie (colonne).
 
@@ -286,20 +287,28 @@ def grafico_heatmap_voti(
         studenti: list[dict] con chiavi 'studente' (str) e 'voti' (dict materia→voto)
                   Formato: {"studente": "Rossi Mario", "voti": {"Matematica": 7.0, ...}}
         materie:  lista materie (colonne)
+        max_righe: oltre questa soglia la figura viene troncata all'altezza max
+                   (mostra le prime max_righe, ordinate per nome) per evitare
+                   immagini enormi e illeggibili a grandi volumi di dati.
     """
     if not studenti or not materie:
         return None
 
-    nomi  = [s["studente"] for s in studenti]
+    troncato = len(studenti) > max_righe
+    studenti_vis = studenti[:max_righe] if troncato else studenti
+
+    nomi  = [s["studente"] for s in studenti_vis]
     mat_v = np.full((len(nomi), len(materie)), np.nan)
-    for r, s in enumerate(studenti):
+    for r, s in enumerate(studenti_vis):
         for c, mat in enumerate(materie):
             v = s.get("voti", {}).get(mat)
             if v is not None:
                 mat_v[r, c] = v
 
-    h = max(5, len(nomi) * 0.4)
-    w = max(6, len(materie) * 1.2)
+    # altezza/larghezza limitate: crescono con i dati ma con un tetto fisso,
+    # niente più figure di decine di pollici a 25x i dati originali
+    h = min(24, max(5, len(nomi) * 0.35))
+    w = min(20, max(6, len(materie) * 1.1))
     fig = Figure(figsize=(w, h))
     FigureCanvasAgg(fig)
     ax = fig.add_subplot(111)
@@ -311,14 +320,20 @@ def grafico_heatmap_voti(
     ax.set_xticks(range(len(materie)))
     ax.set_xticklabels(materie, rotation=40, ha="right", fontsize=8)
     ax.set_yticks(range(len(nomi)))
-    ax.set_yticklabels(nomi, fontsize=8)
-    ax.set_title("Heatmap voti studenti × materie", fontsize=11, fontweight="bold")
+    ax.set_yticklabels(nomi, fontsize=max(5, min(8, 400 // max(1, len(nomi)))))
 
-    for r in range(len(nomi)):
-        for c in range(len(materie)):
-            if not np.isnan(mat_v[r, c]):
-                ax.text(c, r, f"{mat_v[r,c]:.0f}", ha="center", va="center",
-                        fontsize=7, color="black")
+    titolo = "Heatmap voti studenti × materie"
+    if troncato:
+        titolo += f"  (primi {max_righe} di {len(studenti)})"
+    ax.set_title(titolo, fontsize=11, fontweight="bold")
+
+    # celle di testo solo se la matrice resta leggibile, altrimenti si affida al colore
+    if len(nomi) * len(materie) <= 300:
+        for r in range(len(nomi)):
+            for c in range(len(materie)):
+                if not np.isnan(mat_v[r, c]):
+                    ax.text(c, r, f"{mat_v[r,c]:.0f}", ha="center", va="center",
+                            fontsize=7, color="black")
 
     fig.tight_layout()
     return _salva(fig, path)
@@ -330,11 +345,17 @@ def grafico_scatter_media_vs_assenze(
     dati: list[dict],
     soglia: float = 6.0,
     path: str | None = None,
+    max_etichette: int = 25,
 ) -> bytes | None:
     """Scatter media generale vs numero assenze per studente.
 
     Args:
         dati: list[dict] con chiavi 'studente', 'media', 'num_assenze'
+        max_etichette: oltre questa soglia le etichette nominative vengono
+                       omesse (mostrati solo i punti) per evitare
+                       sovrapposizioni illeggibili a grandi volumi di dati;
+                       vengono comunque etichettati i casi limite (media
+                       più bassa e assenze più alte).
     """
     if not dati:
         return None
@@ -348,8 +369,17 @@ def grafico_scatter_media_vs_assenze(
     ax.scatter(assenze, medie, s=90, c=colori, alpha=0.8,
                edgecolor="white", linewidth=0.5)
 
-    for nome, x, y in zip(nomi, assenze, medie):
-        ax.annotate(nome, (x, y), textcoords="offset points",
+    if len(dati) <= max_etichette:
+        indici_da_etichettare = range(len(dati))
+    else:
+        # con molti studenti etichetta solo i casi più significativi:
+        # media più bassa e assenze più alte, il resto resta senza etichetta
+        n_casi = max_etichette // 2
+        indici_da_etichettare = set(np.argsort(medie)[:n_casi]) | \
+                                 set(np.argsort(-assenze)[:n_casi])
+
+    for i in indici_da_etichettare:
+        ax.annotate(nomi[i], (assenze[i], medie[i]), textcoords="offset points",
                     xytext=(5, 3), fontsize=7, alpha=0.8)
 
     ax.axhline(soglia, color="gray", linestyle="--", linewidth=1.2,

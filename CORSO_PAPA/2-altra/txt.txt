@@ -17,3 +17,6 @@ ESEGUI QUESTO PROMPT SOTTO PER AGGIUNGERE UN PAIO DI GRAFICI AL FILE grafici.py
 ti ho dato due file per fare grafici, uno è student_charts.py, l'altro grafici.py
 
 il file student_charts.py è notevolmente più fornito di metodi e tipi di grafici prodotti nonchè parte di una vecchia versione di questo progetto, grafici.py è il file che userò per la versione attuale del progetto e vorrei che adattassi il progetto che ti ho dato nella sezione della GUI TabReport a scegliere di fare anche quei tipi di grafici oltre ai già presenti (in caso di duplicati mantieni solo il codice più efficiente)
+
+
+aggiungi controlli per i file generati da claude 

@@ -90,11 +90,16 @@ def importa_studenti(path: str) -> RisultatoImport:
                     f"colonne mancanti: {', '.join(sorted(mancanti))}"))
                 return res
 
+            email_db = db.get_email_esistenti()
+            email_viste_csv: set[str] = set()
+            righe_valide: list[tuple] = []
+
             for n, row in enumerate(reader, start=2):
                 nome        = row.get("Nome", "").strip()
                 cognome     = row.get("Cognome", "").strip()
                 data_nasc   = row.get("Data_Nascita", "").strip()
                 email       = row.get("Email", "").strip()
+                email_l     = email.lower()
 
                 errori_riga = []
                 if not nome:
@@ -105,18 +110,24 @@ def importa_studenti(path: str) -> RisultatoImport:
                     errori_riga.append(f"Data_Nascita non valida: '{data_nasc}'")
                 if not _valida_email(email):
                     errori_riga.append(f"Email non valida: '{email}'")
+                elif email_l in email_db or email_l in email_viste_csv:
+                    errori_riga.append(f"Email duplicata: '{email}'")
 
                 if errori_riga:
                     res.errori.append(ErroreRiga(p.name, n, "; ".join(errori_riga)))
                     res.ignorati += 1
                     continue
 
+                email_viste_csv.add(email_l)
+                righe_valide.append((nome, cognome, data_nasc, email))
+
+            if righe_valide:
                 try:
-                    db.inserisci_studente(nome, cognome, data_nasc, email)
-                    res.inseriti += 1
+                    db.inserisci_studenti_batch(righe_valide)
+                    res.inseriti += len(righe_valide)
                 except Exception as e:
-                    res.errori.append(ErroreRiga(p.name, n, f"DB: {e}"))
-                    res.ignorati += 1
+                    res.errori.append(ErroreRiga(p.name, 0, f"DB (batch): {e}"))
+                    res.ignorati += len(righe_valide)
 
     except FileNotFoundError:
         res.errori.append(ErroreRiga(p.name, 0, "file non trovato"))
@@ -152,6 +163,10 @@ def importa_voti(path: str) -> RisultatoImport:
                     f"colonne mancanti: {', '.join(sorted(mancanti))}"))
                 return res
 
+            id_studenti_ok = db.get_id_studenti_esistenti()
+            materie_viste: set[str] = set()
+            righe_valide: list[tuple] = []
+
             for n, row in enumerate(reader, start=2):
                 # header-case insensitive lookup
                 id_str  = (row.get("IDStudente") or row.get("idstudente") or "").strip()
@@ -178,19 +193,24 @@ def importa_voti(path: str) -> RisultatoImport:
                     res.ignorati += 1
                     continue
 
-                if db.get_studente(id_studente) is None:
+                if id_studente not in id_studenti_ok:
                     res.errori.append(ErroreRiga(p.name, n,
                         f"IDStudente {id_studente} non esiste"))
                     res.ignorati += 1
                     continue
 
+                righe_valide.append((id_studente, materia, voto_f))
+                materie_viste.add(materia)
+
+            if righe_valide:
                 try:
-                    db.inserisci_voto(id_studente, materia, voto_f)
-                    db.upsert_materia(materia)
-                    res.inseriti += 1
+                    db.inserisci_voti_batch(righe_valide)
+                    for m in materie_viste:
+                        db.upsert_materia(m)
+                    res.inseriti += len(righe_valide)
                 except Exception as e:
-                    res.errori.append(ErroreRiga(p.name, n, f"DB: {e}"))
-                    res.ignorati += 1
+                    res.errori.append(ErroreRiga(p.name, 0, f"DB (batch): {e}"))
+                    res.ignorati += len(righe_valide)
 
     except FileNotFoundError:
         res.errori.append(ErroreRiga(p.name, 0, "file non trovato"))
@@ -226,6 +246,11 @@ def importa_assenze(path: str) -> RisultatoImport:
                     f"colonne mancanti: {', '.join(sorted(mancanti))}"))
                 return res
 
+            id_studenti_ok = db.get_id_studenti_esistenti()
+            chiavi_viste: set[tuple] = set()
+            righe_valide: list[tuple] = []
+            duplicati_csv = 0
+
             for n, row in enumerate(reader, start=2):
                 id_str = (row.get("IDStudente") or row.get("idstudente") or "").strip()
                 data   = (row.get("DATA") or row.get("data") or "").strip()
@@ -246,22 +271,30 @@ def importa_assenze(path: str) -> RisultatoImport:
                     res.ignorati += 1
                     continue
 
-                if db.get_studente(id_studente) is None:
+                if id_studente not in id_studenti_ok:
                     res.errori.append(ErroreRiga(p.name, n,
                         f"IDStudente {id_studente} non esiste"))
                     res.ignorati += 1
                     continue
 
+                chiave = (id_studente, data)
+                if chiave in chiavi_viste:
+                    duplicati_csv += 1
+                    continue
+                chiavi_viste.add(chiave)
+                righe_valide.append(chiave)
+
+            if righe_valide:
                 try:
-                    db.inserisci_assenza(id_studente, data)
-                    res.inseriti += 1
+                    n_inseriti = db.inserisci_assenze_batch(righe_valide)
+                    res.inseriti += n_inseriti
+                    # righe valide ma già presenti in DB (INSERT OR IGNORE) → ignorate
+                    res.ignorati += duplicati_csv + (len(righe_valide) - n_inseriti)
                 except Exception as e:
-                    # UNIQUE constraint → duplicato silenzioso
-                    if "UNIQUE" in str(e):
-                        res.ignorati += 1
-                    else:
-                        res.errori.append(ErroreRiga(p.name, n, f"DB: {e}"))
-                        res.ignorati += 1
+                    res.errori.append(ErroreRiga(p.name, 0, f"DB (batch): {e}"))
+                    res.ignorati += len(righe_valide)
+            else:
+                res.ignorati += duplicati_csv
 
     except FileNotFoundError:
         res.errori.append(ErroreRiga(p.name, 0, "file non trovato"))

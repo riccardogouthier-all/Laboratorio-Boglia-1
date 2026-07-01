@@ -122,7 +122,7 @@ class DialogStudente(tk.Toplevel):
         self.v_email = tk.StringVar(value=dati.get("email", ""))
 
         for r, v in [(0, self.v_nome), (1, self.v_cogn),
-                     (2, self.v_data), (3, self.v_email)]:
+                    (2, self.v_data), (3, self.v_email)]:
             _entry(self, v, width=32).grid(row=r, column=1, sticky="ew", **pad)
 
         f = tk.Frame(self, bg=BG)
@@ -343,7 +343,8 @@ class TabStudenti(tk.Frame):
         frk.pack(fill="x", padx=10)
         _label(frk, "Cerca:").pack(side="left")
         self.v_cerca = tk.StringVar()
-        self.v_cerca.trace_add("write", lambda *_: self.aggiorna())
+        self._debounce_id = None
+        self.v_cerca.trace_add("write", lambda *_: self._cerca_debounced())
         _entry(frk, self.v_cerca, width=28).pack(side="left", padx=6)
 
         # Treeview
@@ -353,7 +354,16 @@ class TabStudenti(tk.Frame):
         self.tv.pack(side="left", fill="both", expand=True)
         sb.pack(side="right", fill="y")
 
+    def _cerca_debounced(self, ritardo_ms: int = 250):
+        """Rinvia la query di ricerca finché l'utente non smette di digitare
+        per ritardo_ms, evitando una query DB completa a ogni carattere
+        (rilevante a grandi volumi, es. 25x i dati di esempio)."""
+        if self._debounce_id is not None:
+            self.after_cancel(self._debounce_id)
+        self._debounce_id = self.after(ritardo_ms, self.aggiorna)
+
     def aggiorna(self, *_):
+        self._debounce_id = None
         self.tv.delete(*self.tv.get_children())
         q = self.v_cerca.get().strip()
         rows = db.cerca_studente(q) if q else db.get_tutti_studenti()
