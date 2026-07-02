@@ -76,20 +76,6 @@ def studenti_sufficienti_insufficienti(soglia: float = 6.0) -> dict:
         }
 
 
-def assenze_per_studente_tutti() -> list[dict]:
-    """Assenze aggregate per tutti gli studenti (per grafici)"""
-    with get_conn() as conn:
-        rows = conn.execute(
-            """SELECT s.id, s.cognome||' '||s.nome AS studente,
-                      COUNT(a.id) AS num_assenze
-               FROM studenti s
-               LEFT JOIN assenze a ON s.id = a.id_studente
-               GROUP BY s.id
-               ORDER BY num_assenze DESC""",
-        ).fetchall()
-        return [dict(r) for r in rows]
-
-
 def medie_per_materia_tutti() -> list[dict]:
     """Media per ogni materia (per grafici)"""
     with get_conn() as conn:

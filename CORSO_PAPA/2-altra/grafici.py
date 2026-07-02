@@ -7,7 +7,6 @@ thread-safe rispetto al TkAgg di main.py.
 import io
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
-from matplotlib.patches import Patch
 import numpy as np
 
 PALETTE = ["#4C72B0", "#DD8452", "#55A868", "#C44E52", "#8172B2",
@@ -62,30 +61,6 @@ def grafico_media_per_materia(
     return _salva(fig, path)
 
 
-# ─── 6.3 ─────────────────────────────────────────────────────────────────────
-
-def grafico_assenze_studenti(
-    dati: list[dict],
-    path: str | None = None,
-    top_n: int = 15,
-) -> bytes | None:
-    """Barchart assenze per studente (top N)."""
-    if not dati:
-        return None
-    dati_sorted = sorted(dati, key=lambda d: d["num_assenze"], reverse=True)[:top_n]
-    nomi   = [d["studente"]    for d in dati_sorted]
-    valori = [d["num_assenze"] for d in dati_sorted]
-
-    fig, ax = _fig((max(6, len(nomi) * 0.9), 5))
-    ax.barh(nomi[::-1], valori[::-1], color=PALETTE[4], edgecolor="white")
-    ax.set_xlabel("Numero assenze")
-    ax.set_title(f"Assenze per studente (top {min(top_n, len(nomi))})")
-    for i, v in enumerate(valori[::-1]):
-        ax.text(v + 0.1, i, str(v), va="center", fontsize=8)
-    fig.tight_layout()
-    return _salva(fig, path)
-
-
 # ─── 6.4 ─────────────────────────────────────────────────────────────────────
 
 def grafico_assenti_giorno(
@@ -120,45 +95,26 @@ def grafico_sufficienti_insufficienti(
     risultato: dict,
     path: str | None = None,
 ) -> bytes | None:
-    """Donut chart sufficienti vs insufficienti + barchart medie."""
+    """Torta sufficienti vs insufficienti con percentuali."""
     suff   = risultato["sufficienti"]
     insuff = risultato["insufficienti"]
     soglia = risultato["soglia"]
 
-    fig = Figure(figsize=(12, 5))
-    FigureCanvasAgg(fig)
-    ax1 = fig.add_subplot(121)
-    ax2 = fig.add_subplot(122)
-
-    # Donut
     n_s, n_i = len(suff), len(insuff)
-    if n_s + n_i > 0:
-        ax1.pie(
-            [n_s, n_i],
-            labels=[f"Sufficienti\n({n_s})", f"Insufficienti\n({n_i})"],
-            colors=[PALETTE[0], PALETTE[3]],
-            autopct="%1.0f%%",
-            startangle=90,
-            pctdistance=0.75,
-            wedgeprops={"width": 0.55, "edgecolor": "white", "linewidth": 2},
-        )
-        ax1.set_title(f"Distribuzione (soglia {soglia})")
-    else:
-        ax1.text(0.5, 0.5, "Nessun dato", ha="center", transform=ax1.transAxes)
+    if n_s + n_i == 0:
+        return None
 
-    # Barchart medie
-    tutti = sorted(suff + insuff, key=lambda d: d["media"], reverse=True)
-    if tutti:
-        nomi   = [d["studente"] for d in tutti]
-        medie  = [d["media"]    for d in tutti]
-        colori = [PALETTE[0] if d["media"] >= soglia else PALETTE[3] for d in tutti]
-        ax2.barh(nomi[::-1], medie[::-1], color=colori[::-1], edgecolor="white")
-        ax2.axvline(soglia, color="gray", linestyle="--", linewidth=1.2)
-        ax2.set_xlabel("Media generale")
-        ax2.set_title("Media per studente")
-        ax2.set_xlim(0, 10.5)
-
-    fig.suptitle("Analisi sufficienti / insufficienti", fontsize=13, fontweight="bold")
+    fig, ax = _fig((6, 6))
+    ax.pie(
+        [n_s, n_i],
+        labels=[f"Sufficienti\n({n_s})", f"Insufficienti\n({n_i})"],
+        colors=[PALETTE[0], PALETTE[3]],
+        autopct="%1.0f%%",
+        startangle=90,
+        wedgeprops={"edgecolor": "white", "linewidth": 1.5},
+    )
+    ax.set_title(f"Distribuzione sufficienti/insufficienti (soglia {soglia})",
+                 fontsize=11, fontweight="bold")
     fig.tight_layout()
     return _salva(fig, path)
 
@@ -227,173 +183,5 @@ def grafico_istogrammi_per_materia(
         fig.add_subplot(n_rows, n_cols, idx + 1).axis("off")
 
     fig.suptitle("Distribuzione voti per materia", fontsize=12, fontweight="bold")
-    fig.tight_layout()
-    return _salva(fig, path)
-
-
-# ─── Scatter correlazione tra due materie ────────────────────────────────────
-
-def grafico_scatter_correlazione(
-    voti_a: list[float],
-    voti_b: list[float],
-    materia_a: str,
-    materia_b: str,
-    path: str | None = None,
-) -> bytes | None:
-    """Scatter plot voti materia_a vs materia_b con linea di tendenza.
-
-    Args:
-        voti_a/voti_b: liste di voti allineate per studente (stessa lunghezza)
-        materia_a/b:   nomi materie
-    """
-    if len(voti_a) < 2 or len(voti_b) < 2 or len(voti_a) != len(voti_b):
-        return None
-    va = np.array(voti_a)
-    vb = np.array(voti_b)
-
-    fig, ax = _fig((8, 6))
-    ax.scatter(va, vb, s=80, alpha=0.7, color=PALETTE[0],
-               edgecolor="white", linewidth=0.5)
-
-    z = np.polyfit(va, vb, 1)
-    x_line = np.linspace(va.min(), va.max(), 100)
-    ax.plot(x_line, np.poly1d(z)(x_line), color=PALETTE[3],
-            linestyle="--", linewidth=1.8, label="Tendenza")
-
-    corr = float(np.corrcoef(va, vb)[0, 1])
-    ax.set_xlabel(materia_a, fontsize=10)
-    ax.set_ylabel(materia_b, fontsize=10)
-    ax.set_title(f"Correlazione {materia_a} ↔ {materia_b}  (r = {corr:.3f})",
-                 fontsize=11, fontweight="bold")
-    ax.set_xlim(0, 10.5)
-    ax.set_ylim(0, 10.5)
-    ax.grid(alpha=0.3)
-    ax.legend(fontsize=8)
-    fig.tight_layout()
-    return _salva(fig, path)
-
-
-# ─── Heatmap voti studenti × materie ─────────────────────────────────────────
-
-def grafico_heatmap_voti(
-    studenti: list[dict],
-    materie: list[str],
-    path: str | None = None,
-    max_righe: int = 40,
-) -> bytes | None:
-    """Heatmap matrice studenti (righe) × materie (colonne).
-
-    Args:
-        studenti: list[dict] con chiavi 'studente' (str) e 'voti' (dict materia→voto)
-                  Formato: {"studente": "Rossi Mario", "voti": {"Matematica": 7.0, ...}}
-        materie:  lista materie (colonne)
-        max_righe: oltre questa soglia la figura viene troncata all'altezza max
-                   (mostra le prime max_righe, ordinate per nome) per evitare
-                   immagini enormi e illeggibili a grandi volumi di dati.
-    """
-    if not studenti or not materie:
-        return None
-
-    troncato = len(studenti) > max_righe
-    studenti_vis = studenti[:max_righe] if troncato else studenti
-
-    nomi  = [s["studente"] for s in studenti_vis]
-    mat_v = np.full((len(nomi), len(materie)), np.nan)
-    for r, s in enumerate(studenti_vis):
-        for c, mat in enumerate(materie):
-            v = s.get("voti", {}).get(mat)
-            if v is not None:
-                mat_v[r, c] = v
-
-    # altezza/larghezza limitate: crescono con i dati ma con un tetto fisso,
-    # niente più figure di decine di pollici a 25x i dati originali
-    h = min(24, max(5, len(nomi) * 0.35))
-    w = min(20, max(6, len(materie) * 1.1))
-    fig = Figure(figsize=(w, h))
-    FigureCanvasAgg(fig)
-    ax = fig.add_subplot(111)
-
-    import matplotlib.cm as mcm
-    im = ax.imshow(mat_v, cmap=mcm.RdYlGn, vmin=0, vmax=10, aspect="auto")
-    fig.colorbar(im, ax=ax, label="Voto")
-
-    ax.set_xticks(range(len(materie)))
-    ax.set_xticklabels(materie, rotation=40, ha="right", fontsize=8)
-    ax.set_yticks(range(len(nomi)))
-    ax.set_yticklabels(nomi, fontsize=max(5, min(8, 400 // max(1, len(nomi)))))
-
-    titolo = "Heatmap voti studenti × materie"
-    if troncato:
-        titolo += f"  (primi {max_righe} di {len(studenti)})"
-    ax.set_title(titolo, fontsize=11, fontweight="bold")
-
-    # celle di testo solo se la matrice resta leggibile, altrimenti si affida al colore
-    if len(nomi) * len(materie) <= 300:
-        for r in range(len(nomi)):
-            for c in range(len(materie)):
-                if not np.isnan(mat_v[r, c]):
-                    ax.text(c, r, f"{mat_v[r,c]:.0f}", ha="center", va="center",
-                            fontsize=7, color="black")
-
-    fig.tight_layout()
-    return _salva(fig, path)
-
-
-# ─── Scatter media personale vs assenze ──────────────────────────────────────
-
-def grafico_scatter_media_vs_assenze(
-    dati: list[dict],
-    soglia: float = 6.0,
-    path: str | None = None,
-    max_etichette: int = 25,
-) -> bytes | None:
-    """Scatter media generale vs numero assenze per studente.
-
-    Args:
-        dati: list[dict] con chiavi 'studente', 'media', 'num_assenze'
-        max_etichette: oltre questa soglia le etichette nominative vengono
-                       omesse (mostrati solo i punti) per evitare
-                       sovrapposizioni illeggibili a grandi volumi di dati;
-                       vengono comunque etichettati i casi limite (media
-                       più bassa e assenze più alte).
-    """
-    if not dati:
-        return None
-
-    nomi    = [d["studente"]    for d in dati]
-    medie   = np.array([d["media"]       for d in dati])
-    assenze = np.array([d["num_assenze"] for d in dati])
-    colori  = [PALETTE[0] if m >= soglia else PALETTE[3] for m in medie]
-
-    fig, ax = _fig((9, 6))
-    ax.scatter(assenze, medie, s=90, c=colori, alpha=0.8,
-               edgecolor="white", linewidth=0.5)
-
-    if len(dati) <= max_etichette:
-        indici_da_etichettare = range(len(dati))
-    else:
-        # con molti studenti etichetta solo i casi più significativi:
-        # media più bassa e assenze più alte, il resto resta senza etichetta
-        n_casi = max_etichette // 2
-        indici_da_etichettare = set(np.argsort(medie)[:n_casi]) | \
-                                 set(np.argsort(-assenze)[:n_casi])
-
-    for i in indici_da_etichettare:
-        ax.annotate(nomi[i], (assenze[i], medie[i]), textcoords="offset points",
-                    xytext=(5, 3), fontsize=7, alpha=0.8)
-
-    ax.axhline(soglia, color="gray", linestyle="--", linewidth=1.2,
-               label=f"Soglia {soglia}")
-    ax.set_xlabel("Numero assenze", fontsize=10)
-    ax.set_ylabel("Media generale", fontsize=10)
-    ax.set_title("Media vs Assenze per studente", fontsize=11, fontweight="bold")
-    ax.set_ylim(0, 10.5)
-    ax.grid(alpha=0.3)
-
-    legenda = [
-        Patch(facecolor=PALETTE[0], label=f"Sufficiente (≥{soglia})"),
-        Patch(facecolor=PALETTE[3], label=f"Insufficiente (<{soglia})"),
-    ]
-    ax.legend(handles=legenda, fontsize=8)
     fig.tight_layout()
     return _salva(fig, path)

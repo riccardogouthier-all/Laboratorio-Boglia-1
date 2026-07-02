@@ -20,3 +20,9 @@ il file student_charts.py è notevolmente più fornito di metodi e tipi di grafi
 
 
 aggiungi controlli per i file generati da claude 
+
+assenze x studente da rimuovere tutto 
+analisi sufficienti/ insufficienti togliere grafico a colonne (il grafico a torta con le percentuali)
+correlazione tra materie togliere
+heatmap voti rimuovoere tutto 
+media vs assenze x studente rimuovere tutto 

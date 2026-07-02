@@ -743,14 +743,10 @@ class TabReport(tk.Frame):
         reports = [
             ("Media materia per studente", self._r61),
             ("Media per materia",          self._r62),
-            ("Assenze per studente",       self._r63),
             ("Assenti in un giorno",       self._r64),
             ("Studenti per materia",       self._r65),
             ("Sufficienti/Insufficienti",  self._r67),
             ("Istogrammi per materia",     self._r_istogrammi),
-            ("Correlazione tra materie",   self._r_correlazione),
-            ("Heatmap voti studenti",      self._r_heatmap),
-            ("Media vs Assenze",           self._r_media_vs_assenze),
         ]
         for label, cmd in reports:
             _btn(left, label, cmd, bg=BLU2).pack(**pad)
@@ -825,13 +821,6 @@ class TabReport(tk.Frame):
         self._mostra_png(png, "Media per materia")
         self._sv.set("Media per materia completata.")
 
-    # ── 6.3 ──
-    def _r63(self):
-        dati = el.assenze_per_studente_tutti()
-        png  = gr.grafico_assenze_studenti(dati)
-        self._mostra_png(png, "Assenze per studente")
-        self._sv.set("Assenze per studente completata.")
-
     # ── 6.4 ──
     def _r64(self):
         data = simpledialog.askstring("Assenti in un giorno", "Data (YYYY-MM-DD):",
@@ -874,96 +863,6 @@ class TabReport(tk.Frame):
         png = gr.grafico_istogrammi_per_materia(dati)
         self._mostra_png(png, "Istogrammi per materia")
         self._sv.set(f"Istogrammi: {len(dati)} materie.")
-
-    # ── Scatter correlazione ──
-    def _r_correlazione(self):
-        materie = db.get_nomi_materie()
-        if len(materie) < 2:
-            messagebox.showinfo("Info", "Servono almeno 2 materie."); return
-
-        w = tk.Toplevel(self)
-        w.title("Correlazione materie")
-        w.configure(bg=BG)
-        w.grab_set()
-
-        tk.Label(w, text="Materia A (asse X):", bg=BG, font=FONT).grid(
-            row=0, column=0, padx=8, pady=6, sticky="e")
-        cb_a = ttk.Combobox(w, values=materie, width=22, font=FONT, state="readonly")
-        cb_a.current(0)
-        cb_a.grid(row=0, column=1, padx=8)
-
-        tk.Label(w, text="Materia B (asse Y):", bg=BG, font=FONT).grid(
-            row=1, column=0, padx=8, pady=6, sticky="e")
-        cb_b = ttk.Combobox(w, values=materie, width=22, font=FONT, state="readonly")
-        cb_b.current(1 if len(materie) > 1 else 0)
-        cb_b.grid(row=1, column=1, padx=8)
-
-        def _genera():
-            mat_a = cb_a.get()
-            mat_b = cb_b.get()
-            if mat_a == mat_b:
-                messagebox.showerror("Errore", "Seleziona due materie diverse.", parent=w)
-                return
-            # recupera voti per studente comune
-            studenti = db.get_tutti_studenti()
-            va, vb = [], []
-            for s in studenti:
-                a = el.media_materia_studente(mat_a, s["id"])
-                b = el.media_materia_studente(mat_b, s["id"])
-                if a is not None and b is not None:
-                    va.append(a)
-                    vb.append(b)
-            w.destroy()
-            if len(va) < 2:
-                messagebox.showinfo("Info", "Troppo pochi studenti con voti in entrambe le materie.")
-                return
-            png = gr.grafico_scatter_correlazione(va, vb, mat_a, mat_b)
-            self._mostra_png(png, f"Correlazione {mat_a} ↔ {mat_b}")
-            self._sv.set(f"Correlazione {mat_a} ↔ {mat_b} su {len(va)} studenti.")
-
-        _btn(w, "Genera", _genera).grid(row=2, column=0, columnspan=2, pady=10)
-
-    # ── Heatmap voti ──
-    def _r_heatmap(self):
-        materie  = db.get_nomi_materie()
-        studenti = db.get_tutti_studenti()
-        if not materie or not studenti:
-            messagebox.showinfo("Info", "Dati insufficienti."); return
-        dati_hm = []
-        for s in studenti:
-            voti = {}
-            for m in materie:
-                v = el.media_materia_studente(m, s["id"])
-                if v is not None:
-                    voti[m] = v
-            if voti:
-                dati_hm.append({
-                    "studente": f"{s['cognome']} {s['nome']}",
-                    "voti": voti,
-                })
-        if not dati_hm:
-            messagebox.showinfo("Info", "Nessun voto registrato."); return
-        png = gr.grafico_heatmap_voti(dati_hm, materie)
-        self._mostra_png(png, "Heatmap voti")
-        self._sv.set(f"Heatmap: {len(dati_hm)} studenti × {len(materie)} materie.")
-
-    # ── Scatter media vs assenze ──
-    def _r_media_vs_assenze(self):
-        suff = el.studenti_sufficienti_insufficienti()
-        ass  = el.assenze_per_studente_tutti()
-        ass_map = {d["id"]: d["num_assenze"] for d in ass}
-        dati = []
-        for d in suff["sufficienti"] + suff["insufficienti"]:
-            dati.append({
-                "studente":    d["studente"],
-                "media":       d["media"],
-                "num_assenze": ass_map.get(d["id"], 0),
-            })
-        if not dati:
-            messagebox.showinfo("Info", "Nessun dato."); return
-        png = gr.grafico_scatter_media_vs_assenze(dati)
-        self._mostra_png(png, "Media vs Assenze")
-        self._sv.set(f"Media vs Assenze: {len(dati)} studenti.")
 
     # ── PDF ──
     def _esporta_pdf(self):

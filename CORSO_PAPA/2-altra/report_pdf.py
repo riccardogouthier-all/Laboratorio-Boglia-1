@@ -147,26 +147,6 @@ def _sezione_media_per_materia(story, stili):
     story.append(Spacer(1, 0.5*cm))
 
 
-# ─── SEZIONE 6.3 ─────────────────────────────────────────────────────────────
-
-def _sezione_assenze(story, stili):
-    story.append(Paragraph("Assenze per studente", stili["H2"]))
-    dati = el.assenze_per_studente_tutti()
-    if not dati:
-        story.append(Paragraph("Nessun dato disponibile.", stili["Normal2"]))
-        return
-
-    righe = [[d["studente"], str(d["num_assenze"])] for d in dati]
-    t = _tabella(righe, ["Studente", "N° assenze"], col_w=[12*cm, 4*cm])
-    story.append(t)
-    story.append(Spacer(1, 0.5*cm))
-
-    png = gr.grafico_assenze_studenti(dati)
-    if png:
-        story.append(_png_flowable(png))
-    story.append(Spacer(1, 0.5*cm))
-
-
 # ─── SEZIONE 6.7 ─────────────────────────────────────────────────────────────
 
 def _sezione_sufficienti(story, stili, soglia=6.0):
@@ -277,9 +257,6 @@ def genera_report_completo(
         story.append(PageBreak())
 
     _sezione_media_per_materia(story, stili)
-    story.append(PageBreak())
-
-    _sezione_assenze(story, stili)
     story.append(PageBreak())
 
     _sezione_sufficienti(story, stili, soglia_sufficienza)
