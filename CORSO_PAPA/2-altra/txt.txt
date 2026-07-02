@@ -26,3 +26,8 @@ analisi sufficienti/ insufficienti togliere grafico a colonne (il grafico a tort
 correlazione tra materie togliere
 heatmap voti rimuovoere tutto 
 media vs assenze x studente rimuovere tutto 
+
+
+FATTO
+
+
