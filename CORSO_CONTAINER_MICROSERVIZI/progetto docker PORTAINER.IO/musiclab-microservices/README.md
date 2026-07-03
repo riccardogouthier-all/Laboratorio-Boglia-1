@@ -5,8 +5,8 @@ riorganizzata da monolite a **architettura a microservizi** con Docker
 Compose, registry Docker locale, message broker e monitoraggio via
 Portainer.
 
-Scenario: gestione di canzoni e playlist (diverso dall'esempio "gestione
-studenti" usato a lezione).
+Scenario:       Gestione canzoni + playlist. 
+Microservizi:   Docker Compose, registry locale, message broker, monitoraggio Portainer.
 
 ---
 
@@ -23,11 +23,11 @@ studenti" usato a lezione).
                          ┌─────────────────────────▼────┐
                          │  api-gateway (Nginx)         │
                          │  /api/canzoni  /api/playlist │
-                         └───────┬───────────────┬──────┘
-                                 │ rete "backend-net"    │
-                 ┌───────────────▼────┐      ┌────────────▼────────────┐
-                 │  songs-service     │      │  playlist-service       │
-                 │  Node.js / Express │      │  Python / FastAPI       │
+                         └──┬───────────────────────┬───┘
+                            │ rete "backend-net"    │
+                 ┌──────────▼─────────┐      ┌──────▼──────────────────┐
+                 │   songs-service    │      │    playlist-service     │
+                 │ Node/Express :4001 │      │  Python/FastAPI :4002   │
                  │  SQLite: songs.db  │      │  SQLite: playlist.db    │
                  └─────────┬──────────┘      └──────────────┬──────────┘
                            │      pubblica eventi           │ consuma eventi
@@ -40,6 +40,17 @@ studenti" usato a lezione).
    - registry:2      → registry Docker locale (push/pull immagini)
    - portainer-ce    → monitoraggio/deploy dello stack
 ```
+
+| Componente | Stack | Porta interna | DB |
+|---|---|---|---|
+| frontend | Nginx statico + proxy `/api/*` | 80 (esposta 8080) | - |
+| api-gateway | Nginx reverse proxy | 80 | - |
+| songs-service | Node.js/Express, SQLite | 4001 | `songs.db` |
+| playlist-service | Python/FastAPI, SQLite | 4002 | `playlist.db` |
+| rabbitmq | RabbitMQ 3.13 management | 5672 / 15672 | - |
+| registry | registry:2 | 5000 | - |
+| portainer | portainer-ce:2.21.4 | 9443 | - |
+
 
 **Perché due linguaggi diversi?** `songs-service` è in Node.js/Express
 (continuità con il codice originale), `playlist-service` è stato riscritto
@@ -69,186 +80,12 @@ i messaggi tra loro (pattern *competing consumers*).
 
 ---
 
-## 2. Prerequisiti
-
-- Docker Engine ≥ 24
-- Docker Compose v2 (comando `docker compose`, non il vecchio `docker-compose`)
-- Circa 2 GB di spazio libero per le immagini
-
-Verifica:
-
-```bash
-docker --version
-docker compose version
-```
-
----
-
-## 3. Setup da zero
-
-### 3.1 Configurazione
-
-```bash
-cd musiclab-microservices
-cp .env.example .env
-```
-
-Il file `.env` contiene le credenziali di RabbitMQ e l'host del registry.
-Per un uso puramente locale i valori di default vanno già bene.
-
-### 3.2 Build delle immagini
-
-```bash
-docker compose build
-```
-
-Verranno costruite 4 immagini: `songs-service`, `playlist-service`,
-`api-gateway`, `frontend`.
-
-### 3.3 Avvio dello stack
-
-```bash
-docker compose up -d
-```
-
-Verifica lo stato dei container:
-
-```bash
-docker compose ps
-```
-
-Tutti i servizi con healthcheck devono risultare `healthy` dopo circa
-15-30 secondi (i database SQLite e le tabelle vengono creati
-automaticamente al primo avvio).
-
-### 3.4 Accesso ai servizi
-
-| Servizio                | URL                              | Note                              |
-|--------------------------|-----------------------------------|------------------------------------|
-| Applicazione web          | http://localhost:8080            | Frontend MusicLab                  |
-| RabbitMQ management UI    | http://localhost:15672           | utente/password da `.env`          |
-| Registry Docker           | http://localhost:5000/v2/_catalog| elenco immagini nel registry       |
-| Portainer                 | https://localhost:9443           | creare l'utente admin al primo accesso |
-
-### 3.5 Arresto
-
-```bash
-docker compose down          # ferma e rimuove i container (i dati restano nei volumi)
-docker compose down -v       # ferma e cancella anche i volumi (reset completo)
-```
-
----
-
-## 4. Registry Docker locale (push / pull)
-
-Il registry (`registry:2`) è già incluso nello stack e parte insieme
-agli altri servizi, sulla porta `5000`.
-
-Le immagini nel `docker-compose.yml` sono già taggate con il prefisso
-del registry (`${REGISTRY_HOST}/musiclab/<servizio>:1.0.0`), quindi
-build/push/pull funzionano direttamente con i comandi di Compose:
-
-```bash
-# 1. build locale delle immagini
-docker compose build
-
-# 2. push delle immagini nel registry locale
-docker compose push
-
-# 3. verifica che le immagini siano nel registry
-curl http://localhost:5000/v2/_catalog
-# → {"repositories":["musiclab/api-gateway","musiclab/frontend","musiclab/playlist-service","musiclab/songs-service"]}
-
-# 4. pull (es. su un'altra macchina/ambiente collegata allo stesso registry)
-docker compose pull
-```
-
-Per simulare un deploy "da zero" scaricando solo dal registry (senza
-ricompilare):
-
-```bash
-docker compose down
-docker compose pull
-docker compose up -d --no-build
-```
-
-> Nota: questo registry non ha autenticazione (uso didattico/locale).
-> In produzione andrebbe protetto con TLS e credenziali
-> (`registry:2` supporta `htpasswd` e certificati out-of-the-box).
-
----
-
-## 5. Scalabilità con il message broker
-
-Scalare i microservizi che consumano eventi da RabbitMQ:
-
-```bash
-docker compose up -d --scale playlist-service=3 --scale songs-service=2
-```
-
-- Le richieste HTTP verso `songs-service`/`playlist-service` vengono
-  distribuite dall'`api-gateway`, che risolve il nome del servizio via
-  DNS interno di Docker ad ogni richiesta (round-robin tra le repliche).
-- Gli eventi RabbitMQ pubblicati da `songs-service` vengono consumati
-  in modalità *competing consumers*: se `playlist-service` ha 3
-  repliche, ciascun messaggio viene elaborato da **una sola** di esse,
-  distribuendo il carico di sincronizzazione.
-
-Verifica le repliche attive:
-
-```bash
-docker compose ps playlist-service
-```
-
-> Nota tecnica: SQLite non è pensato per scritture concorrenti da più
-> processi su larga scala. Qui è usato in modalità WAL per gestire più
-> repliche in lettura/scrittura a basso volume; per uno scenario di
-> produzione con scaling reale si sostituirebbe con PostgreSQL/MySQL
-> (il codice applicativo cambierebbe solo nel layer di accesso ai dati).
-
----
-
-## 6. Monitoraggio (e deploy opzionale) con Portainer
-
-1. Apri **https://localhost:9443** (certificato self-signed: accetta
-   l'avviso del browser).
-2. Al primo accesso crea l'utente amministratore.
-3. Seleziona l'ambiente **"local"** (il socket Docker è già montato nel
-   container Portainer tramite `docker-compose.yml`).
-4. In **Containers** trovi tutti i container dello stack `musiclab`,
-   con stato, log, statistiche CPU/RAM in tempo reale.
-5. In **Images** puoi vedere le immagini pull-ate/pushate verso il
-   registry locale.
-
-### Deploy dello stack direttamente da Portainer (opzionale)
-
-Invece di usare `docker compose up` da riga di comando, lo stesso file
-`docker-compose.yml` può essere usato per creare uno **Stack** in
-Portainer:
-
-1. Menu laterale → **Stacks** → **Add stack**.
-2. Nome: `musiclab`.
-3. Build method: **Upload** (carica `docker-compose.yml`) oppure
-   **Web editor** (incolla il contenuto del file).
-4. In **Environment variables** aggiungi le stesse chiavi presenti in
-   `.env` (`REGISTRY_HOST`, `RABBITMQ_DEFAULT_USER`,
-   `RABBITMQ_DEFAULT_PASS`, `RABBITMQ_URL`), oppure carica direttamente
-   il file `.env`.
-5. **Deploy the stack**.
-
-Portainer richiama internamente lo stesso motore di Docker Compose, per
-cui il file non richiede modifiche: è già "Portainer-ready" (nomi dei
-servizi, reti e volumi espliciti, nessun path relativo all'host tranne
-il socket Docker per Portainer stesso).
-
----
-
-## 7. Struttura del progetto
+## 2. Struttura progetto
 
 ```
 musiclab-microservices/
 ├── docker-compose.yml
-├── docker-compose.override.yml.example   # espone porte di debug (Swagger/FastAPI docs)
+├── docker-compose.override.yml.example   # espone porte debug (Swagger/FastAPI docs)
 ├── .env.example
 ├── README.md
 ├── frontend/                # Nginx + index.html statico
@@ -277,31 +114,150 @@ musiclab-microservices/
 
 ---
 
-## 8. Differenze rispetto al monolite originale (e miglioramenti applicati)
+## 3. Accesso ai servizi
 
-- **Frontend**: l'URL delle API era hardcoded (`http://localhost:3000/api`),
-  reso relativo (`/api`) così il frontend funziona con qualsiasi host/porta
-  di deploy, proxato dallo stesso Nginx che serve i file statici (niente CORS).
-- **Bug fix**: in `openPlaylistModal()` il codice cercava l'elemento
-  `PlaylistModal` (con la P maiuscola) invece di `playlistModal`,
-  impedendo l'apertura del modal di creazione/modifica playlist.
-- **Separazione dei dati**: `canzoni` e `playlist` non condividono più lo
-  stesso database; l'integrità referenziale (cascata alla cancellazione
-  di una canzone) è ora garantita in modo asincrono via eventi RabbitMQ
-  invece che da una `FOREIGN KEY` SQL nello stesso DB.
-- **Documentazione API**: `songs-service` espone Swagger UI su
-  `/api-docs`, `playlist-service` espone i docs automatici di FastAPI su
-  `/docs` (entrambi raggiungibili solo abilitando
-  `docker-compose.override.yml.example`, per non esporre i servizi
-  interni in condizioni normali).
+| Servizio | URL | Note |
+|---|---|---|
+| App web | http://localhost:8080 | Frontend MusicLab |
+| RabbitMQ management | http://localhost:15672 | user/pass da `.env` |
+| Registry | http://localhost:5000/v2/_catalog | elenco immagini |
+| Portainer | https://localhost:9443 | crea admin al primo accesso |
+
+Con `docker-compose.override.yml.example` rinominato in `.override.yml`: Swagger songs-service su `:4001/api-docs`, docs FastAPI playlist-service su `:4002/docs`.
 
 ---
 
-## 9. Troubleshooting rapido
+## 4. Registry Docker locale
 
-| Sintomo | Causa probabile | Soluzione |
+Immagini già taggate `${REGISTRY_HOST}/musiclab/<servizio>:1.0.0`.
+
+```bash
+docker compose build
+docker compose push
+curl http://localhost:5000/v2/_catalog
+# → {"repositories":["musiclab/api-gateway","musiclab/frontend","musiclab/playlist-service","musiclab/songs-service"]}
+docker compose pull
+```
+
+Deploy "da zero" solo da registry, senza build:
+
+```bash
+docker compose down
+docker compose pull
+docker compose up -d --no-build
+```
+
+> Registry senza auth (uso didattico). In produzione: TLS + htpasswd.
+
+---
+
+## 5. Scalabilità
+
+```bash
+docker compose up -d --scale playlist-service=3 --scale songs-service=2
+```
+
+- HTTP verso i servizi: distribuito da api-gateway via DNS interno Docker (round-robin)
+- Eventi RabbitMQ: competing consumers, ogni messaggio elaborato da 1 sola replica
+
+Verifica:
+
+```bash
+docker compose ps playlist-service
+```
+
+> SQLite in WAL regge repliche a basso volume. Scaling reale in produzione → PostgreSQL/MySQL (cambia solo il layer di accesso dati).
+
+---
+
+## 6. Portainer
+
+1. https://localhost:9443 (certificato self-signed, accetta l'avviso)
+2. Crea utente admin al primo accesso
+3. Seleziona ambiente **local** (socket Docker già montato)
+4. **Containers**: stato, log, CPU/RAM dello stack `musiclab`
+5. **Images**: immagini pull/push verso registry locale
+
+### Deploy da Portainer (opzionale)
+
+1. Stacks → Add stack, nome `musiclab`
+2. Upload `docker-compose.yml` o Web editor
+3. Environment variables: stesse chiavi di `.env` (`REGISTRY_HOST`, `RABBITMQ_DEFAULT_USER`, `RABBITMQ_DEFAULT_PASS`, `RABBITMQ_URL`), o carica `.env` direttamente
+4. Deploy the stack
+
+File già "Portainer-ready": nomi servizi/reti/volumi espliciti, nessun path host tranne socket Docker per Portainer stesso.
+
+---
+
+## 7. Differenze dal monolite originale
+
+- Frontend: URL API hardcoded (`http://localhost:3000/api`) → relativo (`/api`), proxato dallo stesso Nginx (niente CORS)
+- Bug fix: `openPlaylistModal()` cercava `PlaylistModal` invece di `playlistModal` (modal non si apriva)
+- DB separati per servizio, cascata gestita via eventi RabbitMQ invece che FOREIGN KEY SQL
+- Swagger UI (songs-service, `/api-docs`) e docs FastAPI (playlist-service, `/docs`) raggiungibili solo con override
+
+---
+
+## 8. Troubleshooting
+
+| Sintomo | Causa | Soluzione |
 |---|---|---|
-| `playlist-service` non mostra titolo/artista nelle playlist appena create | la cache locale non è stata ancora sincronizzata | attendere qualche secondo dopo aver creato la canzone, oppure verificare i log: `docker compose logs -f playlist-service` |
-| Container in stato `unhealthy` | RabbitMQ non ancora pronto | attendere, `depends_on: condition: service_healthy` gestisce l'ordine di avvio |
-| `docker compose push` fallisce | registry non raggiungibile | verificare che il container `registry` sia `Up`: `docker compose ps registry` |
-| Porta 8080/5672/15672/5000/9443 già in uso | conflitto con altri servizi locali | modificare il mapping delle porte nel `docker-compose.yml` |
+| playlist-service non mostra titolo/artista in playlist appena create | cache locale non ancora sincronizzata | attendere qualche secondo, o `docker compose logs -f playlist-service` |
+| Container `unhealthy` | RabbitMQ non pronto | attendere, `depends_on: condition: service_healthy` gestisce l'ordine |
+| `docker compose push` fallisce | registry non raggiungibile | `docker compose ps registry` |
+| Porta 8080/5672/15672/5000/9443 occupata | conflitto locale | modifica mapping porte in `docker-compose.yml` |
+
+---
+
+## 9. Procedura di installazione da zero
+
+### 9.1 Prerequisiti
+
+- Docker Engine ≥ 24
+- Docker Compose v2 (`docker compose`, non il vecchio `docker-compose`)
+- ~2 GB spazio libero
+
+```bash
+docker --version
+docker compose version
+```
+
+### 9.2 Configurazione
+
+```bash
+cd musiclab-microservices
+cp .env.example .env
+```
+
+Valori di default in `.env` già sufficienti per uso locale.
+
+### 9.3 Build immagini
+
+```bash
+docker compose build
+```
+
+Costruisce 4 immagini: `songs-service`, `playlist-service`, `api-gateway`, `frontend`.
+
+### 9.4 Avvio stack
+
+```bash
+docker compose up -d
+docker compose ps
+```
+
+Tutti i servizi con healthcheck devono risultare `healthy` dopo 15-30s (DB SQLite e tabelle creati automaticamente al primo avvio).
+
+### 9.5 Verifica
+
+- App: http://localhost:8080
+- RabbitMQ UI: http://localhost:15672 (credenziali da `.env`)
+- Registry: `curl http://localhost:5000/v2/_catalog`
+- Portainer: https://localhost:9443
+
+### 9.6 Arresto
+
+```bash
+docker compose down          # ferma/rimuove container, dati restano nei volumi
+docker compose down -v       # ferma + cancella volumi (reset completo)
+```
