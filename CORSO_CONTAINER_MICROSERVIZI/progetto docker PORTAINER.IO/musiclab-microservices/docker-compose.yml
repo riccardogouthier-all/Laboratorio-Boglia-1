@@ -1,0 +1,130 @@
+name: musiclab
+
+# ─────────────────────────────────────────────────────────────
+#  MusicLab - stack a microservizi
+#  frontend (Nginx) -> api-gateway (Nginx) -> songs-service (Node/Express)
+#                                          -> playlist-service (Python/FastAPI)
+#  songs-service e playlist-service comunicano in modo asincrono
+#  tramite RabbitMQ (message broker).
+# ─────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Registry Docker locale, per push/pull delle immagini dello stack ──
+  registry:
+    image: registry:2
+    container_name: musiclab-registry
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - registry-data:/var/lib/registry
+    networks:
+      - public-net
+
+  # ── Message broker ──
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: musiclab-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-musiclab}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-musiclab_pw}
+    ports:
+      - "5672:5672"     # protocollo AMQP
+      - "15672:15672"   # management UI (http://localhost:15672)
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    networks:
+      - backend-net
+
+  # ── Microservizio canzoni (Node.js / Express / SQLite) ──
+  songs-service:
+    build: ./songs-service
+    image: ${REGISTRY_HOST:-localhost:5000}/musiclab/songs-service:1.0.0
+    restart: unless-stopped
+    environment:
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://musiclab:musiclab_pw@rabbitmq:5672}
+      DB_PATH: /app/data/songs.db
+    volumes:
+      - songs-data:/app/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - backend-net
+
+  # ── Microservizio playlist (Python / FastAPI / SQLite) ──
+  playlist-service:
+    build: ./playlist-service
+    image: ${REGISTRY_HOST:-localhost:5000}/musiclab/playlist-service:1.0.0
+    restart: unless-stopped
+    environment:
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://musiclab:musiclab_pw@rabbitmq:5672}
+      DB_PATH: /app/data/playlist.db
+    volumes:
+      - playlist-data:/app/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - backend-net
+
+  # ── API Gateway (Nginx reverse proxy) ──
+  api-gateway:
+    build: ./api-gateway
+    image: ${REGISTRY_HOST:-localhost:5000}/musiclab/api-gateway:1.0.0
+    restart: unless-stopped
+    depends_on:
+      - songs-service
+      - playlist-service
+    networks:
+      - backend-net
+      - public-net
+
+  # ── Frontend (Nginx statico + proxy verso l'api-gateway) ──
+  frontend:
+    build: ./frontend
+    image: ${REGISTRY_HOST:-localhost:5000}/musiclab/frontend:1.0.0
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - public-net
+
+  # ── Portainer, per il monitoraggio (e opzionalmente il deploy) dello stack ──
+  portainer:
+    image: portainer/portainer-ce:2.21.4
+    container_name: musiclab-portainer
+    restart: unless-stopped
+    ports:
+      - "9443:9443"   # UI web (https://localhost:9443)
+      - "8000:8000"   # Edge agent (non necessario in locale, ma innocuo)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    networks:
+      - public-net
+
+networks:
+  # Rete "pubblica": frontend, gateway, registry, portainer.
+  public-net:
+    driver: bridge
+  # Rete "interna": solo gateway e microservizi possono raggiungere
+  # songs-service, playlist-service e rabbitmq. Non è esposta all'host.
+  backend-net:
+    driver: bridge
+
+volumes:
+  songs-data:
+  playlist-data:
+  rabbitmq-data:
+  registry-data:
+  portainer-data:

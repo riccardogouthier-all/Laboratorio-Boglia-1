@@ -1,0 +1,19 @@
+# Override opzionale, SOLO per sviluppo/debug locale.
+# In un'architettura a microservizi i servizi interni non dovrebbero
+# essere raggiungibili direttamente dall'host: qui li esponiamo solo
+# per comodità (es. consultare Swagger UI o i docs di FastAPI).
+#
+# Uso:
+#   docker compose -f docker-compose.yml -f docker-compose.override.yml.example up -d
+#
+# Rinominare in "docker-compose.override.yml" per farlo caricare
+# automaticamente da `docker compose` insieme al file principale.
+
+services:
+  songs-service:
+    ports:
+      - "4001:4001"   # Swagger UI: http://localhost:4001/api-docs
+
+  playlist-service:
+    ports:
+      - "4002:4002"   # Docs FastAPI: http://localhost:4002/docs
