@@ -222,7 +222,7 @@ docker --version
 docker compose version
 ```
 
-### 9.2 Configurazione
+### 9.2.A Configurazione
 
 ```bash
 cd musiclab-microservices
@@ -231,29 +231,28 @@ cp .env.example .env
 
 Valori di default in `.env` già sufficienti per uso locale.
 
-### 9.3 Build immagini
-
+### 9.3
 ```bash
-docker compose build
+docker compose -f services-compose.yml up -d
 ```
 
-Costruisce 4 immagini: `songs-service`, `playlist-service`, `api-gateway`, `frontend`.
+Tira su Portainer e il Registry
 
-### 9.4 Avvio stack
+- Portainer: https://localhost:9443
+- Environments / Local
+- Add stack e carica docker-compose.yml dalla cartella
 
-```bash
-docker compose up -d
-docker compose ps
-```
-
-Tutti i servizi con healthcheck devono risultare `healthy` dopo 15-30s (DB SQLite e tabelle creati automaticamente al primo avvio).
+Tira su tutta l'infrastruttura
 
 ### 9.5 Verifica
 
-- App: http://localhost:8080
-- RabbitMQ UI: http://localhost:15672 (credenziali da `.env`)
-- Registry: `curl http://localhost:5000/v2/_catalog`
 - Portainer: https://localhost:9443
+
+- App: http://localhost:8080
+- Traefik: http://localhost:8081
+- RabbitMQ UI: http://localhost:15672 (credenziali da `.env`)
+
+- Registry: `curl http://localhost:5000/v2/_catalog`
 
 ### 9.6 Arresto
 
