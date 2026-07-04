@@ -113,9 +113,9 @@ def _header_footer(canvas, doc):
 # ─── SEZIONE: frontespizio ───────────────────────────────────────────────────
 
 def _frontespizio(story, stili):
+    story.append(Paragraph("Gestione Studenti \n", stili["Titolo"]))
     story.append(Spacer(1, 4*cm))
-    story.append(Paragraph("Gestione Studenti", stili["Titolo"]))
-    story.append(Paragraph("Report Statistico", stili["Sottotitolo"]))
+    story.append(Paragraph("\n Report Statistico", stili["Sottotitolo"]))
     story.append(HRFlowable(width="80%", thickness=2, color=BLU, spaceAfter=10))
     story.append(Paragraph(
         f"Generato il {datetime.now().strftime('%d/%m/%Y alle %H:%M')}",

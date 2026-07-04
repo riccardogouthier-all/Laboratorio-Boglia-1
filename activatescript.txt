@@ -1,0 +1,1 @@
+(Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned) ; (& c:\Users\riccardo.gouthier\Desktop\GITHUB\Laboratorio-Boglia-1\CORSO_BOGLIA\.venv\Scripts\Activate.ps1)
