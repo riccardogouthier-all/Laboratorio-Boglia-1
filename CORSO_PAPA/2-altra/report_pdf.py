@@ -1,5 +1,5 @@
 """
-report_pdf.py — generazione report PDF con reportlab + grafici embedded
+report_pdf.py — crea il report PDF con reportlab, con i grafici incorporati
 """
 
 import io
@@ -33,6 +33,14 @@ W, H = A4
 # ─── STILI ───────────────────────────────────────────────────────────────────
 
 def _stili():
+    """
+    Crea tutti gli stili di testo (ParagraphStyle) usati nel PDF:
+    titoli, sottotitoli, intestazioni di sezione, testo normale,
+    numeri KPI in grande e il testo del footer.
+    Tenere tutti gli stili grafici in un solo punto fa sì che ogni
+    sezione del documento usi sempre gli stessi colori e le stesse
+    dimensioni di testo, senza doverli ripetere ogni volta.
+    """
     s = getSampleStyleSheet()
     extra = {
         "Titolo": ParagraphStyle("Titolo", fontSize=22, textColor=BLU,
@@ -61,6 +69,17 @@ def _stili():
 
 
 def _png_flowable(png_bytes: bytes, width=14*cm) -> Image:
+    """
+    Trasforma i byte di un'immagine PNG in un oggetto Image di
+    reportlab, ridimensionato a una larghezza fissa mantenendo le
+    proporzioni originali.
+    I grafici creati da grafici.py arrivano come byte tenuti in
+    memoria (non come file salvati su disco). Questa funzione li
+    rende inseribili nel testo del documento reportlab (un
+    "flowable", cioè un elemento che scorre nella pagina), calcolando
+    l'altezza giusta in base al rapporto tra larghezza e altezza
+    originali, così l'immagine non risulta schiacciata o allungata.
+    """
     img = Image(io.BytesIO(png_bytes))
     ratio = img.imageHeight / img.imageWidth
     img.drawWidth  = width
@@ -69,6 +88,15 @@ def _png_flowable(png_bytes: bytes, width=14*cm) -> Image:
 
 
 def _tabella(dati, intestazione, col_w=None) -> Table:
+    """
+    Crea una tabella per il PDF con l'intestazione in evidenza (sfondo
+    blu, testo bianco) e le righe colorate a bande alternate, per
+    essere più facili da leggere.
+    Usata da tutte le sezioni del report che mostrano dati in
+    tabella (medie per materia, elenchi sufficienti/insufficienti),
+    così tutte le tabelle del documento hanno lo stesso stile senza
+    ripetere ogni volta la stessa configurazione.
+    """
     righe = [intestazione] + dati
     t = Table(righe, colWidths=col_w, repeatRows=1)
     t.setStyle(TableStyle([
@@ -89,8 +117,18 @@ def _tabella(dati, intestazione, col_w=None) -> Table:
 # ─── HEADER / FOOTER ─────────────────────────────────────────────────────────
 
 def _header_footer(canvas, doc):
+    """
+    Disegna a mano la barra in alto (titolo + data/ora di
+    generazione) e la barra in basso (avviso di riservatezza +
+    numero di pagina), che vengono ripetute su ogni pagina.
+    Reportlab chiama automaticamente questa funzione per ogni pagina
+    tramite PageTemplate(onPage=...). Disegnare direttamente sul
+    canvas (invece di aggiungerle come testo normale) permette di
+    avere intestazione e piè di pagina fissi, indipendentemente da
+    quanto contenuto scorre nella pagina.
+    """
     canvas.saveState()
-    # Header bar
+    # Barra in alto
     canvas.setFillColor(BLU)
     canvas.rect(0, H - 1.2*cm, W, 1.2*cm, fill=1, stroke=0)
     canvas.setFillColor(BIANCO)
@@ -99,7 +137,7 @@ def _header_footer(canvas, doc):
     canvas.setFont("Helvetica", 8)
     canvas.drawRightString(W - 1.5*cm, H - 0.8*cm,
                            datetime.now().strftime("%d/%m/%Y %H:%M"))
-    # Footer bar
+    # Barra in basso
     canvas.setFillColor(GRIGIO_L)
     canvas.rect(0, 0, W, 1*cm, fill=1, stroke=0)
     canvas.setFillColor(GRIGIO)
@@ -113,6 +151,12 @@ def _header_footer(canvas, doc):
 # ─── SEZIONE: frontespizio ───────────────────────────────────────────────────
 
 def _frontespizio(story, stili):
+    """
+    Aggiunge la pagina di copertina del report (titolo, sottotitolo,
+    riga separatrice, data di generazione) e poi va a pagina nuova.
+    Dà al documento un aspetto più curato e separa bene la copertina
+    dal contenuto statistico che segue.
+    """
     story.append(Paragraph("Gestione Studenti \n", stili["Titolo"]))
     story.append(Spacer(1, 4*cm))
     story.append(Paragraph("\n Report Statistico", stili["Sottotitolo"]))
@@ -127,6 +171,15 @@ def _frontespizio(story, stili):
 # ─── SEZIONE 6.2 ─────────────────────────────────────────────────────────────
 
 def _sezione_media_per_materia(story, stili):
+    """
+    Aggiunge la sezione "Media per materia": una tabella con
+    materia/media/numero studenti, seguita dal grafico a barre
+    corrispondente.
+    Realizza nel PDF la richiesta 6.2, mettendo insieme il dato
+    esatto (tabella) e il grafico, per una lettura sia precisa sia
+    veloce. Se non ci sono dati, mostra un messaggio invece di
+    lasciare la sezione vuota.
+    """
     story.append(Paragraph("Media per materia", stili["H2"]))
     dati = el.medie_per_materia_tutti()
     if not dati:
@@ -150,6 +203,16 @@ def _sezione_media_per_materia(story, stili):
 # ─── SEZIONE 6.7 ─────────────────────────────────────────────────────────────
 
 def _sezione_sufficienti(story, stili, soglia=6.0):
+    """
+    Aggiunge la sezione "Sufficienti/Insufficienti": tre numeri
+    riassuntivi in grande (quanti sufficienti, quanti insufficienti,
+    la percentuale di sufficienza), le tabelle dettagliate dei due
+    gruppi e il grafico a torta riassuntivo.
+    Realizza nel PDF la richiesta 6.7. I tre numeri sono racchiusi in
+    un KeepTogether per evitare che finiscano spezzati su due pagine
+    diverse, e la percentuale è protetta da un'eventuale divisione
+    per zero (mostra "—" se non ci sono dati).
+    """
     story.append(Paragraph(
         f"Studenti sufficienti / insufficienti (soglia {soglia})", stili["H2"]))
     ris = el.studenti_sufficienti_insufficienti(soglia)
@@ -158,7 +221,7 @@ def _sezione_sufficienti(story, stili, soglia=6.0):
     n_i = len(ris["insufficienti"])
     tot = n_s + n_i
 
-    # KPI box
+    # Riquadro con i numeri riassuntivi
     kpi_data = [[
         Paragraph(str(n_s), stili["Kpi"]),
         Paragraph(str(n_i), stili["Kpi"]),
@@ -179,7 +242,7 @@ def _sezione_sufficienti(story, stili, soglia=6.0):
     ]))
     story.append(KeepTogether([kpi_t, Spacer(1, 0.4*cm)]))
 
-    # Tabelle dettaglio
+    # Tabelle con il dettaglio
     for label, lista, colore in [
         ("Sufficienti", ris["sufficienti"], BLU_CH),
         ("Insufficienti", ris["insufficienti"], ROSSO),
@@ -202,6 +265,15 @@ def _sezione_sufficienti(story, stili, soglia=6.0):
 
 def _sezione_media_materia_studente(story, stili, materia: str, id_studente: int,
                                      nome_studente: str):
+    """
+    Aggiunge una sezione personalizzata "Media {materia} —
+    {studente}": la media dello studente con l'indicazione se è
+    sufficiente o no, seguita dall'istogramma con la distribuzione
+    dei voti di tutta la materia, come confronto.
+    Realizza nel PDF la richiesta 6.1 come sezione facoltativa,
+    attivata solo se l'utente sceglie materia e studente dalla GUI.
+    Utile per un report mirato su un singolo caso.
+    """
     story.append(Paragraph(
         f"Media {materia} — {nome_studente}", stili["H2"]))
     media = el.media_materia_studente(materia, id_studente)
@@ -228,6 +300,20 @@ def genera_report_completo(
     id_studente_focus: int | None = None,
     nome_studente_focus: str | None = None,
 ):
+    """
+    Funzione principale del modulo: costruisce il report PDF completo
+    e lo salva in output_path.
+    Mette insieme tutte le sezioni del documento (copertina, eventuale
+    sezione mirata 6.1, media per materia 6.2, sufficienti/
+    insufficienti 6.7), imposta il modello di pagina con intestazione
+    e piè di pagina ripetuti (_header_footer) e i margini del
+    documento. È l'unica funzione chiamata da fuori (main.py), così
+    tutti i dettagli su come è fatto il PDF restano dentro questo file.
+    I parametri materia_focus/id_studente_focus/nome_studente_focus
+    sono facoltativi: se vengono passati tutti e tre, la sezione 6.1
+    personalizzata viene messa all'inizio del report, altrimenti
+    viene saltata.
+    """
     stili = _stili()
 
     doc = BaseDocTemplate(

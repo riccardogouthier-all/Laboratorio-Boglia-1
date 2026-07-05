@@ -1,5 +1,6 @@
 """
-main.py — GUI tkinter: gestione completa studenti/voti/assenze/materie + report PDF
+main.py — interfaccia grafica (GUI) con tkinter: gestisce studenti,
+voti, assenze, materie e la creazione del report in PDF
 """
 
 import os
@@ -11,7 +12,7 @@ from datetime import datetime
 import threading
 import io
 
-# ── assicura import dal package locale ────────────────────────────────────────
+# ── serve per poter importare i file .py che si trovano nella stessa cartella ──
 sys.path.insert(0, os.path.dirname(__file__))
 
 import database as db
@@ -20,13 +21,13 @@ import elaborazioni as el
 import grafici as gr
 import report_pdf as rpdf
 
-# ── matplotlib embed ──────────────────────────────────────────────────────────
+# ── per mostrare i grafici matplotlib dentro la finestra tkinter ──────────────
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 
-# ─── PALETTE ─────────────────────────────────────────────────────────────────
+# ─── COLORI E FONT DELL'APP ───────────────────────────────────────────────────
 BLU  = "#2D4A8A"
 BLU2 = "#4C72B0"
 BG   = "#F4F6FA"
@@ -43,20 +44,34 @@ FONT_T = ("Segoe UI", 16, "bold")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  WIDGET HELPERS
+#  FUNZIONI PER CREARE I WIDGET
 # ─────────────────────────────────────────────────────────────────────────────
+# Questa parte raccoglie funzioni brevi per creare i widget tkinter più
+# usati (etichetta, campo di testo, bottone, tabella, titolo, riga
+# separatrice, barra di stato), così ogni finestra dell'app usa sempre
+# lo stesso stile grafico (colori, font) senza dover ripetere gli
+# stessi parametri decine di volte.
 
 def _label(parent, text, **kw):
+    """Crea una tk.Label con lo stile standard dell'app (sfondo BG2,
+    testo colore TESTO, font FONT); i parametri passati in kw possono
+    sovrascrivere questi valori di default."""
     return tk.Label(parent, text=text, bg=kw.pop("bg", BG2),
                     fg=kw.pop("fg", TESTO), font=kw.pop("font", FONT), **kw)
 
 
 def _entry(parent, textvariable=None, **kw):
+    """Crea un campo di testo (ttk.Entry) collegato a una variabile,
+    con il font standard dell'app, per rendere uguali tutti i campi
+    di input nei form."""
     e = ttk.Entry(parent, textvariable=textvariable, font=FONT, **kw)
     return e
 
 
 def _btn(parent, text, cmd, **kw):
+    """Crea un bottone (tk.Button) con lo stile standard dell'app
+    (sfondo blu di default, testo bianco, bordo piatto, cursore a
+    manina), così tutti i bottoni dell'interfaccia sono uguali."""
     bg = kw.pop("bg", BLU2)
     fg = kw.pop("fg", "white")
     b = tk.Button(parent, text=text, command=cmd, bg=bg, fg=fg,
@@ -67,6 +82,12 @@ def _btn(parent, text, cmd, **kw):
 
 
 def _tree(parent, cols: list[str], heights=12):
+    """Crea una tabella (ttk.Treeview) con le colonne indicate e una
+    barra di scorrimento verticale collegata; la larghezza di ogni
+    colonna viene stimata in base alla lunghezza del suo titolo.
+    Tutte le schede con tabelle (Studenti, Voti, Assenze, Materie)
+    usano questa stessa funzione, così sono tutte fatte allo stesso
+    modo senza ripetere il codice ogni volta."""
     tv = ttk.Treeview(parent, columns=cols, show="headings", height=heights)
     for c in cols:
         tv.heading(c, text=c)
@@ -77,6 +98,11 @@ def _tree(parent, cols: list[str], heights=12):
 
 
 def _titolo(parent, text):
+    """Crea un riquadro con un'etichetta in stile "titolo di sezione"
+    (sfondo blu, testo bianco, font grande). Nota: è definita ma non
+    viene usata direttamente nelle schede attuali (che costruiscono
+    la loro intestazione in un altro modo), resta disponibile come
+    funzione pronta all'uso per nuove sezioni future."""
     f = tk.Frame(parent, bg=BLU)
     tk.Label(f, text=text, bg=BLU, fg="white",
              font=FONT_T, padx=16, pady=10).pack(side="left")
@@ -84,10 +110,18 @@ def _titolo(parent, text):
 
 
 def _sep(parent):
+    """Crea una riga separatrice orizzontale, usata per dividere
+    visivamente gruppi di bottoni (ad esempio tra i report e i
+    bottoni per esportare il PDF)."""
     return ttk.Separator(parent, orient="horizontal")
 
 
 def _status(parent):
+    """Crea la barra di stato in fondo alla finestra principale,
+    collegata a una variabile di testo condivisa.
+    Restituisce sia il widget della barra sia la variabile, così ogni
+    scheda può aggiornare il messaggio di stato (es. "12 studenti")
+    semplicemente scrivendo dentro quella variabile."""
     sv = tk.StringVar(value="Pronto.")
     bar = tk.Label(parent, textvariable=sv, bg=BLU, fg="white",
                    font=FONT_S, anchor="w", padx=8)
@@ -95,11 +129,23 @@ def _status(parent):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  DIALOGO GENERICO STUDENTE
+#  FINESTRA: NUOVO/MODIFICA STUDENTE
 # ─────────────────────────────────────────────────────────────────────────────
 
 class DialogStudente(tk.Toplevel):
+    """
+    Finestra popup per inserire o modificare uno studente.
+    Una sola classe gestisce sia il caso "nuovo studente" (dati=None)
+    sia il caso "modifica studente" (dati già precompilati), così non
+    serve scrivere due volte lo stesso form in due classi diverse. Il
+    risultato scelto dall'utente viene salvato in self.risultato, che
+    chi ha aperto la finestra legge dopo che è stata chiusa (wait_window).
+    """
+
     def __init__(self, parent, titolo, dati=None):
+        """Prepara la finestra popup (grab_set la rende bloccante, cioè
+        non si può usare il resto dell'app finché non viene chiusa) e
+        costruisce il form, riempito con 'dati' se presenti (caso modifica)."""
         super().__init__(parent)
         self.title(titolo)
         self.configure(bg=BG)
@@ -110,6 +156,11 @@ class DialogStudente(tk.Toplevel):
         self._build(dati or {})
 
     def _build(self, dati):
+        """Costruisce i campi del form (nome, cognome, data di
+        nascita, email) collegati a variabili di testo, e i bottoni
+        Salva/Annulla.
+        Separiamo la costruzione grafica dall'__init__ per rendere il
+        codice più facile da leggere."""
         pad = dict(padx=12, pady=5)
         _label(self, "Nome *", bg=BG).grid(row=0, column=0, sticky="e", **pad)
         _label(self, "Cognome *", bg=BG).grid(row=1, column=0, sticky="e", **pad)
@@ -131,6 +182,17 @@ class DialogStudente(tk.Toplevel):
         _btn(f, "✖  Annulla", self.destroy, bg=ACCENT).pack(side="left", padx=6)
 
     def _salva(self):
+        """
+        Controlla tutti i campi del form (che non siano vuoti, che
+        nome e cognome non abbiano numeri o simboli strani, che la
+        data sia scritta bene ed esista davvero, che l'email sia
+        valida) e, solo se tutto è corretto, salva i dati in
+        self.risultato e chiude la finestra.
+        Controllare subito nella finestra (prima ancora di chiedere
+        al database) permette di far vedere all'utente un messaggio
+        di errore chiaro e specifico, invece di un generico errore
+        del database dopo che ha già provato a salvare.
+        """
         nome  = self.v_nome.get().strip()
         cogn  = self.v_cogn.get().strip()
         data  = self.v_data.get().strip()
@@ -161,7 +223,7 @@ class DialogStudente(tk.Toplevel):
                 parent=self
             ); return
 
-        # ── data di nascita: formato YYYY-MM-DD e data reale ────────────────
+        # ── data di nascita: formato YYYY-MM-DD e data che esiste davvero ───
         if not re.match(r"^\d{4}-\d{2}-\d{2}$", data):
             messagebox.showerror(
                 "Errore",
@@ -196,11 +258,22 @@ class DialogStudente(tk.Toplevel):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  DIALOGO VOTO
+#  FINESTRA: NUOVO/MODIFICA VOTO
 # ─────────────────────────────────────────────────────────────────────────────
 
 class DialogVoto(tk.Toplevel):
+    """
+    Finestra popup per inserire o modificare un voto.
+    Come DialogStudente, gestisce con un'unica classe sia la
+    creazione sia la modifica; riceve già pronte le liste di
+    studenti e materie caricate da chi apre la finestra, per riempire
+    i menu a tendina senza dover interrogare il database più volte
+    per la stessa lista.
+    """
+
     def __init__(self, parent, titolo, studenti, materie, dati=None):
+        """Prepara la finestra popup salvando le liste di studenti e
+        materie disponibili, e costruisce il form."""
         super().__init__(parent)
         self.title(titolo)
         self.configure(bg=BG)
@@ -213,6 +286,11 @@ class DialogVoto(tk.Toplevel):
         self._build(dati or {})
 
     def _build(self, dati):
+        """Costruisce i campi del form: menu a tendina per lo
+        studente (si può anche scrivere, con l'elenco "id — cognome
+        nome"), menu a tendina per la materia (solo scelta tra quelle
+        esistenti) e campo di testo per il voto. Se 'dati' contiene
+        già un voto, riempie i menu con la scelta corrispondente."""
         pad = dict(padx=12, pady=5)
         _label(self, "Studente *", bg=BG).grid(row=0, column=0, sticky="e", **pad)
         _label(self, "Materia *",  bg=BG).grid(row=1, column=0, sticky="e", **pad)
@@ -242,6 +320,15 @@ class DialogVoto(tk.Toplevel):
         _btn(f, "✖  Annulla", self.destroy, bg=ACCENT).pack(side="left", padx=6)
 
     def _salva(self):
+        """
+        Controlla la scelta fatta (studente selezionato, materia tra
+        quelle esistenti, voto numerico tra 0 e 10) e, se tutto è
+        corretto, salva i dati in self.risultato e chiude la finestra.
+        Il controllo sul voto (0-10) rispecchia il vincolo scritto
+        nel database, così l'errore si vede subito ed è chiaro; se la
+        materia non esiste ancora, viene detto all'utente di crearla
+        prima nella scheda Materie.
+        """
         idx = self.cb_stud.current()
         if idx < 0:
             messagebox.showerror("Errore", "Seleziona uno studente.", parent=self); return
@@ -270,11 +357,20 @@ class DialogVoto(tk.Toplevel):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  DIALOGO ASSENZA
+#  FINESTRA: NUOVA/MODIFICA ASSENZA
 # ─────────────────────────────────────────────────────────────────────────────
 
 class DialogAssenza(tk.Toplevel):
+    """
+    Finestra popup per inserire o modificare un'assenza.
+    Stesso schema di DialogStudente/DialogVoto applicato alle
+    assenze, per tenere il codice e l'esperienza d'uso coerenti in
+    tutta l'app.
+    """
+
     def __init__(self, parent, titolo, studenti, dati=None):
+        """Prepara la finestra popup salvando la lista di studenti
+        disponibili, e costruisce il form."""
         super().__init__(parent)
         self.title(titolo)
         self.configure(bg=BG)
@@ -285,6 +381,9 @@ class DialogAssenza(tk.Toplevel):
         self._build(dati or {})
 
     def _build(self, dati):
+        """Costruisce i campi del form: menu a tendina studente e
+        campo data, già riempito con la data di oggi se non viene
+        specificato altro (caso tipico "nuova assenza": oggi)."""
         pad = dict(padx=12, pady=5)
         _label(self, "Studente *", bg=BG).grid(row=0, column=0, sticky="e", **pad)
         _label(self, "Data (YYYY-MM-DD) *", bg=BG).grid(row=1, column=0, sticky="e", **pad)
@@ -306,6 +405,15 @@ class DialogAssenza(tk.Toplevel):
         _btn(f, "✖  Annulla", self.destroy, bg=ACCENT).pack(side="left", padx=6)
 
     def _salva(self):
+        """
+        Controlla la scelta fatta (studente selezionato, data scritta
+        come YYYY-MM-DD) e, se corretta, salva i dati in
+        self.risultato e chiude la finestra.
+        Il controllo sul formato della data avviene qui, prima che i
+        dati arrivino al database, dove invece il controllo sui
+        doppioni (stesso studente + stessa data) è già gestito dal
+        vincolo UNIQUE.
+        """
         idx = self.cb_stud.current()
         if idx < 0:
             messagebox.showerror("Errore", "Seleziona uno studente.", parent=self); return
@@ -320,17 +428,31 @@ class DialogAssenza(tk.Toplevel):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  TAB: STUDENTI
+#  SCHEDA: STUDENTI
 # ─────────────────────────────────────────────────────────────────────────────
 
 class TabStudenti(tk.Frame):
+    """
+    Scheda dell'app dedicata all'anagrafica degli studenti: elenco
+    con ricerca in tempo reale, e operazioni per creare, modificare
+    ed eliminare uno studente.
+    Tenere tutto il codice sugli studenti in questa classe permette
+    di lasciare la classe App (la finestra principale) semplice, con
+    il solo compito di gestire le varie schede.
+    """
+
     def __init__(self, parent, status_var):
+        """Prepara la scheda, costruisce i widget e carica subito
+        l'elenco degli studenti dal database."""
         super().__init__(parent, bg=BG)
         self._sv = status_var
         self._build()
         self.aggiorna()
 
     def _build(self):
+        """Costruisce la barra dei bottoni (Nuovo/Modifica/Elimina/
+        Aggiorna), il campo di ricerca in tempo reale e la tabella
+        con le colonne anagrafiche."""
         top = tk.Frame(self, bg=BG)
         top.pack(fill="x", padx=10, pady=6)
         _btn(top, "➕ Nuovo",   self._nuovo).pack(side="left", padx=4)
@@ -347,7 +469,7 @@ class TabStudenti(tk.Frame):
         self.v_cerca.trace_add("write", lambda *_: self._cerca_debounced())
         _entry(frk, self.v_cerca, width=28).pack(side="left", padx=6)
 
-        # Treeview
+        # Tabella
         frm = tk.Frame(self, bg=BG)
         frm.pack(fill="both", expand=True, padx=10, pady=4)
         self.tv, sb = _tree(frm, ["ID", "Cognome", "Nome", "Data Nascita", "Email"])
@@ -355,14 +477,24 @@ class TabStudenti(tk.Frame):
         sb.pack(side="right", fill="y")
 
     def _cerca_debounced(self, ritardo_ms: int = 250):
-        """Rinvia la query di ricerca finché l'utente non smette di digitare
-        per ritardo_ms, evitando una query DB completa a ogni carattere
-        (rilevante a grandi volumi, es. 25x i dati di esempio)."""
+        """Aspetta che l'utente smetta di scrivere per ritardo_ms
+        millisecondi prima di lanciare davvero la ricerca, così non
+        facciamo una query al database a ogni singolo carattere
+        digitato (utile soprattutto con tanti dati)."""
         if self._debounce_id is not None:
             self.after_cancel(self._debounce_id)
         self._debounce_id = self.after(ritardo_ms, self.aggiorna)
 
     def aggiorna(self, *_):
+        """
+        Ricarica la tabella con l'elenco studenti aggiornato: se c'è
+        del testo nel campo di ricerca applica il filtro
+        (db.cerca_studente), altrimenti mostra tutti gli studenti.
+        Questa è l'unica funzione che aggiorna la tabella, ed è
+        chiamata sia dal bottone "Aggiorna" sia dopo ogni operazione
+        di scrittura (nuovo/modifica/elimina) sia dalla ricerca, per
+        avere sempre la tabella allineata con il database.
+        """
         self._debounce_id = None
         self.tv.delete(*self.tv.get_children())
         q = self.v_cerca.get().strip()
@@ -374,6 +506,10 @@ class TabStudenti(tk.Frame):
         self._sv.set(f"{len(rows)} studenti")
 
     def _sel_id(self):
+        """Restituisce l'id dello studente selezionato nella tabella,
+        oppure None (mostrando un avviso) se non è selezionato niente.
+        Questa funzione è usata sia da modifica sia da elimina, per
+        non ripetere due volte lo stesso controllo."""
         sel = self.tv.selection()
         if not sel:
             messagebox.showinfo("Info", "Seleziona uno studente.")
@@ -381,6 +517,11 @@ class TabStudenti(tk.Frame):
         return self.tv.item(sel[0])["values"][0]
 
     def _nuovo(self):
+        """Apre la finestra per inserire un nuovo studente e, se
+        l'utente conferma con dati corretti, lo salva nel database e
+        aggiorna la tabella. Un eventuale errore del database (per
+        esempio un'email duplicata sfuggita al controllo della
+        finestra) viene mostrato in un messaggio."""
         d = DialogStudente(self, "Nuovo studente")
         self.wait_window(d)
         if d.risultato:
@@ -392,6 +533,8 @@ class TabStudenti(tk.Frame):
                 messagebox.showerror("Errore DB", str(e))
 
     def _modifica(self):
+        """Apre la finestra di modifica già riempita con i dati dello
+        studente selezionato, e salva le modifiche se confermate."""
         sid = self._sel_id()
         if sid is None: return
         s = db.get_studente(sid)
@@ -406,6 +549,9 @@ class TabStudenti(tk.Frame):
                 messagebox.showerror("Errore DB", str(e))
 
     def _elimina(self):
+        """Chiede conferma (avvisando che verranno cancellati anche
+        voti e assenze collegati) e, se confermato, cancella lo
+        studente selezionato."""
         sid = self._sel_id()
         if sid is None: return
         if messagebox.askyesno("Conferma", f"Eliminare studente ID {sid}?\n"
@@ -416,17 +562,28 @@ class TabStudenti(tk.Frame):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  TAB: VOTI
+#  SCHEDA: VOTI
 # ─────────────────────────────────────────────────────────────────────────────
 
 class TabVoti(tk.Frame):
+    """
+    Scheda dedicata alla gestione dei voti: elenco (con già scritto
+    il nome dello studente) e operazioni per creare, modificare ed
+    eliminare un voto.
+    Stessa idea di TabStudenti: tutto il codice sui voti sta qui.
+    """
+
     def __init__(self, parent, status_var):
+        """Prepara la scheda, costruisce i widget e carica l'elenco
+        dei voti dal database."""
         super().__init__(parent, bg=BG)
         self._sv = status_var
         self._build()
         self.aggiorna()
 
     def _build(self):
+        """Costruisce la barra dei bottoni e la tabella dei voti
+        (ID, Studente, Materia, Voto)."""
         top = tk.Frame(self, bg=BG)
         top.pack(fill="x", padx=10, pady=6)
         _btn(top, "➕ Nuovo",    self._nuovo).pack(side="left", padx=4)
@@ -441,6 +598,8 @@ class TabVoti(tk.Frame):
         sb.pack(side="right", fill="y")
 
     def aggiorna(self):
+        """Ricarica la tabella con tutti i voti presenti nel database
+        (già uniti al nome dello studente dalla query)."""
         self.tv.delete(*self.tv.get_children())
         rows = db.get_tutti_voti()
         for r in rows:
@@ -449,6 +608,8 @@ class TabVoti(tk.Frame):
         self._sv.set(f"{len(rows)} voti")
 
     def _sel_id(self):
+        """Restituisce l'id del voto selezionato nella tabella,
+        oppure None con un avviso se non è selezionato niente."""
         sel = self.tv.selection()
         if not sel:
             messagebox.showinfo("Info", "Seleziona un voto.")
@@ -456,6 +617,10 @@ class TabVoti(tk.Frame):
         return self.tv.item(sel[0])["values"][0]
 
     def _nuovo(self):
+        """Apre la finestra per inserire un nuovo voto, controllando
+        prima che esistano almeno uno studente e una materia
+        (altrimenti i menu a tendina sarebbero vuoti e inutilizzabili),
+        e salva il voto se confermato."""
         studenti = db.get_tutti_studenti()
         materie  = db.get_nomi_materie()
         if not studenti:
@@ -473,6 +638,10 @@ class TabVoti(tk.Frame):
                 messagebox.showerror("Errore DB", str(e))
 
     def _modifica(self):
+        """Recupera il voto direttamente dal database (con una query
+        diretta, perché get_tutti_voti restituisce solo la versione
+        già pronta per la tabella) e apre la finestra di modifica
+        già riempita con i suoi dati."""
         vid = self._sel_id()
         if vid is None: return
         with db.get_conn() as conn:
@@ -491,6 +660,7 @@ class TabVoti(tk.Frame):
                 messagebox.showerror("Errore DB", str(e))
 
     def _elimina(self):
+        """Chiede conferma e cancella il voto selezionato."""
         vid = self._sel_id()
         if vid is None: return
         if messagebox.askyesno("Conferma", f"Eliminare voto ID {vid}?"):
@@ -500,17 +670,29 @@ class TabVoti(tk.Frame):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  TAB: ASSENZE
+#  SCHEDA: ASSENZE
 # ─────────────────────────────────────────────────────────────────────────────
 
 class TabAssenze(tk.Frame):
+    """
+    Scheda dedicata alla gestione delle assenze: elenco (le più
+    recenti per prime) e operazioni per creare, modificare ed
+    eliminare un'assenza.
+    Stessa idea delle altre schede: tutto il codice sulle assenze
+    sta in questa classe.
+    """
+
     def __init__(self, parent, status_var):
+        """Prepara la scheda, costruisce i widget e carica l'elenco
+        delle assenze dal database."""
         super().__init__(parent, bg=BG)
         self._sv = status_var
         self._build()
         self.aggiorna()
 
     def _build(self):
+        """Costruisce la barra dei bottoni e la tabella delle assenze
+        (ID, Studente, Data)."""
         top = tk.Frame(self, bg=BG)
         top.pack(fill="x", padx=10, pady=6)
         _btn(top, "➕ Nuova",    self._nuovo).pack(side="left", padx=4)
@@ -525,6 +707,7 @@ class TabAssenze(tk.Frame):
         sb.pack(side="right", fill="y")
 
     def aggiorna(self):
+        """Ricarica la tabella con tutte le assenze presenti nel database."""
         self.tv.delete(*self.tv.get_children())
         rows = db.get_tutte_assenze()
         for r in rows:
@@ -532,12 +715,17 @@ class TabAssenze(tk.Frame):
         self._sv.set(f"{len(rows)} assenze")
 
     def _sel_id(self):
+        """Restituisce l'id dell'assenza selezionata nella tabella,
+        oppure None con un avviso se non è selezionato niente."""
         sel = self.tv.selection()
         if not sel:
             messagebox.showinfo("Info", "Seleziona un'assenza."); return None
         return self.tv.item(sel[0])["values"][0]
 
     def _nuovo(self):
+        """Apre la finestra per inserire una nuova assenza
+        (controllando prima che esista almeno uno studente) e la
+        salva se confermata."""
         studenti = db.get_tutti_studenti()
         if not studenti:
             messagebox.showinfo("Info", "Nessuno studente."); return
@@ -552,6 +740,8 @@ class TabAssenze(tk.Frame):
                 messagebox.showerror("Errore DB", str(e))
 
     def _modifica(self):
+        """Recupera l'assenza direttamente dal database e apre la
+        finestra di modifica già riempita con i suoi dati."""
         aid = self._sel_id()
         if aid is None: return
         with db.get_conn() as conn:
@@ -568,6 +758,7 @@ class TabAssenze(tk.Frame):
                 messagebox.showerror("Errore DB", str(e))
 
     def _elimina(self):
+        """Chiede conferma e cancella l'assenza selezionata."""
         aid = self._sel_id()
         if aid is None: return
         if messagebox.askyesno("Conferma", f"Eliminare assenza ID {aid}?"):
@@ -577,17 +768,29 @@ class TabAssenze(tk.Frame):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  TAB: MATERIE
+#  SCHEDA: MATERIE
 # ─────────────────────────────────────────────────────────────────────────────
 
 class TabMaterie(tk.Frame):
+    """
+    Scheda dedicata alla gestione delle materie: elenco e operazioni
+    per creare, modificare ed eliminare una materia.
+    Le materie sono gestite come dati a sé stanti (non solo come
+    testo scritto dentro i voti), così i menu a tendina che
+    mostrano le materie sono sempre coerenti in tutta l'app.
+    """
+
     def __init__(self, parent, status_var):
+        """Prepara la scheda, costruisce i widget e carica l'elenco
+        delle materie dal database."""
         super().__init__(parent, bg=BG)
         self._sv = status_var
         self._build()
         self.aggiorna()
 
     def _build(self):
+        """Costruisce la barra dei bottoni e la tabella delle materie
+        (ID, Nome)."""
         top = tk.Frame(self, bg=BG)
         top.pack(fill="x", padx=10, pady=6)
         _btn(top, "➕ Nuova",    self._nuovo).pack(side="left", padx=4)
@@ -602,6 +805,7 @@ class TabMaterie(tk.Frame):
         sb.pack(side="right", fill="y")
 
     def aggiorna(self):
+        """Ricarica la tabella con tutte le materie presenti nel database."""
         self.tv.delete(*self.tv.get_children())
         rows = db.get_tutte_materie()
         for r in rows:
@@ -609,6 +813,12 @@ class TabMaterie(tk.Frame):
         self._sv.set(f"{len(rows)} materie")
 
     def _sel(self):
+        """Restituisce (id, nome) della materia selezionata nella
+        tabella, oppure (None, None) con un avviso se non è
+        selezionato niente.
+        A differenza delle altre schede, qui serve anche il nome
+        (non solo l'id) per riempire la finestra di modifica con
+        simpledialog.askstring."""
         sel = self.tv.selection()
         if not sel:
             messagebox.showinfo("Info", "Seleziona una materia."); return None, None
@@ -616,6 +826,9 @@ class TabMaterie(tk.Frame):
         return v[0], v[1]
 
     def _nuovo(self):
+        """Chiede il nome della nuova materia con una semplice
+        finestra di dialogo (basta un solo campo, non serve un form
+        completo) e la inserisce nel database."""
         nome = simpledialog.askstring("Nuova materia", "Nome materia:", parent=self)
         if nome and nome.strip():
             try:
@@ -626,6 +839,8 @@ class TabMaterie(tk.Frame):
                 messagebox.showerror("Errore DB", str(e))
 
     def _modifica(self):
+        """Chiede il nuovo nome (già scritto quello attuale) per la
+        materia selezionata e lo aggiorna nel database."""
         mid, mnome = self._sel()
         if mid is None: return
         nuovo = simpledialog.askstring("Modifica materia", "Nuovo nome:", initialvalue=mnome,
@@ -639,6 +854,9 @@ class TabMaterie(tk.Frame):
                 messagebox.showerror("Errore DB", str(e))
 
     def _elimina(self):
+        """Chiede conferma (avvisando che anche i voti collegati alla
+        materia verranno cancellati, come gestito in
+        db.cancella_materia) e cancella la materia selezionata."""
         mid, mnome = self._sel()
         if mid is None: return
         if messagebox.askyesno("Conferma", f"Eliminare la materia '{mnome}'?\n"
@@ -649,16 +867,34 @@ class TabMaterie(tk.Frame):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  TAB: IMPORTAZIONE FILE
+#  SCHEDA: IMPORTAZIONE FILE
 # ─────────────────────────────────────────────────────────────────────────────
 
 class TabImport(tk.Frame):
+    """
+    Scheda dedicata a importare tanti dati insieme da file CSV
+    (studenti, voti, assenze), con un log di testo che mostra il
+    risultato.
+    Questa scheda è separata da quelle di gestione (Studenti, Voti,
+    ecc.) per dare all'utente uno strumento dedicato quando deve
+    caricare tanti dati insieme (per esempio l'importazione iniziale
+    di tutta la classe), senza doverli inserire uno alla volta a mano.
+    """
+
     def __init__(self, parent, status_var):
+        """Prepara la scheda e costruisce i widget (non carica niente
+        all'avvio: la scheda parte vuota finché l'utente non sceglie
+        e importa dei file)."""
         super().__init__(parent, bg=BG)
         self._sv = status_var
         self._build()
 
     def _build(self):
+        """Costruisce, per ogni tipo di file (studenti/voti/assenze),
+        una riga con il percorso del file e un bottone per scegliere
+        il file, il bottone per avviare l'importazione e un'area di
+        testo in stile console per mostrare il risultato e gli
+        eventuali errori riga per riga."""
         tk.Label(self, text="Importazione file CSV", font=FONT_T,
                  bg=BG, fg=BLU).pack(pady=12)
 
@@ -694,11 +930,24 @@ class TabImport(tk.Frame):
         sb.pack(side="right", fill="y")
 
     def _scegli(self, tipo):
+        """Apre la finestra di sistema per scegliere un file CSV e
+        salva il percorso scelto nella variabile giusta, in base al
+        tipo di file (studenti/voti/assenze)."""
         p = filedialog.askopenfilename(filetypes=[("CSV", "*.csv"), ("Tutti", "*")])
         if p:
             self._paths[tipo].set(p)
 
     def _importa(self):
+        """
+        Per ogni tipo di file che ha un percorso impostato, chiama la
+        funzione di importazione giusta (in importa_file.py) e
+        scrive nel log il riepilogo (inseriti/ignorati) e gli
+        eventuali errori riga per riga.
+        Questo è l'unico punto da cui parte l'importazione: usa una
+        mappa tipo→funzione invece di scrivere tanti if/elif uguali,
+        così in futuro è facile aggiungere un nuovo tipo di file da
+        importare.
+        """
         self.log.delete("1.0", "end")
         fn_map = {"studenti": imp.importa_studenti,
                   "voti":    imp.importa_voti,
@@ -719,16 +968,32 @@ class TabImport(tk.Frame):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  TAB: REPORT / GRAFICI
+#  SCHEDA: REPORT / GRAFICI
 # ─────────────────────────────────────────────────────────────────────────────
 
 class TabReport(tk.Frame):
+    """
+    Scheda dedicata ai report: bottoni per generare ogni grafico
+    statistico su richiesta (mostrato direttamente nella scheda) e
+    per esportare il report PDF completo, con o senza filtri.
+    Mette insieme in un solo pannello tutte le funzioni di analisi
+    (elaborazioni.py + grafici.py + report_pdf.py), separando "vedere
+    a schermo" (grafici interattivi con Tkinter/matplotlib) da
+    "esportare" (creare un PDF da salvare e condividere).
+    """
+
     def __init__(self, parent, status_var):
+        """Prepara la scheda e costruisce il pannello con i comandi e
+        l'area dove vengono mostrati i grafici."""
         super().__init__(parent, bg=BG)
         self._sv = status_var
         self._build()
 
     def _build(self):
+        """Costruisce il layout a due colonne: a sinistra i bottoni
+        per i singoli report/grafici e per l'esportazione PDF, a
+        destra il riquadro dove viene disegnato il grafico richiesto
+        (self._canvas_frame)."""
         left = tk.Frame(self, bg=BG, width=260)
         left.pack(side="left", fill="y", padx=0)
         left.pack_propagate(False)
@@ -756,10 +1021,24 @@ class TabReport(tk.Frame):
         _btn(left, "📄 PDF con filtri attuali", self._esporta_pdf_focus, bg=ACCENT).pack(**pad)
 
     def _clear_canvas(self):
+        """Distrugge tutti i widget presenti nell'area del grafico,
+        per fare spazio a una nuova visualizzazione.
+        Serve per evitare che i grafici vecchi restino sovrapposti a
+        ogni nuova richiesta di report."""
         for w in self._canvas_frame.winfo_children():
             w.destroy()
 
     def _mostra_png(self, png_bytes: bytes | None, titolo=""):
+        """
+        Mostra un'immagine PNG (byte tenuti in memoria) dentro la
+        scheda usando un canvas matplotlib (FigureCanvasTkAgg),
+        oppure un messaggio "nessun dato" se png_bytes è None.
+        I grafici creati da grafici.py sono già byte PNG in memoria
+        (pensati per essere riusati anche nel PDF): questa funzione
+        li fa vedere nella finestra senza doverli scrivere su disco,
+        semplicemente leggendoli con plt.imread e disegnandoli in un
+        nuovo canvas dentro il riquadro.
+        """
         self._clear_canvas()
         if not png_bytes:
             tk.Label(self._canvas_frame, text="Nessun dato da visualizzare.",
@@ -775,6 +1054,15 @@ class TabReport(tk.Frame):
 
     # ── 6.1 ──
     def _r61(self):
+        """
+        Apre una finestra con due menu a tendina (materia, studente)
+        e un bottone "Calcola" che mostra a schermo la media dello
+        studente scelto nella materia scelta.
+        Realizza a schermo la richiesta 6.1; a differenza degli altri
+        report, qui il calcolo dipende da due scelte fatte
+        dall'utente, quindi serve un piccolo form dedicato invece di
+        un bottone diretto.
+        """
         materie  = db.get_nomi_materie()
         studenti = db.get_tutti_studenti()
         if not materie or not studenti:
@@ -799,6 +1087,10 @@ class TabReport(tk.Frame):
                  fg=BLU).grid(row=2, column=0, columnspan=2, pady=8)
 
         def calcola():
+            """Legge cosa è stato scelto nei due menu a tendina,
+            calcola la media con elaborazioni.media_materia_studente
+            e aggiorna l'etichetta del risultato (oppure scrive
+            "Nessun voto." se non c'è nessun dato)."""
             if cb_mat.current() < 0 or cb_stu.current() < 0:
                 return
             mat  = cb_mat.get()
@@ -814,6 +1106,9 @@ class TabReport(tk.Frame):
 
     # ── 6.2 ──
     def _r62(self):
+        """Calcola la media di ogni materia e mostra il grafico a
+        barre corrispondente nell'area dedicata. Realizza a schermo
+        la richiesta 6.2."""
         dati = el.medie_per_materia_tutti()
         if not dati:
             messagebox.showinfo("Info", "Nessun voto registrato."); return
@@ -823,6 +1118,9 @@ class TabReport(tk.Frame):
 
     # ── 6.4 ──
     def _r64(self):
+        """Chiede una data all'utente (già scritta la data di oggi),
+        calcola gli assenti in quel giorno e mostra il grafico a
+        torta presenti/assenti. Realizza a schermo la richiesta 6.4."""
         data = simpledialog.askstring("Assenti in un giorno", "Data (YYYY-MM-DD):",
                                       initialvalue=datetime.now().strftime("%Y-%m-%d"),
                                       parent=self)
@@ -835,6 +1133,10 @@ class TabReport(tk.Frame):
 
     # ── 6.5 ──
     def _r65(self):
+        """Chiede il nome di una materia e mostra (in un messaggio,
+        non con un grafico) il numero di studenti valutati in quella
+        materia. Realizza la richiesta 6.5, che essendo un solo
+        numero non ha bisogno di un grafico apposta."""
         materie = db.get_nomi_materie()
         if not materie:
             messagebox.showinfo("Info", "Nessuna materia."); return
@@ -846,6 +1148,9 @@ class TabReport(tk.Frame):
 
     # ── 6.7 ──
     def _r67(self):
+        """Calcola la divisione tra sufficienti e insufficienti e
+        mostra il grafico a torta corrispondente. Realizza a schermo
+        la richiesta 6.7."""
         ris = el.studenti_sufficienti_insufficienti()
         png = gr.grafico_sufficienti_insufficienti(ris)
         self._mostra_png(png, "Sufficienti/Insufficienti")
@@ -853,6 +1158,14 @@ class TabReport(tk.Frame):
 
     # ── Istogrammi multi-materia ──
     def _r_istogrammi(self):
+        """
+        Raccoglie la distribuzione dei voti di ogni materia esistente
+        (scartando le materie senza nessun voto) e mostra la griglia
+        di istogrammi risultante.
+        Non fa parte dei punti numerati 6.x, ma dà una vista
+        d'insieme in più, utile per confrontare al volo l'andamento
+        di tutte le materie insieme.
+        """
         materie = db.get_nomi_materie()
         if not materie:
             messagebox.showinfo("Info", "Nessuna materia."); return
@@ -866,6 +1179,14 @@ class TabReport(tk.Frame):
 
     # ── PDF ──
     def _esporta_pdf(self):
+        """
+        Chiede all'utente dove salvare il PDF e avvia in un thread
+        separato (in background) la creazione del report completo
+        con report_pdf.genera_report_completo.
+        Creare il PDF (grafici + reportlab) può richiedere qualche
+        secondo; farlo in un thread separato evita che la finestra
+        dell'app si blocchi durante l'attesa, restando reattiva.
+        """
         path = filedialog.asksaveasfilename(
             defaultextension=".pdf",
             filetypes=[("PDF", "*.pdf")],
@@ -874,6 +1195,9 @@ class TabReport(tk.Frame):
         if not path: return
         self._sv.set("Generazione PDF in corso…")
         def _gen():
+            """Funzione eseguita nel thread in background: crea il
+            PDF e aggiorna lo stato/il messaggio in caso di successo
+            o di errore."""
             try:
                 rpdf.genera_report_completo(path)
                 self._sv.set(f"PDF salvato: {path}")
@@ -884,7 +1208,13 @@ class TabReport(tk.Frame):
         threading.Thread(target=_gen, daemon=True).start()
 
     def _esporta_pdf_focus(self):
-        """PDF con sezione "Media materia per studente" personalizzata + sezioni globali."""
+        """PDF con la sezione "Media materia per studente"
+        personalizzata, più le sezioni generali.
+        A differenza di _esporta_pdf (report standard), qui l'utente
+        può scegliere (se vuole) una materia e uno studente
+        specifici da mettere come sezione dedicata all'inizio del
+        report, tramite un piccolo form (materia e studente sono
+        entrambi facoltativi, con l'opzione "(nessuna)"/"(nessuno)")."""
         materie  = db.get_nomi_materie()
         studenti = db.get_tutti_studenti()
         if not materie or not studenti:
@@ -907,6 +1237,10 @@ class TabReport(tk.Frame):
         cb_stu.grid(row=1, column=1, padx=8)
 
         def _genera():
+            """Legge cosa è stato scelto (o None se è rimasto su
+            "(nessuna/o)"), chiede dove salvare il PDF e avvia la
+            creazione in un thread in background, come in
+            _esporta_pdf."""
             path = filedialog.asksaveasfilename(
                 defaultextension=".pdf",
                 filetypes=[("PDF", "*.pdf")],
@@ -920,6 +1254,8 @@ class TabReport(tk.Frame):
                      studenti[idx_s - 1]["nome"]) if idx_s > 0 else None
             w.destroy()
             def _gen():
+                """Funzione eseguita nel thread in background: crea il
+                PDF con i filtri scelti e aggiorna lo stato/il messaggio."""
                 try:
                     rpdf.genera_report_completo(path, materia_focus=mat,
                                                 id_studente_focus=sid,
@@ -938,7 +1274,19 @@ class TabReport(tk.Frame):
 # ─────────────────────────────────────────────────────────────────────────────
 
 class App(tk.Tk):
+    """
+    Finestra principale dell'applicazione: inizializza il database e
+    ospita, tramite un Notebook (un contenitore di schede), tutte le
+    schede dell'app (Importa, Studenti, Voti, Assenze, Materie, Report).
+    È il punto di partenza della GUI: prepara il database e crea la
+    barra di stato condivisa, che viene passata a ogni scheda così
+    tutte possono scrivere messaggi di stato allo stesso modo.
+    """
+
     def __init__(self):
+        """Prepara il database (creando le tabelle se mancano),
+        imposta la finestra principale (titolo, dimensioni, colore di
+        sfondo) e collega la funzione personalizzata per la chiusura."""
         super().__init__()
         db.init_db()
 
@@ -951,14 +1299,29 @@ class App(tk.Tk):
         self._build()
 
     def _on_close(self):
-        """Chiude la finestra e termina il processo in modo pulito."""
+        """Chiude la finestra e termina il programma in modo pulito.
+        Usiamo os._exit(0) invece del semplice destroy() per essere
+        sicuri che il programma si chiuda subito anche se sono
+        rimasti thread in background ancora attivi (per esempio la
+        creazione del PDF non ancora finita), evitando che l'app
+        resti "appesa" in memoria dopo aver chiuso la finestra."""
         try:
             self.destroy()
         finally:
             os._exit(0)
 
     def _build(self):
-        # Header
+        """
+        Costruisce il layout della finestra principale: intestazione
+        con il titolo dell'app, barra di stato in basso, e un
+        Notebook con una scheda per ogni funzione (Importa, Studenti,
+        Voti, Assenze, Materie, Report).
+        Usare un Notebook con classi separate per ogni scheda rende
+        l'app facile da modificare: per aggiungere una nuova funzione
+        basta creare una nuova classe Frame e aggiungerla alla lista
+        'tabs', senza toccare le altre schede.
+        """
+        # Intestazione
         hdr = tk.Frame(self, bg=BLU, height=52)
         hdr.pack(fill="x")
         hdr.pack_propagate(False)
@@ -966,11 +1329,11 @@ class App(tk.Tk):
                  font=("Segoe UI", 15, "bold"), bg=BLU, fg="white",
                  padx=16).pack(side="left", pady=10)
 
-        # Status bar
+        # Barra di stato
         self._status_bar, self._sv = _status(self)
         self._status_bar.pack(side="bottom", fill="x")
 
-        # Notebook
+        # Notebook (contenitore delle schede)
         style = ttk.Style()
         style.configure("TNotebook", background=BG)
         style.configure("TNotebook.Tab", font=FONT_B, padding=[12, 6])

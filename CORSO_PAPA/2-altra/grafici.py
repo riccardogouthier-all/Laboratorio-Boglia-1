@@ -1,7 +1,11 @@
 """
-grafici.py — generazione grafici matplotlib (PNG su disco o in memoria)
-Usa Figure+FigureCanvasAgg direttamente: nessuna dipendenza dal backend globale,
-thread-safe rispetto al TkAgg di main.py.
+grafici.py — crea i grafici con matplotlib (li salva come PNG su disco
+oppure li tiene in memoria)
+Usiamo Figure+FigureCanvasAgg direttamente, senza passare da un
+backend "globale": così questo codice funziona sempre allo stesso
+modo, anche se viene eseguito in un thread diverso da quello della
+finestra principale (che invece usa TkAgg), ad esempio quando si
+genera il PDF in background.
 """
 
 import io
@@ -14,13 +18,27 @@ PALETTE = ["#4C72B0", "#DD8452", "#55A868", "#C44E52", "#8172B2",
 
 
 def _fig(figsize) -> tuple:
-    """Crea Figure + Agg canvas; ritorna (fig, ax) per subplot singolo."""
+    """Crea una Figure con il suo canvas e restituisce (fig, ax) per
+    un grafico singolo.
+    Usiamo questa funzione per non riscrivere sempre le stesse tre
+    righe (Figure + FigureCanvasAgg + add_subplot) in ogni funzione
+    che disegna un grafico."""
     fig = Figure(figsize=figsize)
     FigureCanvasAgg(fig)
     return fig, fig.add_subplot(111)
 
 
 def _salva(fig: Figure, path: str | None) -> bytes | None:
+    """
+    Salva il grafico: se viene passato un percorso (path), lo scrive
+    su file; altrimenti lo trasforma in un'immagine PNG tenuta in
+    memoria e ne restituisce i byte.
+    Tutte le funzioni di questo file usano questo comando per non
+    ripetere la stessa logica di salvataggio. Avere entrambe le
+    modalità (file oppure byte in memoria) ci permette di riusare gli
+    stessi grafici sia nella finestra dell'app sia nel PDF, senza
+    dover creare un file temporaneo ogni volta.
+    """
     if path:
         fig.savefig(path, dpi=150, bbox_inches="tight")
         return None
@@ -37,7 +55,11 @@ def grafico_media_per_materia(
     path: str | None = None,
     soglia: float = 6.0,
 ) -> bytes | None:
-    """Barchart media complessiva per ogni materia."""
+    """Grafico a barre con la media generale di ogni materia.
+    Serve per la richiesta 6.2 (media per materia). Le barre sono
+    colorate in modo diverso se la media supera o no la soglia di
+    sufficienza, così si vede subito quali materie vanno peggio, e
+    sopra ogni barra scriviamo il numero esatto della media."""
     if not dati:
         return None
     materie = [d["materia"] for d in dati]
@@ -69,7 +91,10 @@ def grafico_assenti_giorno(
     tot_studenti: int,
     path: str | None = None,
 ) -> bytes | None:
-    """Pie chart assenti vs presenti in un giorno."""
+    """Torta con assenti e presenti in un giorno.
+    Serve per la richiesta 6.4 (assenti in un giorno). Mostrare la
+    proporzione con una torta è più facile da leggere rispetto a un
+    numero da solo."""
     if tot_studenti == 0:
         return None
     n_assenti  = len(studenti)
@@ -95,7 +120,10 @@ def grafico_sufficienti_insufficienti(
     risultato: dict,
     path: str | None = None,
 ) -> bytes | None:
-    """Torta sufficienti vs insufficienti con percentuali."""
+    """Torta con sufficienti e insufficienti, con le percentuali.
+    Serve per la richiesta 6.7 (dividere gli studenti tra sufficienti
+    e insufficienti). La torta con le percentuali fa vedere subito
+    quanta parte della classe è sufficiente."""
     suff   = risultato["sufficienti"]
     insuff = risultato["insufficienti"]
     soglia = risultato["soglia"]
@@ -126,7 +154,12 @@ def grafico_distribuzione_voti(
     materia: str,
     path: str | None = None,
 ) -> bytes | None:
-    """Istogramma distribuzione voti di una materia."""
+    """Istogramma con la distribuzione dei voti di una materia.
+    Completa la richiesta 6.1: oltre alla media di un singolo
+    studente, mostra come sono distribuiti tutti i voti della classe
+    in quella materia, per dare un confronto. I gruppi (bin) larghi
+    0.5 punti e la riga verticale sulla soglia 6 fanno vedere subito
+    quanti voti sono sotto o sopra la sufficienza."""
     if not voti:
         return None
     fig, ax = _fig((6, 4))
@@ -149,10 +182,16 @@ def grafico_istogrammi_per_materia(
     path: str | None = None,
     soglia: float = 6.0,
 ) -> bytes | None:
-    """Griglia di istogrammi, uno per ogni materia.
+    """Tanti istogrammi insieme, uno per ogni materia.
 
     Args:
         dati_materie: {nome_materia: [voti]}
+
+    Fa vedere tutte le materie in un solo grafico (una griglia con
+    più colonne e righe, calcolata in base a quante materie ci sono),
+    utile per confrontare velocemente le materie tra loro senza dover
+    aprire N grafici separati. Le caselle della griglia che restano
+    vuote vengono nascoste con axis("off").
     """
     if not dati_materie:
         return None
