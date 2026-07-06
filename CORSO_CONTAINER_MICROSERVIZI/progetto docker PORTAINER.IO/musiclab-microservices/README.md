@@ -237,7 +237,7 @@ docker compose -f services-compose.yml up -d
 ```
 
 Tira su Portainer e il Registry
-
+ykyr
 - Portainer: https://localhost:9443
 - Environments / Local
 - Add stack e carica docker-compose.yml dalla cartella
