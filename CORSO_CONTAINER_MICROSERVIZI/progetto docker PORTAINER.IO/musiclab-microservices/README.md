@@ -192,7 +192,6 @@ File già "Portainer-ready": nomi servizi/reti/volumi espliciti, nessun path hos
 ## 7. Differenze dal monolite originale
 
 - Frontend: URL API hardcoded (`http://localhost:3000/api`) → relativo (`/api`), proxato dallo stesso Nginx (niente CORS)
-- Bug fix: `openPlaylistModal()` cercava `PlaylistModal` invece di `playlistModal` (modal non si apriva)
 - DB separati per servizio, cascata gestita via eventi RabbitMQ invece che FOREIGN KEY SQL
 - Swagger UI (songs-service, `/api-docs`) e docs FastAPI (playlist-service, `/docs`) raggiungibili solo con override
 
@@ -200,12 +199,12 @@ File già "Portainer-ready": nomi servizi/reti/volumi espliciti, nessun path hos
 
 ## 8. Troubleshooting
 
-| Sintomo | Causa | Soluzione |
-|---|---|---|
+|                              Sintomo                                 |                Causa                  |                              Soluzione                                 |
+|----------------------------------------------------------------------|---------------------------------------|------------------------------------------------------------------------|
 | playlist-service non mostra titolo/artista in playlist appena create | cache locale non ancora sincronizzata | attendere qualche secondo, o `docker compose logs -f playlist-service` |
-| Container `unhealthy` | RabbitMQ non pronto | attendere, `depends_on: condition: service_healthy` gestisce l'ordine |
-| `docker compose push` fallisce | registry non raggiungibile | `docker compose ps registry` |
-| Porta 8080/5672/15672/5000/9443 occupata | conflitto locale | modifica mapping porte in `docker-compose.yml` |
+| Container `unhealthy`                                                | RabbitMQ non pronto                   | attendere, `depends_on: condition: service_healthy` gestisce l'ordine  |
+| `docker compose push` fallisce                                       | registry non raggiungibile            | `docker compose ps registry`                                           |
+| Porta 8080/5672/15672/5000/9443 occupata                             | conflitto locale                      | modifica mapping porte in `docker-compose.yml`                         |
 
 ---
 
@@ -222,7 +221,7 @@ docker --version
 docker compose version
 ```
 
-### 9.2.A Configurazione
+### 9.2 Configurazione
 
 ```bash
 cd musiclab-microservices
@@ -232,6 +231,7 @@ cp .env.example .env
 Valori di default in `.env` già sufficienti per uso locale.
 
 ### 9.2.B Configurazione lampo (Portainer)
+
 ```bash
 docker compose -f services-compose.yml up -d
 ```
