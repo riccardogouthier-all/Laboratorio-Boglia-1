@@ -231,7 +231,7 @@ cp .env.example .env
 
 Valori di default in `.env` già sufficienti per uso locale.
 
-### 9.3
+### 9.2.B Configurazione lampo (Portainer)
 ```bash
 docker compose -f services-compose.yml up -d
 ```
@@ -243,6 +243,23 @@ Tira su Portainer e il Registry
 - Add stack e carica docker-compose.yml dalla cartella
 
 Tira su tutta l'infrastruttura
+
+### 9.3 Build immagini
+
+```bash
+docker compose build
+```
+
+Costruisce 4 immagini: `songs-service`, `playlist-service`, `api-gateway`, `frontend`.
+
+### 9.4 Avvio stack
+
+```bash
+docker compose up -d
+docker compose ps
+```
+
+Tutti i servizi con healthcheck devono risultare `healthy` dopo 15-30s (DB SQLite e tabelle creati automaticamente al primo avvio).
 
 ### 9.5 Verifica
 
