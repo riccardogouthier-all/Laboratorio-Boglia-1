@@ -1,0 +1,95 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "MusicLab - Songs Service API",
+    "description": "Microservizio per la gestione del catalogo delle canzoni",
+    "version": "1.0.0"
+  },
+  "tags": [{ "name": "Canzoni", "description": "Operazioni relative al catalogo delle canzoni" }],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/api/canzoni": {
+      "get": {
+        "tags": ["Canzoni"],
+        "summary": "Recupera l'intero catalogo delle canzoni (filtri opzionali titolo/artista)",
+        "parameters": [
+          { "name": "titolo", "in": "query", "required": false, "type": "string" },
+          { "name": "artista", "in": "query", "required": false, "type": "string" }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      },
+      "post": {
+        "tags": ["Canzoni"],
+        "summary": "Aggiunge una nuova canzone",
+        "parameters": [{ "name": "body", "in": "body", "required": true, "schema": { "$ref": "#/definitions/NuovaCanzone" } }],
+        "responses": { "201": { "description": "Creata" }, "400": { "description": "Dati non validi" } }
+      }
+    },
+    "/api/canzoni/search": {
+      "get": {
+        "tags": ["Canzoni"],
+        "summary": "Ricerca canzoni per titolo",
+        "parameters": [{ "name": "titolo", "in": "query", "required": true, "type": "string" }],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/canzoni/{id}": {
+      "get": {
+        "tags": ["Canzoni"],
+        "summary": "Dettaglio canzone",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "type": "integer" }],
+        "responses": { "200": { "description": "OK" }, "404": { "description": "Non trovata" } }
+      },
+      "put": {
+        "tags": ["Canzoni"],
+        "summary": "Sostituzione completa",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer" },
+          { "name": "body", "in": "body", "required": true, "schema": { "$ref": "#/definitions/NuovaCanzone" } }
+        ],
+        "responses": { "200": { "description": "Aggiornata" } }
+      },
+      "patch": {
+        "tags": ["Canzoni"],
+        "summary": "Aggiornamento parziale",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "integer" },
+          { "name": "body", "in": "body", "required": true, "schema": { "$ref": "#/definitions/NuovaCanzone" } }
+        ],
+        "responses": { "200": { "description": "Aggiornata" } }
+      },
+      "delete": {
+        "tags": ["Canzoni"],
+        "summary": "Elimina una canzone",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "type": "integer" }],
+        "responses": { "200": { "description": "Eliminata" } }
+      }
+    },
+    "/api/canzoni/{id}/audio": {
+      "get": {
+        "tags": ["Canzoni"],
+        "summary": "Streaming del file audio associato alla canzone",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "type": "integer" }],
+        "produces": ["audio/mpeg"],
+        "responses": { "200": { "description": "Stream audio" }, "404": { "description": "Canzone o file audio non trovato" } }
+      }
+    }
+  },
+  "definitions": {
+    "NuovaCanzone": {
+      "type": "object",
+      "required": ["titolo", "artista"],
+      "properties": {
+        "titolo": { "type": "string", "example": "Bohemian Rhapsody" },
+        "artista": { "type": "string", "example": "Queen" },
+        "album": { "type": "string", "example": "A Night at the Opera" },
+        "genere": { "type": "string", "example": "Rock" },
+        "anno": { "type": "integer", "example": 1975 },
+        "durata_secondi": { "type": "integer", "example": 354 },
+        "file_audio": { "type": "string", "example": "sample-01.mp3", "description": "Nome del file audio nella cartella public/audio del servizio. Se omesso in fase di creazione, ne viene assegnato uno casuale tra i campioni demo disponibili." }
+      }
+    }
+  }
+}

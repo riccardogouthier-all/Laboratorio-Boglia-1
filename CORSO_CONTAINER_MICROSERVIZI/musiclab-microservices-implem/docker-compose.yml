@@ -1,0 +1,157 @@
+name: musiclab
+
+# ─────────────────────────────────────────────────────────────
+#  MusicLab - stack a microservizi
+#  frontend (Nginx) -> api-gateway (Nginx) -> songs-service (Node/Express)
+#                                          -> playlist-service (Python/FastAPI)
+#  songs-service e playlist-service comunicano in modo asincrono
+#  tramite RabbitMQ (message broker).
+# ─────────────────────────────────────────────────────────────
+
+services:
+  traefik:
+    image: traefik:v3.7.5
+    container_name: traefik
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--api.dashboard=true"
+      - "--api.insecure=true" 
+      - "--log.level=DEBUG"
+      - "--accesslog=true"
+      - "--accesslog.format=json"
+      - "--accesslog.fields.defaultmode=keep"
+
+    ports:
+      - "80:80"
+      - "8081:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - proxy-net
+    restart: unless-stopped
+
+  # ── Message broker ──
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: musiclab-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-musiclab}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-musiclab_pw}
+    ports:
+      - "5672:5672"     # protocollo AMQP
+      - "15672:15672"   # management UI (http://localhost:15672)
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    networks:
+      - backend-net
+
+  # ── Microservizio canzoni (Node.js / Express / SQLite) ──
+  songs-service:
+    build: ./songs-service
+    image: ${REGISTRY_HOST:-localhost:5000}/musiclab/songs-service:1.0.0
+    restart: unless-stopped
+    environment:
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://musiclab:musiclab_pw@rabbitmq:5672}
+      DB_PATH: /app/data/songs.db
+      AUDIO_TRACKS_DIR: /app/tracce-audio          # <-- nuovo
+    volumes:
+      - songs-data:/app/data
+      - ./songs-service/tracce-audio:/app/tracce-audio   # <-- nuovo, bind mount
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.songs-service.rule=Host(`songs-service`)"
+      - "traefik.http.services.songs-service.loadbalancer.server.port=8000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - backend-net
+
+  # ── Microservizio playlist (Python / FastAPI / SQLite) ──
+  playlist-service:
+    build: ./playlist-service
+    image: ${REGISTRY_HOST:-localhost:5000}/musiclab/playlist-service:1.0.0
+    restart: unless-stopped
+    environment:
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://musiclab:musiclab_pw@rabbitmq:5672}
+      DB_PATH: /app/data/playlist.db
+      AUDIO_TRACKS_DIR: /app/tracce-audio          # <-- nuovo
+    volumes:
+      - playlist-data:/app/data
+      - ./playlist-service/tracce-audio:/app/tracce-audio   # <-- nuovo, bind mount
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.playlist-service.rule=Host(`playlist-service`)"
+      - "traefik.http.services.playlist-service.loadbalancer.server.port=8001"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - backend-net
+
+  # ── API Gateway (Nginx reverse proxy) ──
+  api-gateway:
+    build: ./api-gateway
+    image: ${REGISTRY_HOST:-localhost:5000}/musiclab/api-gateway:1.0.0
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-gateway.rule=Host(`api-gateway`)"
+      - "traefik.http.services.api-gateway.loadbalancer.server.port=80"
+      - "traefik.http.routers.songs-service.rule=Host(`songs-service`)"
+      - "traefik.http.services.songs-service.loadbalancer.server.port=8000"
+      - "traefik.http.routers.playlist-service.rule=Host(`playlist-service`)"
+      - "traefik.http.services.playlist-service.loadbalancer.server.port=8001"
+    depends_on:
+      - songs-service
+      - playlist-service
+    networks:
+      - backend-net
+      - public-net
+
+  # ── Frontend (Nginx statico + proxy verso l'api-gateway) ──
+  frontend:
+    build: ./frontend
+    image: ${REGISTRY_HOST:-localhost:5000}/musiclab/frontend:1.0.0
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.front-end.rule=Host(`front-end`)"
+      - "traefik.http.services.front-end.loadbalancer.server.port=80"
+      - "traefik.http.routers.songs-service.rule=Host(`songs-service`)"
+      - "traefik.http.services.songs-service.loadbalancer.server.port=8000"
+      - "traefik.http.routers.playlist-service.rule=Host(`playlist-service`)"
+      - "traefik.http.services.playlist-service.loadbalancer.server.port=8001"
+    depends_on:
+      - api-gateway
+    networks:
+      - public-net
+
+networks:
+  # Rete "pubblica": frontend, gateway, registry, portainer.
+  public-net:
+    driver: bridge
+  # Rete "interna": solo gateway e microservizi possono raggiungere
+  # songs-service, playlist-service e rabbitmq. Non è esposta all'host.
+  backend-net:
+    driver: bridge
+  # Rete per il proxy: utilizzata per la comunicazione tra i servizi
+  proxy-net:
+    driver: bridge
+
+volumes:
+  songs-data:
+  playlist-data:
+  rabbitmq-data:
+
+  api-gateway-data:

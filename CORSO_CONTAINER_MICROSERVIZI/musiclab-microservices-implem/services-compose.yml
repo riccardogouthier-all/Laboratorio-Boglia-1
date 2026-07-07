@@ -1,0 +1,47 @@
+
+name: musiclab-stack
+
+services:
+  # ── Portainer, per il monitoraggio (e opzionalmente il deploy) dello stack ──
+  portainer:
+    image: portainer/portainer-ce:2.21.4
+    container_name: musiclab-portainer
+    restart: unless-stopped
+    ports:
+      - "9443:9443"   # UI web (https://localhost:9443)
+      - "8000:8000"   # Edge agent (non necessario in locale, ma innocuo)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    networks:
+      - public-net
+
+
+  # ── Registry Docker locale, per push/pull delle immagini dello stack ──
+  registry:
+    image: registry:2
+    container_name: musiclab-registry
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.registry.rule=Host(`registry`)"
+      - "traefik.http.services.registry.loadbalancer.server.port=8000"
+    volumes:
+      - registry-data:/var/lib/registry
+    networks:
+      - public-net
+
+networks:
+  # Rete "pubblica": frontend, gateway, registry, portainer.
+  public-net:
+    driver: bridge
+  # Rete "interna": solo gateway e microservizi possono raggiungere
+  # songs-service, playlist-service e rabbitmq. Non è esposta all'host.
+  backend-net:
+    driver: bridge
+
+volumes:
+  portainer-data:
+  registry-data:

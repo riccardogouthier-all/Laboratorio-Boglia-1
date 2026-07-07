@@ -33,8 +33,6 @@ services:
     networks:
       - public-net
 
-  
-
 networks:
   # Rete "pubblica": frontend, gateway, registry, portainer.
   public-net:

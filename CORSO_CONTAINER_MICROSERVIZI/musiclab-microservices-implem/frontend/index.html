@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MusicLab – Gestione Collezione Musicale</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+<style>
+    body { background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); min-height:100vh; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; }
+    .main-container { background:#fff; border-radius:15px; box-shadow:0 10px 40px rgba(0,0,0,.3); margin:30px 0; }
+    .header { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:#fff; padding:30px; border-radius:15px 15px 0 0; text-align:center; }
+    .nav-tabs .nav-link { color:#667eea; border-color:transparent; font-weight:500; }
+    .nav-tabs .nav-link.active { color:#fff; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); border-color:transparent; }
+    .btn-primary { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); border:none; }
+    .btn-primary:hover { background:linear-gradient(135deg,#764ba2 0%,#667eea 100%); transform:translateY(-2px); box-shadow:0 5px 15px rgba(102,126,234,.4); }
+    .song-row:hover { background-color:#f8f9fa; }
+    .playlist-card { border:2px solid #e9ecef; border-radius:10px; transition:all .3s; }
+    .playlist-card:hover { border-color:#667eea; box-shadow:0 5px 20px rgba(102,126,234,.2); transform:translateY(-5px); }
+    .modal-header { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:#fff; }
+    .badge-playlist { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); }
+    .empty-state { text-align:center; padding:40px; color:#6c757d; }
+    .empty-state i { font-size:48px; margin-bottom:15px; opacity:.5; }
+    .action-buttons { white-space:nowrap; }
+    .playlist-songs-list { max-height:350px; overflow-y:auto; }
+    /* Mini player audio fisso in basso */
+    .now-playing-bar { position:fixed; bottom:0; left:0; right:0; background:#212529; color:#fff; padding:.6rem 1.5rem; display:flex; align-items:center; gap:1rem; z-index:9998; box-shadow:0 -4px 12px rgba(0,0,0,.3); }
+    .now-playing-info { flex:0 0 auto; min-width:180px; max-width:280px; display:flex; align-items:center; gap:.5rem; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+    .now-playing-bar audio { flex:1 1 auto; height:32px; }
+    body { padding-bottom: 70px; } /* spazio per non coprire i contenuti col player fisso */
+    /* Toast container */
+    #toast-container { position:fixed; top:1rem; right:1rem; z-index:9999; display:flex; flex-direction:column; gap:.5rem; }
+    .toast-item { min-width:280px; padding:.75rem 1.25rem; border-radius:.5rem; color:#fff; font-size:.9rem; box-shadow:0 4px 12px rgba(0,0,0,.2); animation:slideIn .3s ease; }
+    .toast-success { background:#198754; }
+    .toast-danger  { background:#dc3545; }
+    .toast-warning { background:#ffc107; color:#212529; }
+    @keyframes slideIn { from { opacity:0; transform:translateX(60px); } to { opacity:1; transform:translateX(0); } }
+</style>
+</head>
+
+<body>
+<div id="toast-container"></div>
+
+<div id="nowPlayingBar" class="now-playing-bar" style="display:none">
+  <div class="now-playing-info">
+    <i class="bi bi-music-note-beamed"></i>
+    <span id="nowPlayingText">—</span>
+  </div>
+  <audio id="audioPlayer" controls style="flex:1 1 auto;"></audio>
+  <button class="btn btn-sm btn-outline-light" onclick="closePlayer()" title="Chiudi player"><i class="bi bi-x-lg"></i></button>
+</div>
+
+<div class="container-lg py-4">
+<div class="main-container">
+    <!-- Header -->
+    <div class="header">
+    <h1><i class="bi bi-music-note-beamed"></i> MusicLab</h1>
+    <p class="mb-0">Gestione della tua Collezione Musicale</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="px-4 pt-4">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#songs-section" type="button"><i class="bi bi-disc"></i> Canzoni</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#playlists-section" type="button"><i class="bi bi-collection-play"></i> Playlist</button></li>
+    </ul>
+    </div>
+
+    <div class="tab-content p-4">
+
+    <!-- ══════════════ CANZONI ══════════════ -->
+    <div class="tab-pane fade show active" id="songs-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-disc"></i> Gestione Canzoni</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#songModal" onclick="openSongModal()">
+            <i class="bi bi-plus-circle"></i> Aggiungi
+        </button>
+        </div>
+        <!-- Filtri -->
+        <div class="row mb-4">
+        <div class="col-md-6"><input type="text" class="form-control" id="songSearchTitle"  placeholder="Cerca per titolo…"  oninput="loadSongs()"></div>
+        <div class="col-md-6"><input type="text" class="form-control" id="songSearchArtist" placeholder="Cerca per artista…" oninput="loadSongs()"></div>
+        </div>
+        <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-light">
+            <tr><th>Titolo</th><th>Artista</th><th>Album</th><th>Genere</th><th>Anno</th><th>Durata</th><th>Azioni</th></tr>
+            </thead>
+            <tbody id="songsTableBody"></tbody>
+        </table>
+        </div>
+        <div id="emptySongsState" class="empty-state" style="display:none">
+        <i class="bi bi-music-note"></i><p>Nessuna canzone trovata</p>
+        </div>
+    </div>
+
+    <!-- ══════════════ PLAYLIST ══════════════ -->
+    <div class="tab-pane fade" id="playlists-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-collection-play"></i> Gestione Playlist</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#playlistModal" onclick="openPlaylistModal()">
+            <i class="bi bi-plus-circle"></i> Nuova Playlist
+        </button>
+        </div>
+        <div id="playlistsContainer" class="row"></div>
+        <div id="emptyPlaylistsState" class="empty-state" style="display:none">
+        <i class="bi bi-collection-play"></i><p>Nessuna playlist. Creane una!</p>
+        </div>
+    </div>
+    </div><!-- /tab-content -->
+</div>
+</div>
+
+<!-- ══════════════ MODAL CANZONE ══════════════ -->
+<div class="modal fade" id="songModal" tabindex="-1">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="songModalLabel">Canzone</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    </div>
+    <div class="modal-body">
+        <input type="hidden" id="songId">
+        <div class="mb-3"><label class="form-label">Titolo *</label><input type="text" class="form-control" id="songTitle"></div>
+        <div class="mb-3"><label class="form-label">Artista *</label><input type="text" class="form-control" id="songArtist"></div>
+        <div class="mb-3"><label class="form-label">Album</label><input type="text" class="form-control" id="songAlbum"></div>
+        <div class="mb-3"><label class="form-label">Genere</label><input type="text" class="form-control" id="songGenre"></div>
+        <div class="row">
+        <div class="col mb-3"><label class="form-label">Anno</label><input type="number" class="form-control" id="songYear" min="1900" max="2099"></div>
+        <div class="col mb-3"><label class="form-label">Durata (sec)</label><input type="number" class="form-control" id="songDuration" min="1"></div>
+        </div>
+        <!-- PATCH: mostra solo in modalità edit -->
+        <div id="patchNotice" class="alert alert-info py-2 small" style="display:none">
+        <i class="bi bi-info-circle"></i> Lascia vuoti i campi che non vuoi modificare (verranno mantenuti i valori attuali).
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+        <button class="btn btn-warning" id="patchSongBtn" onclick="saveSong('PATCH')" style="display:none"><i class="bi bi-pencil-square"></i> Aggiorna parzialmente</button>
+        <button class="btn btn-primary" id="saveSongBtn" onclick="saveSong()"><i class="bi bi-save"></i> Salva</button>
+    </div>
+    </div>
+</div>
+</div>
+
+<!-- ══════════════ MODAL PLAYLIST ══════════════ -->
+<div class="modal fade" id="playlistModal" tabindex="-1">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="playlistModalLabel">Playlist</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    </div>
+    <div class="modal-body">
+        <input type="hidden" id="playlistId">
+        <div class="mb-3"><label class="form-label">Nome *</label><input type="text" class="form-control" id="playlistName"></div>
+        <div class="mb-3"><label class="form-label">Descrizione</label><textarea class="form-control" id="playlistDescription" rows="3"></textarea></div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+        <button class="btn btn-warning" id="patchPlaylistBtn" onclick="savePlaylist('PATCH')" style="display:none"><i class="bi bi-pencil-square"></i> Aggiorna parzialmente</button>
+        <button class="btn btn-primary" id="savePlaylistBtn" onclick="savePlaylist()"><i class="bi bi-save"></i> Salva</button>
+    </div>
+    </div>
+</div>
+</div>
+
+<!-- ══════════════ MODAL DETTAGLIO PLAYLIST ══════════════ -->
+<div class="modal fade" id="playlistDetailModal" tabindex="-1">
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="playlistDetailTitle">Dettagli Playlist</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    </div>
+    <div class="modal-body" id="playlistDetailContent"></div>
+    </div>
+</div>
+</div>
+
+<!-- ══════════════ MODAL AGGIUNGI CANZONE A PLAYLIST ══════════════ -->
+<div class="modal fade" id="addSongModal" tabindex="-1">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">Aggiungi Canzone alla Playlist</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    </div>
+    <div class="modal-body">
+        <label class="form-label">Seleziona Canzone *</label>
+        <select class="form-select" id="songSelectForPlaylist"><option value="">-- Seleziona --</option></select>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+        <button class="btn btn-primary" onclick="addSongToPlaylist()"><i class="bi bi-plus"></i> Aggiungi</button>
+    </div>
+    </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const API = '/api'; // relativo: il frontend proxya verso l'api-gateway (vedi nginx.conf)
+let allSongs    = [];
+let allPlaylists = [];
+let currentPlaylistId = null;
+
+/* ══════════════════════════════════════════
+INIT
+══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+loadSongs();
+loadPlaylists();
+});
+
+/* ══════════════════════════════════════════
+CANZONI – READ
+══════════════════════════════════════════ */
+async function loadSongs() {
+const titolo  = document.getElementById('songSearchTitle').value.trim();
+const artista = document.getElementById('songSearchArtist').value.trim();
+let url = `${API}/canzoni`;
+const p = new URLSearchParams();
+if (titolo)  p.append('titolo',  titolo);
+if (artista) p.append('artista', artista);
+if ([...p].length) url += '?' + p;
+
+try {
+    const res = await fetch(url);
+    allSongs = await res.json();
+    renderSongs(allSongs);
+} catch (e) { toast('Errore nel caricamento canzoni', 'danger'); }
+}
+
+function renderSongs(songs) {
+const tbody = document.getElementById('songsTableBody');
+const empty = document.getElementById('emptySongsState');
+if (!songs.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+empty.style.display = 'none';
+tbody.innerHTML = songs.map(s => `
+    <tr class="song-row">
+    <td>${esc(s.titolo)}</td>
+    <td>${esc(s.artista)}</td>
+    <td>${s.album  ? esc(s.album)  : '<span class="text-muted">-</span>'}</td>
+    <td>${s.genere ? esc(s.genere) : '<span class="text-muted">-</span>'}</td>
+    <td>${s.anno   || '<span class="text-muted">-</span>'}</td>
+    <td>${s.durata_secondi ? formatDurata(s.durata_secondi) : '<span class="text-muted">-</span>'}</td>
+    <td class="action-buttons">
+        <button class="btn btn-sm btn-success" title="Riproduci" onclick="playSong(${s.id}, '${escJs(s.titolo)}', '${escJs(s.artista)}')"><i class="bi bi-play-fill"></i></button>
+        <button class="btn btn-sm btn-warning"  title="Modifica (PUT)"  onclick="editSong(${s.id})"><i class="bi bi-pencil"></i></button>
+        <button class="btn btn-sm btn-info text-white" title="Patch parziale" onclick="patchSong(${s.id})"><i class="bi bi-pencil-square"></i></button>
+        <button class="btn btn-sm btn-danger"   title="Elimina"        onclick="deleteSong(${s.id})"><i class="bi bi-trash"></i></button>
+    </td>
+    </tr>`).join('');
+}
+
+/* ══════════════════════════════════════════
+CANZONI – CREATE / UPDATE (PUT) / PATCH / DELETE
+══════════════════════════════════════════ */
+function openSongModal(song = null, isPatch = false) {
+document.getElementById('songId').value        = song ? song.id    : '';
+document.getElementById('songTitle').value     = song ? (song.titolo  || '') : '';
+document.getElementById('songArtist').value    = song ? (song.artista || '') : '';
+document.getElementById('songAlbum').value     = song ? (song.album   || '') : '';
+document.getElementById('songGenre').value     = song ? (song.genere  || '') : '';
+document.getElementById('songYear').value      = song ? (song.anno    || '') : '';
+document.getElementById('songDuration').value  = song ? (song.durata_secondi || '') : '';
+
+document.getElementById('songModalLabel').textContent = song
+    ? (isPatch ? 'Modifica parziale canzone' : 'Modifica canzone')
+    : 'Aggiungi canzone';
+
+document.getElementById('patchNotice').style.display  = isPatch ? 'block' : 'none';
+document.getElementById('patchSongBtn').style.display = isPatch ? 'inline-block' : 'none';
+document.getElementById('saveSongBtn').dataset.method = song && !isPatch ? 'PUT' : 'POST';
+document.getElementById('saveSongBtn').style.display  = isPatch ? 'none' : 'inline-block';
+
+// new bootstrap.Modal(document.getElementById('songModal')).show();
+bootstrap.Modal.getOrCreateInstance(document.getElementById('songModal')).show();
+}
+
+async function editSong(id) {
+try {
+    const res  = await fetch(`${API}/canzoni/${id}`);
+    const song = await res.json();
+    openSongModal(song, false);
+} catch { toast('Errore nel caricamento della canzone', 'danger'); }
+}
+
+async function patchSong(id) {
+try {
+    const res  = await fetch(`${API}/canzoni/${id}`);
+    const song = await res.json();
+    openSongModal(song, true);
+} catch { toast('Errore nel caricamento della canzone', 'danger'); }
+}
+
+async function saveSong(forceMethod = null) {
+const id     = document.getElementById('songId').value;
+const method = forceMethod || document.getElementById('saveSongBtn').dataset.method || 'POST';
+
+const body = {};
+const titolo  = document.getElementById('songTitle').value.trim();
+const artista = document.getElementById('songArtist').value.trim();
+const album   = document.getElementById('songAlbum').value.trim();
+const genere  = document.getElementById('songGenre').value.trim();
+const anno    = document.getElementById('songYear').value.trim();
+const durata  = document.getElementById('songDuration').value.trim();
+
+if (method === 'PATCH') {
+    // Solo i campi compilati
+    if (titolo)  body.titolo  = titolo;
+    if (artista) body.artista = artista;
+    if (album)   body.album   = album;
+    if (genere)  body.genere  = genere;
+    if (anno)    body.anno    = parseInt(anno);
+    if (durata)  body.durata_secondi = parseInt(durata);
+    if (!Object.keys(body).length) { toast('Nessun campo compilato per il PATCH', 'warning'); return; }
+} else {
+    if (!titolo || !artista) { toast('Titolo e artista sono obbligatori', 'warning'); return; }
+    body.titolo  = titolo;
+    body.artista = artista;
+    if (album)  body.album  = album;
+    if (genere) body.genere = genere;
+    if (anno)   body.anno   = parseInt(anno);
+    if (durata) body.durata_secondi = parseInt(durata);
+}
+
+const url = (method === 'POST') ? `${API}/canzoni` : `${API}/canzoni/${id}`;
+try {
+    const res    = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const result = await res.json();
+    if (!res.ok) { toast(result.error || 'Errore', 'danger'); return; }
+    toast(result.message, 'success');
+    bootstrap.Modal.getInstance(document.getElementById('songModal')).hide();
+    loadSongs();
+} catch { toast('Errore nella richiesta', 'danger'); }
+}
+
+async function deleteSong(id) {
+if (!confirm('Eliminare questa canzone?')) return;
+try {
+    const res    = await fetch(`${API}/canzoni/${id}`, { method: 'DELETE' });
+    const result = await res.json();
+    toast(result.message || result.error, res.ok ? 'success' : 'danger');
+    loadSongs();
+} catch { toast('Errore nell\'eliminazione', 'danger'); }
+}
+
+/* ══════════════════════════════════════════
+PLAYLIST – READ
+══════════════════════════════════════════ */
+async function loadPlaylists() {
+try {
+    const res   = await fetch(`${API}/playlist`);
+    const list  = await res.json();
+    // Fetch dettagli per contare le canzoni
+    const full  = await Promise.all(list.map(p =>
+    fetch(`${API}/playlist/${p.id}`).then(r => r.json())
+    ));
+    allPlaylists = full;
+    renderPlaylists(allPlaylists);
+} catch { toast('Errore nel caricamento playlist', 'danger'); }
+}
+
+function renderPlaylists(playlists) {
+const container = document.getElementById('playlistsContainer');
+const empty     = document.getElementById('emptyPlaylistsState');
+if (!playlists.length) { container.innerHTML = ''; empty.style.display = 'block'; return; }
+empty.style.display = 'none';
+container.innerHTML = playlists.map(p => `
+    <div class="col-md-6 col-lg-4 mb-4">
+    <div class="card playlist-card h-100">
+        <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-collection-play"></i> ${esc(p.nome)}</h5>
+        <p class="card-text text-muted small">${p.descrizione ? esc(p.descrizione) : 'Nessuna descrizione'}</p>
+        <span class="badge badge-playlist">${(p.songs||[]).length} canzoni</span>
+        </div>
+        <div class="card-footer bg-white border-top d-flex flex-wrap gap-1">
+        <button class="btn btn-sm btn-info text-white" onclick="viewPlaylist(${p.id})"><i class="bi bi-eye"></i> Apri</button>
+        <button class="btn btn-sm btn-warning"         onclick="editPlaylist(${p.id})"><i class="bi bi-pencil"></i> PUT</button>
+        <button class="btn btn-sm btn-secondary"       onclick="patchPlaylist(${p.id})"><i class="bi bi-pencil-square"></i> PATCH</button>
+        <button class="btn btn-sm btn-danger"          onclick="deletePlaylist(${p.id})"><i class="bi bi-trash"></i></button>
+        </div>
+    </div>
+    </div>`).join('');
+}
+
+/* ══════════════════════════════════════════
+PLAYLIST – CREATE / PUT / PATCH / DELETE
+══════════════════════════════════════════ */
+function openPlaylistModal(playlist = null, isPatch = false) {
+document.getElementById('playlistId').value          = playlist ? playlist.id : '';
+document.getElementById('playlistName').value        = playlist ? (playlist.nome        || '') : '';
+document.getElementById('playlistDescription').value = playlist ? (playlist.descrizione || '') : '';
+
+document.getElementById('playlistModalLabel').textContent = playlist
+    ? (isPatch ? 'Modifica parziale playlist' : 'Modifica playlist')
+    : 'Nuova Playlist';
+
+document.getElementById('patchPlaylistBtn').style.display  = isPatch ? 'inline-block' : 'none';
+document.getElementById('savePlaylistBtn').dataset.method  = playlist && !isPatch ? 'PUT' : 'POST';
+document.getElementById('savePlaylistBtn').style.display   = isPatch ? 'none' : 'inline-block';
+
+bootstrap.Modal.getOrCreateInstance(document.getElementById('playlistModal')).show();
+}
+
+function editPlaylist(id) {
+const p = allPlaylists.find(x => x.id === id);
+if (p) openPlaylistModal(p, false);
+}
+
+function patchPlaylist(id) {
+const p = allPlaylists.find(x => x.id === id);
+if (p) openPlaylistModal(p, true);
+}
+
+async function savePlaylist(forceMethod = null) {
+const id     = document.getElementById('playlistId').value;
+const method = forceMethod || document.getElementById('savePlaylistBtn').dataset.method || 'POST';
+const nome   = document.getElementById('playlistName').value.trim();
+const desc   = document.getElementById('playlistDescription').value.trim();
+
+const body = {};
+if (method === 'PATCH') {
+    if (nome) body.nome = nome;
+    if (desc) body.descrizione = desc;
+    if (!Object.keys(body).length) { toast('Nessun campo compilato per il PATCH', 'warning'); return; }
+} else {
+    if (!nome) { toast('Il nome è obbligatorio', 'warning'); return; }
+    body.nome = nome;
+    if (desc) body.descrizione = desc;
+}
+
+const url = (method === 'POST') ? `${API}/playlist` : `${API}/playlist/${id}`;
+try {
+    const res    = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const result = await res.json();
+    if (!res.ok) { toast(result.error || 'Errore', 'danger'); return; }
+    toast(result.message, 'success');
+    bootstrap.Modal.getInstance(document.getElementById('playlistModal')).hide();
+    loadPlaylists();
+} catch { toast('Errore nella richiesta', 'danger'); }
+}
+
+async function deletePlaylist(id) {
+if (!confirm('Eliminare questa playlist?')) return;
+try {
+    const res    = await fetch(`${API}/playlist/${id}`, { method: 'DELETE' });
+    const result = await res.json();
+    toast(result.message || result.error, res.ok ? 'success' : 'danger');
+    loadPlaylists();
+} catch { toast('Errore nell\'eliminazione', 'danger'); }
+}
+
+/* ══════════════════════════════════════════
+PLAYLIST – DETTAGLIO + GESTIONE CANZONI
+══════════════════════════════════════════ */
+async function viewPlaylist(id) {
+try {
+    const res = await fetch(`${API}/playlist/${id}`);
+    const p   = await res.json();
+    const songs = p.songs || [];
+
+    document.getElementById('playlistDetailTitle').textContent = p.nome;
+    document.getElementById('playlistDetailContent').innerHTML = `
+    <p class="text-muted">${p.descrizione ? esc(p.descrizione) : 'Nessuna descrizione'}</p>
+    <hr>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0">Canzoni (${songs.length})</h6>
+        <button class="btn btn-sm btn-primary" onclick="showAddSongModal(${id})">
+        <i class="bi bi-plus"></i> Aggiungi canzone
+        </button>
+    </div>
+    <div class="playlist-songs-list">
+        ${songs.length ? `
+        <div class="list-group">
+            ${songs.map(s => `
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                <strong>${esc(s.titolo)}</strong>
+                <small class="text-muted d-block">${esc(s.artista)}${s.album ? ' · ' + esc(s.album) : ''}</small>
+                </div>
+                <div class="d-flex gap-1">
+                <button class="btn btn-sm btn-outline-success" onclick="playSong(${s.id}, '${escJs(s.titolo)}', '${escJs(s.artista)}')" title="Riproduci">
+                    <i class="bi bi-play-fill"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="removeSongFromPlaylist(${id}, ${s.id})" title="Rimuovi">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+                </div>
+            </div>`).join('')}
+        </div>` : '<p class="text-muted">Nessuna canzone in questa playlist.</p>'}
+    </div>`;
+
+    // new bootstrap.Modal(document.getElementById('playlistDetailModal')).show();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('playlistDetailModal')).show();
+} catch { toast('Errore nel caricamento playlist', 'danger'); }
+}
+
+function showAddSongModal(playlistId) {
+currentPlaylistId = playlistId;
+const sel = document.getElementById('songSelectForPlaylist');
+sel.innerHTML = '<option value="">-- Seleziona --</option>';
+sel.innerHTML += allSongs.map(s =>
+    `<option value="${s.id}">${esc(s.titolo)} – ${esc(s.artista)}</option>`
+).join('');
+// new bootstrap.Modal(document.getElementById('addSongModal')).show();
+bootstrap.Modal.getOrCreateInstance(document.getElementById('addSongModal')).show();
+}
+
+async function addSongToPlaylist() {
+const songId = document.getElementById('songSelectForPlaylist').value;
+if (!songId) { toast('Seleziona una canzone', 'warning'); return; }
+try {
+    const res    = await fetch(`${API}/playlist/${currentPlaylistId}/songs`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ song_id: parseInt(songId) })
+    });
+    const result = await res.json();
+    toast(result.message || result.error, res.ok ? 'success' : 'danger');
+    if (res.ok) {
+    bootstrap.Modal.getInstance(document.getElementById('addSongModal')).hide();
+    loadPlaylists();
+    viewPlaylist(currentPlaylistId);
+    }
+} catch { toast('Errore nell\'aggiunta', 'danger'); }
+}
+
+async function removeSongFromPlaylist(playlistId, songId) {
+if (!confirm('Rimuovere la canzone dalla playlist?')) return;
+try {
+    const res    = await fetch(`${API}/playlist/${playlistId}/songs/${songId}`, { method: 'DELETE' });
+    const result = await res.json();
+    toast(result.message || result.error, res.ok ? 'success' : 'danger');
+    if (res.ok) { loadPlaylists(); viewPlaylist(playlistId); }
+} catch { toast('Errore nella rimozione', 'danger'); }
+}
+
+/* ══════════════════════════════════════════
+UTILITIES
+══════════════════════════════════════════ */
+function esc(text) {
+if (!text) return '';
+return String(text).replace(/[&<>"']/g, m =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' })[m]
+);
+}
+
+/* Escaping per stringhe inserite dentro attributi onclick="..." in JS */
+function escJs(text) {
+return String(text || '')
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/"/g, '&quot;');
+}
+
+/* ══════════════════════════════════════════
+PLAYER AUDIO (mini-player fisso in basso)
+══════════════════════════════════════════ */
+function playSong(id, titolo, artista) {
+const player = document.getElementById('audioPlayer');
+const bar    = document.getElementById('nowPlayingBar');
+const text   = document.getElementById('nowPlayingText');
+
+player.src = `${API}/canzoni/${id}/audio`;
+text.textContent = `${titolo} — ${artista}`;
+bar.style.display = 'flex';
+
+player.play().catch(() => toast('Impossibile avviare la riproduzione', 'warning'));
+}
+
+function closePlayer() {
+const player = document.getElementById('audioPlayer');
+player.pause();
+player.src = '';
+document.getElementById('nowPlayingBar').style.display = 'none';
+}
+
+function formatDurata(sec) {
+const m = Math.floor(sec / 60);
+const s = sec % 60;
+return `${m}:${String(s).padStart(2,'0')}`;
+}
+
+function toast(msg, type = 'success') {
+const el = document.createElement('div');
+el.className = `toast-item toast-${type}`;
+el.textContent = msg;
+document.getElementById('toast-container').appendChild(el);
+setTimeout(() => el.remove(), 4000);
+}
+</script>
+</body>
+</html>
+
