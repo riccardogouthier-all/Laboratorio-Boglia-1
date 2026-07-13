@@ -15,6 +15,11 @@ RUN npm install --omit=dev --build-from-source=sqlite3
 
 COPY . .
 
+# FIX: garantisce che i file audio reali in tracce-audio/ siano sempre
+# inclusi nell'immagine, indipendentemente da bind mount/deploy method
+# (es. Portainer con path relativo risolto sulla working dir dello stack).
+COPY tracce-audio ./tracce-audio
+
 # Genera 12 brevi toni audio di esempio (NON brani reali: usati solo per
 # dimostrare schema DB + storage + streaming + player, evitando qualunque
 # problema di licenza legato a includere audio protetto da copyright nel

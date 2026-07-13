@@ -284,7 +284,7 @@ musiclab-microservices/
 │   │   ├── schema.js
 │   │   ├── demoCatalog.js    # genera il catalogo demo di 100 brani fittizi
 │   │   └── seed.js           # popola il DB al primo avvio (idempotente)
-│   ├── public/audio/         # generata a build-time da ffmpeg (non in repo)
+│   ├── tracce-audio/         # contiene le canzoni in formato musicale, da collegare al tasto play in front end
 │   ├── routes/canzoniRouter.js
 │   ├── events/publisher.js
 │   └── doc/swagger.json

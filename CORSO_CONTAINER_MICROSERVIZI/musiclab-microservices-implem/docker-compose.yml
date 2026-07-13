@@ -64,7 +64,10 @@ services:
       AUDIO_TRACKS_DIR: /app/tracce-audio          # <-- nuovo
     volumes:
       - songs-data:/app/data
-      - ./songs-service/tracce-audio:/app/tracce-audio   # <-- nuovo, bind mount
+      # FIX: rimosso bind mount ./songs-service/tracce-audio:/app/tracce-audio
+      # (causava 404 su /api/canzoni/:id/audio con deploy via Portainer:
+      #  path relativo risolto sulla working dir dello stack, non sul repo).
+      # I file audio ora vengono inclusi nell'immagine via COPY nel Dockerfile.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.songs-service.rule=Host(`songs-service`)"
@@ -153,5 +156,6 @@ volumes:
   songs-data:
   playlist-data:
   rabbitmq-data:
+  tracce-audio:
 
   api-gateway-data:
