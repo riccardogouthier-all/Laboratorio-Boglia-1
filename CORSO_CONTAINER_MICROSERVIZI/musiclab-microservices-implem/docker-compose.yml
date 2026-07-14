@@ -64,10 +64,9 @@ services:
       AUDIO_TRACKS_DIR: /app/tracce-audio          # <-- nuovo
     volumes:
       - songs-data:/app/data
-      # FIX: rimosso bind mount ./songs-service/tracce-audio:/app/tracce-audio
-      # (causava 404 su /api/canzoni/:id/audio con deploy via Portainer:
-      #  path relativo risolto sulla working dir dello stack, non sul repo).
-      # I file audio ora vengono inclusi nell'immagine via COPY nel Dockerfile.
+      # FIX: bind mount con path assoluto (necessario per Portainer, che
+      # risolve path relativi sulla propria working dir, non sul repo).
+      - C:/Users/riccardo.gouthier/Desktop/GITHUB/Laboratorio-Boglia-1/CORSO_CONTAINER_MICROSERVIZI/musiclab-microservices-implem/songs-service/tracce-audio:/app/tracce-audio
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.songs-service.rule=Host(`songs-service`)"
@@ -89,7 +88,9 @@ services:
       AUDIO_TRACKS_DIR: /app/tracce-audio          # <-- nuovo
     volumes:
       - playlist-data:/app/data
-      - ./playlist-service/tracce-audio:/app/tracce-audio   # <-- nuovo, bind mount
+      # FIX: bind mount con path assoluto (necessario per Portainer, che
+      # risolve path relativi sulla propria working dir, non sul repo).
+      - C:/Users/riccardo.gouthier/Desktop/GITHUB/Laboratorio-Boglia-1/CORSO_CONTAINER_MICROSERVIZI/musiclab-microservices-implem/songs-service/tracce-audio:/app/tracce-audio
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.playlist-service.rule=Host(`playlist-service`)"

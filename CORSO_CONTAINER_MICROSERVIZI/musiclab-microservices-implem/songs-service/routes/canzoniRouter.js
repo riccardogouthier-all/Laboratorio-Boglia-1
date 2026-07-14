@@ -12,8 +12,6 @@ const canzoniRouter = express.Router();
 
 const __dirname   = path.dirname(fileURLToPath(import.meta.url));
 const AUDIO_DIR   = process.env.AUDIO_TRACKS_DIR || path.join(__dirname, '..', 'public', 'audio');
-const NUM_CAMPIONI_AUDIO = 12; // deve combaciare col numero generato nel Dockerfile
-
 
 /* GET /api/canzoni?titolo=&artista= */
 canzoniRouter.get('/', (req, res) => {
