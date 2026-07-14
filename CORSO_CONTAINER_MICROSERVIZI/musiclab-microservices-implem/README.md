@@ -67,13 +67,16 @@ l'altro) ed è anche il meccanismo di **scalabilità**: se scali
 ascolto sulla stessa coda (`playlist_songs_sync`) e RabbitMQ distribuisce
 i messaggi tra loro (pattern *competing consumers*).
 
-### 1.1 Catalogo demo precaricato + streaming audio
+### 1.1 Catalogo reale precaricato + streaming audio
 
-Al primo avvio (database vuoto), `songs-service` viene implementato tramite un file csv
-caricato nella cartella db con i dati presenti e pubblica un evento `song.created`
-per ciascuno, così `playlist-service` sincronizza subito la propria
-cache: l'app è quindi già utilizzabile, con canzoni pronte da inserire
-nelle playlist, senza inserimenti manuali necessari.
+Al primo avvio (database vuoto), `songs-service` carica il catalogo da
+`db/catalogo.csv` — **2180 brani reali** (colonne `Titolo, Artista,
+Album, Genere, Anno, Durata`), ottenuti unendo un export Exportify da
+Spotify a un catalogo di base e deduplicando su chiave Titolo+Artista —
+e pubblica un evento `song.created` per ciascuno, così `playlist-service`
+sincronizza subito la propria cache: l'app è quindi già utilizzabile,
+con canzoni pronte da inserire nelle playlist, senza inserimenti manuali
+necessari.
 
 Ogni canzone ha un campo `file_audio` e può essere riprodotta dal
 frontend (pulsante ▶ nella tabella canzoni e nel dettaglio playlist,
@@ -142,7 +145,7 @@ automaticamente al primo avvio).
 ### 3.4 Accesso ai servizi
 
 | Servizio                  | URL                              | Note                                   |
-|---------------------------|----------------------------------|----------------------------------------|
+|---------------------------|-----------------------------------|----------------------------------------|
 | Applicazione web          | http://localhost:8080            | Frontend MusicLab                      |
 | RabbitMQ management UI    | http://localhost:15672           | utente/password da `.env`              |
 | Registry Docker           | http://localhost:5000/v2/_catalog| elenco immagini nel registry           |
@@ -282,8 +285,8 @@ musiclab-microservices/
 │   ├── server.js
 │   ├── db/
 │   │   ├── schema.js
-│   │   ├── demoCatalog.js    # genera il catalogo demo di 100 brani fittizi
-│   │   └── seed.js           # popola il DB al primo avvio (idempotente)
+│   │   ├── catalogo.csv      # catalogo reale: 2180 brani (Titolo, Artista, Album, Genere, Anno, Durata)
+│   │   └── seed.js           # popola il DB al primo avvio dal csv (idempotente)
 │   ├── tracce-audio/         # contiene le canzoni in formato musicale, da collegare al tasto play in front end
 │   ├── routes/canzoniRouter.js
 │   ├── events/publisher.js
@@ -316,6 +319,9 @@ musiclab-microservices/
   `/docs` (entrambi raggiungibili solo abilitando
   `docker-compose.override.yml.example`, per non esporre i servizi
   interni in condizioni normali).
+- **Catalogo dati**:catalogo reale di 2180 brani, ottenuto unendo un
+  export Exportify (Spotify) al catalogo di base e deduplicando su
+  Titolo+Artista.
 
 ---
 
