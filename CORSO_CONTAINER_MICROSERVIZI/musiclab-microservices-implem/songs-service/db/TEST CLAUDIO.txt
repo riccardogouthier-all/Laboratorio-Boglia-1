@@ -1,0 +1,234 @@
+
+
+
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Cartella dove verranno collocati i file audio reali (una volta scaricati).
+// Configurabile via variabile d'ambiente AUDIO_TRACKS_DIR, perché il percorso
+// basato su __dirname punta dentro l'immagine Docker (non persistente, non
+// accessibile dall'host) mentre qui serve un percorso montato come volume,
+// come /app/data lo è per il database (vedi DB_PATH in docker-compose.yml).
+const CARTELLA_TRACCE_AUDIO = process.env.AUDIO_TRACKS_DIR || path.join(__dirname, 'tracce audio');
+
+/**
+ * Normalizza una stringa per il confronto "fuzzy" tra metadati CSV e nomi
+ * file: minuscolo, rimozione accenti/diacritici, rimozione di tutto ciò
+ * che non è lettera o cifra (spazi, virgole, parentesi, underscore, ecc).
+ * Così "Tony Boy", "tony_boy", "Tony-Boy (feat.)" collassano sulla stessa chiave.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function normalizza(str) {
+  return (str || '')
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+}
+
+/**
+ * Estrae l'artista "principale" da un campo Artista che può contenere più
+ * nomi separati da virgola e/o indicazioni di feature ("feat.", "FT", "con").
+ * Usato solo come chiave di matching, non modifica il dato salvato in DB.
+ *
+ * @param {string} artista
+ * @returns {string}
+ */
+function artistaPrincipale(artista) {
+  return (artista || '')
+    .split(',')[0]
+    .split(/\bfeat\.?\b|\bft\.?\b|\bcon\b/i)[0]
+    .trim();
+}
+
+/**
+ * Scansiona la cartella tracce audio una sola volta e restituisce l'elenco
+ * dei file .mp3 trovati, ciascuno con il proprio nome normalizzato (utile
+ * per il matching fuzzy per autore/album/titolo).
+ *
+ * @param {string} cartella percorso della cartella tracce audio
+ * @returns {Array<{nomeFile: string, normalizzato: string}>}
+ */
+function elencaFileAudio(cartella) {
+  let nomiFile;
+  try {
+    nomiFile = fs.readdirSync(cartella);
+  } catch {
+    console.warn(`[csvCatalog] cartella tracce audio non trovata: ${cartella}`);
+    return [];
+  }
+
+  return nomiFile
+    .filter((nome) => nome.toLowerCase().endsWith('.mp3'))
+    .map((nome) => ({
+      nomeFile: nome,
+      normalizzato: normalizza(path.basename(nome, path.extname(nome))),
+    }));
+}
+
+/**
+ * Cerca il file audio corrispondente a un brano confrontando i nomi file
+ * (normalizzati) con autore, album e titolo del brano, invece di basarsi
+ * sulla posizione/id nel CSV. Il nome file può contenere autore/album/titolo
+ * in ordine ed estensione libera (es. "Artista_Album_Titolo (feat. X).mp3"):
+ * il confronto è quindi "il nome normalizzato contiene queste chiavi?".
+ *
+ * Strategia, dalla più alla meno specifica:
+ *  1. contiene artista principale + album + titolo
+ *  2. contiene artista principale + titolo
+ *  3. contiene titolo (solo se univoco, per evitare falsi positivi)
+ *
+ * @param {{artista:string, album:string, titolo:string}} brano
+ * @param {Array<{nomeFile:string, normalizzato:string}>} elencoFile
+ * @returns {string|null} nome del file audio trovato, o null se nessun match
+ */
+function trovaFileAudio(brano, elencoFile) {
+  const chiaveArtista = normalizza(artistaPrincipale(brano.artista));
+  const chiaveAlbum = normalizza(brano.album);
+  const chiaveTitolo = normalizza(brano.titolo);
+
+  if (!chiaveTitolo) return null;
+
+  const contieneTutte = (file, chiavi) => chiavi.every((c) => c && file.normalizzato.includes(c));
+
+  let candidati = elencoFile.filter((f) => contieneTutte(f, [chiaveArtista, chiaveAlbum, chiaveTitolo]));
+  if (candidati.length === 1) return candidati[0].nomeFile;
+
+  candidati = elencoFile.filter((f) => contieneTutte(f, [chiaveArtista, chiaveTitolo]));
+  if (candidati.length === 1) return candidati[0].nomeFile;
+
+  candidati = elencoFile.filter((f) => contieneTutte(f, [chiaveTitolo]));
+  if (candidati.length === 1) return candidati[0].nomeFile;
+
+  // Più file (o nessuno) corrispondono in modo univoco: nessun match sicuro,
+  // meglio nessun audio che un audio sbagliato.
+  return null;
+}
+
+/**
+ * Converte una durata in formato "m:ss" (es. "3:45") in secondi totali.
+ * @param {string} durataMMSS
+ * @returns {number} durata in secondi
+ */
+function durataInSecondi(durataMMSS) {
+  const parti = durataMMSS.split(':').map(Number);
+  const [minuti, secondi] = parti;
+  return minuti * 60 + secondi;
+}
+
+/**
+ * Parser CSV minimale (senza dipendenze esterne), conforme a RFC 4180:
+ * gestisce campi tra virgolette che contengono virgole o virgolette escapate ("").
+ * Adatto a file piccoli/medi come il catalogo di un seed.
+ *
+ * @param {string} contenuto testo grezzo del file CSV
+ * @returns {Array<Object>} righe come oggetti { nomeColonna: valore }
+ */
+function parseCsv(contenuto) {
+  const righe = [];
+  let riga = [];
+  let campo = '';
+  let dentroVirgolette = false;
+  let intestazioni = null;
+
+  const chiudiCampo = () => {
+    riga.push(campo);
+    campo = '';
+  };
+
+  const chiudiRiga = () => {
+    chiudiCampo();
+    if (riga.some((c) => c !== '')) {
+      if (!intestazioni) {
+        intestazioni = riga;
+      } else {
+        const oggetto = {};
+        intestazioni.forEach((chiave, indice) => {
+          oggetto[chiave.trim()] = (riga[indice] ?? '').trim();
+        });
+        righe.push(oggetto);
+      }
+    }
+    riga = [];
+  };
+
+  // normalizza fine riga e rimuove eventuale BOM iniziale
+  const testo = contenuto.replace(/\r\n/g, '\n').replace(/^\uFEFF/, '');
+
+  for (let i = 0; i < testo.length; i++) {
+    const carattere = testo[i];
+
+    if (dentroVirgolette) {
+      if (carattere === '"') {
+        if (testo[i + 1] === '"') {
+          campo += '"';
+          i++;
+        } else {
+          dentroVirgolette = false;
+        }
+      } else {
+        campo += carattere;
+      }
+      continue;
+    }
+
+    if (carattere === '"') {
+      dentroVirgolette = true;
+    } else if (carattere === ',') {
+      chiudiCampo();
+    } else if (carattere === '\n') {
+      chiudiRiga();
+    } else {
+      campo += carattere;
+    }
+  }
+  if (campo !== '' || riga.length > 0) {
+    chiudiRiga();
+  }
+
+  return righe;
+}
+
+/**
+ * Legge il catalogo brani da un file CSV con colonne
+ * Titolo, Artista, Album, Genere, Anno, Durata (formato mm:ss),
+ * e restituisce l'elenco pronto per l'inserimento in DB,
+ * completo del percorso alla traccia audio corrispondente.
+ *
+ * @param {string} percorsoCsv percorso al file CSV del catalogo
+ * @returns {Array<{titolo:string, artista:string, album:string, genere:string, anno:number, durata_secondi:number, file_audio:string}>}
+ */
+export function caricaCatalogoDaCsv(percorsoCsv) {
+  const contenuto = fs.readFileSync(percorsoCsv, 'utf-8');
+  const righe = parseCsv(contenuto);
+  const elencoFile = elencaFileAudio(CARTELLA_TRACCE_AUDIO);
+
+  let trovati = 0;
+
+  const catalogo = righe.map((r) => {
+    const brano = {
+      titolo: r.Titolo,
+      artista: r.Artista,
+      album: r.Album,
+      genere: r.Genere,
+      anno: parseInt(r.Anno, 10),
+      durata_secondi: durataInSecondi(r.Durata),
+    };
+
+    const fileAudio = trovaFileAudio(brano, elencoFile);
+    if (fileAudio) trovati++;
+
+    return { ...brano, file_audio: fileAudio };
+  });
+
+  console.log(`[csvCatalog] audio abbinati: ${trovati}/${catalogo.length}`);
+  return catalogo;
+}
+
+export { trovaFileAudio, artistaPrincipale, normalizza, elencaFileAudio, CARTELLA_TRACCE_AUDIO };
