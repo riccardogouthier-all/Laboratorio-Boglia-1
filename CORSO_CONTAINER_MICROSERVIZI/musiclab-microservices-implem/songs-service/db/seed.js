@@ -16,10 +16,9 @@ const PERCORSO_CSV_CATALOGO = path.join(__dirname, 'catalogo.csv');
  * subito la propria cache locale.
  * Se la tabella contiene già dati (riavvio, volume persistente) non fa nulla.
  *
- * Nota: il campo file_audio calcolato in csvCatalog.js assume che l'id
- * assegnato da SQLite coincida con la posizione del brano nel CSV (1, 2, 3...),
- * il che è garantito solo se il seed viene eseguito su una tabella vuota,
- * come verificato qui sotto.
+ * Nota: il campo file_audio calcolato in csvCatalog.js è ora derivato da
+ * Artista/Album/Titolo (nome file "{autore}_{album}_{titolo}.mp3"), non
+ * dall'id/posizione nel CSV: nessuna assunzione su ordine o id necessaria.
  */
 export function seedIfEmpty(db) {
   return new Promise((resolve, reject) => {
