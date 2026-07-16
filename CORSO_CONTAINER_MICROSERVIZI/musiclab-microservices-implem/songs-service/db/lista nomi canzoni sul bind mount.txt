@@ -1,0 +1,2180 @@
+file_audio":"Future;Metro Boomin;Travis Scott_WE DON'T TRUST YOU_Cinderella.mp3"
+file_audio":"Future_HNDRXX_Solo.mp3"
+file_audio":"Lil Durk_7220_No Interviews.mp3"
+file_audio":"Travis Scott_ESCAPE PLAN - MAFIA_ESCAPE PLAN.mp3"
+file_audio":"Travis Scott_ASTROWORLD_HOUSTONFORNICATION.mp3"
+file_audio":"Artie 5ive;Tony Boy;Astro_ASPETTANDO LA BELLA VITA - Before and After_NIKE (feat. Tony Boy, Astro).mp3"
+file_audio":"Artie 5ive_LA BELLAVITA_MILANO A FERRAGOSTO.mp3"
+file_audio":"Kid Yugi;Glocky_Tutti i Nomi del Diavolo_Diablo (feat. Glocky).mp3"
+file_audio":"Kid Yugi_Tutti i Nomi del Diavolo_Yung 3p 4.mp3"
+file_audio":"Don Toliver;Kodak Black_HARDSTONE PSYCHO_BROTHER STONE (FEAT. KODAK BLACK).mp3"
+file_audio":"Don Toliver_HARDSTONE PSYCHO_4X4.mp3"
+file_audio":"Don Toliver_HARDSTONE PSYCHO_DEEP IN THE WATER.mp3"
+file_audio":"Offset;Moneybagg Yo_CODE (feat. Moneybagg Yo)_CODE (feat. Moneybagg Yo).mp3"
+file_audio":"Offset;JID_Bodies_Bodies.mp3"
+file_audio":"21 Savage;Offset;Metro Boomin;Travis Scott_Without Warning_Ghostface Killers (feat. Travis Scott).mp3"
+file_audio":"Travis Scott;Swae Lee;Chief Keef_Rodeo_Nightcrawler (feat. Swae Lee & Chief Keef).mp3"
+file_audio":"Gunna_One of Wun_one of wun.mp3"
+file_audio":"Gunna_One of Wun_back in the a.mp3"
+file_audio":"Future_I NEVER LIKED YOU_I'M DAT N----.mp3"
+file_audio":"Simba La Rue;Tony Boy;FT Kings_AYAHUASCA (feat. Tony Boy)_AYAHUASCA (feat. Tony Boy).mp3"
+file_audio":"Gunna_DS4EVER_south to west.mp3"
+file_audio":"Tony Boy_Going Hard 2_Piumini.mp3"
+file_audio":"Morad_Normal_Normal.mp3"
+file_audio":"Future;Lil Wayne_Monster_After That (feat. Lil Wayne).mp3"
+file_audio":"KA$HDAMI;Trippie Redd_HYPERNOVA._Head$hot! (with Trippie Redd).mp3"
+file_audio":"Night Skinny;Artie 5ive_Containers_Numero 5 (feat. Artie 5ive).mp3"
+file_audio":"Jeune Morty_Dent_Dent.mp3"
+file_audio":"JBEE_Zidane_Zidane.mp3"
+file_audio":"JBEE;Sillage_90mph_90mph.mp3"
+file_audio":"Sadturs;KIID;Tony Boy_NO REGULAR MUSIC 2_GLORIA (feat. Tony Boy).mp3"
+file_audio":"MACE;Tony Boy;Guè;Noyz Narcos_MĀYĀ_PRAISE THE LORD ☥ (con Guè, Noyz Narcos, Tony Boy).mp3"
+file_audio":"Melons_Titoli di Spaccio_Titoli di Spaccio.mp3"
+file_audio":"Trippie Redd;Playboi Carti_Trip At Knight_Miss The Rage.mp3"
+file_audio":"Don Toliver;Travis Scott_Life of a DON_Flocky Flocky (feat. Travis Scott).mp3"
+file_audio":"Young Thug_Slime Season 3_Memo.mp3"
+file_audio":"Capo Plaza;Tony Boy_FERITE_I Miss U (feat. Tony Boy).mp3"
+file_audio":"Werenoi_Carré_Chemin d'or.mp3"
+file_audio":"Offset_SET IT OFF_HOP OUT THE VAN.mp3"
+file_audio":"Offset_SET IT OFF_BLAME IT ON SET.mp3"
+file_audio":"Offset;Mango Foo_SET IT OFF_SKYAMI (feat. Mango Foo).mp3"
+file_audio":"Lil Yachty_Lil Boat 3.5_Coffin.mp3"
+file_audio":"Offset_KIARI-OFFSET_Professional.mp3"
+file_audio":"Offset_KIARI-OFFSET_Swing My Way.mp3"
+file_audio":"Waze RRX_MOON-XTRA_Rains Coat.mp3"
+file_audio":"Metro Boomin;Don Toliver_HEROES & VILLAINS_Around Me (feat. Don Toliver).mp3"
+file_audio":"Tame Impala;Lil Yachty_Breathe Deeper (Lil Yachty Remix)_Breathe Deeper - Lil Yachty Remix.mp3"
+file_audio":"Moji x Sboy_NIRVANA_NIRVANA.mp3"
+file_audio":"Moji x Sboy_SAINT-LAURENT_SAINT-LAURENT.mp3"
+file_audio":"Offset;Key Glock_KIARI_Run It Up (feat. Key Glock).mp3"
+file_audio":"Key Glock_Yellow Tape_Dough.mp3"
+file_audio":"Key Glock_Yellow Tape 2_Ambition For Cash.mp3"
+file_audio":"18K_Frosted Silver_Frosted Silver.mp3"
+file_audio":"IvanBi_UNDERDOG_UNDERDOG.mp3"
+file_audio":"Sick Luke;Sayf_DOPAMINA_TESTA O CROCE (feat. Sayf).mp3"
+file_audio":"Tony 2Milli_ASPETTANDO LA FINE DELLA GUERRA (Strettamente)_IO ODIO IL GOVERNO!.mp3"
+file_audio":"18K_ANTI ANTI (Doom Edition)_Anti Anti.mp3"
+file_audio":"Bladee;Yung Lean_Evil World_Evil World.mp3"
+file_audio":"Simba La Rue;Sick Luke_ESCI DAL TUNNEL_FREESTYLE.mp3"
+file_audio":"PRACI;22simba;Sgribaz_The Blue Hour_Da Dove Vengo Io (feat. 22simba, Sgribaz).mp3"
+file_audio":"Waze RRX_PRADA ME_PRADA ME.mp3"
+file_audio":"Young Thug;Travis Scott_Pipe Down (feat. Travis Scott)_Pipe Down (feat. Travis Scott).mp3"
+file_audio":"Maxo Kream_Punken_Grannies.mp3"
+file_audio":"Waze RRX;Glocky_War And Romance 3_MH...SAI COME FUNZIONA- (feat. Glocky).mp3"
+file_audio":"Waze RRX;Jamil_War And Romance 3_OZEMPIC (feat. Jamil).mp3"
+file_audio":"Tkandz;CXSPER_NOW OR NEVER_NOW OR NEVER.mp3"
+file_audio":"18K;d-rose_UPPDOWNN_UPPDOWNN.mp3"
+file_audio":"R2_7-7 - 24-24_RUINART.mp3"
+file_audio":"Sala;Datkid;Melons_OGNI MUSICA_A.D.H.D. (con Datkid, Melons).mp3"
+file_audio":"Moneybagg Yo_A Gangsta’s Pain_Shottas (Lala).mp3"
+file_audio":"LILCR;Ay Mazza_PROGETTO X DELUXE_ME STESSO.mp3"
+file_audio":"Tony Boy_TRAUMA_Ice.mp3"
+file_audio":"LILCR_PROGETTO X DELUXE_BIG CEO.mp3"
+file_audio":"YoungBoy Never Broke Again_38 Baby_Gravity.mp3"
+file_audio":"YoungBoy Never Broke Again_AI YoungBoy 2_In Control.mp3"
+file_audio":"Tony Boy_Going Hard 3_Cerchio.mp3"
+file_audio":"A$AP Rocky_HELICOPTER_HELICOPTER.mp3"
+file_audio":"Don Toliver_OCTANE_Excavator.mp3"
+file_audio":"Kid Yugi;Simba La Rue;FT Kings_Anche gli Eroi Muoiono_Mu'Ammar Gheddafi (feat. Simba La Rue).mp3"
+file_audio":"Khodi_BlitzTank_BlitzTank.mp3"
+file_audio":"Yeat_The Bell_The Bell.mp3"
+file_audio":"Yeat_DANGEROUS SUMMER_COMË N GO.mp3"
+file_audio":"Don Toliver;Yeat_Rendezvous (feat. Yeat)_Rendezvous (feat. Yeat).mp3"
+file_audio":"Playboi Carti;The Weeknd_MUSIC_RATHER LIE (with The Weeknd).mp3"
+file_audio":"Yeat_DANGEROUS SUMMER_[ADL IS COMING].mp3"
+file_audio":"Fimiguerrero;Reekz MB_Tartan_Tartan.mp3"
+file_audio":"Rich Amiri_Grit & Grace_Paranoid.mp3"
+file_audio":"Yeat_Lyfë_Up off X.mp3"
+file_audio":"Yeat_Up 2 Më_Told ya.mp3"
+file_audio":"Artie 5ive_LA BELLAVITA_INTRO (La Bella Vita).mp3"
+file_audio":"Leam_DAMN!_Junkie.mp3"
+file_audio":"Kanye West;Ye;Andre Troutman_BULLY_ALL THE LOVE (feat. Andre Troutman).mp3"
+file_audio":"Travis Scott_4X4_4X4.mp3"
+file_audio":"Yeat_ADL_2Nite.mp3"
+file_audio":"Yeat_ADL_2Planës.mp3"
+file_audio":"Yeat;BNYX®_DANGEROUS SUMMER_IM YEAT.mp3"
+file_audio":"sosocamo_no service_keep steady.mp3"
+file_audio":"Sadturs;KIID;Khodi_NO REGULAR MUSIC 2.5_re bowser (feat. Khodi).mp3"
+file_audio":"18K;Latrelle;Ed Mars_+ FORTE_+ FORTE.mp3"
+file_audio":"Yeat;Don Toliver_ADL_Griddlë.mp3"
+file_audio":"Sadturs;KIID;Lubi;Astro_NO REGULAR MUSIC 2.5_devo cambiare i vestiti (feat. Lubi, Astro).mp3"
+file_audio":"Glocky_Glocky vs Kiddo_Extraterreno.mp3"
+file_audio":"Future_Future Hndrxx Presents- The WIZRD_Stick to the Models.mp3"
+file_audio":"18K_ANTI ANTI_Vendetta.mp3"
+file_audio":"Yeat_Up 2 Më_Rokstar.mp3"
+file_audio":"mikeeysmind;prodbysky_wat u want 2_wat u want 2.mp3"
+file_audio":"Young Thug;Future_Beautiful Thugger Girls_Relationship (feat. Future).mp3"
+file_audio":"Travis Scott;Future;2 Chainz_Rodeo_3500 (feat. Future & 2 Chainz).mp3"
+file_audio":"Yeat_Lyfë_Systëm.mp3"
+file_audio":"Playboi Carti_Whole Lotta Red_Sky.mp3"
+file_audio":"Playboi Carti_Whole Lotta Red_Over.mp3"
+file_audio":"Playboi Carti_Die Lit_Old Money.mp3"
+file_audio":"Playboi Carti;Young Nudy_Die Lit_R.I.P. Fredo (feat. Young Nudy) - Notice Me.mp3"
+file_audio":"Destroy Lonely_NO STYLIST_NOSTYLIST.mp3"
+file_audio":"Young Thug;Duke_Barter 6_With That (feat. Duke).mp3"
+file_audio":"18K;Visino Bianco;UNK_FOTTUTO COLTELLO (feat. Visino Bianco, UNK)_FOTTUTO COLTELLO (feat. VisinoBianco, UNK).mp3"
+file_audio":"Drake;Future;Molly Santana_ICEMAN_Ran To Atlanta (feat. Future & Molly Santana).mp3"
+file_audio":"Lil Tecca_TEC_500lbs.mp3"
+file_audio":"18K;4997_GROTTO_Rizzzla.mp3"
+file_audio":"Metro Boomin;Future;Don Toliver_HEROES & VILLAINS_Too Many Nights (feat. Don Toliver & with Future).mp3"
+file_audio":"Don Toliver_HARDSTONE PSYCHO_5 TO 10.mp3"
+file_audio":"18K;4997_IO_Cane Contro Cane.mp3"
+file_audio":"18K;Macello;d-rose;4997_IO_HowToBasic (feat. Macello).mp3"
+file_audio":"18K;d-rose;4997_IO_Proverò a Curarmi.mp3"
+file_audio":"18K;d-rose_IO_Ho visto Cristo.mp3"
+file_audio":"18K;d-rose;4997_IO_Come 6-.mp3"
+file_audio":"Tony Boy;Finesse_Cuore rotto_Cuore rotto.mp3"
+file_audio":"UNK_sconosciuto_TOY STORY.mp3"
+file_audio":"La Rvfleuze_Numéro d'écrou_312-391.mp3"
+file_audio":"Khodi_Pop e perc_Pop e perc.mp3"
+file_audio":"UNK_sconosciuto_SCONOSCIUTO.mp3"
+file_audio":"Drillionaire;Guè;Marracash_10_YALLA (feat. Guè & Marracash).mp3"
+file_audio":"Club Dogo;Giuliano Palma_Noi Siamo Il Club (Reloaded Edition)_P.E.S..mp3"
+file_audio":"Salmo;Fritz Da Cat_Death USB_Demons To Diamonds (feat. Fritz da Cat).mp3"
+file_audio":"18K;Kid Yugi_GROTTO_No Kizzy.mp3"
+file_audio":"Macello_PENSIERI CATTIVI_CRACK AL ROCKET.mp3"
+file_audio":"Salmo_Machete Mixtape Gold Edition_Disobey.mp3"
+file_audio":"Migos;YoungBoy Never Broke Again_Culture III_Need It (feat. YoungBoy Never Broke Again).mp3"
+file_audio":"Arden Jones_age tape 14_omg (guess I had it coming).mp3"
+file_audio":"Maroon 5_JORDI (Deluxe)_Memories.mp3"
+file_audio":"Younger Hunger_Dead Inside_Dead Inside.mp3"
+file_audio":"Shawn James_Shadows_Through the Valley.mp3"
+file_audio":"Bad Bunny_DeBÍ TiRAR MáS FOToS_DtMF.mp3"
+file_audio":"Shiva;Kid Yugi_Vangelo_Babyface.mp3"
+file_audio":"fun._Some Nights_Some Nights.mp3"
+file_audio":"El De Las R's_Beretta (De Los Cerros La Escuela)_Beretta (De Los Cerros La Escuela).mp3"
+file_audio":"Oliver Tree;sped up nightcore_Miss You (Sped Up Version)_Miss You - Sped Up Version.mp3"
+file_audio":"Ian Asher_Way Too Self Aware_Way Too Self Aware.mp3"
+file_audio":"MC Ren_The Villain In Black_I Don't Give A Damn.mp3"
+file_audio":"18K_IO_Quando Voglio.mp3"
+file_audio":"MilleniumKid;JBS;HOLY PRIEST;elMefti_Vielleicht Vielleicht (Holy Priest & elMefti Remix)_Vielleicht Vielleicht - Holy Priest & elMefti Remix.mp3"
+file_audio":"BADGRUB;Police In Paris_KATYUSHA_KATYUSHA.mp3"
+file_audio":"thasup_23 6451_fuck 3x.mp3"
+file_audio":"Ren0wned_Poker Face_Poker Face - Sped Up.mp3"
+file_audio":"Fabri Fibra_Squallor_Alieno.mp3"
+file_audio":"Bad Meets Evil_Hell- The Sequel (Deluxe)_Fast Lane.mp3"
+file_audio":"Dani Faiv_Ultimo Piano B_Air Tag.mp3"
+file_audio":"Dani Faiv;Ensi;Nerone_Teoria Del Contrario Mixtape Vol. 2_Legame (feat. Ensi & Nerone) - prod. Strage.mp3"
+file_audio":"Dani Faiv;Gianni Bismark_Scusate_Facce finte (feat. Gianni Bismark) - prod. Strage.mp3"
+file_audio":"Mostro;Gemitaiz_Sinceramente Mostro_Britney nel 2007 (feat. Gemitaiz).mp3"
+file_audio":"Fred again..;Skepta;PlaqueBoyMax_Victory Lap_Victory Lap.mp3"
+file_audio":"Vegas Jones_Chic Nisello_Aifon.mp3"
+file_audio":"Dani Faiv_Teoria Del Contrario Mixtape Vol. 2_Mobamba - prod. Big Joe.mp3"
+file_audio":"Dani Faiv;Gianni Bismark_Teoria Del Contrario Mixtape Vol. 2_Danger (feat. Gianni Bismark) - prod. Mixer T.mp3"
+file_audio":"Justin Bieber;Nicki Minaj_Believe (Deluxe Edition)_Beauty And A Beat.mp3"
+file_audio":"50 Cent_Get Rich Or Die Tryin'_What Up Gangsta.mp3"
+file_audio":"Bumboi;Ze66y;AfterDeath_sonrisa_sonrisa.mp3"
+file_audio":"Lazza;333 Mob_Fuego_Fuego.mp3"
+file_audio":"Dave_Tequila_Tequila.mp3"
+file_audio":"Dani Faiv;Kira;Mostro_Teoria Del Contrario Mixtape Vol. 2_Bruno Barbieri (feat. Kira & Mostro) - prod. 2nd Roof - scratch by DJ Gengis.mp3"
+file_audio":"Kodak Black;XXXTENTACION_Project Baby 2- All Grown Up_Roll in Peace (feat. XXXTENTACION).mp3"
+file_audio":"Tame Impala_Dracula_Dracula.mp3"
+file_audio":"Massimo Pericolo;Crookers;Salmo;Nic Sarno_SOLO TUTTO_CAZZO CULO (feat. Salmo).mp3"
+file_audio":"Bumboi;870glizzy_Bummed Out vol. 2 (Deluxe)_SOUTH SIDE PLAYAZ.mp3"
+file_audio":"Central Cee;Dave_CAN'T RUSH GREATNESS_CRG (feat. Dave).mp3"
+file_audio":"BigXthaPlug_AMAR_Badu Flow.mp3"
+file_audio":"J. Cole_MIDDLE CHILD_MIDDLE CHILD.mp3"
+file_audio":"Dominic Fike_Don't Forget About Me, Demos_Babydoll.mp3"
+file_audio":"Vangelis_Vangelis- Delectus (Remastered)_La petite fille de la mer - Remastered.mp3"
+file_audio":"Kid Yugi_Minaccia_Minaccia.mp3"
+file_audio":"Nerone_PENKILLER_Il più grosso.mp3"
+file_audio":"Maroon 5;Wiz Khalifa_Overexposed Track By Track_Payphone.mp3"
+file_audio":"Nerone_MAXTAPE_Old man.mp3"
+file_audio":"Татьяна Куртукова_Матушка_Матушка.mp3"
+file_audio":"Jake La Furia;Kid Yugi;Night Skinny_FAME_Viagra (feat. Kid Yugi).mp3"
+file_audio":"Capital Cities_In A Tidal Wave of Mystery_Safe and Sound.mp3"
+file_audio":"DJ HXMMER;YXMI;DJ SARKE_CARAMELLDANSEN HARDTEKK_CARAMELLDANSEN HARDTEKK (SLOWED).mp3"
+file_audio":"Dire Straits_Dire Straits_Sultans Of Swing.mp3"
+file_audio":"Maroon 5_Songs About Jane- 10th Anniversary Edition_This Love.mp3"
+file_audio":"Eminem_8 Mile (Music From And Inspired By The Motion Picture)_Rabbit Run.mp3"
+file_audio":"Bad Meets Evil_Hell- The Sequel (Deluxe)_The Reunion.mp3"
+file_audio":"Britney Spears_Femme Fatale (Deluxe Version)_Criminal.mp3"
+file_audio":"Central Cee_Wild West_6 For 6.mp3"
+file_audio":"Smash Mouth_Smash Mouth_I'm A Believer.mp3"
+file_audio":"Picu_Whiskey Cola_Whiskey Cola.mp3"
+file_audio":"The Lumineers_The Lumineers_Ho Hey.mp3"
+file_audio":"Goodnight Daylight_OMGEE_OMGEE.mp3"
+file_audio":"The Lumineers_Cleopatra_Ophelia.mp3"
+file_audio":"Taylor Swift_The Life of a Showgirl_The Fate of Ophelia.mp3"
+file_audio":"Maroon 5;Kendrick Lamar_Red Pill Blues (Deluxe)_Don't Wanna Know (feat. Kendrick Lamar).mp3"
+file_audio":"Bad Meets Evil_Hell- The Sequel (Deluxe)_Above The Law.mp3"
+file_audio":"N.W.A._The Best Of N.W.A- The Strength Of Street Knowledge_Chin Check.mp3"
+file_audio":"Marracash;Elisa_Persona_NEON - Le Ali.mp3"
+file_audio":"50 Cent_Get Rich Or Die Tryin'_Wanksta.mp3"
+file_audio":"Fabri Fibra_Tradimento (Platinum Edition)_Mal Di Stomaco.mp3"
+file_audio":"Maroon 5_V_Maps.mp3"
+file_audio":"Frosti_8' Bars_8' Bars.mp3"
+file_audio":"Ramzuto_La Trompeta Que Llora_Vida Loca.mp3"
+file_audio":"Outkast_Speakerboxxx-The Love Below_Hey Ya!.mp3"
+file_audio":"Damso_Lithopédion_Feu de bois.mp3"
+file_audio":"Rixton_Let The Road_Me And My Broken Heart.mp3"
+file_audio":"Maroon 5;Future_Red Pill Blues (Deluxe)_Cold (feat. Future).mp3"
+file_audio":"Clave Especial_MIJA NO TE ASUSTES_KALASHNIKOV.mp3"
+file_audio":"Clave Especial_MIJA NO TE ASUSTES_RÁPIDO SOY.mp3"
+file_audio":"Gianni Bismark_Re Senza Corona_Rolex.mp3"
+file_audio":"Royce Da 5'9-;Eminem;King Green_Book of Ryan (Bonus Track Edition)_Caterpillar (feat. Eminem & King Green).mp3"
+file_audio":"Eminem_Music To Be Murdered By - Side B (Deluxe Edition)_Gnat.mp3"
+file_audio":"Bassi Maestro;Gemitaiz_Mia Maestà_Solo un altro inverno.mp3"
+file_audio":"amped;AfterDeath;Bumboi_Ammo_Ammo.mp3"
+file_audio":"The Bridge City Sinners_In the Age of Doubt_Crazy.mp3"
+file_audio":"Daft Punk_Discovery_Veridis Quo.mp3"
+file_audio":"Eminem_Relapse- Refill_My Darling.mp3"
+file_audio":"Fritz Da Cat;Guè;Nitro;MadMan_Fritz_Never.mp3"
+file_audio":"DJ Shocca;Sottotono;Sissi;Gemitaiz_Sacrosanto_Sembrava Impossibile.mp3"
+file_audio":"K Dazee_what they say_what they say.mp3"
+file_audio":"BENNETT_Lullaby_Lullaby.mp3"
+file_audio":"Eminem_Relapse- Refill_Buffalo Bill.mp3"
+file_audio":"Eiffel 65;Gabry Ponte_Blue (Da Ba Dee)_Blue (Da Ba Dee) - Gabry Ponte Video Edit.mp3"
+file_audio":"2Pac;Talent_Greatest Hits_Changes.mp3"
+file_audio":"Eminem_Relapse- Refill_Taking My Ball.mp3"
+file_audio":"Eminem_Relapse- Refill_Beautiful.mp3"
+file_audio":"Eminem_Relapse- Refill_3 a.m..mp3"
+file_audio":"DJ Shocca;Inoki;Nitro_Sacrosanto_Il Resto è Storia.mp3"
+file_audio":"Eminem;KXNG Crooked;Royce Da 5'9-;Joell Ortiz_Music To Be Murdered By_I Will (feat. KXNG Crooked, Royce Da 5'9- & Joell Ortiz).mp3"
+file_audio":"Eminem_Music To Be Murdered By_Farewell.mp3"
+file_audio":"Eslabon Armado;Peso Pluma_Ella Baila Sola_Ella Baila Sola.mp3"
+file_audio":"Fuerza Regida;Grupo Frontera_MALA MÍA_SOS.mp3"
+file_audio":"Radiohead_OK Computer_Let Down.mp3"
+file_audio":"Nujabes_2nd Collection_Counting Stars.mp3"
+file_audio":"Clementino;Salmo_Miracolo!_Top Player.mp3"
+file_audio":"Ernia_Gemelli_U2.mp3"
+file_audio":"Fabri Fibra_Controcultura_Vip In Trip.mp3"
+file_audio":"Gemitaiz;nayt_QVC 10 - Quello Che Vi Consiglio Vol. 10_Ballon d'Or (feat. Nayt).mp3"
+file_audio":"nayt;3D;Gemitaiz_Good Vibes (feat. Gemitaiz)_Good Vibes (feat. Gemitaiz).mp3"
+file_audio":"Shablo;Ernia;Joshua;Neffa_Manifesto_Welcome To The Jungle (feat. Ernia, Joshua, Neffa).mp3"
+file_audio":"Morad_Reinsertado_Estopa.mp3"
+file_audio":"DJ Shocca;Ele A;Guè_Sacrosanto_El Clásico.mp3"
+file_audio":"The Dubliners_The Best of Irish Folk_The Rocky Road to Dublin.mp3"
+file_audio":"The Handsome Family_Singing Bones_Far from Any Road.mp3"
+file_audio":"Kodak Black_No Flockin'_No Flockin'.mp3"
+file_audio":"Men At Work_Business As Usual_Down Under.mp3"
+file_audio":"2Pac;Rappin' 4-Tay_All Eyez On Me_Only God Can Judge Me (ft. Rappin' 4-Tay).mp3"
+file_audio":"Ernia;Kid Yugi_PER SOLDI E PER AMORE_FELLINI (feat. Kid Yugi).mp3"
+file_audio":"MACE;Kid Yugi;Izi;Franco126_MĀYĀ_TUTTO FUORI CONTROLLO ൵ (con Franco 126, Kid Yugi, Izi).mp3"
+file_audio":"DJ Shocca;Club Dogo_60 Hz II_Rendez Vous Col Delirio II.mp3"
+file_audio":"DJ Shadow;Mos Def_The Fast And The Furious- Tokyo Drift (Original Motion Picture Soundtrack)_Six Days - Remix.mp3"
+file_audio":"Morad;Baby Gang_Sentir_Sentir.mp3"
+file_audio":"Earl_All That Glitters_All That Glitters.mp3"
+file_audio":"Jake La Furia;Paky;8blevrai_L'amore e la violenza (feat. Paky & 8blevrai)_L'amore e laviolenza (feat. Paky & 8blevrai).mp3"
+file_audio":"Shiva_Milano Angels_Syrup.mp3"
+file_audio":"Big Mo_Country Bitch_Country Bitch.mp3"
+file_audio":"Rosa Linn_SNAP_SNAP.mp3"
+file_audio":"The Neighbourhood_I Love You._Sweater Weather.mp3"
+file_audio":"Lord Huron_Strange Trails_The Night We Met.mp3"
+file_audio":"Rasty Kilo_CINZIA_Malavita.mp3"
+file_audio":"Netrum;Halvorsen_Phoenix_Phoenix.mp3"
+file_audio":"Jamil;Vacca_UNA VITA SOLA_UNA VITA SOLA.mp3"
+file_audio":"Lex-OG_SIGARETT_SIGARETT.mp3"
+file_audio":"21 Savage;Mariah the Scientist_american dream_dark days.mp3"
+file_audio":"Caramella Girls_Supergott (Speedy Mixes)_Caramelldansen.mp3"
+file_audio":"Nerone;Salmo;Jake La Furia;DJ 2P_PENKILLER_Costolette (feat. Salmo, Jake La Furia).mp3"
+file_audio":"MACE;Gemitaiz_OBE_CANDYMAN ༄ (con GEMITAIZ).mp3"
+file_audio":"Mostro;MadMan_È Crazy (feat. MadMan)_È Crazy (feat. MadMan).mp3"
+file_audio":"DJ Shocca;Ele A;Nitro_60 Hz II_Baggy.mp3"
+file_audio":"DJ Shocca;Inoki;Danno_60 Hz II_Giorni Di Piombo.mp3"
+file_audio":"DJ Shocca;Jake La Furia;Izi;Stokka;Madbuddy_60 Hz II_Ghettoblaster II.mp3"
+file_audio":"DJ Shocca_60 Hz II_Interludio Due.mp3"
+file_audio":"DJ Shocca;Ensi;Nerone_60 Hz II_How We Roc.mp3"
+file_audio":"DJ Shocca;Silent Bob;Johnny Marsiglia_60 Hz II_Il Diavolo Con Me.mp3"
+file_audio":"DJ Shocca;Ernia;Frank Siciliano;Gemitaiz_60 Hz II_Notte Blu II (feat. Gemitaiz).mp3"
+file_audio":"DJ Shocca_60 Hz II_Interludio Uno.mp3"
+file_audio":"DJ Shocca;Primo;Guè;Izi_60 Hz II_Fiamma Viva.mp3"
+file_audio":"DJ Shocca;Ghemon;Neffa_60 Hz II_Stella Nera.mp3"
+file_audio":"DJ Shocca;Mistaman;Ghemon;Stokka;Frank Siciliano;Madbuddy_60 Hz II_60 Hz II.mp3"
+file_audio":"DJ Shocca;Clementino;Mistaman_60 Hz II_Quelle Sere.mp3"
+file_audio":"Allie X_Collxtion I_Bitch.mp3"
+file_audio":"The Weeknd;Ariana Grande_Save Your Tears (Remix)_Save Your Tears (with Ariana Grande) (Remix).mp3"
+file_audio":"The Weeknd;Ariana Grande_After Hours (Deluxe)_Save Your Tears (Remix) (with Ariana Grande) - Bonus Track.mp3"
+file_audio":"Rushy_Pressure_Pressure.mp3"
+file_audio":"Fuerza Regida;Grupo Frontera_MALA MÍA_ME JALO.mp3"
+file_audio":"MGMT_Oracular Spectacular_Kids.mp3"
+file_audio":"883_Nord Sud Ovest Est_Nord sud ovest est.mp3"
+file_audio":"Nina Simone_I Put A Spell On You_I Put A Spell On You.mp3"
+file_audio":"Aventura;Judy Santos_We Broke The Rules_Obsesion.mp3"
+file_audio":"Gorillaz;De La Soul_Demon Days_Feel Good Inc..mp3"
+file_audio":"883_La donna il sogno & il grande incubo_Il grande incubo.mp3"
+file_audio":"Nerone;Dani Faiv;Shari_PENKILLER_Loser (feat. Shari, Dani Faiv).mp3"
+file_audio":"Natasha Bedingfield_Strip Me Away_Pocketful of Sunshine.mp3"
+file_audio":"Madcon;Ray Dalton_Don't Worry (feat. Ray Dalton)_Don't Worry (with Ray Dalton) - Radio Edit.mp3"
+file_audio":"Nerone;Heartman_PENKILLER_Domani (feat. Heartman).mp3"
+file_audio":"Lazza;Gemitaiz_J_LIMBO (feat. Gemitaiz).mp3"
+file_audio":"Cypress Hill_The Essential Cypress Hill_Illusions.mp3"
+file_audio":"NBSPLV_The Lost Soul Down (Slowed & Reverb)_The Lost Soul Down - Slowed & Reverb.mp3"
+file_audio":"NBSPLV_The Lost Soul Down_The Lost Soul Down.mp3"
+file_audio":"Lady Gaga;Colby O'Donis_The Fame_Just Dance.mp3"
+file_audio":"The Bridge City Sinners_In the Age of Doubt_Heavy.mp3"
+file_audio":"Sfera Ebbasta;Shiva_SANTANA MONEY GANG_NON METTERCI BECCO.mp3"
+file_audio":"Eminem_Relapse- Refill_Must Be The Ganja.mp3"
+file_audio":"Antonio Banderas;Los Lobos_Mexico and Mariachis_Canción del Mariachi (Ilia Topuria -El Matador-Anthem).mp3"
+file_audio":"AronChupa;Little Sis Nora_I'm an Albatraoz_I'm an Albatraoz.mp3"
+file_audio":"Nicki Minaj_Pink Friday- Roman Reloaded The Re-Up (Explicit Version)_Starships.mp3"
+file_audio":"will.i.am;Britney Spears_#willpower_Scream & Shout.mp3"
+file_audio":"Twenty One Pilots_Blurryface_Ride.mp3"
+file_audio":"Fitz and The Tantrums_More Than Just a Dream_Out of My League.mp3"
+file_audio":"Ice Cube_It's My Ego_It's My Ego.mp3"
+file_audio":"Freddie Dredd_Weather_Weather.mp3"
+file_audio":"Sfera Ebbasta;Shiva_SANTANA MONEY GANG_SEI PERSA.mp3"
+file_audio":"Iyaz_Replay_Replay.mp3"
+file_audio":"Skrillex;Damian -Jr Gong- Marley_Make It Bun Dem_Make It Bun Dem.mp3"
+file_audio":"Pitbull;Kesha_Global Warming- Meltdown (Deluxe Version)_Timber.mp3"
+file_audio":"Kesha_Animal (Expanded Edition)_TiK ToK.mp3"
+file_audio":"Flo Rida_Wild Ones_Whistle.mp3"
+file_audio":"Jessie J;B.o.B_Who You Are (Platinum Edition)_Price Tag.mp3"
+file_audio":"CXSPER_Yasashi_Yasashi.mp3"
+file_audio":"Propaganda_A Secret Wish (Analogue Sequence)_p-Machinery.mp3"
+file_audio":"Katy Perry_Teenage Dream- The Complete Confection_The One That Got Away.mp3"
+file_audio":"Katy Perry_Teenage Dream_Last Friday Night (T.G.I.F.).mp3"
+file_audio":"Katy Perry_Teenage Dream- The Complete Confection_Part Of Me.mp3"
+file_audio":"Foster The People_Torches_Pumped Up Kicks.mp3"
+file_audio":"Skull Beard_Skull Beard_Skull Sessions.mp3"
+file_audio":"Katy Perry_One Of The Boys_Hot N Cold.mp3"
+file_audio":"Kesha_Warrior (Expanded Edition)_Die Young.mp3"
+file_audio":"Caparezza_Verità Supposte_Jodellavitanonhocapitouncazzo.mp3"
+file_audio":"Surf Curse_Freaks_Freaks.mp3"
+file_audio":"Dr. Dre_Keep Their Heads Ringin'_Keep Their Heads Ringin'.mp3"
+file_audio":"Kendrick Lamar;Lefty Gunplay_GNX_tv off (feat. lefty gunplay).mp3"
+file_audio":"Selena Gomez & The Scene_When The Sun Goes Down_Love You Like A Love Song.mp3"
+file_audio":"Clementino_Miracolo!_Cos Cos Cos.mp3"
+file_audio":"Kronus_Rage Room_serenity.mp3"
+file_audio":"Fred again..;Baby Keem_leavemealone_leavemealone.mp3"
+file_audio":"Kronus_Rage Room_shonen.mp3"
+file_audio":"Fetty Wap_Fetty Wap_Again.mp3"
+file_audio":"Kronus_Sonder_Sonder.mp3"
+file_audio":"Kronus_Dreams_Dreams.mp3"
+file_audio":"Guri_Morning Moon_Parada.mp3"
+file_audio":"Stromae;Pomme;Arcane_Ma Meilleure Ennemie (from the series Arcane League of Legends)_Ma Meilleure Ennemie (from the series Arcane League of Legends).mp3"
+file_audio":"Gunna_Drip or Drown 2_Who You Foolin.mp3"
+file_audio":"Bumboi;Ze66y_luna llena_luna llena.mp3"
+file_audio":"A$AP Rocky;FKA twigs_TESTING_Fukk Sleep (feat. FKA twigs).mp3"
+file_audio":"The Weeknd_My Dear Melancholy,_Call Out My Name.mp3"
+file_audio":"Belly;Travis Scott_Another Day In Paradise_Money Go.mp3"
+file_audio":"SPYDER550;Ryan Celsius Sounds_ACID THUG_kill yo self.mp3"
+file_audio":"YNW Melly_I AM YOU_Murder on My Mind.mp3"
+file_audio":"Argy;Omnya_New World_Aria.mp3"
+file_audio":"The Notorious B.I.G._Greatest Hits_Ten Crack Commandments - 2007 Remaster.mp3"
+file_audio":"Diss Gacha;Sala_Cultura Italiana Pt.1_4Sheesh.mp3"
+file_audio":"Diss Gacha;Sala;Rosa Chemical_Cultura Italiana Pt.1_Opera (feat. Rosa Chemical).mp3"
+file_audio":"Playboi Carti_Die Lit_R.I.P..mp3"
+file_audio":"Arctic Monkeys_Favourite Worst Nightmare_505.mp3"
+file_audio":"Los Palmeras_Los Más Grandes Éxitos_El Bombón.mp3"
+file_audio":"ANSBRO_Bamboleo_Bamboleo.mp3"
+file_audio":"Gabry Ponte_Crusade_Crusade - Club Edit.mp3"
+file_audio":"Russian Village Boys_Tekk Стиль_Tekk Стиль 175.mp3"
+file_audio":"TurboKevin_CHASE THE SUN_CHASE THE SUN.mp3"
+file_audio":"BigXthaPlug_TAKE CARE_The Largest.mp3"
+file_audio":"BigXthaPlug_TAKE CARE_Back on my BS.mp3"
+file_audio":"VIZE;Alan Walker;Edward Artemyev;Leony_Walker Racing League_Space Melody (Edward Artemyev) (feat. Leony).mp3"
+file_audio":"DJ Khaled;Travis Scott;Lil Wayne_Major Key_Tourist (feat. Travis Scott & Lil Wayne).mp3"
+file_audio":"Mac Miller;The Temper Trap_I Love Life, Thank You_Love Lost.mp3"
+file_audio":"isaintjames_Someday Soon_Someday Soon.mp3"
+file_audio":"Maluma_PAPI JUANCHO_Hawái.mp3"
+file_audio":"Lazza;Ghali_LOCURA_GHETTO SUPERSTAR (feat. Ghali).mp3"
+file_audio":"Ella Henderson;Rudimental_Alibi (feat. Rudimental)_Alibi (feat. Rudimental).mp3"
+file_audio":"KAROL G_Si Antes Te Hubiera Conocido_Si Antes Te Hubiera Conocido.mp3"
+file_audio":"Eminem;WESTSIDE BOOGIE;GRIP_Fuel (feat. WESTSIDE BOOGIE & GRIP) [Shady Edition]_Fuel (feat. WESTSIDE BOOGIE & GRIP) - Shady Edition.mp3"
+file_audio":"JACKBOYS;Travis Scott;Young Thug_JACKBOYS_OUT WEST (feat. Young Thug).mp3"
+file_audio":"Blu Cantrell_So Blu_Hit 'Em Up Style (Oops!).mp3"
+file_audio":"Ella Langley;Riley Green_you look like you love me (feat. Riley Green)_you look like you love me (feat. Riley Green).mp3"
+file_audio":"Kodak Black_Painting Pictures_Tunnel Vision.mp3"
+file_audio":"Tommee Profitt;Fleurie;Mellen Gi_In The End_In The End - Mellen Gi Remix.mp3"
+file_audio":"Guè;Lazza_Gelida Estate EP_Montenapo (feat. Lazza).mp3"
+file_audio":"Fabri Fibra_Il Tempo Vola 2002-2020_Pronti, Partenza, Via!.mp3"
+file_audio":"Linkin Park_Hybrid Theory (Bonus Edition)_In the End.mp3"
+file_audio":"Noyz Narcos & Fritz Da Cat_Localz Only_Polvere Di Stelle.mp3"
+file_audio":"Gianni Bismark_Re Senza Corona_So Finiti I Giochi.mp3"
+file_audio":"Massimo Pericolo;Tedua_Le cose cambiano_Straniero (feat. Tedua).mp3"
+file_audio":"Die Antwoord_Ten$ion_Baby's On Fire.mp3"
+file_audio":"MadMan_LONEWOLF_Jon Jones.mp3"
+file_audio":"Baby Gang;Bobo;Morad_DELINQUENTE_Casablanca (feat. Morad).mp3"
+file_audio":"Ensi;Nerone;Brava Gente_BRAVA GENTE_King Kong vs Godzilla.mp3"
+file_audio":"Shiva_Take 5_Take 5.mp3"
+file_audio":"Dr. Dre;Snoop Dogg_The Chronic_Nuthin' But A -G- Thang.mp3"
+file_audio":"Grupo Soñador_Soñador 2005_Gigante Con Guacharaca.mp3"
+file_audio":"Charlie Charles;Izi_RAP (feat. Izi)_RAP (feat. Izi).mp3"
+file_audio":"Lovegang126;Franco126;Danno;Drone126_CRISTI E DIAVOLI_Tinta unita (feat. Danno).mp3"
+file_audio":"Ernia;Tradez_No Hooks_Lewandowski IV.mp3"
+file_audio":"Eminem_Relapse- Refill_My Mom.mp3"
+file_audio":"Vegas Jones;Salmo;Andry The Hitmaker_Giro veloce_SBALLO SHALLO - feat. Salmo.mp3"
+file_audio":"Eminem_Relapse- Refill_Deja Vu.mp3"
+file_audio":"Lazza;Drillionaire_Red Bull 64 Bars, The Album_MEZZO SPORT (64 Bars).mp3"
+file_audio":"Pop Smoke_Shoot For The Stars Aim For The Moon_What You Know Bout Love.mp3"
+file_audio":"Highsnob_Harley Quinn_Harley Quinn.mp3"
+file_audio":"Kid Yugi_I Nomi del Diavolo_Il Signore delle Mosche.mp3"
+file_audio":"Gemitaiz;MadMan_Detto, Fatto._Detto, Fatto..mp3"
+file_audio":"Kid Yugi;Night Skinny_Quarto di Bue_Massafghanistan.mp3"
+file_audio":"Kid Yugi;Fido Guido_I Nomi del Diavolo_Ilva (Fume scure rmx) (feat. Fido Guido).mp3"
+file_audio":"Juice WRLD;Lil Uzi Vert_Goodbye & Good Riddance_Wasted (feat. Lil Uzi Vert).mp3"
+file_audio":"21 Savage_Issa Album_Bank Account.mp3"
+file_audio":"Bryson Tiller_T R A P S O U L_Right My Wrongs.mp3"
+file_audio":"Travis Scott_HIGHEST IN THE ROOM_HIGHEST IN THE ROOM.mp3"
+file_audio":"Lilly Wood and The Prick;Robin Schulz_Prayer in C_Prayer in C - Robin Schulz Radio Edit.mp3"
+file_audio":"Dani Faiv;Nitro_Fruit Joint + Gusto_Pollo (feat. Nitro) - RMX (prod Kanesh).mp3"
+file_audio":"Akon_Trouble_Locked Up.mp3"
+file_audio":"Eminem;Sly Pyper_The Death of Slim Shady (Coup De Grâce)_Lucifer.mp3"
+file_audio":"Bob Marley & The Wailers_Exodus_Jamming.mp3"
+file_audio":"Marracash_NOI, LORO, GLI ALTRI_CRAZY LOVE.mp3"
+file_audio":"Eminem;JID_The Death of Slim Shady (Coup De Grâce)_Fuel.mp3"
+file_audio":"Eminem;White Gold_The Death of Slim Shady (Coup De Grâce)_Habits.mp3"
+file_audio":"Mobb Deep_The Infamous_Shook Ones, Pt. II.mp3"
+file_audio":"Sheff G;Sleepy Hallow_One and Only_Weight On Me.mp3"
+file_audio":"Kendrick Lamar_Not Like Us_Not Like Us.mp3"
+file_audio":"Eminem;Dr. Dre;50 Cent_Relapse- Refill_Crack A Bottle.mp3"
+file_audio":"R3HAB;Marnik;VINAI;INNA;Sash!_Rock My Body (with INNA & Sash!) [Marnik & VINAI Remix]_Rock My Body (with INNA & Sash!) - Marnik & VINAI Remix.mp3"
+file_audio":"Kali Uchis_Sin Miedo (del Amor y Otros Demonios) ∞_telepatía.mp3"
+file_audio":"Akon;Eminem_Konvicted_Smack That.mp3"
+file_audio":"Je Suis Parte_Davy Jones Theme (Pirates of the Caribbean)_Davy Jones Theme (Pirates of the Caribbean).mp3"
+file_audio":"Krayzie Bone_The Fixtape Vol. 1- Smoke on This_Whatchuwando.mp3"
+file_audio":"Central Cee;Lil Baby_BAND4BAND (feat. Lil Baby)_BAND4BAND (feat. Lil Baby).mp3"
+file_audio":"Sfera Ebbasta;thasup;Tony Effe_X2VR_3uphon.mp3"
+file_audio":"Eminem_Houdini_Houdini.mp3"
+file_audio":"Metro Boomin;Travis Scott;Kodak Black;21 Savage_NOT ALL HEROES WEAR CAPES (Deluxe)_No More (feat. Travis Scott, Kodak Black & 21 Savage).mp3"
+file_audio":"Kronus_Ethereal_Ethereal.mp3"
+file_audio":"Sfera Ebbasta;Geolier;Simba La Rue;Baby Gang_X2VR_Calcolatrici.mp3"
+file_audio":"JACKBOYS;Pop Smoke;Travis Scott_JACKBOYS_GATTI.mp3"
+file_audio":"Barbara Pravi_Voilà_Voilà.mp3"
+file_audio":"Sfera Ebbasta_Rockstar (Popstar Edition)_Popstar.mp3"
+file_audio":"Jack The Smoker;Big Joe;Nerone;Ensi;Louis Dee_Sedicinoni_No Problema RMX (feat. Nerone, Ensi & LouisDee).mp3"
+file_audio":"Carly Rae Jepsen_Kiss_Call Me Maybe.mp3"
+file_audio":"Gemitaiz_Eclissi_Adesso.mp3"
+file_audio":"Polo & Pan_Caravelle_Nanã.mp3"
+file_audio":"Nicolae Guta_Whiskey Cola Tequila_Whiskey Cola Tequila.mp3"
+file_audio":"Bizarrap;Milo j_Milo J- Bzrp Music Sessions, Vol. 57-66_Milo J- Bzrp Music Sessions,Vol. 57-66.mp3"
+file_audio":"Camila Cabello;DaBaby_Romance_My Oh My (feat. DaBaby).mp3"
+file_audio":"Sfera Ebbasta;Guè_X2VR_Gol.mp3"
+file_audio":"Big Mountain_The Best of Big Mountain_Baby, I Love Your Way.mp3"
+file_audio":"Tony Effe;Rose Villain_ICON_BALENCIAGA (feat. Rose Villain).mp3"
+file_audio":"Mustard;Roddy Ricch_Perfect Ten_Ballin' (with Roddy Ricch).mp3"
+file_audio":"Kid Yugi_Paganini_Paganini.mp3"
+file_audio":"David Guetta;Kid Cudi_One More Love_Memories (feat. Kid Cudi).mp3"
+file_audio":"Katy Perry;Snoop Dogg_Teenage Dream_California Gurls.mp3"
+file_audio":"Night Skinny;Ketama126;Side Baby;Franco126_Mattoni_Stay Away (feat. Ketama126, Side Baby & Franco126).mp3"
+file_audio":"Jack The Smoker;Big Joe_Sedicinoni_P.I.M.P..mp3"
+file_audio":"DJ Shocca;Inoki;Royal Mehdi_60 Hz_Bolo By Night.mp3"
+file_audio":"Post Malone;Ozzy Osbourne;Travis Scott_Hollywood's Bleeding_Take What You Want (feat. Ozzy Osbourne & Travis Scott).mp3"
+file_audio":"Jack The Smoker;Big Joe_Sedicinoni_Bussola.mp3"
+file_audio":"Briga;Il Tre;Gemitaiz_Non mi regolo (feat. Gemitaiz & Il Tre)_Non mi regolo (feat. Gemitaiz & Il Tre).mp3"
+file_audio":"Artie 5ive_00_00.mp3"
+file_audio":"MACE_MĀYĀ_IL VELO DI MĀYĀ ႟.mp3"
+file_audio":"Tony Effe;Bresh;Tedua_ICON_DOPO LE 4 (feat. Bresh & Tedua).mp3"
+file_audio":"MACE;Izi;centomilacarie;Gemitaiz_MĀYĀ_METEORE Ⳣ (con Gemitaiz, Izi, centomilacarie).mp3"
+file_audio":"Muse_The Resistance_Uprising.mp3"
+file_audio":"Michael Jackson_HIStory - PAST, PRESENT AND FUTURE - BOOK I_The Way You Make Me Feel.mp3"
+file_audio":"Eminem_Revival_Castle.mp3"
+file_audio":"Big Pun;Fat Joe_Capital Punishment_Twinz (Deep Cover 98) (feat. Fat Joe).mp3"
+file_audio":"DJ Zone_Vibe_Mexico Cruise (Interlude).mp3"
+file_audio":"Dani Faiv_Scusate_Oggi no - prod. Strage.mp3"
+file_audio":"Tove Lo_Queen Of The Clouds_Habits (Stay High).mp3"
+file_audio":"6ix9ine;Anuel AA_DUMMY BOY (Revised)_MALA (feat. Anuel AA).mp3"
+file_audio":"Inner Circle_Blazzin' Fire_Sweat (A La La La La Long).mp3"
+file_audio":"Mary J. Blige_No More Drama_Family Affair.mp3"
+file_audio":"Wheatus_Wheatus_Teenage Dirtbag.mp3"
+file_audio":"R. City;Adam Levine_What Dreams Are Made Of_Locked Away (feat. Adam Levine).mp3"
+file_audio":"YG Marley_Praise Jah In The Moonlight_Praise Jah In The Moonlight.mp3"
+file_audio":"Guè;Dj Harsh;Gemitaiz;Noyz Narcos_Fastlife 4_Champagne 4 The Pain (feat. Gemitaiz & Noyz Narcos).mp3"
+file_audio":"Michael Jackson_Thriller_Beat It.mp3"
+file_audio":"Rockwell_Somebody's Watching Me_Somebody's Watching Me.mp3"
+file_audio":"Alan Walker_Alone_Alone.mp3"
+file_audio":"Pentatonix_A Pentatonix Christmas_Hallelujah.mp3"
+file_audio":"Sérgio Mendes;Black Eyed Peas_Timeless_Mas Que Nada.mp3"
+file_audio":"mikeeysmind_After Dark x Sweater Weather_After Dark x Sweater Weather.mp3"
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_Evil Twin.mp3"
+file_audio":"Lazza_100 MESSAGGI_100 MESSAGGI.mp3"
+file_audio":"FILV;Edmofo;Emma Peters_Clandestina (feat. Emma Peters) [Cocaina Remix]_Clandestina (feat. Emma Peters) - Cocaina Remix.mp3"
+file_audio":"Dave;Central Cee_Split Decision_Our 25th Birthday.mp3"
+file_audio":"Yussef Dayes;Rocco Palladino;Charlie Stacey_Duality_For My Ladies.mp3"
+file_audio":"Khalil-_Sheeesh_Sheeesh.mp3"
+file_audio":"Kendrick Lamar;James Fauntleroy;Ronald Isley_To Pimp A Butterfly_How Much A Dollar Cost.mp3"
+file_audio":"Teddy Swims_Lose Control_Lose Control.mp3"
+file_audio":"Kendrick Lamar;MC Eiht_good kid, m.A.A.d city (Deluxe)_m.A.A.d city.mp3"
+file_audio":"Travis Scott;Playboi Carti_UTOPIA_FE!N (feat. Playboi Carti).mp3"
+file_audio":"Israel Vibration_Stamina_Natty Dread.mp3"
+file_audio":"21 Savage;Travis Scott;Metro Boomin_née-nah_née-nah.mp3"
+file_audio":"Bob Marley & The Wailers_Legend - The Best Of Bob Marley And The Wailers_Three Little Birds.mp3"
+file_audio":"Carl Brave;Ugo Borghetti;Bipuntato_Notti Brave_Scusa (feat. Ugo Borghetti & B).mp3"
+file_audio":"Immortal Technique_Revolutionary, Vol. 1_Dance With The Devil.mp3"
+file_audio":"Travis Scott;SZA;Future_UTOPIA_TELEKINESIS (feat. SZA & Future).mp3"
+file_audio":"Massimo Pericolo;Crookers;Nic Sarno_Scialla Semper_Cocco.mp3"
+file_audio":"Kid Yugi;Night Skinny;Artie 5ive_Quarto di Bue_Porto il Commerciale (feat. Artie 5ive).mp3"
+file_audio":"Mondo Marcio_La Freschezza Del Marcio_Questo Cuore, Queste Stelle.mp3"
+file_audio":"21 Savage_american dream_redrum.mp3"
+file_audio":"24kGoldn;Nitro_CITY OF ANGELS (Nitro Remix)_CITY OF ANGELS (Nitro Remix).mp3"
+file_audio":"Rundown Spaz_First Day Out (Freestyle), Pt. 2_First Day Out (Freestyle), Pt. 2.mp3"
+file_audio":"Travis Scott_Rodeo_I Can Tell.mp3"
+file_audio":"Kanye West_The Life Of Pablo_Father Stretch My Hands Pt. 1.mp3"
+file_audio":"Don Pero;Kid Yugi_MEZZA PAROLA_Tech Pack (feat. Kid Yugi).mp3"
+file_audio":"Baby Keem;Travis Scott_The Melodic Blue_durag activity (with Travis Scott).mp3"
+file_audio":"Travis Scott_UTOPIA_I KNOW -.mp3"
+file_audio":"Travis Scott_UTOPIA_MY EYES.mp3"
+file_audio":"lilbubblegum;Yung Gravy_af1 (slowed and reverbed)_af1.mp3"
+file_audio":"Drake_Scorpion_Nice For What.mp3"
+file_audio":"Lil Baby;Drake_Harder Than Ever_Yes Indeed.mp3"
+file_audio":"Kendrick Lamar_DAMN._DNA..mp3"
+file_audio":"Future;Drake;Tems_I NEVER LIKED YOU_WAIT FOR U (feat. Drake & Tems).mp3"
+file_audio":"Drake_Scorpion_I'm Upset.mp3"
+file_audio":"BlocBoy JB;Drake_Simi_Look Alive (feat. Drake).mp3"
+file_audio":"SadBoyProlific;Aiko;Teqkoi_Natsukashii_Walk Away.mp3"
+file_audio":"Drake_If You're Reading This It's Too Late_Energy.mp3"
+file_audio":"Papithbk_Thbk._Caution and Ease.mp3"
+file_audio":"Meek Mill;Drake_Championships_Going Bad (feat. Drake).mp3"
+file_audio":"Gemitaiz_QVC 10 - Quello Che Vi Consiglio Vol. 10_Jeffrey.mp3"
+file_audio":"Sheck Wes_MUDBOY_Mo Bamba.mp3"
+file_audio":"Tory Lanez_The New Toronto 3_Broke In A Minute.mp3"
+file_audio":"TY1;Kid Yugi;Nerissima Serpe_DJUNGLE UNCHAINED_MONOPOLIO (feat. Kid Yugi, Nerissima Serpe).mp3"
+file_audio":"A$AP Rocky;Skepta_TESTING_Praise The Lord (Da Shine) (feat. Skepta).mp3"
+file_audio":"Offset;Metro Boomin_Without Warning_Ric Flair Drip (with Metro Boomin).mp3"
+file_audio":"Bor Pro_Subliminal_Nocturne.mp3"
+file_audio":"Gemitaiz;DJ Shocca_QVC 10 - Quello Che Vi Consiglio Vol. 10_Hip Hop Snippet (feat. Dj Shocca).mp3"
+file_audio":"Gemitaiz_QVC 10 - Quello Che Vi Consiglio Vol. 10_La Ballata Del Dubbio Pt.4 - FINAL ACT.mp3"
+file_audio":"Gemitaiz_QVC 10 - Quello Che Vi Consiglio Vol. 10_Vibes.mp3"
+file_audio":"Vacca;Kushgad_Tropical Shopping_Tropical Shopping.mp3"
+file_audio":"Milky Chance_Sadnecessary_Stolen Dance.mp3"
+file_audio":"Ghali_PIZZA KEBAB Vol. 1_Zuppa Di Succo Di Mucca.mp3"
+file_audio":"Ghali_PIZZA KEBAB Vol. 1_Dimmi La Verità.mp3"
+file_audio":"Massimo Pericolo_Le cose cambiano_Totoro 2.mp3"
+file_audio":"J-AX;Fedez_Comunisti col Rolex_Vorrei ma non posto.mp3"
+file_audio":"Massimo Pericolo;Emis Killa_Le cose cambiano_Moneylove (feat. Emis Killa).mp3"
+file_audio":"UB40_The Very Best Of_Red Red Wine.mp3"
+file_audio":"Massimo Pericolo_Le cose cambiano_Come Aria.mp3"
+file_audio":"JID;21 Savage;Baby Tate_The Forever Story (Extended Version)_Surround Sound (feat. 21 Savage & Baby Tate).mp3"
+file_audio":"Bob Marley & The Wailers_Legend - The Best Of Bob Marley And The Wailers_Buffalo Soldier.mp3"
+file_audio":"Michael Jackson_Thriller 25 Super Deluxe Edition_Billie Jean.mp3"
+file_audio":"Ice Cube_Greatest Hits_You Know How We Do It.mp3"
+file_audio":"Drake_0 To 100 - The Catch Up_0 To 100 - The Catch Up.mp3"
+file_audio":"That Mexican OT;Paul Wall;DRODi_Johnny Dang (with Paul Wall & DRODi)_Johnny Dang (with PaulWall & DRODi).mp3"
+file_audio":"Sfera Ebbasta;Marracash_X2VR_15 Piani.mp3"
+file_audio":"Salmo;Noyz Narcos;Kid Yugi_CVLT_CVLT (feat. Kid Yugi).mp3"
+file_audio":"Kid Yugi_The Globe_Paradise Now.mp3"
+file_audio":"Kid Yugi;Ksub_The Globe_Sturm und drang.mp3"
+file_audio":"Kid Yugi_The Globe_Kabuki.mp3"
+file_audio":"Kid Yugi_The Globe_Hybris.mp3"
+file_audio":"Kid Yugi;Sosa Priority_The Globe_King Lear (feat. Sosa Priority).mp3"
+file_audio":"Kid Yugi_The Globe_No Gimmick.mp3"
+file_audio":"Kid Yugi_The Globe_GRAMMELOT.mp3"
+file_audio":"Ghali_Album_Ninna Nanna.mp3"
+file_audio":"LIZOT;KYANU_This Is The Life_This Is The Life.mp3"
+file_audio":"Guè;Sfera Ebbasta_Mr. Fini_Immortale (feat. Sfera Ebbasta).mp3"
+file_audio":"Shiva;Sfera Ebbasta_Santana Season_Un milione di volte (feat. Sfera Ebbasta).mp3"
+file_audio":"50 Cent_Window Shopper_Window Shopper.mp3"
+file_audio":"Eminem;Kendrick Lamar_The Marshall Mathers LP2 (Deluxe)_Love Game.mp3"
+file_audio":"Eminem;Jamie N Commons_The Marshall Mathers LP2 (Deluxe)_Desperation.mp3"
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_Rhyme Or Reason.mp3"
+file_audio":"Lil Baby_Harder Than Hard_My Dawg.mp3"
+file_audio":"Taylor Swift_1989 (Deluxe)_Blank Space.mp3"
+file_audio":"Ghali_DNA_Good Times.mp3"
+file_audio":"Ghali_Cara Italia_Cara Italia.mp3"
+file_audio":"Papithbk_Thbk._Love Is a Drug.mp3"
+file_audio":"Drake_For All The Dogs_8am in Charlotte.mp3"
+file_audio":"Papithbk_Thbk._Hard It All Can Be.mp3"
+file_audio":"Papithbk_Thbk._Why Am I Waiting.mp3"
+file_audio":"Silent Bob;Sick Budd_Piove Ancora_Vedova Nera.mp3"
+file_audio":"Shiloh Dynasty;timmies_Vivid Pictures_Again.mp3"
+file_audio":"6ix9ine;Nicki Minaj;Murda Beatz_DUMMY BOY_FEFE.mp3"
+file_audio":"BIA;Sfera Ebbasta;Fivio Foreign_REALLY HER (Intl Deluxe)_MILANO.mp3"
+file_audio":"Annibale_The Best of Bud Spencer & Terence Hill, Vol. 1_Trinity (da -Lo chiamavano Trinità-) - Remastered.mp3"
+file_audio":"Richard Carter_Talk to Me (Original Soundtrack)_Le Monde - From Talk to Me.mp3"
+file_audio":"Travis Scott_UTOPIA_SIRENS.mp3"
+file_audio":"Bresh;SHUNE_ORO BLU_Andrea.mp3"
+file_audio":"Sebastian;Gemitaiz;3D_Maracaibo, Maracanã_Maracaibo, Maracanã.mp3"
+file_audio":"Gunna_a Gift & a Curse_fukumean.mp3"
+file_audio":"Jahneration;Queen Omega_Wham to Dem-_Wham to Dem-.mp3"
+file_audio":"Juice WRLD_Fighting Demons (Deluxe)_Legends.mp3"
+file_audio":"BENNETT_Vois sur ton chemin (Techno Mix)_Vois sur ton chemin - Techno Mix.mp3"
+file_audio":"DJ Belite;DNDM;Shahlo Ahmedova_All eyez on me [Gangsta Remix]_All eyez on me [Gangsta Remix].mp3"
+file_audio":"Achille Lauro;Boss Doms;Simon P;Sedato Blend;QBP_Ragazzi madre_Latte in polvere.mp3"
+file_audio":"Salmo;Hell Raton;En-gma;Slait_Midnite (Deluxe Version)_The Island (feat. Hell Raton, En-gma, Slait).mp3"
+file_audio":"Warez;Ensi;Biggie Paul_Maestro_Ping Pong.mp3"
+file_audio":"A$AP Rocky_Sundress_Sundress.mp3"
+file_audio":"Takagi & Ketra;thasup;Salmo_BUBBLE (feat. thasup & Salmo)_BUBBLE (feat. thasup & Salmo).mp3"
+file_audio":"Kid Yugi_The Globe_Il Filmografo.mp3"
+file_audio":"thasup;Gemitaiz;MadMan_23 6451_pers0na2 - feat. Gemitaiz, Madman.mp3"
+file_audio":"Kendrick Lamar_good kid, m.A.A.d city (Deluxe)_good kid.mp3"
+file_audio":"Bumboi;Pranav.Wav_bummed out_lemonade.mp3"
+file_audio":"Noyz Narcos;Night Skinny_VIRUS_DOPE BOY.mp3"
+file_audio":"Noyz Narcos;Sfera Ebbasta;Night Skinny;Luchè_VIRUS_CRY LATER (feat. Sfera Ebbasta & Luchè).mp3"
+file_audio":"Noyz Narcos;MACE_VIRUS_VICTORY LAP.mp3"
+file_audio":"DaBaby_KIRK_BOP.mp3"
+file_audio":"Drake;21 Savage_Honestly, Nevermind_Jimmy Cooks (feat. 21 Savage).mp3"
+file_audio":"Lil Baby_Street Gossip_Pure Cocaine.mp3"
+file_audio":"thasup;Lazza_23 6451_gua10 - feat. Lazza.mp3"
+file_audio":"thasup;Dani Faiv_23 6451_no14 - feat. Dani Faiv.mp3"
+file_audio":"The Notorious B.I.G.;Eminem_Greatest Hits_Dead Wrong (feat. Eminem) -2007 Remaster.mp3"
+file_audio":"DaBaby_BLAME IT ON BABY (DELUXE)_PRACTICE.mp3"
+file_audio":"Lil Peep;XXXTENTACION_Come Over When You're Sober, Pt. 2_Falling Down - Bonus Track.mp3"
+file_audio":"Nu Aspect_Sinner_Sinner.mp3"
+file_audio":"Vacca_Don Vacca Corleone_DVC.mp3"
+file_audio":"Dave;Central Cee_Sprinter_Sprinter.mp3"
+file_audio":"Lil Peep_Star Shopping_Star Shopping.mp3"
+file_audio":"Shiva;Mostro_Solo_Acciaio.mp3"
+file_audio":"Rondodasosa;Nko;MILES;Low Kidd_TRENCHES BABY_SIN CARA.mp3"
+file_audio":"XXXTENTACION_-_Moonlight.mp3"
+file_audio":"Papithbk_Thbk._Losing Interest.mp3"
+file_audio":"XXXTENTACION_17_Jocelyn Flores.mp3"
+file_audio":"XXXTENTACION_Bad Vibes Forever_Ex Bitch.mp3"
+file_audio":"Night Skinny;Mecna;CoCo_Pezzi_Equilibrio.mp3"
+file_audio":"Frankie hi-nrg mc;Riccardo Sinigallia_La Morte Dei Miracoli & Diff. Coupling_Quelli che benpensano (feat. Riccardo Sinigallia).mp3"
+file_audio":"Cancun;Kid Yugi_Culto Boy (feat. Kid Yugi)_Culto Boy (feat. Kid Yugi).mp3"
+file_audio":"Doja Cat;SZA_Planet Her_Kiss Me More (feat. SZA).mp3"
+file_audio":"Doja Cat_Paint The Town Red_Paint The Town Red.mp3"
+file_audio":"Russ_There's Really A Wolf_What They Want.mp3"
+file_audio":"Migos;Travis Scott_Culture_Kelly Price (feat. Travis Scott).mp3"
+file_audio":"Russ_3-15 (Breathe)_3-15 (Breathe).mp3"
+file_audio":"Kid Yugi;Night Skinny_Quarto di Bue_Quarto di Bue.mp3"
+file_audio":"Warez;Fallen_Maestro ad Honorem_Che Babbo.mp3"
+file_audio":"Tedua;Baby Gang;Kid Yugi_La Divina Commedia_Paradiso Artificiale (feat. Baby Gang & Kid Yugi).mp3"
+file_audio":"D12_Curtain Call (Deluxe)_Shit On You.mp3"
+file_audio":"Lazza;Giaime_Re Mida_No Selfie (feat. Giaime).mp3"
+file_audio":"Sech;Ozuna_Si Te Vas_Si Te Vas.mp3"
+file_audio":"Topshakaz_Kold Blooded Soulja_Kold Blooded Soulja.mp3"
+file_audio":"D4L_Down for Life_Laffy Taffy.mp3"
+file_audio":"Bruno Mars;Damian Marley_Doo-Wops & Hooligans_Liquor Store Blues (feat. Damian Marley).mp3"
+file_audio":"Eminem_Recovery_Almost Famous.mp3"
+file_audio":"Manuel Turizo_La Bachata_La Bachata.mp3"
+file_audio":"Eminem;Jessie Reyez_Kamikaze_Nice Guy (with Jessie Reyez).mp3"
+file_audio":"Alan Walker_Faded_Faded.mp3"
+file_audio":"Eminem_Music To Be Murdered By_Never Love Again.mp3"
+file_audio":"Eminem;Jessie Reyez_Kamikaze_Good Guy (feat. Jessie Reyez).mp3"
+file_audio":"Tony Effe_BOSS_BOSS.mp3"
+file_audio":"Street Corner Renaissance_Life Could Be A Dream_Life Could Be A Dream.mp3"
+file_audio":"Mashonda_HONEY, I SEE YOU_HONEY, I SEE YOU.mp3"
+file_audio":"50 Cent;Nate Dogg_Get Rich Or Die Tryin'_21 Questions.mp3"
+file_audio":"Drake;GIVĒON_Dark Lane Demo Tapes_Chicago Freestyle (feat. Giveon).mp3"
+file_audio":"Drillionaire;Salmo;Capo Plaza_10_CHIAMA (feat. Capo Plaza & Salmo).mp3"
+file_audio":"Nathan Evans_Wellerman (Sea Shanty)_Wellerman - Sea Shanty.mp3"
+file_audio":"Salmo_The Island Chainsaw Massacre_Driveway.mp3"
+file_audio":"Emis Killa;Sfera Ebbasta_Effetto notte_ON FIRE - paid in full.mp3"
+file_audio":"Angelo Di Guardo;Mark_Dream Big_Ci sono anch'io.mp3"
+file_audio":"Drillionaire;Sfera Ebbasta;Lazza_10_10 (feat. Sfera Ebbasta & Lazza).mp3"
+file_audio":"Club Dogo_Mi fist (Remastered version)_Llcd - Ladies love club dogo.mp3"
+file_audio":"Purple Disco Machine;Kungs;Julian Perretta_Substitution (feat. Julian Perretta)_Substitution (feat. Julian Perretta).mp3"
+file_audio":"Camila Cabello;Young Thug_Camila_Havana (feat. Young Thug).mp3"
+file_audio":"Eminem_Relapse- Refill_Bagpipes From Baghdad.mp3",
+file_audio":"Francis Lai;Christian Gaubert_Mayerling_La leçon particulière - Bande originale du film -La leçon particulière-.mp3",
+file_audio":"Eminem;PHresher_Revival_Chloraseptic (feat. Phresher).mp3",
+file_audio":"Chase & Status;Bou;Flowdan;IRAH;Trigga;Takura_Baddadan (feat. IRAH, Flowdan, Trigga & Takura)_Baddadan (feat. IRAH, Flowdan, Trigga & Takura).mp3",
+file_audio":"Travis Scott;Drake_UTOPIA_MELTDOWN (feat. Drake).mp3",
+file_audio":"Pure Negga;Skillz Beatz_Cnv Sound Volums (Kion Studio One Shots)_Cnv Sound, Vol. 14.mp3",
+file_audio":"Nitro_Suicidol_Sassi e diamanti.mp3",
+file_audio":"Lana Del Rey_Born To Die (Deluxe Version)_Summertime Sadness.mp3",
+file_audio":"Morad_Reinsertado_Tiempo de Nada.mp3",
+file_audio":"Little Simz_NO THANK YOU_Gorilla.mp3",
+file_audio":"Wu-Tang Clan_Enter The Wu-Tang (36 Chambers) [Expanded Edition]_C.R.E.A.M. (Cash Rules Everything Around Me).mp3",
+file_audio":"DJ Skandalous;Chyde;T-Bizzy & The Management_Built For This_Built For This.mp3",
+file_audio":"DJ Skandalous;T-Bizzy & The Management;MVG_Built For This_ReBuilt For This.mp3",
+file_audio":"2Pac;Roger;Dr. Dre_Greatest Hits_California Love - Original Version.mp3",
+file_audio":"DJ Skandalous;T-Bizzy & The Management_Montana Freestyle_Montana Freestyle.mp3",
+file_audio":"Geolier;Emis Killa_Emanuele_Como Te (feat. Emis Killa).mp3",
+file_audio":"Avicii_True_Hey Brother.mp3",
+file_audio":"Avicii_Stories_Waiting For Love.mp3",
+file_audio":"Avicii_The Days - Nights_The Nights.mp3",
+file_audio":"Avicii_True_Wake Me Up.mp3",
+file_audio":"Trevor Daniel_Falling_Falling.mp3",
+file_audio":"Emis Killa;Lazza_Effetto notte_SENZ'ANIMA - nikita.mp3",
+file_audio":"ScHoolboy Q;Kanye West_Blank Face LP_THat Part.mp3",
+file_audio":"Kanye West;Big Sean;Pusha T;2 Chainz_Mercy_Mercy.mp3",
+file_audio":"alexis;Alexis vrignaud_les choristes (techno remix)_les choristes (techno remix).mp3",
+file_audio":"The Kid Brisk_the kidd_the kidd.mp3",
+file_audio":"KYLE;Lil Yachty_iSpy (feat. Lil Yachty) [No Intro]_iSpy (feat. Lil Yachty) - No Intro.mp3",
+file_audio":"Lyrical Lemonade;Juice WRLD;Cordae_Doomsday_Doomsday (with Juice WRLD & Cordae).mp3",
+file_audio":"Kanye West_Graduation_Can't Tell Me Nothing.mp3",
+file_audio":"Lil Uzi Vert_Just Wanna Rock_Just Wanna Rock.mp3",
+file_audio":"Geolier_IL CORAGGIO DEI BAMBINI_COME VUOI.mp3",
+file_audio":"Achille Lauro;Boss Doms_Ragazzi madre_Maharaja.mp3",
+file_audio":"Gemitaiz_QVC Collection_La Ballata Del Dubbio - Pt.3.mp3",
+file_audio":"Lil Baby;Gucci Mane;Offset_Street Gossip_Realist In It (feat. Gucci Mane & Offset).mp3",
+file_audio":"Kanye West_Donda_Off The Grid.mp3",
+file_audio":"Ellie Goulding;Juice WRLD_Hate Me (with Juice WRLD)_Hate Me (with Juice WRLD).mp3",
+file_audio":"Miley Cyrus_Plastic Hearts_Angels Like You.mp3",
+file_audio":"Abraham Mateo;Sofía Reyes_¿Qué Ha Pasao'-_¿Qué Ha Pasao'-.mp3",
+file_audio":"Post Malone;Young Thug_Hollywood's Bleeding_Goodbyes (feat. Young Thug).mp3",
+file_audio":"Drake_Views_Hotline Bling.mp3",
+file_audio":"Bru-C;Simula_Original Sounds_You & I (feat. Simula).mp3",
+file_audio":"LeRoyce_The Sunny Nights Project_Sunny Nights.mp3",
+file_audio":"nayt;3D_Raptus 2_Poveri - Folk Version.mp3",
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_Brainless.mp3",
+file_audio":"YNW Melly_I AM YOU_Mama Cry.mp3",
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_So Much Better.mp3",
+file_audio":"Dave;Stormzy_Clash (feat. Stormzy)_Clash (feat. Stormzy).mp3",
+file_audio":"FIFTY FIFTY_The Beginning- Cupid_Cupid - Twin Ver..mp3",
+file_audio":"John Legend_Love In The Future (Expanded Edition)_All of Me.mp3",
+file_audio":"AVA;ANNA;Capo Plaza_VETRI NERI_VETRI NERI.mp3",
+file_audio":"Grupo Extra_Salsa Classics - The Best Latin Hits of All Times_Me Emborracharè.mp3",
+file_audio":"Romeo Santos_Golden_Imitadora.mp3",
+file_audio":"Vance Joy_Dream Your Life Away_Riptide.mp3",
+file_audio":"TWOPILOTS_Riptide_Riptide.mp3",
+file_audio":"Rema_Calm Down_Calm Down.mp3",
+file_audio":"Lil Eazzyy_Underrated_Onna Come Up.mp3",
+file_audio":"Lukas Graham_Lukas Graham_7 Years.mp3",
+file_audio":"Damian Marley_Welcome to Jamrock_Welcome To Jamrock.mp3",
+file_audio":"Bruno Mars_Unorthodox Jukebox_Locked out of Heaven.mp3",
+file_audio":"Catz 'n Dogz_Chucky73 - Bzrp 43_Chucky73 - Bzrp 43.mp3",
+file_audio":"OMI;felix jaehn_Me 4 U_Cheerleader (Felix Jaehn Remix) - Radio Edit.mp3",
+file_audio":"Gnarls Barkley;CeeLo Green;Danger Mouse_St. Elsewhere_Crazy.mp3",
+file_audio":"OneRepublic_I Ain’t Worried (Music From The Motion Picture -Top Gun- Maverick-)_I Ain't Worried.mp3",
+file_audio":"Justin Bieber_Justice_Ghost.mp3",
+file_audio":"Wiz Khalifa;Charlie Puth_See You Again (feat. Charlie Puth)_See You Again (feat. Charlie Puth).mp3",
+file_audio":"DJ Khaled;Rihanna;Bryson Tiller_Grateful_Wild Thoughts (feat. Rihanna & Bryson Tiller).mp3",
+file_audio":"Adele_25_Hello.mp3",
+file_audio":"Rosa Chemical_BELLU GUAGLIONE_BELLU GUAGLIONE.mp3",
+file_audio":"Tony Effe;Emma;Takagi & Ketra_TAXI SULLA LUNA_TAXI SULLA LUNA.mp3",
+file_audio":"Westside Connection_Terrorist Threats_Gangsta Nation.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Deluxe Edition)_Sabato sera.mp3",
+file_audio":"Eminem_The Eminem Show_Say Goodbye Hollywood.mp3",
+file_audio":"Achille Lauro;Rose Villain_Fragole_Fragole.mp3",
+file_audio":"Miley Cyrus_Flowers_Flowers.mp3",
+file_audio":"Medy;Capo Plaza_Nove Chiamate_Arai (feat. Capo Plaza).mp3",
+file_audio":"Tedua;Sfera Ebbasta_La Divina Commedia_Hoe (feat. Sfera Ebbasta).mp3",
+file_audio":"Lil Sleep_Sleepless_2 Faced.mp3",
+file_audio":"Soolking;Boro_Suavemente_Suavemente.mp3",
+file_audio":"The Notorious B.I.G._Greatest Hits_Hypnotize - 2007 Remaster.mp3",
+file_audio":"Mac Miller_GO-OD AM_Clubhouse.mp3",
+file_audio":"DJ Snake;J Balvin;Tyga_Carte Blanche_Loco Contigo (feat. J. Balvin & Tyga).mp3",
+file_audio":"Geolier;Marracash_IL CORAGGIO DEI BAMBINI - ATTO II_IL MALE CHE MI FAI (feat. Marracash).mp3",
+file_audio":"Travis Scott_Birds In The Trap Sing McKnight_sdp interlude.mp3",
+file_audio":"Santana;The Product G&B_Supernatural (Remastered)_Maria Maria (feat. The Product G&B).mp3",
+file_audio":"Farizki_Past Lives_Past Lives.mp3",
+file_audio":"Cheriimoya;Sierra Kidd_Living Life, In The Night_Living Life, In The Night.mp3",
+file_audio":"YoungBoy Never Broke Again_Realer 2_Put It On Me.mp3",
+file_audio":"Salmo;The Navigator_Midnite (Deluxe Version)_Ordinaria follia.mp3",
+file_audio":"Vacca;Cromo_Don Vacca Corleone_S’il vous plait.mp3",
+file_audio":"Izi_Pizzicato_Pizzicato.mp3",
+file_audio":"Lovegang126;Pretty Solero;Ugo Borghetti;DJ Gengis;Ketama126;Franco126;Drone126;Nino Brown_CRISTI E DIAVOLI_Cattive abitudini.mp3",
+file_audio":"Lovegang126;Ugo Borghetti;Franco126;Gemello;Nino Brown_CRISTI E DIAVOLI_Sintonia (feat. Gemello).mp3",
+file_audio":"Migos;Lil Uzi Vert_Culture_Bad and Boujee (feat. Lil Uzi Vert).mp3",
+file_audio":"Lovegang126;Asp126;Mystic One;Franco126;Nino Brown_CRISTI E DIAVOLI_Giorni migliori (feat. Mystic One).mp3",
+file_audio":"Lovegang126;Sosa Priority;Security;Pretty Solero;Ugo Borghetti;Drone126;Nino Brown_CRISTI E DIAVOLI_Triathlon (feat. Sosa Priority & Security).mp3",
+file_audio":"Lovegang126;Asp126;Ugo Borghetti;Pretty Solero;Franco126;Ketama126_CRISTI E DIAVOLI_Classico.mp3",
+file_audio":"Lovegang126;Pretty Solero;Asp126;Ugo Borghetti;Drone126_CRISTI E DIAVOLI_Tic tac.mp3",
+file_audio":"Lovegang126;Pretty Solero;Ketama126;Franco126;Asp126;Ugo Borghetti;Drone126;Nino Brown_CRISTI E DIAVOLI_Cristi e diavoli.mp3",
+file_audio":"Lovegang126;Franco126;Ketama126;Gemitaiz;Drone126_CRISTI E DIAVOLI_Marciapiedi (feat. Gemitaiz).mp3",
+file_audio":"Lovegang126;Ketama126;Side Baby;Franco126;Drone126_CRISTI E DIAVOLI_Spacciasogni (feat. Side Baby).mp3",
+file_audio":"AriBeatz;Ozuna;GIMS;Sfera Ebbasta_MIRAGE (feat. Ozuna, Sfera Ebbasta & GIMS)_MIRAGE (feat. Ozuna, GIMS & Sfera Ebbasta).mp3",
+file_audio":"Dr. Dre;Mary J. Blige;Rell_2001_The Message.mp3",
+file_audio":"Dr. Dre;Devin The Dude;Snoop Dogg_2001_Fuck You.mp3",
+file_audio":"Tai Verdes_how deep-_how deep-.mp3",
+file_audio":"Akon_Trouble Deluxe Edition_Lonely.mp3",
+file_audio":"Hell Raton;Slait_Machete Mixtape Gold Edition_Lucifer's Concept.mp3",
+file_audio":"Kendrick Lamar_good kid, m.A.A.d city (Deluxe)_Sing About Me, I'm Dying Of Thirst.mp3",
+file_audio":"Mac Miller_Macadelic_Thoughts from a Balcony.mp3",
+file_audio":"Mac Miller_K.I.D.S._Nikes on My Feet.mp3",
+file_audio":"Shablo;Geolier;Sfera Ebbasta_M' Manc (con Geolier & Sfera Ebbasta)_M' Manc (con Geolier & Sfera Ebbasta).mp3",
+file_audio":"Ozuna_Nibiru_Baila Baila Baila.mp3",
+file_audio":"Sfera Ebbasta;Luciano_Orange_Orange.mp3",
+file_audio":"Dr. Dre;Hittman_2001_Light Speed.mp3",
+file_audio":"KAROL G;Shakira_TQG_TQG.mp3",
+file_audio":"Eminem;Nate Dogg_Curtain Call- The Hits (Deluxe Edition)_Shake That.mp3",
+file_audio":"Finesse;Shiva;Sfera Ebbasta;Guè;Drillionaire_Gelosa (feat. Shiva, Sfera Ebbasta, Guè)_Gelosa (feat. Shiva, Sfera Ebbasta, Guè).mp3",
+file_audio":"D12_D-12 World_My Band.mp3",
+file_audio":"Guè_Sinatra_Bling Bling (Oro).mp3",
+file_audio":"XXXTENTACION_-_Hope.mp3",
+file_audio":"DDG;Blueface_Die 4 Respect_Moonwalking in Calabasas (feat. Blueface) - Remix.mp3",
+file_audio":"Vacca;L'Elfo_Don Vacca Corleone_Corvetto.mp3",
+file_audio":"Lil Uzi Vert_Luv Is Rage 2_XO Tour Llif3.mp3",
+file_audio":"Vacca_Don Vacca Corleone_Bah Bah.mp3",
+file_audio":"Pop Smoke_Shoot For The Stars Aim For The Moon_Got It On Me.mp3",
+file_audio":"Gang Starr;Inspectah Deck_Moment Of Truth_Above The Clouds.mp3",
+file_audio":"Rich The Kid_The World Is Yours_Plug Walk.mp3",
+file_audio":"Busta Rhymes;Mariah Carey;Flipmode Squad_It Ain't Safe No More_I Know What You Want (feat. Flipmode Squad).mp3",
+file_audio":"Yasuha_Fly-day Chinatown_Fly-day Chinatown.mp3",
+file_audio":"Fetty Wap_Fetty Wap_Trap Queen.mp3",
+file_audio":"D12;50 Cent_8 Mile [Music From And Inspired By The Motion Picture (Expanded Edition)]_Rap Game.mp3",
+file_audio":"Guè;Rose Villain_GVESVS_Piango Sulla Lambo (feat. Rose Villain).mp3",
+file_audio":"Guè;Marracash;Rkomi_Madreperla_Free (feat. Marracash & Rkomi).mp3",
+file_audio":"Eminem_Revival_Framed.mp3",
+file_audio":"Massimo Pericolo;Crookers;Madame_SOLO TUTTO_AIRFORCE (feat. Madame).mp3",
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_Groundhog Day.mp3",
+file_audio":"Nerone_Entertainer_Oggi no.mp3",
+file_audio":"Travis Scott_ASTROWORLD_CAN'T SAY.mp3",
+file_audio":"Young Dro_High Times_FDB.mp3",
+file_audio":"J Swey;Azide;Blak Trash_To Grant Them Eternal Rest_Pablo's Revenge.mp3",
+file_audio":"Carl Brave;Francesca Michielin;Fabri Fibra_Notti Brave_Fotografia (feat. Francesca Michielin & Fabri Fibra).mp3",
+file_audio":"Eminem_The Marshall Mathers LP - Tour Edition (International Version)_Marshall Mathers.mp3",
+file_audio":"Cordae_The Lost Boy_Broke As Fuck.mp3",
+file_audio":"Coi Leray_Players_Players.mp3",
+file_audio":"1nonly_Stay With Me_Stay With Me.mp3",
+file_audio":"Paky;Geolier_Salvatore Vive_Comandamento (feat. Geolier).mp3",
+file_audio":"Lazza;Low Kidd_Zzala_Silenzio.mp3",
+file_audio":"Paky_Salvatore_Mama I’m a Criminal.mp3",
+file_audio":"Paky_Salvatore_Blauer.mp3",
+file_audio":"Juice WRLD_Goodbye & Good Riddance_Lucid Dreams.mp3",
+file_audio":"MACE;Venerus;Gemitaiz_OBE_DAL TRAMONTO ALL’ALBA ⚭ (con VENERUS & GEMITAIZ).mp3",
+file_audio":"Geolier;Sfera Ebbasta_IL CORAGGIO DEI BAMBINI_X CASO (feat. Sfera Ebbasta).mp3",
+file_audio":"Baby Gang;Il Ghost_EP1_3 Occhi (feat. Il Ghost).mp3",
+file_audio":"Lazza;Low Kidd_Zzala_Origami.mp3",
+file_audio":"MamboLosco;Pyrex_SKUSKU (feat. Pyrex)_SKUSKU (feat. Pyrex).mp3",
+file_audio":"MamboLosco;Nardi;Finesse_Bandito_Bandito.mp3",
+file_audio":"Caparezza_Le Dimensioni Del Mio Caos_Eroe (Storia Di Luigi Delle Bicocche).mp3",
+file_audio":"FSK SATELLITE;Greg Willen_PADRE FIGLIO E SPIRITO_DON’T TOUCH MY STICK.mp3",
+file_audio":"Cordae;Anderson .Paak_The Lost Boy_RNP (feat. Anderson .Paak).mp3",
+file_audio":"Eminem_The Slim Shady LP_As The World Turns.mp3",
+file_audio":"Salmo;Travis Barker_Hellvisback_Bentley vs Cadillac (feat. Travis Barker).mp3",
+file_audio":"Capo Plaza_PLAZA_Non Fare Così.mp3",
+file_audio":"Tedua_Lo-fi For U_Lo-fi For U.mp3",
+file_audio":"Tedua;SHUNE_Don't Panic_Lo-fi Drill.mp3",
+file_audio":"RA (Real Artillery)_Wrap Up 2022_Wrap Up 2022.mp3",
+file_audio":"Creeds_Push Up EP_Push Up - Original Mix.mp3",
+file_audio":"Geolier;Lazza;Takagi & Ketra_IL CORAGGIO DEI BAMBINI_CHIAGNE (feat. Lazza & Takagi & Ketra).mp3",
+file_audio":"Geolier_IL CORAGGIO DEI BAMBINI_HERE I COME.mp3",
+file_audio":"Lazza;Low Kidd_Zzala_DDA.mp3",
+file_audio":"Lazza_SIRIO (Concertos)_SENZA RUMORE (Concertos).mp3",
+file_audio":"Taxi B_SOS_SOS.mp3",
+file_audio":"Capo Plaza_Hustle Mixtape_RapStar.mp3",
+file_audio":"Travis Scott_ASTROWORLD_5- TINT.mp3",
+file_audio":"Travis Scott_ASTROWORLD_NO BYSTANDERS.mp3",
+file_audio":"Eminem_The Eminem Show_Square Dance.mp3",
+file_audio":"Paky_Salvatore_Vita sbagliata.mp3",
+file_audio":"J. Cole_Cole World- The Sideline Story_Work Out.mp3",
+file_audio":"Outkast_Stankonia_Ms. Jackson.mp3",
+file_audio":"Massimo Pericolo_Scialla Semper (Emodrill Repack)_Totoro - Emodrill version 2019.mp3",
+file_audio":"Massimo Pericolo;Crookers_SOLO TUTTO_FUMO.mp3",
+file_audio":"Massimo Pericolo;Crookers_SOLO TUTTO_STUPIDO.mp3",
+file_audio":"Kanye West;Pusha T_My Beautiful Dark Twisted Fantasy_Runaway.mp3",
+file_audio":"J. Cole_2014 Forest Hills Drive_Wet Dreamz.mp3",
+file_audio":"J. Cole_2014 Forest Hills Drive_03’ Adolescence.mp3",
+file_audio":"J. Cole_2014 Forest Hills Drive_Fire Squad.mp3",
+file_audio":"J. Cole_2014 Forest Hills Drive_January 28th.mp3",
+file_audio":"J. Cole_2014 Forest Hills Drive_Intro.mp3",
+file_audio":"Dreamville;J. Cole;Lute;DaBaby_Revenge Of The Dreamers III_Under The Sun (with J. Cole & Lute feat. DaBaby).mp3",
+file_audio":"Rkomi;Sfera Ebbasta;Junior K_TAXI DRIVER_NUOVO RANGE (con SFERA EBBASTA).mp3",
+file_audio":"Salmo_FLOP_ANTIPATICO.mp3",
+file_audio":"Paky;Kermit_Non Scherzare_Non Scherzare.mp3",
+file_audio":"Ghali;Marracash_Sensazione ultra_FREE SOLO (feat. Marracash).mp3",
+file_audio":"Paky;Kermit_Boss_Boss.mp3",
+file_audio":"Capo Plaza;AVA_Allenamento #2_Allenamento #2.mp3",
+file_audio":"Achille Lauro;Boss Doms;Gemitaiz;Frenetik&Orang3_Pour l'amour_Purple Rain (feat. Gemitaiz, Frenetik&Orang3).mp3",
+file_audio":"Salmo_Machete Mixtape, Vol. 3_Falsità & cortesia.mp3",
+file_audio":"Izi;Moses Sangare_Fenice_Scusa (feat. Moses Sangare).mp3",
+file_audio":"Shiva;Sfera Ebbasta_Soldi in Nero (feat. Sfera Ebbasta)_Soldi in Nero - feat. Sfera Ebbasta.mp3",
+file_audio":"Jay Reaper;Jack The Smoker;Johnny Marsiglia;Dopey Rotten_Machete Mixtape, Vol. 3_Skid Mark.mp3",
+file_audio":"Denzel Curry_Ultimate_Ultimate.mp3",
+file_audio":"Chris Lorenzo;Cobrah_MAMI_MAMI.mp3",
+file_audio":"Kendrick Lamar;Baby Keem;Sam Dew_Mr. Morale & The Big Steppers_Savior.mp3",
+file_audio":"Freddie Dredd_Freddie's Inferno_Limbo.mp3",
+file_audio":"Izi_Aletheia_Fumo Da Solo.mp3",
+file_audio":"Marracash;Neffa_Status_Nella Macchina.mp3",
+file_audio":"MadMan_Back Home_Grande.mp3",
+file_audio":"Eminem_The Slim Shady LP (Expanded Edition)_I'm Shady.mp3",
+file_audio":"Lazza_SIRIO (Concertos)_PIOVE (Concertos).mp3",
+file_audio":"Shiva_Take 4_Take 4.mp3",
+file_audio":"Lazza_SIRIO (Concertos)_NESSUNO (Concertos).mp3",
+file_audio":"Central Cee_LET GO_LET GO.mp3",
+file_audio":"Vegas Jones;Nitro_Chic Nisello_Trankilo (feat. Nitro).mp3",
+file_audio":"Ghali_Lunga Vita a Sto_Vai Tra.mp3",
+file_audio":"Ghali_Lunga Vita a Sto_Marijuana.mp3",
+file_audio":"Ghali_Lunga Vita a Sto_Voci.mp3",
+file_audio":"Ghali_Lunga Vita a Sto_Mamma.mp3",
+file_audio":"Ghali_Lunga Vita a Sto_Cazzo Mene.mp3",
+file_audio":"Ghali_Lunga Vita a Sto_Optional.mp3",
+file_audio":"Ghali_Lunga Vita a Sto_Come Milano.mp3",
+file_audio":"Ghali;Izi_Lunga Vita a Sto_Non Lo So.mp3",
+file_audio":"Gemitaiz;Coez;Marracash_Eclissi_K.O. (feat. Coez & Marracash).mp3",
+file_audio":"Night Skinny;Guè;Izi_Pezzi_6 A.M..mp3",
+file_audio":"En-gma;Jack The Smoker_Machete Mixtape, Vol. 3_Machetero.mp3",
+file_audio":"Izi_Pizzicato_Na Na Na.mp3",
+file_audio":"Southside;Future;Travis Scott_Hold That Heat (feat. Travis Scott)_Hold That Heat (feat. Travis Scott).mp3",
+file_audio":"LXST CXNTURY;Kingpin Skinny Pimp_UNIVERSE OF THE PAST_ODIUM.mp3",
+file_audio":"Eminem;Obie Trice_The Eminem Show_Drips.mp3",
+file_audio":"Le Scimmie;Izi_Eldorado_We We.mp3",
+file_audio":"Salmo_FLOP_A DIO.mp3",
+file_audio":"Salmo_FLOP_KUMITE.mp3",
+file_audio":"Salmo_FLOP_CHE NE SO.mp3",
+file_audio":"Lazza;Izi_Re Mida_Cazal (feat. Izi).mp3",
+file_audio":"Mostro_Sinceramente Mostro_Nostradamus.mp3",
+file_audio":"Salmo_FLOP_MI SENTO BENE.mp3",
+file_audio":"Vacca;Jamil_DON_C'est la vie (feat. Jamil).mp3",
+file_audio":"Salmo;Guè_FLOP_YHWH - feat. Guè.mp3",
+file_audio":"Ghali_DNA_Fast Food.mp3",
+file_audio":"Shiva;Paky_Fendi belt_Fendi belt.mp3",
+file_audio":"Eminem_Recovery_On Fire.mp3",
+file_audio":"Eminem_Recovery_W.T.P..mp3",
+file_audio":"En-gma_Machete Mixtape, Vol. 3_Antieroi.mp3",
+file_audio":"thasup;Lazza;Sfera Ebbasta_s!r! (feat. Lazza & Sfera Ebbasta)_s!r! (feat. Lazza & Sfera Ebbasta).mp3",
+file_audio":"Kendrick Lamar;Dom Kennedy;Murs_Overly Dedicated_She Needs Me (Remix).mp3",
+file_audio":"Cancun;Lazza;Guè_CANCUN_Compare (feat. Lazza & Guè).mp3",
+file_audio":"Dr. Dre;Hittman;Ms. Roq_2001_Murder Ink.mp3",
+file_audio":"Booba;Sfera Ebbasta_Téléphone_Téléphone.mp3",
+file_audio":"Paky_Salvatore Vive_Auto tedesca.mp3",
+file_audio":"Paky;Marracash_Salvatore Vive_No wallet (feat. Marracash).mp3",
+file_audio":"Paky_Salvatore Vive_Sharm El Sheikh.mp3",
+file_audio":"Ghali_Album_Vida.mp3",
+file_audio":"Ghali_Album_Oggi No.mp3",
+file_audio":"Ghali_Album_Boulevard.mp3",
+file_audio":"Ghali_Album_Pizza Kebab.mp3",
+file_audio":"Ghali_Album_Milano.mp3",
+file_audio":"Ghali_Album_Happy Days.mp3",
+file_audio":"Ghali_Album_Lacrime.mp3",
+file_audio":"Ghali_Album_Habibi.mp3",
+file_audio":"Ghali_Album_Ricchi Dentro.mp3",
+file_audio":"Stormzy;Ghali_Vossi Bop (Remix) [feat. Ghali]_Vossi Bop (Remix) [feat. Ghali].mp3",
+file_audio":"Salmo_Midnite (Deluxe Version)_Faraway.mp3",
+file_audio":"Achille Lauro;Boss Doms;Vins_Pour l'amour_Dolores (feat. Vins).mp3",
+file_audio":"Pop Smoke_Shoot For The Stars Aim For The Moon_Gangstas.mp3",
+file_audio":"Kanye West;Jamie Foxx_Late Registration_Gold Digger.mp3",
+file_audio":"Eminem_Curtain Call- The Hits (Deluxe Edition)_FACK.mp3",
+file_audio":"Eminem_Recovery_Space Bound.mp3",
+file_audio":"Nerone;Nitro;Gemitaiz_Un sec_Un sec.mp3",
+file_audio":"Salmo_Machete Mixtape Iii_Falsità e cortesia.mp3",
+file_audio":"Salmo_Midnite (Deluxe Version)_Old Boy.mp3",
+file_audio":"Eminem_SHADYXV_Lose Yourself.mp3",
+file_audio":"Lazza;Low Kidd_Zzala_Take Away.mp3",
+file_audio":"En-gma_Machete Mixtape Gold Edition_Olimpiade.mp3",
+file_audio":"Lil Wayne;Swizz Beatz_Tha Carter V_Uproar.mp3",
+file_audio":"Marracash_NOI, LORO, GLI ALTRI_CLIFFHANGER.mp3",
+file_audio":"Marracash_NOI, LORO, GLI ALTRI_NOI.mp3",
+file_audio":"Marracash_NOI, LORO, GLI ALTRI_DUBBI.mp3",
+file_audio":"Marracash;Guè_NOI, LORO, GLI ALTRI_∞ LOVE (feat. Guè).mp3",
+file_audio":"Marracash_NOI, LORO, GLI ALTRI_LORO.mp3",
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_Legacy.mp3",
+file_audio":"JAŸ-Z;Kanye West_Watch The Throne (Deluxe)_Ni--as In Paris.mp3",
+file_audio":"Ernia_Come Uccidere Un Usignolo (67 Edition)_Pas Ta Fête.mp3",
+file_audio":"Dr. Dre;Hittman;Six-Two;Snoop Dogg_2001_Bitch Niggaz.mp3",
+file_audio":"Salmo;Victor Kwality;Travis Barker_Hellvisback_Il messia (feat. Travis Barker).mp3",
+file_audio":"MACE;BLANCO;Salmo_LA CANZONE NOSTRA ⟁ (con BLANCO & Salmo)_LA CANZONE NOSTRA ⟁ (con BLANCO & Salmo).mp3",
+file_audio":"Vegas Jones_Bellaria_La Finale.mp3",
+file_audio":"Sfera Ebbasta;Tedua;Izi_XDVR Reloaded_Mercedes Nero.mp3",
+file_audio":"Capo Plaza_Hustle Mixtape_Capri Sun.mp3",
+file_audio":"Salmo_Machete Mixtape Gold Edition_Stupido gioco del Rap.mp3",
+file_audio":"Central Cee_Wild West_Day in the Life.mp3",
+file_audio":"Shiva_Dark Love EP_X Sempre.mp3",
+file_audio":"Shiva_Dark Love EP_Niente da perdere.mp3",
+file_audio":"Shiva_Dark Love EP_Tanti Cuori.mp3",
+file_audio":"Shiva_Dark Love EP_Sei qui.mp3",
+file_audio":"Shiva_Dark Love EP_Pensando a lei.mp3",
+file_audio":"Kendrick Lamar_Mr. Morale & The Big Steppers_Count Me Out.mp3",
+file_audio":"Central Cee_23_Obsessed With You.mp3",
+file_audio":"MadMan;Priestess_Doppelganger_Non Esiste.mp3",
+file_audio":"Paky;Shiva_Salvatore_Star (feat. Shiva).mp3",
+file_audio":"Paky_Salvatore_Mi manchi.mp3",
+file_audio":"Guè_GVESVS_Veleno.mp3",
+file_audio":"Marracash;Guè_Santeria_Film Senza Volume.mp3",
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_So Far....mp3",
+file_audio":"Eminem_Recovery_Cold Wind Blows.mp3",
+file_audio":"Tion Wayne;Russ Millions;Capo Plaza;Rondodasosa_Body (Remix) [feat. Capo Plaza & Rondodasosa]_Body (Remix) [feat. Capo Plaza & Rondodasosa].mp3",
+file_audio":"Eminem_The Eminem Show_Business.mp3",
+file_audio":"Eminem;Joyner Lucas_Kamikaze_Lucky You (feat. Joyner Lucas).mp3",
+file_audio":"Drake;Lil Baby_Scary Hours 2_Wants and Needs (feat. Lil Baby).mp3",
+file_audio":"Emis Killa;Lazza_Keta Music, Vol. 3_Morto di fame (feat. Lazza).mp3",
+file_audio":"Tedua;Lazza;Chris Nolan_Vita Vera Mixtape_Party HH - feat. Lazza.mp3",
+file_audio":"BLOODY VINYL;Slait;MILES;Lazza_BV3_BLOODY BARS - STUDIOMOB (feat. Lazza).mp3",
+file_audio":"Tony Effe;Lazza;Gazo_Untouchable_Ke Lo Ke (feat. Lazza & Gazo).mp3",
+file_audio":"T.I.;Eminem_No Mercy_That's All She Wrote.mp3",
+file_audio":"Eminem_The Marshall Mathers LP - Tour Edition (International Version)_Who Knew.mp3",
+file_audio":"Eminem_The Slim Shady LP_My Fault.mp3",
+file_audio":"K Dazee_remind me tomorrow_the new me is still the old me.mp3",
+file_audio":"Marracash;Guè_Santeria_Tony.mp3",
+file_audio":"James Hype;Miggy Dela Rosa;Lazza_Ferrari (Remix)_Ferrari - Remix.mp3",
+file_audio":"Kendrick Lamar;Sampha_Mr. Morale & The Big Steppers_Father Time (feat. Sampha).mp3",
+file_audio":"Quavo;Takeoff_HOTEL LOBBY (Unc & Phew)_HOTEL LOBBY (Unc & Phew).mp3",
+file_audio":"Lazza_SIRIO_CINEMA.mp3",
+file_audio":"Lazza_SIRIO_REPLAY.mp3",
+file_audio":"Lazza_SIRIO_NULLA DI.mp3",
+file_audio":"Mick Jenkins_The Circus_Carefree.mp3",
+file_audio":"Lazza_SIRIO_JEFE.mp3",
+file_audio":"Lazza_SIRIO_USCITO DI GALERA.mp3",
+file_audio":"Lazza_SIRIO_3 PALI.mp3",
+file_audio":"Lazza;Geolier_SIRIO_NESSUNO (feat. Geolier).mp3",
+file_audio":"Lazza;Noyz Narcos_SIRIO_TOPBOY (feat. Noyz Narcos).mp3",
+file_audio":"Lazza;Takagi & Ketra_SIRIO_PANICO (feat. Takagi & Ketra).mp3",
+file_audio":"Lazza;Tory Lanez_SIRIO_BUGIA (feat. Tory Lanez).mp3",
+file_audio":"Lazza_SIRIO_MOLOTOV.mp3",
+file_audio":"Lazza_SIRIO_OUV3RTURE.mp3",
+file_audio":"Lazza_SIRIO_SENZA RUMORE.mp3",
+file_audio":"nayt;3D_DOOM_Mortale.mp3",
+file_audio":"Lazza_SIRIO_SOGNI D'ORO.mp3",
+file_audio":"Silent Bob;Sick Budd;Massimo Pericolo;Crookers_Piano B_Autostrada Del Sole.mp3",
+file_audio":"Kendrick Lamar_good kid, m.A.A.d city_Bitch, Don’t Kill My Vibe.mp3",
+file_audio":"Marracash_Persona_CRUDELIA - I nervi.mp3",
+file_audio":"Caparezza_Habemus Capa_La Mia Parte Intollerante.mp3",
+file_audio":"Sfera Ebbasta;Future_Famoso_Abracadabra (feat. Future).mp3",
+file_audio":"Eminem_The Slim Shady LP_If I Had.mp3",
+file_audio":"Emis Killa;Don Joe_Rollercoaster_Rollercoaster.mp3",
+file_audio":"Kendrick Lamar_DAMN. COLLECTORS EDITION._FEEL..mp3",
+file_audio":"Imagine Dragons_Evolve_Next To Me.mp3",
+file_audio":"En-gma;Riky_Machete Mixtape Iii_Game Play.mp3",
+file_audio":"Gemitaiz_QVC Collection_Il Primo.mp3",
+file_audio":"Silent Bob;Sick Budd_Piano B_Zitta.mp3",
+file_audio":"Silent Bob;Sick Budd_Piano B_I Miei Cio'.mp3",
+file_audio":"Dr. Dre;Hittman;Knoc-Turn'al_2001_Bang Bang.mp3",
+file_audio":"Lazza;Sfera Ebbasta_SIRIO_PIOVE (feat. Sfera Ebbasta).mp3",
+file_audio":"Sfera Ebbasta_Famoso_6 AM.mp3",
+file_audio":"Nitro_Machete Mixtape Gold Edition_Jack e Sally.mp3",
+file_audio":"Nitro_Danger_Without You.mp3",
+file_audio":"Eminem_Curtain Call (Deluxe)_Mockingbird.mp3",
+file_audio":"En-gma;Jack The Smoker;Salmo_Machete Mixtape Gold Edition_Terminal.mp3",
+file_audio":"Highsnob_Bipopular_Arigato.mp3",
+file_audio":"Eminem;Dina Rae_The Eminem Show_Superman.mp3",
+file_audio":"Eminem_Kamikaze_Fall.mp3",
+file_audio":"Ernia;Izi;Moses Sangare_Fenomeno_Fenomeno.mp3",
+file_audio":"G-Unit_Beg For Mercy_G'D Up.mp3",
+file_audio":"Salmo_Hellvisback_Black Widow.mp3",
+file_audio":"Guè_Vero_Eravamo Re.mp3",
+file_audio":"nayt;3D_MOOD_Scuola.mp3",
+file_audio":"Eminem_Relapse_Same Song & Dance.mp3",
+file_audio":"Lazza;Sfera Ebbasta;Capo Plaza_Re Mida (Aurum)_Gigolò (feat. Sfera Ebbasta & Capo Plaza).mp3",
+file_audio":"Jack The Smoker_Machete Mixtape, Vol. 3_Ce l'ho.mp3",
+file_audio":"Kendrick Lamar_To Pimp A Butterfly_Alright.mp3",
+file_audio":"Eminem_The Slim Shady LP (Expanded Edition)_Rock Bottom.mp3",
+file_audio":"Mostro_Sinceramente Mostro_Un po' depresso.mp3",
+file_audio":"Club Dogo_Mi fist (Remastered version)_Selezione all'ingresso.mp3",
+file_audio":"Salmo;Jack The Smoker;Mondo Marcio;Coez_Machete Mixtape, Vol. 3_Non esco mai.mp3",
+file_audio":"En-gma;El Raton_Machete Mixtape Iii_Mandrie.mp3",
+file_audio":"Lazza;Low Kidd_Zzala_MNM.mp3",
+file_audio":"Gemitaiz_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Outro In The Night.mp3",
+file_audio":"Emis Killa;Jake La Furia;Massimo Pericolo_17_L'ultima volta - feat. Massimo Pericolo.mp3",
+file_audio":"Emis Killa;Jake La Furia_17_Maleducato.mp3",
+file_audio":"Emis Killa;Jake La Furia_17_666.mp3",
+file_audio":"Emis Killa;Jake La Furia;Lazza_17_No Insta - feat. Lazza.mp3",
+file_audio":"Emis Killa;Jake La Furia_17_Broken Language.mp3",
+file_audio":"Dr. Dre;Hittman;Kurupt_2001_Housewife.mp3",
+file_audio":"Central Cee_Doja_Doja.mp3",
+file_audio":"Central Cee_Loading_Loading.mp3",
+file_audio":"En-gma_Rebus_Bugie Bianche.mp3",
+file_audio":"Dr. Dre;Eminem;Knoc-Turn'al_2001_The Watcher.mp3",
+file_audio":"Guè;Dj Harsh;Marracash_Fastlife 4_Smith & Wesson Freestyle (feat. Marracash).mp3",
+file_audio":"Roddy Ricch_Please Excuse Me for Being Antisocial_The Box.mp3",
+file_audio":"Sting;Shaggy_44-876 (Deluxe)_Morning Is Coming (with Shaggy).mp3",
+file_audio":"Ernia_Gemelli (ascendente Milano)_Lewandowski VII.mp3",
+file_audio":"Dani Faiv;Lexotan_Teoria Del Contrario_Contrario - Bonus Track.mp3",
+file_audio":"KAMRAD_I Believe_I Believe.mp3",
+file_audio":"Lost Frequencies;Calum Scott_Where Are You Now_Where Are You Now.mp3",
+file_audio":"LIBERATO_LIBERATO II_PARTENOPE.mp3",
+file_audio":"Kendrick Lamar_Mr. Morale & The Big Steppers_N95.mp3",
+file_audio":"Imagine Dragons_Evolve_Dancing In The Dark.mp3",
+file_audio":"Imagine Dragons_Evolve_Start Over.mp3",
+file_audio":"Imagine Dragons_Evolve_Thunder.mp3",
+file_audio":"Imagine Dragons_Evolve_Mouth Of The River.mp3",
+file_audio":"Imagine Dragons_Evolve_Yesterday.mp3",
+file_audio":"Imagine Dragons_Evolve_I’ll Make It Up To You.mp3",
+file_audio":"Imagine Dragons_Evolve_Rise Up.mp3",
+file_audio":"Imagine Dragons_Evolve_Walking The Wire.mp3",
+file_audio":"Imagine Dragons_Evolve_Believer.mp3",
+file_audio":"Imagine Dragons_Evolve_Whatever It Takes.mp3",
+file_audio":"Imagine Dragons_Evolve_I Don’t Know Why.mp3",
+file_audio":"Mondo Marcio_Cose dell'altro Mondo_Senza cuore - La ballata di Johnny.mp3",
+file_audio":"Guè;Marracash_Bravo Ragazzo (Royal Edition)_Brivido.mp3",
+file_audio":"Eminem_The Eminem Show_Cleanin' Out My Closet.mp3",
+file_audio":"Imagine Dragons;JID;Arcane;League of Legends_Enemy (with JID) [from the series Arcane League of Legends]_Enemy (with JID) - from the series Arcane League of Legends.mp3",
+file_audio":"Lazza_SIRIO_ALIBI.mp3",
+file_audio":"Double A-Ron;Jdillon_Commercial Break_Walk Around.mp3",
+file_audio":"2Pac;50 Cent;Lloyd Banks;Young Buck_Loyal To The Game_Loyal To The Game.mp3",
+file_audio":"Pop Smoke;Lil Tjay_Shoot For The Stars Aim For The Moon_Mood Swings (feat. Lil Tjay).mp3",
+file_audio":"Frenetik&Orang3;Gemitaiz_ZEROSEI_Giornate vuote (feat. Gemitaiz).mp3",
+file_audio":"Lazza_Re Mida (Piano Solo)_Morto Mai (Piano Solo).mp3",
+file_audio":"Logic_The Incredible True Story_Lord Willin'.mp3",
+file_audio":"Dxrk ダーク_RAVE_RAVE.mp3",
+file_audio":"Salmo;Guè;Sixpm_BLOCCO 181 – ORIGINAL SOUNDTRACK_LOCO.mp3",
+file_audio":"Salmo;Lazza;Verano_BLOCCO 181 – ORIGINAL SOUNDTRACK_MI ANTHEM.mp3",
+file_audio":"IIIDAZE_Night Shift_Night Shift.mp3",
+file_audio":"JAŸ-Z_4-44_4-44.mp3",
+file_audio":"Kodak Black_Sniper Gang Presents Syko Bob & Snapkatt- Nightmare Babies_Super Gremlin.mp3",
+file_audio":"Ice Cube_Greatest Hits_It Was A Good Day.mp3",
+file_audio":"Kid Cudi_Man On The Moon II- The Legend Of Mr. Rager_Marijuana.mp3",
+file_audio":"Lazza;French Montana_SIRIO_PUTO (feat. French Montana).mp3",
+file_audio":"Lungz;Logic_Inebriation_20-20 (feat. Logic).mp3",
+file_audio":"Drake;JAŸ-Z_Nothing Was The Same_Pound Cake - Paris Morton Music 2.mp3",
+file_audio":"Russ_SHAKE THE SNOW GLOBE (DELUXE)_NIGHTTIME (Interlude).mp3",
+file_audio":"6LACK_FREE 6LACK_PRBLMS.mp3",
+file_audio":"Pop Smoke_Meet The Woo_Scenario.mp3",
+file_audio":"Meek Mill_DC4_Blue Notes.mp3",
+file_audio":"Sueco_Paralyzed_Paralyzed.mp3",
+file_audio":"Khalid_Suncity_Better.mp3",
+file_audio":"Kodak Black_First Day Out_First Day Out.mp3",
+file_audio":"Aaron May_CHASE_Let Go.mp3",
+file_audio":"A Boogie Wit da Hoodie;Jessie Reyez_International Artist_Pretending (feat. Jessie Reyez).mp3",
+file_audio":"Trippie Redd_A Love Letter To You_It Takes Time.mp3",
+file_audio":"21 Savage_i am - i was_ball w-o you.mp3",
+file_audio":"$uicideboy$_STOP STARING AT THE SHADOWS_...And To Those I Love, Thanks For Sticking Around.mp3",
+file_audio":"Rod Wave_Ghetto Gospel_Sky Priority.mp3",
+file_audio":"Mac Miller_Circles_Good News.mp3",
+file_audio":"Pop Smoke;Gunna;Young Thug_Shoot For The Stars Aim For The Moon (Deluxe)_Paranoia (feat. Gunna & Young Thug).mp3",
+file_audio":"The Beatnuts;Method Man_Take It Or Squeeze It_Se Acabo (feat. Method Man).mp3",
+file_audio":"Eminem_The Marshall Mathers LP_The Way I Am.mp3",
+file_audio":"1020Meezy_Mobties_Mobties.mp3",
+file_audio":"21 Savage;Metro Boomin_SAVAGE MODE II_Runnin.mp3",
+file_audio":"Drake;21 Savage;Project Pat_Certified Lover Boy_Knife Talk (with 21 Savage ft. Project Pat).mp3",
+file_audio":"Gemitaiz_Eclissi_Ciao Baby.mp3",
+file_audio":"BONES_IFeelLikeDirt_AirplaneMode.mp3",
+file_audio":"Gemitaiz;MadMan_Eclissi_Top (feat. MadMan).mp3",
+file_audio":"2Pac_All Eyez On Me_Ambitionz Az A Ridah.mp3",
+file_audio":"2Pac_Greatest Hits_Hail Mary.mp3",
+file_audio":"Kendrick Lamar;BJ The Chicago Kid_Section.80_Kush & Corinthians (feat. BJ The Chicago Kid).mp3",
+file_audio":"Kendrick Lamar_Section.80_Chapter Six.mp3",
+file_audio":"XXXTENTACION_17_Everybody Dies In Their Nightmares.mp3",
+file_audio":"Russ;Tamae;Capella Grey_Seduce (Feat. Capella Grey & Tamae)_Seduce (Feat. Capella Grey & Tamae).mp3",
+file_audio":"DaBaby_BLAME IT ON BABY_SAD SH-T.mp3",
+file_audio":"Logic_Bobby Tarantino_44 Bars.mp3",
+file_audio":"BONES_Skinny_WhereTheTreesMeetTheFreeway.mp3",
+file_audio":"Lil Skies_Magic_Magic.mp3",
+file_audio":"21 Savage_i am - i was_a lot.mp3",
+file_audio":"J. Cole_2014 Forest Hills Drive_Love Yourz.mp3",
+file_audio":"Delinquent Habits_Merry Go Round_Return of the Tres.mp3",
+file_audio":"XXXTENTACION_-_the remedy for a broken heart (why am I so in love).mp3",
+file_audio":"Obie Trice;Dr. Dre_Cheers_Shit Hits The Fan.mp3",
+file_audio":"Bresh;SHUNE_Angelina Jolie_Angelina Jolie.mp3",
+file_audio":"Rob $tone;J. Davi$;J Spooks_Chill Bill (feat. J. Davi$ & Spooks)_Chill Bill (feat. J. Davi$ & Spooks).mp3",
+file_audio":"Kanye West_808s & Heartbreak_Heartless.mp3",
+file_audio":"50 Cent_The Massacre_Just A Lil Bit.mp3",
+file_audio":"50 Cent_The Massacre_Disco Inferno.mp3",
+file_audio":"Kendrick Lamar;Jay Rock_good kid, m.A.A.d city (Deluxe)_Money Trees.mp3",
+file_audio":"Kendrick Lamar_DAMN._DUCKWORTH..mp3",
+file_audio":"Meek Mill;YG;Snoop Dogg_That's My N---- (with Meek Mill, YG & Snoop Dogg) [From Bright- The Album]_That's My N---- (with Meek Mill, YG & Snoop Dogg).mp3",
+file_audio":"Eminem;Anderson .Paak_Music To Be Murdered By_Lock It Up (feat. Anderson .Paak).mp3",
+file_audio":"G-Unit_Beg For Mercy_Poppin' Them Thangs.mp3",
+file_audio":"50 Cent_Get Rich Or Die Tryin'- The Original Motion Picture Soundtrack_When It Rains It Pours.mp3",
+file_audio":"Pop Smoke;KAROL G_Shoot For The Stars Aim For The Moon_Enjoy Yourself (feat. Karol G).mp3",
+file_audio":"Obie Trice;D12;Eminem_Cheers_Outro (Obie Trice- Cheers).mp3",
+file_audio":"Eminem;Dido_The Marshall Mathers LP_Stan.mp3",
+file_audio":"50 Cent;Eminem_Get Rich Or Die Tryin'_Patiently Waiting.mp3",
+file_audio":"DaBaby;Lil Wayne_Lonely (with Lil Wayne)_Lonely (with Lil Wayne).mp3",
+file_audio":"DJ Khaled;Drake_POPSTAR (feat. Drake)_POPSTAR (feat. Drake).mp3",
+file_audio":"Eminem;DMX;Obie Trice_Cradle 2 The Grave_Go To Sleep.mp3",
+file_audio":"Pop Smoke;A Boogie Wit da Hoodie_Shoot For The Stars Aim For The Moon (Deluxe)_Hello (feat. A Boogie Wit da Hoodie).mp3",
+file_audio":"Eminem_The Slim Shady LP_Role Model.mp3",
+file_audio":"Eminem_Relapse_Stay Wide Awake.mp3",
+file_audio":"Mandragora_La Espanolita (Jon Mesquita & Henrique Camacho Remix)_La Espanolita - Jon Mesquita & Henrique Camacho Remix.mp3",
+file_audio":"Hilight Tribe_Temple of Light_Esperanza.mp3",
+file_audio":"Nitro_GarbAge Evilution_Animalz - prod. Strage.mp3",
+file_audio":"Eminem_The Marshall Mathers LP_Kill You.mp3",
+file_audio":"Coolio;L.V._Gangsta's Paradise_Gangsta's Paradise.mp3",
+file_audio":"50 Cent_Get Rich Or Die Tryin'_In Da Club.mp3",
+file_audio":"Obie Trice;50 Cent;Lloyd Banks;Eminem_Cheers_We All Die One Day.mp3",
+file_audio":"2Pac_All Eyez On Me_Can't C Me.mp3",
+file_audio":"2Pac;Snoop Dogg_All Eyez On Me_2 Of Amerikaz Most Wanted (ft. Snoop Doggy Dogg).mp3",
+file_audio":"2Pac;Outlawz_Greatest Hits_Hit 'Em Up - Single Version.mp3",
+file_audio":"Ice Cube_Laugh Now, Cry Later_Why We Thugs.mp3",
+file_audio":"Eminem_The Slim Shady LP_My Name Is.mp3",
+file_audio":"2Pac;Big Syke_All Eyez On Me_All Eyez On Me (ft. Big Syke).mp3",
+file_audio":"JAŸ-Z;Eminem_The Blueprint (Explicit Version)_Renegade.mp3",
+file_audio":"Dr. Dre;Eminem_2001_Forgot About Dre.mp3",
+file_audio":"Joyner Lucas;Lil Baby_Ramen & OJ_Ramen & OJ.mp3",
+file_audio":"J. Cole_2014 Forest Hills Drive_No Role Modelz.mp3",
+file_audio":"50 Cent_Get Rich Or Die Tryin'_P.I.M.P..mp3",
+file_audio":"Drake;Travis Scott_Certified Lover Boy_Fair Trade (with Travis Scott).mp3",
+file_audio":"Eve;Gwen Stefani_Scorpion_Let Me Blow Ya Mind.mp3",
+file_audio":"Post Malone_beerbongs & bentleys_Better Now.mp3",
+file_audio":"A Boogie Wit da Hoodie;Kodak Black_The Bigger Artist_Drowning (feat. Kodak Black).mp3",
+file_audio":"Pop Smoke;50 Cent;Roddy Ricch_Shoot For The Stars Aim For The Moon_The Woo (feat. 50 Cent & Roddy Ricch).mp3",
+file_audio":"Nate Dogg;Eminem;Obie Trice;Bobby Creekwater_Eminem Presents The Re-Up_Shake That (Remix).mp3",
+file_audio":"Eminem_Encore_Ass Like That.mp3",
+file_audio":"Drake_Dark Lane Demo Tapes_Toosie Slide.mp3",
+file_audio":"Pop Smoke_Meet The Woo 2_Element.mp3",
+file_audio":"Travis Scott_ASTROWORLD_SICKO MODE.mp3",
+file_audio":"Travis Scott_Birds In The Trap Sing McKnight_goosebumps.mp3",
+file_audio":"Pop Smoke_Meet The Woo_Dior.mp3",
+file_audio":"50 Cent_Get Rich Or Die Tryin'_Many Men (Wish Death).mp3",
+file_audio":"Lil Wayne_Tha Carter III_A Milli.mp3",
+file_audio":"Future_FUTURE_Mask Off.mp3",
+file_audio":"Pop Smoke_Meet The Woo 2_Invincible.mp3",
+file_audio":"Eminem_Relapse_We Made You.mp3",
+file_audio":"2Pac;Hussein Fatal;Papoose;Carl Thomas_Pac's Life_Dumpin'.mp3",
+file_audio":"Dr. Dre;Eminem_Gospel (with Eminem)_Gospel (with Eminem).mp3",
+file_audio":"Snoop Dogg;Dr. Dre;Jewell_The Best Of Snoop Dogg_Just Dippin'.mp3",
+file_audio":"Tiësto;Ava Max_The Motto_The Motto.mp3",
+file_audio":"thasup;Mara Sattei_23 6451_m12ano - feat. Mara Sattei.mp3",
+file_audio":"Eminem;Dr. Dre;Snoop Dogg;Xzibit;Nate Dogg_The Marshall Mathers LP_Bitch Please II.mp3",
+file_audio":"Gemitaiz_Nonostante Tutto_Forte.mp3",
+file_audio":"Lil Nas X;Jack Harlow_INDUSTRY BABY (feat. Jack Harlow)_INDUSTRY BABY (feat. Jack Harlow).mp3",
+file_audio":"Ernia;Shiva_Gemelli_MeryXSempre (feat. Shiva).mp3",
+file_audio":"TY1;Geolier;Marracash_FANTASMI (feat. Geolier & Marracash)_FANTASMI (feat. Geolier & Marracash).mp3",
+file_audio":"Sfera Ebbasta_Famoso_UHLALA.mp3",
+file_audio":"Charlie Charles;Sfera Ebbasta;Mahmood;Fabri Fibra_Calipso (with Dardust) (feat. Sfera Ebbasta, Mahmood & Fabri Fibra)_Calipso (with Dardust) (feat. Sfera Ebbasta, Mahmood & Fabri Fibra).mp3",
+file_audio":"Mattak;Marteena;DJ Fastcut_Riproduzione Vietata_M&m's, Pt. II (feat. Marteena).mp3",
+file_audio":"Sfera Ebbasta;Lil Mosey_Famoso_Gangang (feat. Lil Mosey).mp3",
+file_audio":"Sfera Ebbasta_Famoso_$€ Freestyle.mp3",
+file_audio":"Sfera Ebbasta_Famoso_Giovani Re.mp3",
+file_audio":"Sfera Ebbasta_Famoso_Gelosi.mp3",
+file_audio":"Sfera Ebbasta_Famoso_Male.mp3",
+file_audio":"Sfera Ebbasta;Marracash;Guè_Famoso_Tik Tok (feat. Marracash & Guè Pequeno).mp3",
+file_audio":"Sfera Ebbasta;Diplo_Famoso_Hollywood (feat. Diplo).mp3",
+file_audio":"Sfera Ebbasta;J Balvin_Famoso_Baby (with J Balvin).mp3",
+file_audio":"Sfera Ebbasta;Offset_Famoso_Macarena (feat. Offset).mp3",
+file_audio":"Sfera Ebbasta_Famoso_Bottiglie Privè.mp3",
+file_audio":"Izi;Gemitaiz;MadMan_RIOT_Foto (feat. Gemitaiz & MadMan).mp3",
+file_audio":"Gemitaiz;Achille Lauro_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Trap Emo Rmx (feat. Achille Lauro).mp3",
+file_audio":"Gemitaiz;Priestess;Chadia_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Ehy (feat. Priestess, Chadia Rodriguez).mp3",
+file_audio":"Gemitaiz;Gemello;Mystic One_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Si Va Pt.3 (feat. Gemello, Mystic One).mp3",
+file_audio":"Gemitaiz;Ensi;Speranza_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Money Money (feat. Speranza, Ensi).mp3",
+file_audio":"Gemitaiz_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_-3.mp3",
+file_audio":"Gemitaiz;D'african_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Più Di Così (feat. D'african).mp3",
+file_audio":"Gemitaiz;Carl Brave_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Rollercoaster (feat. Carl Brave).mp3",
+file_audio":"Gemitaiz_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Russian Roulette.mp3",
+file_audio":"Gemitaiz;MadMan_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Fair (feat. MadMan).mp3",
+file_audio":"Gemitaiz;Izi_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Marte (feat. Izi).mp3",
+file_audio":"Gemitaiz;Emis Killa;Geolier_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Alright (feat. Emis Killa, Geolier).mp3",
+file_audio":"Gemitaiz;Fabri Fibra_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_In Una Benz (feat. Fabri Fibra).mp3",
+file_audio":"Gemitaiz_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Fuck-Peace.mp3",
+file_audio":"Gemitaiz_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Mondo Di Fango.mp3",
+file_audio":"Gemitaiz;Nitro_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Mama (feat. Nitro).mp3",
+file_audio":"Gemitaiz_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_Noi Siamo Così.mp3",
+file_audio":"Gemitaiz_QVC9 - QUELLO CHE VI CONSIGLIO VOL. 9_QVC9.mp3",
+file_audio":"Marcus Layton_Sweet Dreams_Sweet Dreams.mp3",
+file_audio":"Ghali_Lunga Vita a Sto_Dende.mp3",
+file_audio":"Ghali_Lunga Vita a Sto_Wily Wily.mp3",
+file_audio":"Lazza;Tony Effe_J_CLEAN (feat. Tony Effe).mp3",
+file_audio":"Lazza;Shiva;Geolier_J_FRIEND (feat. Shiva, Geolier).mp3",
+file_audio":"Lazza;Emis Killa_J_L'ERBA VOGLIO (Geordie) (feat. Emis Killa).mp3",
+file_audio":"Lazza;Shiva_J_MON AMOUR (feat. Shiva).mp3",
+file_audio":"Lazza;Rondodasosa_J_SLIME (feat. Rondodasosa).mp3",
+file_audio":"Lazza;Pyrex;Guè_J_MONCLER (feat. Pyrex, Guè Pequeno).mp3",
+file_audio":"Lazza;Capo Plaza_J_ALYX (feat. Capo Plaza).mp3",
+file_audio":"Lazza_J_J.mp3",
+file_audio":"Lazza_Re Mida (Aurum)_Superman.mp3",
+file_audio":"Rkomi;Izi_Dasein Sollen_Aeroplanini Di Carta.mp3",
+file_audio":"Gemitaiz;MadMan;Salmo_Scatola Nera_Esagono (feat. Salmo).mp3",
+file_audio":"Twenty One Pilots_Heathens_Heathens.mp3",
+file_audio":"Dani Faiv;Lazza;Nitro;Hell Raton;Jack The Smoker_Scusate_Machete Mob (feat. Lazza, Nitro, Hell Raton & Jack The Smoker) - prod. Low Kidd.mp3",
+file_audio":"Carl Brave;Mara Sattei;thasup_Spigoli_Spigoli.mp3",
+file_audio":"Dani Faiv;Salmo_Scusate_Cioilflow (feat. Salmo) - prod. Strage.mp3",
+file_audio":"Clementino;MadMan_Come Fa-_Come Fa- (feat. MadMan).mp3",
+file_audio":"Ghali;thasup_DNA_Marymango (feat. tha Supreme).mp3",
+file_audio":"Shiva_Bossoli_Bossoli.mp3",
+file_audio":"Nerone_GEMINI_Gemini.mp3",
+file_audio":"Nerone_GEMINI_Piacere, Max!.mp3",
+file_audio":"Nerone_GEMINI_Vieni da me.mp3",
+file_audio":"Guè;Luchè_Gentleman_Oro Giallo.mp3",
+file_audio":"Guè;Cosculluela;El Micha_Sinatra_Bam Bam (feat. Cosculluela & El Micha).mp3",
+file_audio":"Guè;Marracash_Gentleman_Relaxxx.mp3",
+file_audio":"Flo Rida;Sage The Gemini;Lookas_My House_GDFR (feat. Sage the Gemini & Lookas).mp3",
+file_audio":"Paky_Rozzi_Rozzi.mp3",
+file_audio":"Fabri Fibra;Neffa_Guerra E Pace_Panico.mp3",
+file_audio":"Noyz Narcos;Luchè;Capo Plaza_Enemy_Casa Mia (feat. Luchè & Capo Plaza).mp3",
+file_audio":"Vacca;Inoki_DON_Blood a blood (feat. Inoki).mp3",
+file_audio":"Shiva;Emis Killa_Mon Fre (feat. Emis Killa)_Mon Fre - feat. Emis Killa.mp3",
+file_audio":"Don Joe;Ketama126;Franco126;Franco Califano_KETY_Cos'è l'amore (feat. Franco Califano).mp3",
+file_audio":"Ketama126;Massimo Pericolo_KETY_SCACCIACANI.mp3",
+file_audio":"Ketama126_KETY_NONMIFREGAUNCA.mp3",
+file_audio":"Lil Wayne;Gudda Gudda_I Am Not A Human Being II (Deluxe)_Gunwalk.mp3",
+file_audio":"Vegas Jones_Boom_Boom.mp3",
+file_audio":"Nitro;Fabri Fibra_GarbAge_Avvoltoi (feat. Fabri Fibra) - prod. CRVEL & STABBER.mp3",
+file_audio":"Nitro_GarbAge_GarbAge - prod. Strage & STABBER.mp3",
+file_audio":"Nitro_GarbAge_Cicatrici - prod. STABBER.mp3",
+file_audio":"Nitro;Lazza_GarbAge_OKAY-! (feat. Lazza) - prod. Lazza & STABBER.mp3",
+file_audio":"Nitro_GarbAge_Saturno - prod. Strage.mp3",
+file_audio":"Nitro;thasup;Gemitaiz_GarbAge_RAP SHIT (feat. thasup & Gemitaiz) - prod. STABBER.mp3",
+file_audio":"Nitro_GarbAge_Wormhole - prod. The Cratez.mp3",
+file_audio":"Nitro;Ocean Wisdom;Ward 21;Victor Kwality_GarbAge_MURDAMURDAMURDA (feat. Ocean Wisdom, Ward 21 & Victor Kwality) - prod. STABBER.mp3",
+file_audio":"Nitro;Dani Faiv_GarbAge_Come non detto (feat. Dani Faiv) - prod. Low Kidd.mp3",
+file_audio":"Nitro;Giaime_GarbAge_Gostoso (feat. Giaime) - prod. Andry The Hitmaker.mp3",
+file_audio":"Izi;Sfera Ebbasta_Fenice_Tutto apposto (feat. Sfera Ebbasta).mp3",
+file_audio":"Nitro;Doll Kill_GarbAge_Blood (feat. Doll Kill) - prod. Low Kidd.mp3",
+file_audio":"Nitro_GarbAge_Rispetto - prod. Kanesh & STABBER.mp3",
+file_audio":"Nitro_GarbAge_Libellule - prod. CRVEL & STABBER.mp3",
+file_audio":"A Boogie Wit da Hoodie;Capo Plaza_Look Back at It (feat. CAPO PLAZA)_Look Back at It (feat. CAPO PLAZA).mp3",
+file_audio":"Dani Faiv_In peggio (prod. Strage)_In peggio - prod. Strage.mp3",
+file_audio":"Marracash;Luchè;Lazza;Paky;Taxi B_Persona_SPORT + muscoli (RMX) (feat. Lazza, Paky, Luchè & Taxi B).mp3",
+file_audio":"Ketama126;Tedua;Chris Nolan_KETY_LOVE BANDANA.mp3",
+file_audio":"Leslie_Bipolar_Stoner.mp3",
+file_audio":"Leslie_Bipolar_Come Ti Pare.mp3",
+file_audio":"Elodie;Marracash_Margarita (con Marracash)_Margarita (con Marracash).mp3",
+file_audio":"Tredici Pietro;Mr. Monkey_Assurdo_Tredici.mp3",
+file_audio":"Tredici Pietro;Mr. Monkey_Assurdo_Non Ci Fotti.mp3",
+file_audio":"Tredici Pietro;Mr. Monkey_Assurdo_Assurdo.mp3",
+file_audio":"Tredici Pietro;Mr. Monkey_Assurdo_Leggenda.mp3",
+file_audio":"Tredici Pietro;Mr. Monkey;Madame_Assurdo_Farabutto (feat. Madame).mp3",
+file_audio":"Tredici Pietro;Mr. Monkey_Assurdo_Biassanot.mp3",
+file_audio":"IN6N;Rhen_Bye Bye Man_Bye Bye Man.mp3",
+file_audio":"Tredici Pietro;Mr. Monkey_Assurdo_Tu Non Sei Con Noi, Bro.mp3",
+file_audio":"Flosstradamus;TroyBoi_HDYNATION RADIO_Soundclash.mp3",
+file_audio":"Skioffi_All'indenno - EP_Un pò un pino.mp3",
+file_audio":"Yanky;Kiddy;Dogslife;Master Code_Ferrero Rocher_Ferrero Rocher.mp3",
+file_audio":"Édith Piaf_Edith Piaf - The Best Of_La Vie en rose.mp3",
+file_audio":"Gemitaiz;MadMan_Detto, Fatto._Non Cambio Mai.mp3",
+file_audio":"Guè;El Micha_Gentleman_Milionario.mp3",
+file_audio":"Guè_Gentleman_Guersace.mp3",
+file_audio":"BLACKPINK_KILL THIS LOVE_Kill This Love.mp3",
+file_audio":"Eminem;Nate Dogg_The Eminem Show_Till I Collapse.mp3",
+file_audio":"MACHETE;Salmo;Lazza_MACHETE MIXTAPE 4_HO PAURA DI USCIRE 2 - prod. Mace.mp3",
+file_audio":"MACHETE;Ghali;Sick Luke_MACHETE MIXTAPE 4_GOKU - prod. Sick Luke.mp3",
+file_audio":"MACHETE;Dani Faiv;thasup;Fabri Fibra_MACHETE MIXTAPE 4_YOSHI (feat. Fabri Fibra) - prod. Strage.mp3",
+file_audio":"MACHETE;Salmo;Hell Raton_MACHETE MIXTAPE 4_GANG! - prod. Strage.mp3",
+file_audio":"MACHETE;Fabri Fibra;Massimo Pericolo_MACHETE MIXTAPE 4_STAR WARS - prod. Young Miles - Crookers x Nic Sarno.mp3",
+file_audio":"MACHETE;Salmo;Nitro;Marracash_MACHETE MIXTAPE 4_MARYLEAN (feat. Marracash) - prod. Low Kidd.mp3",
+file_audio":"MACHETE;Tedua;thasup;Nitro_MACHETE MIXTAPE 4_NO WAY (feat. Nitro) - prod. Low Kidd.mp3",
+file_audio":"MACHETE;Dani Faiv;Jack The Smoker;Nitro_MACHETE MIXTAPE 4_MACHETE BO$$ (feat. Nitro) - prod. Kanesh.mp3",
+file_audio":"MACHETE;Dani Faiv;Shiva_MACHETE MIXTAPE 4_WALTER WALZER - prod. Salmo.mp3",
+file_audio":"MACHETE;thasup_MACHETE MIXTAPE 4_DOPPIOGANG - prod. tha Supreme.mp3",
+file_audio":"MACHETE;Dani Faiv;Salmo;Jack The Smoker_MACHETE MIXTAPE 4_ORANGE GULF (feat. Jack The Smoker) - prod. Salmo.mp3",
+file_audio":"MACHETE;Salmo;Lazza_MACHETE MIXTAPE 4_SUGAR - prod. Low Kidd - Salmo.mp3",
+file_audio":"MACHETE;Jack The Smoker;Beba;Salmo_MACHETE MIXTAPE 4_IO PUO' (feat. Salmo) - prod. Low Kidd.mp3",
+file_audio":"MACHETE;Dani Faiv;Nitro;Salmo_MACHETE MIXTAPE 4_FQCMP (feat. Salmo) - prod. Low Kidd.mp3",
+file_audio":"MACHETE;Jack The Smoker;Nitro_MACHETE MIXTAPE 4_skit FREESTYLE - prod. Strage.mp3",
+file_audio":"MACHETE;Nitro_MACHETE MIXTAPE 4_KEN SHIRO - prod. tha Supreme.mp3",
+file_audio":"MACHETE;Gemitaiz;Izi;Salmo_MACHETE MIXTAPE 4_MAMMASTOMALE (feat. Salmo) - prod. Dade.mp3",
+file_audio":"MACHETE;Salmo;Lazza_MACHETE MIXTAPE 4_BUD SPENCER - prod. Dade - Low Kidd - Salmo.mp3",
+file_audio":"MadMan_MM Vol. 2_Bolla Papale Freestyle.mp3",
+file_audio":"Coez_Faccio un casino_Faccio un casino.mp3",
+file_audio":"Nerone;Nex Cassel;Egreen_GEMINI_Uno fisso.mp3",
+file_audio":"Leo Cassini_Jumanji_Jumanji.mp3",
+file_audio":"Ensi;Noyz Narcos;Salmo_Rock Steady_Stratocaster (feat. Noyz Narcos & Salmo).mp3",
+file_audio":"thasup_6itch_6itch.mp3",
+file_audio":"Gemitaiz_Giù (Resto Qua) - Fabio Volo_Fabio Volo.mp3",
+file_audio":"Rkomi;Sfera Ebbasta_Dove Gli Occhi Non Arrivano_Mon Cheri (feat. Sfera Ebbasta).mp3",
+file_audio":"Gemitaiz;MadMan_Veleno 7_Veleno 7.mp3",
+file_audio":"Skioffi_Benjamin_Benjamin.mp3",
+file_audio":"Skioffi_Benjamin_Luna.mp3",
+file_audio":"Skioffi_Benjamin_Penz.mp3",
+file_audio":"Skioffi;Slava_Benjamin_Yes Sir.mp3",
+file_audio":"Skioffi;Blue Virus;Pedar_Benjamin_Tourette.mp3",
+file_audio":"Skioffi_Benjamin_Andale.mp3",
+file_audio":"Skioffi_Benjamin_Charles Manson.mp3",
+file_audio":"Skioffi_Benjamin_Fuoco.mp3",
+file_audio":"Skioffi_Benjamin_Ballare.mp3",
+file_audio":"Skioffi_Benjamin_Parlerò di te.mp3",
+file_audio":"Skioffi_Benjamin_Cancer.mp3",
+file_audio":"Highsnob_OPS!_OPS!.mp3",
+file_audio":"Beba;Lazza_Male O Bene_Male O Bene (feat. Lazza).mp3",
+file_audio":"Highsnob;MamboLosco;Andry The Hitmaker_23 coltellate_23 coltellate.mp3",
+file_audio":"Noyz Narcos_Monster Reloaded_Game Over.mp3",
+file_audio":"Emis Killa_Supereroe_Supereroe.mp3",
+file_audio":"Ozymandias;Il Tre;DOD_Addicted_Jeeg Robot.mp3",
+file_audio":"YG;Tyga;Jon Z_Go Loko_Go Loko.mp3",
+file_audio":"Ultimo;Comagatte;Il Tre;EDEN;Young Slash;Xfetto;KAYLER;Nese Ikaro;Evrint Bless_Osg16_Osg16.mp3",
+file_audio":"Post Malone;21 Savage_beerbongs & bentleys_rockstar (feat. 21 Savage).mp3",
+file_audio":"Gemello;Gemitaiz_Stanotte_Stanotte.mp3",
+file_audio":"Beyoncé_I AM...SASHA FIERCE_Halo.mp3",
+file_audio":"Highsnob_PrettyBoy - EP_Fa volare.mp3",
+file_audio":"Highsnob_La tocco piano_La tocco piano.mp3",
+file_audio":"Izi_Aletheia_Il Nome Della Rosa.mp3",
+file_audio":"Izi_Aletheia_Volare II.mp3",
+file_audio":"Izi;Sfera Ebbasta_Aletheia_48H (feat. Sfera Ebbasta).mp3",
+file_audio":"Izi_Aletheia_Pace.mp3",
+file_audio":"Izi_Aletheia_A'dam.mp3",
+file_audio":"Izi_Aletheia_Dammi Un Motivo.mp3",
+file_audio":"Izi_Aletheia_Uh, Che Peccato!.mp3",
+file_audio":"Izi_Aletheia_Dolcenera.mp3",
+file_audio":"Izi;Heezy Lee;Josh_Aletheia_San Giorgio (feat. Heezy Lee & Josh).mp3",
+file_audio":"Izi_Aletheia_Carioca.mp3",
+file_audio":"Izi_Aletheia_Pasta E Molliche.mp3",
+file_audio":"Izi_Aletheia_Grande.mp3",
+file_audio":"Izi_Aletheia_Zorba.mp3",
+file_audio":"Izi;Speranza_Aletheia_OK (feat. Speranza).mp3",
+file_audio":"Logic;Eminem_Homicide_Homicide.mp3",
+file_audio":"Carl Brave;Coez_Notti Brave_Parco Gondar (feat. Coez).mp3",
+file_audio":"Izi_Aletheia_Weekend (feat. ---).mp3",
+file_audio":"nayt_OPS_OPS.mp3",
+file_audio":"BADA$$ B.;OG Eastbull_Reggaeton_Reggaeton.mp3",
+file_audio":"thasup_m8nstar_m8nstar.mp3",
+file_audio":"Clementino;Gemitaiz_Tarantelle_Alleluia (feat. Gemitaiz).mp3",
+file_audio":"Massimo Pericolo_Scialla Semper_7 miliardi.mp3",
+file_audio":"nayt;3D_Gli occhi della tigre_Gli occhi della tigre.mp3",
+file_audio":"Coez_È sempre bello_È sempre bello.mp3",
+file_audio":"Mostro_The Illest, Vol. 2_L'anno del Serpente.mp3",
+file_audio":"Mostro_The Illest, Vol. 2_Diavolo magro.mp3",
+file_audio":"Mostro_The Illest, Vol. 2_Sono quel che sono.mp3",
+file_audio":"Mostro;MadMan_The Illest, Vol. 2_Voci in testa.mp3",
+file_audio":"Mostro_The Illest, Vol. 2_Nicotina.mp3",
+file_audio":"Mostro_The Illest, Vol. 2_Soldi e puttane.mp3",
+file_audio":"Mostro_The Illest, Vol. 2_Cani bastardi.mp3",
+file_audio":"Mostro_The Illest, Vol. 2_Guanti neri, balaclava.mp3",
+file_audio":"Mostro_The Illest, Vol. 2_Tutto passa.mp3",
+file_audio":"Mostro;Nick Sick_The Illest, Vol. 2_Still Ill.mp3",
+file_audio":"Mostro_The Illest, Vol. 2_Le tre di notte.mp3",
+file_audio":"Jamil_Most Hated_Most Hated.mp3",
+file_audio":"Ernia_68 (Till The End)_Phi.mp3",
+file_audio":"Guè;Sfera Ebbasta;Elettra Lamborghini_Gentleman (The Complete Playlist)_Lamborghini - RMX.mp3",
+file_audio":"Jamil_Mike Tyson_Mike Tyson.mp3",
+file_audio":"Tyga_Floss In The Bank_Floss In The Bank.mp3",
+file_audio":"Tyga_SWISH_SWISH.mp3",
+file_audio":"Beba_Groupie_Groupie.mp3",
+file_audio":"Marracash;Guè_Santeria (Voodoo Edition)_Cantante Italiana.mp3",
+file_audio":"Ernia;Chadia_68 (Till The End)_Mr Bamboo (feat. Chadia Rodriguez).mp3",
+file_audio":"Dium;Jamil_Fast Food Music_Quale gang.mp3",
+file_audio":"Clementino;nayt_Hola!_Hola! (feat. Nayt).mp3",
+file_audio":"CHA CHA_Torino_Torino.mp3",
+file_audio":"Rocco Hunt;Gemitaiz_Cuore Rotto (feat. Gemitaiz)_Cuore Rotto (feat. Gemitaiz).mp3",
+file_audio":"Trick Trick;Diezel_Smoke Weed Everyday Ft. Diezel_Smoke Weed Everyday (feat. Diezel).mp3",
+file_audio":"Linea 77;Salmo;Slait_AK77_AK77 (feat. Salmo & Slait).mp3",
+file_audio":"Ramz_Barking_Barking.mp3",
+file_audio":"Ernia_68 (Till The End)_Lewandowski VI.mp3",
+file_audio":"Ernia;Lazza_68 (Till The End)_Il Mondo Chico (feat. Lazza).mp3",
+file_audio":"Ernia_68 (Till The End)_Un Sasso Nella Scarpa.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Deluxe Edition)_Poison.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Deluxe Edition)_Strike.mp3",
+file_audio":"Mostro;Shiva_Ogni maledetto giorno (Deluxe Edition)_Amore sporco.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Deluxe Edition)_Sai che cazzo me ne frega.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Deluxe Edition)_Attraversa la città.mp3",
+file_audio":"Mostro;Jamil_Ogni maledetto giorno (Deluxe Edition)_Freddi.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Deluxe Edition)_Niente di me.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Deluxe Edition)_E fumo ancora.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Deluxe Edition)_Ogni maledetto giorno.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Deluxe Edition)_Chris Benoit.mp3",
+file_audio":"Mostro;Sercho_Ogni maledetto giorno (Deluxe Edition)_Pioggia di vetro.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Deluxe Edition)_Heavy Metal.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Deluxe Edition)_Amore per favore resta.mp3",
+file_audio":"Capo Plaza;AVA_Giovane Fuoriclasse_Giovane Fuoriclasse.mp3",
+file_audio":"Frah Quintale_Lungolinea._64 Bars (Prod. by Bassi Maestro).mp3",
+file_audio":"Kendrick Lamar_DAMN._HUMBLE..mp3",
+file_audio":"Imagine Dragons_Origins (Deluxe)_Bad Liar.mp3",
+file_audio":"Ernia;Nitro_Certi Giorni_Certi Giorni (feat. Nitro).mp3",
+file_audio":"Carl Brave;Frah Quintale_Notti Brave_Chapeau (feat. Frah Quintale).mp3",
+file_audio":"Carl Brave;Gemitaiz_Notti Brave_Malibu (feat. Gemitaiz).mp3",
+file_audio":"Bassi Maestro_Background_S.I.C..mp3",
+file_audio":"Priestess_Brigitte_Brigitte.mp3",
+file_audio":"Kodak Black;Offset;Travis Scott_Dying to Live_ZEZE (feat. Travis Scott & Offset).mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_XDVR.mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_SG4M1.mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_Panette.mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_No Champagne.mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_Te Lo Do.mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_Brutti Sogni.mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_Più Forte.mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_Tutti Scemi.mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_Rapina.mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_Zero.mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_Marshmallow.mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_Ciny.mp3",
+file_audio":"Sfera Ebbasta;Luchè;Marracash_XDVR Reloaded_XDVRMX.mp3",
+file_audio":"Sfera Ebbasta_XDVR Reloaded_Trap Kings.mp3",
+file_audio":"Jon Connor;Chelsea Blare;Tito Lopez_Unconscious State_In My Sleep (feat. Tito Lopez & Chelsea Blare).mp3",
+file_audio":"Carl Brave x Franco126_Polaroid 2.0_Noccioline.mp3",
+file_audio":"Rihanna_Bitch Better Have My Money_Bitch Better Have My Money.mp3",
+file_audio":"Ghali_I Love You_I Love You.mp3",
+file_audio":"Clementino_Gandhi_Gandhi.mp3",
+file_audio":"Nashley_Real_Nuovi Jeans.mp3",
+file_audio":"Sfera Ebbasta_Mademoiselle_Mademoiselle.mp3",
+file_audio":"Warez_Double Dragon_Double Dragon.mp3",
+file_audio":"Dark Polo Gang_The Dark Album_Intro TDA.mp3",
+file_audio":"Guè;Tony Effe;Il Profeta_Gentleman_Scarafaggio.mp3",
+file_audio":"Dark Polo Gang;Tony Effe_The Dark Album_Sportswear.mp3",
+file_audio":"Dark Polo Gang;Dark Side_The Dark Album_Dark boy.mp3",
+file_audio":"Token;Tech N9ne_Between Somewhere_YouTube Rapper (Bonus Track).mp3",
+file_audio":"Lazza_Re Mida_Per Sempre.mp3",
+file_audio":"Lazza;Fabri Fibra_Re Mida_Box Logo (feat. Fabri Fibra).mp3",
+file_audio":"Lazza_Re Mida_Re Mida.mp3",
+file_audio":"Lazza_Re Mida_Morto Mai.mp3",
+file_audio":"Lazza_Re Mida_Netflix.mp3",
+file_audio":"Lazza_Re Mida_2 Cellulari.mp3",
+file_audio":"Lazza_Re Mida_24H.mp3",
+file_audio":"Lazza;Tedua_Re Mida_Catrame (feat. Tedua).mp3",
+file_audio":"Lazza_Re Mida_Povero Te.mp3",
+file_audio":"Lazza_Re Mida_Desperado.mp3",
+file_audio":"Lazza;Luchè_Re Mida_Iside (feat. Luchè).mp3",
+file_audio":"Lazza;Guè_Re Mida_Gucci Ski Mask (feat. Guè).mp3",
+file_audio":"Lazza_Re Mida_Porto Cervo.mp3",
+file_audio":"Gast;Depha Beat;Noyz Narcos_Star Roller_CBR.mp3",
+file_audio":"Rico Mendossa & Poly_La Banda_La Banda.mp3",
+file_audio":"Dark Polo Gang;Capo Plaza_Gang Shit_Gang Shit (feat. Capo Plaza).mp3",
+file_audio":"Emis Killa;Big Joe_Keta Music - Volume 2_C'era una volta - prod. by Big Joe.mp3",
+file_audio":"Jamil_No Racism_No Racism.mp3",
+file_audio":"B.o.B;2 Chainz_Underground Luxury_HeadBand (feat. 2 Chainz).mp3",
+file_audio":"Mike WiLL Made-It;Lil Wayne_Creed II- The Album_Amen (Pre Fight Prayer) (with Lil Wayne).mp3",
+file_audio":"Bon Iver_Creed II- The Album_Do You Need Power- (Walk Out Music).mp3",
+file_audio":"Eearz;ScHoolboy Q;2 Chainz;Mike WiLL Made-It_Creed II- The Album_Kill 'Em With Success (with Eearz, ScHoolboy Q & 2 Chainz).mp3",
+file_audio":"Mike WiLL Made-It;Nas;Rick Ross_Creed II- The Album_Check (with Nas & Rick Ross).mp3",
+file_audio":"Mike WiLL Made-It;Young Thug;Swae Lee_Creed II- The Album_Fate (with Young Thug & Swae Lee).mp3",
+file_audio":"Ari Lennox;J. Cole_Creed II- The Album_Shea Butter Baby (with J. Cole).mp3",
+file_audio":"Mike WiLL Made-It;Pharrell Williams;Kendrick Lamar_Creed II- The Album_The Mantra (with Pharrell & Kendrick Lamar).mp3",
+file_audio":"Mike WiLL Made-It;Rae Sremmurd;Kodak Black_Creed II- The Album_Watching Me (with Rae Sremmurd & Kodak Black).mp3",
+file_audio":"Mike WiLL Made-It;Eearz;Gucci Mane;YG;Trouble;Quavo;Juicy J_Creed II- The Album_F.I.G.H.T. (with Eearz, Gucci Mane, YG, Trouble, Quavo & Juicy J).mp3",
+file_audio":"Mike WiLL Made-It;A$AP Rocky;A$AP Ferg;Nicki Minaj_Creed II- The Album_Runnin (with A$AP Rocky, A$AP Ferg & Nicki Minaj).mp3",
+file_audio":"Mike WiLL Made-It;Tessa Thompson;Gunna_Creed II- The Album_Midnight (with Tessa Thompson & Gunna ).mp3",
+file_audio":"Ama_Creed II- The Album_Bless Me - (Demo).mp3",
+file_audio":"Mike WiLL Made-It;Vince Staples;Ludwig Göransson_Creed II- The Album_Ice Cold (Final Round) (with Vince Staples & Ludwig Göransson).mp3",
+file_audio":"Ella Mai_Creed II- The Album_Love Me Like That (Champion Love).mp3",
+file_audio":"Dani Faiv;MadMan_Fruit Joint + Gusto_Giornale - Di corsa (feat. Madman) - prod. Strage.mp3",
+file_audio":"MadMan;Fabri Fibra_Doppelganger-Ramadan_Ramadan.mp3",
+file_audio":"MadMan_For Honor_For Honor.mp3",
+file_audio":"MadMan_MM Vol. 3_R8.mp3",
+file_audio":"MadMan_MM Vol. 3_Ludovico.mp3",
+file_audio":"MadMan;Mostro_MM Vol. 3_Mignolo (feat. Mostro).mp3",
+file_audio":"MadMan;Vale Lambo_MM Vol. 3_Beatrix Kiddo (feat. Vale Lambo).mp3",
+file_audio":"MadMan;Priestess_MM Vol. 3_A-R (feat. Priestess).mp3",
+file_audio":"MadMan_MM Vol. 3_Numeri.mp3",
+file_audio":"MadMan;Emis Killa_MM Vol. 3_Supernova (feat. Emis Killa).mp3",
+file_audio":"MadMan_MM Vol. 3_24-7.mp3",
+file_audio":"MadMan_MM Vol. 3_7-8 Sour.mp3",
+file_audio":"MadMan;Lil' Pin;Mattaman_MM Vol. 3_Uova D'Oro (feat. Lil Pin & Mattaman).mp3",
+file_audio":"MadMan;Nacho_MM Vol. 3_Comodino (feat. Nacho).mp3",
+file_audio":"MadMan_MM Vol. 3_Fuori Piove.mp3",
+file_audio":"MadMan_MM Vol. 3_Perry Mason.mp3",
+file_audio":"PMD;Snowgoons;Sean Strange;Swollen Memebers;Jus Allah;Impakt!;Odoub;Klee Magor;Virtuoso;Meth Mouth_Welcome To The Goondox_Raps of the Titans (feat. Swollen Memebers, Jus Allah, Impakt, Odoub, Klee Magor, Virtuoso, Meth Mouth, Psych Ward & Jaysaun).mp3",
+file_audio":"Izi_Magico_Magico.mp3",
+file_audio":"Guè;Capo Plaza_Sinatra_Trap Phone (feat. Capo Plaza).mp3",
+file_audio":"Luchè;Sfera Ebbasta_Stamm Fort_Stamm Fort (feat. Sfera Ebbasta).mp3",
+file_audio":"Guè;Tony Effe;Pyrex_Sinatra_Claro (feat. Tony Effe & Pyrex).mp3",
+file_audio":"Ernia;Rkomi_Come Uccidere Un Usignolo_Madonna.mp3",
+file_audio":"Charlie Charles;Izi;Rkomi;Sfera Ebbasta;Tedua;Ghali_Bimbi_Bimbi.mp3",
+file_audio":"Izi_Pizzicato_Fuori.mp3",
+file_audio":"Izi_Pizzicato_RSCN.mp3",
+file_audio":"Izi_Pizzicato_Pianto.mp3",
+file_audio":"Izi_Pizzicato_Distrutto.mp3",
+file_audio":"Izi_Pizzicato_Tutto torna.mp3",
+file_audio":"Izi_Pizzicato_Volare.mp3",
+file_audio":"Izi;Fabri Fibra_Pizzicato_Dopo esco (feat. Fabri Fibra).mp3",
+file_audio":"Izi;Enzo Dong_Pizzicato_Come me (feat. Enzo Dong).mp3",
+file_audio":"Izi;Caneda_Pizzicato_Bad Trip (feat. Caneda).mp3",
+file_audio":"Izi_Pizzicato_4GETU.mp3",
+file_audio":"Izi;Vaz Tè;Tedua_Pizzicato_Wild Bandana (feat. Tedua & Vaz Tè).mp3",
+file_audio":"Izi_Fenice_Chic.mp3",
+file_audio":"Gianni Bismark;Izi_Pregiudicati_Pregiudicati (feat. Izi).mp3",
+file_audio":"Adele_21_Someone Like You.mp3",
+file_audio":"Vacca_Don Vacca Corleone_Calimocho.mp3",
+file_audio":"Vacca;Yung Fume_Don Vacca Corleone_Vallanzasca.mp3",
+file_audio":"Vacca;Jamil_Don Vacca Corleone_Merci beaucoup.mp3",
+file_audio":"Vacca_Don Vacca Corleone_Accalappianani 2.0.mp3",
+file_audio":"Vacca_Don Vacca Corleone_Da solo.mp3",
+file_audio":"Vacca;Jamil;Skioffi_Don Vacca Corleone_Porco.mp3",
+file_audio":"Vacca_Don Vacca Corleone_Kraken.mp3",
+file_audio":"Dani Faiv;Guezz;Little G;Parolaser;Pitto Stail_Teoria Del Contrario_Centro.mp3",
+file_audio":"Dani Faiv;thasup_Yung (feat. thasup) [prod. tha Supreme]_Yung (feat. thasup) - prod. tha Supreme.mp3",
+file_audio":"Gemitaiz_QVC8 – Singles_Toradol.mp3",
+file_audio":"Gemitaiz;Ketama126_QVC8 – Singles_Bad Boys (feat. Ketama126).mp3",
+file_audio":"Gemitaiz;Priestess;Quentin40_QVC8 – Singles_Giuro Che (feat. Priestess & Quentin40).mp3",
+file_audio":"Gemitaiz;Mixer T_QVC8 – Singles_Che Ci Faccio.mp3",
+file_audio":"Gemitaiz;Venerus;Franco126_QVC8 – Singles_Senza Di Me (feat. Venerus & Franco126).mp3",
+file_audio":"Gemitaiz;Mixer T_QVC8 – Singles_Rollin'.mp3",
+file_audio":"Ghali_Album_Ora D'aria.mp3",
+file_audio":"Ghali_Album_Liberté.mp3",
+file_audio":"Ariana Grande_Santa Tell Me_Santa Tell Me.mp3",
+file_audio":"Dani Faiv;thasup_Gameboy Color (prod. thasup)_Gameboy Color - prod. thasup.mp3",
+file_audio":"Dani Faiv;Lazza_Gabbiano - Moonrock (feat. Lazza) [prod. Lazza]_Gabbiano - Moonrock (feat. Lazza) - prod. Lazza.mp3",
+file_audio":"Quentin40;Fabri Fibra_Se ne va (feat. Fabri Fibra) [prod. Dr. Cream]_Se ne va (feat. Fabri Fibra) - prod. Dr. Cream.mp3",
+file_audio":"Eminem;D12_The Marshall Mathers LP - Tour Edition (International Version)_Under The Influence.mp3",
+file_audio":"Deleterio;MadMan;Gemitaiz_Dadaismo_Albe Nere.mp3",
+file_audio":"Warez;Nitro;thasup_Casa Free- (feat. Nitro & thasup)_Casa Free- (feat. Nitro & thasup).mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_20.mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_Giù da me.mp3",
+file_audio":"Capo Plaza;Sfera Ebbasta;DrefGold_20 (Deluxe Edition)_Tesla (feat. Sfera Ebbasta & DrefGold).mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_Nike Boy.mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_Come me.mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_J$ JP.mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_Interlude (Ora è la mia ora).mp3",
+file_audio":"Capo Plaza;Ghali_20 (Deluxe Edition)_Ne è valsa la pena (feat. Ghali).mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_Non cambierò mai.mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_Taxi.mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_Uno squillo.mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_Vabbene.mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_Forte e chiaro.mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_Giovane fuoriclasse.mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_NewJeans.mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_Coupé.mp3",
+file_audio":"Capo Plaza;Ninho_20 (Deluxe Edition)_Billets (feat. Ninho).mp3",
+file_audio":"Capo Plaza_20 (Deluxe Edition)_RATATA.mp3",
+file_audio":"Dark Polo Gang;Sfera Ebbasta_The Dark Album_Fiori del male.mp3",
+file_audio":"nayt;3D;MadMan_Fame_Fame.mp3",
+file_audio":"thasup;nayt_oh 9od_oh 9od.mp3",
+file_audio":"lowlow;Sercho;Gemitaiz;Briga;Luca J;MadMan_Per sempre_Honiro monster track.mp3",
+file_audio":"Fabri Fibra;Gemitaiz_Tradimento 10 Anni - Reloaded_La Pula Bussò - 2016.mp3",
+file_audio":"Eminem_Kamikaze_The Ringer.mp3",
+file_audio":"Eminem_Kamikaze_Greatest.mp3",
+file_audio":"Eminem_Kamikaze_Normal.mp3",
+file_audio":"Eminem_Kamikaze_Stepping Stone.mp3",
+file_audio":"Eminem;Royce Da 5'9-_Kamikaze_Not Alike (feat. Royce Da 5'9).mp3",
+file_audio":"Eminem_Kamikaze_Kamikaze.mp3",
+file_audio":"Shade;Nitro_Truman_Le cose peggiori (feat. Nitro).mp3",
+file_audio":"Mondo Marcio_DDR (Dio Del Rap)_DDR (Dio Del Rap).mp3",
+file_audio":"Emis Killa;Vegas Jones;Gemitaiz_Supereroe_Claro.mp3",
+file_audio":"mgk_RAP DEVIL_RAP DEVIL.mp3",
+file_audio":"Eminem_Killshot_Killshot.mp3",
+file_audio":"Vegas Jones;Nitro_Chic Nisello_Trankilo.mp3",
+file_audio":"Fabri Fibra;Nitro;Salmo_Squallor_Dexter.mp3",
+file_audio":"Fabri Fibra;Nitro;Yazee_Tradimento 10 Anni - Reloaded_Vaffan---O Scemo - Yazee Remix.mp3",
+file_audio":"Gemitaiz;Guè_Tanta Roba Anthem (feat. Guè)_Tanta Roba Anthem (feat. Guè).mp3",
+file_audio":"Lil Wayne;Wiz Khalifa;Imagine Dragons;X Ambassadors;Logic;Ty Dolla $ign_Sucker for Pain (with Logic & Ty Dolla $ign feat. X Ambassadors)_Sucker for Pain (with Wiz Khalifa, Imagine Dragons, Logic & Ty Dolla $ign feat. X Ambassadors).mp3",
+file_audio":"Salmo_Playlist_90MIN.mp3",
+file_audio":"Salmo;Fabri Fibra_Playlist_STAI ZITTO (feat. Fabri Fibra).mp3",
+file_audio":"Salmo_Playlist_RICCHI E MORTI.mp3",
+file_audio":"Salmo;Nitro_Playlist_DISPOVERY CHANNEL (feat. Nitro).mp3",
+file_audio":"Salmo;Sfera Ebbasta_Playlist_CABRIOLET (feat. Sfera Ebbasta).mp3",
+file_audio":"Salmo_Playlist_HO PAURA DI USCIRE.mp3",
+file_audio":"Salmo;Coez_Playlist_SPARARE ALLA LUNA (feat. Coez).mp3",
+file_audio":"Salmo_Playlist_PXM.mp3",
+file_audio":"Salmo;NSTASIA_Playlist_IL CIELO NELLA STANZA (feat. NSTASIA).mp3",
+file_audio":"Salmo_Playlist_TIE'.mp3",
+file_audio":"Salmo_Playlist_ORA CHE FAI-.mp3",
+file_audio":"Salmo_Playlist_PERDONAMI.mp3",
+file_audio":"Salmo_Playlist_LUNEDI'.mp3",
+file_audio":"Nitro_Lucifero (prod. Yazee)_Lucifero (prod. Yazee).mp3",
+file_audio":"Eminem_The Marshall Mathers LP - Tour Edition (International Version)_The Kids.mp3",
+file_audio":"Eminem_The Marshall Mathers LP - Tour Edition (International Version)_The Real Slim Shady.mp3",
+file_audio":"Eminem;RBX;Sticky Fingaz_The Marshall Mathers LP - Tour Edition (International Version)_Remember Me-.mp3",
+file_audio":"Eminem_The Marshall Mathers LP - Tour Edition (International Version)_I'm Back.mp3",
+file_audio":"Eminem;Bizarre_The Marshall Mathers LP - Tour Edition (International Version)_Amityville.mp3",
+file_audio":"Eminem_The Marshall Mathers LP - Tour Edition (International Version)_Criminal.mp3",
+file_audio":"Eminem_Kamikaze_Venom - Music From The Motion Picture.mp3",
+file_audio":"nayt_Raptus, Vol. 2_Rap2s.mp3",
+file_audio":"nayt_Raptus, Vol. 2_Brillo.mp3",
+file_audio":"nayt_Raptus, Vol. 2_Poveri.mp3",
+file_audio":"nayt_Raptus, Vol. 2_Spaghetti.mp3",
+file_audio":"nayt_Raptus, Vol. 2_Davvero.mp3",
+file_audio":"nayt;Jesto_Raptus, Vol. 2_Nessuno (feat. Jesto).mp3",
+file_audio":"nayt_Raptus, Vol. 2_Gola.mp3",
+file_audio":"nayt;Skioffi_Raptus, Vol. 2_Money (feat. Skioffi).mp3",
+file_audio":"nayt_Raptus, Vol. 2_Pezzi di me.mp3",
+file_audio":"nayt_Raptus, Vol. 2_Non mi ricordo di te.mp3",
+file_audio":"nayt_Raptus, Vol. 2_Poveri (Folk Version).mp3",
+file_audio":"nayt_Raptus, Vol. 2_Gola (Trio Jazz Version).mp3",
+file_audio":"nayt_Raptus, Vol. 2_Freestyle 21.mp3",
+file_audio":"nayt;Gemitaiz_Raptus, Vol. 2_Autovelox (feat. Gemitaiz).mp3",
+file_audio":"T-Wayne_Nasty Freestyle_Nasty Freestyle.mp3",
+file_audio":"Ensi;Gemitaiz;MadMan_V_4-20 (feat. Gemitaiz & Madman).mp3",
+file_audio":"Gemitaiz;Priestess_Davide_Alaska (feat. Priestess).mp3",
+file_audio":"Ernia;Guè_Come Uccidere Un Usignolo (67 Edition)_Disgusting.mp3",
+file_audio":"Rkomi;Ernia_Ossigeno - EP_Acqua Calda E Limone (feat. Ernia).mp3",
+file_audio":"Il Pagante;MadMan_Paninaro 2.0_DAM 2 (il ritorno).mp3",
+file_audio":"Ghali_Lunga Vita a Sto_Sempre Me.mp3",
+file_audio":"Marracash;Guè_Santeria_Salvador Dalì.mp3",
+file_audio":"Diplo;Juicy J;Famous Dex;Lil Pump;French Montana_Welcome to the Party (with Lil Pump, Juicy J, Famous Dex, & French Montana) [Remix]_Welcome to the Party (with Lil Pump, Juicy J, Famous Dex, & French Montana) - Remix.mp3",
+file_audio":"Ghali;Sick Luke_Zingarello_Zingarello.mp3",
+file_audio":"Cardi B;Bad Bunny;J Balvin_Invasion of Privacy_I Like It.mp3",
+file_audio":"Desiigner_New English_Panda.mp3",
+file_audio":"Eminem_Encore_Just Lose It.mp3",
+file_audio":"Caparezza_Habemus Capa_Torna Catalessi.mp3",
+file_audio":"Caparezza;Alborosie_Il Sogno Eretico_Legalize The Premier.mp3",
+file_audio":"Caparezza_Le Dimensioni Del Mio Caos_Abiura Di Me.mp3",
+file_audio":"Caparezza_Museica_Mica Van Gogh.mp3",
+file_audio":"Caparezza_Verità Supposte_Vengo Dalla Luna.mp3",
+file_audio":"Caparezza_Verità Supposte_Fuori Dal Tunnel.mp3",
+file_audio":"Nitro_Danger_Danger.mp3",
+file_audio":"Emis Killa;Gemitaiz;MadMan;PK_Keta Music - Volume 2_10 comandamenti - prod. by Pk (feat. Gemitaiz & Madman).mp3",
+file_audio":"Ernia_Domani_Domani.mp3",
+file_audio":"Kalash;Sfera Ebbasta_Mwaka Moon (Remix)_Mwaka Moon - Remix.mp3",
+file_audio":"DELTA PRIMO SQUAD_Full Me(n)tal Darkness_Coven.mp3",
+file_audio":"DELTA PRIMO SQUAD_Full Me(n)tal Darkness_Ahriman.mp3",
+file_audio":"DELTA PRIMO SQUAD_Full Me(n)tal Darkness_Icaro.mp3",
+file_audio":"Kalash;Damso_Mwaka Moon_Mwaka Moon.mp3",
+file_audio":"Passenger_All The Little Lights_Let Her Go.mp3",
+file_audio":"Dani Faiv_Teoria Del Contrario_Teoria del contrario - Intro.mp3",
+file_audio":"Dani Faiv_Teoria Del Contrario_Vivi meglio.mp3",
+file_audio":"Dani Faiv;Lexotan_Teoria Del Contrario_No Look.mp3",
+file_audio":"Dani Faiv_Teoria Del Contrario_Contrario della speranza.mp3",
+file_audio":"Dani Faiv_Teoria Del Contrario_Cracco.mp3",
+file_audio":"Dani Faiv;Strage;BLAZE;DJ Spada_Teoria Del Contrario_Mic on la palla.mp3",
+file_audio":"Dani Faiv_Teoria Del Contrario_Scodinzolando - Freestyle.mp3",
+file_audio":"Dani Faiv;Giovane Feddini_Teoria Del Contrario_Mi diverte dirlo.mp3",
+file_audio":"Dani Faiv;Pitto Stail_Teoria Del Contrario_Heart.mp3",
+file_audio":"Dani Faiv;Souldtato_Teoria Del Contrario_F.D.S..mp3",
+file_audio":"Dani Faiv_Teoria Del Contrario_Uma Thurman - Freestyle.mp3",
+file_audio":"Dani Faiv;Tommy Boy_Teoria Del Contrario_S.W.N.C.mp3",
+file_audio":"Dani Faiv_Teoria Del Contrario_Con il fumo dietro.mp3",
+file_audio":"Dani Faiv;Pitto Stail_Teoria Del Contrario_Gufo - Outro.mp3",
+file_audio":"Dani Faiv_Teoria Del Contrario_Solo quello - Bonus Track.mp3",
+file_audio":"Dani Faiv_The Waiter_Looper.mp3",
+file_audio":"Dani Faiv_The Waiter_Scompaio.mp3",
+file_audio":"Dani Faiv_The Waiter_Sorrisi di plastica.mp3",
+file_audio":"Dani Faiv;Jack The Smoker_The Waiter_Dalai Lama (feat. Jack The Smoker).mp3",
+file_audio":"Dani Faiv_The Waiter_Affogare.mp3",
+file_audio":"Dani Faiv_The Waiter_Pragaras.mp3",
+file_audio":"Dani Faiv_The Waiter_Wow.mp3",
+file_audio":"Dani Faiv_The Waiter_Malattia.mp3",
+file_audio":"Dani Faiv_The Waiter_Senza sabbia dentro.mp3",
+file_audio":"Dani Faiv_The Waiter_PIN.mp3",
+file_audio":"Dani Faiv;Lexotan_The Waiter_The Waiter (feat. Lexotan).mp3",
+file_audio":"Dani Faiv;Jack The Smoker_The Waiter_4MST (feat. Jack The Smoker).mp3",
+file_audio":"Dani Faiv_Fruit Joint_Pollo - prod. Kanesh (Intro).mp3",
+file_audio":"Dani Faiv_Fruit Joint_Lemon Haze - prod. Strage.mp3",
+file_audio":"Dani Faiv;Low Kidd;G.bit_Fruit Joint_Ananas (feat. G.bit) - prod. Low Kidd.mp3",
+file_audio":"Dani Faiv;thasup_Fruit Joint_Gameboy Advance - prod. thasup.mp3",
+file_audio":"Dani Faiv;Low Kidd_Fruit Joint_Fortnite - prod. Low Kidd.mp3",
+file_audio":"Dani Faiv;Low Kidd_Fruit Joint_Melinda - prod. Low Kidd.mp3",
+file_audio":"Dani Faiv;thasup;Lexotan_Fruit Joint_La La La La La (feat. Lexotan) - prod. thasup.mp3",
+file_audio":"Sfera Ebbasta_Sfera Ebbasta_Equilibrio.mp3",
+file_audio":"Sfera Ebbasta_Sfera Ebbasta_Figli Di Papà.mp3",
+file_audio":"Sfera Ebbasta;SCH_Sfera Ebbasta_Balenciaga.mp3",
+file_audio":"Sfera Ebbasta_Sfera Ebbasta_Notti.mp3",
+file_audio":"Sfera Ebbasta_Sfera Ebbasta_No No.mp3",
+file_audio":"Sfera Ebbasta_Sfera Ebbasta_BRNBQ.mp3",
+file_audio":"Sfera Ebbasta_Sfera Ebbasta_Bang Bang.mp3",
+file_audio":"Sfera Ebbasta_Sfera Ebbasta_Quello Che Non Va.mp3",
+file_audio":"SCH;Sfera Ebbasta_Sfera Ebbasta_Cartine Cartier.mp3",
+file_audio":"Sfera Ebbasta_Sfera Ebbasta_BHMG.mp3",
+file_audio":"Night Skinny;Guè;Rkomi_Pezzi_Pezzi.mp3",
+file_audio":"Night Skinny;Luchè_Pezzi_Al mio fianco.mp3",
+file_audio":"Night Skinny;Rkomi_Pezzi_Sisinomah!.mp3",
+file_audio":"Night Skinny;Samuel Heron;TY1_Pezzi_Si frate.mp3",
+file_audio":"Night Skinny;Lazza_Pezzi_Houdini.mp3",
+file_audio":"Night Skinny;Vale Lambo_Pezzi_Egitto.mp3",
+file_audio":"Night Skinny;Johnny Marsiglia_Pezzi_Una bella botta.mp3",
+file_audio":"Night Skinny;Rkomi_Pezzi_Fuck Tomorrow.mp3",
+file_audio":"Night Skinny;Noyz Narcos_Pezzi_Dope Games.mp3",
+file_audio":"Night Skinny;67_Pezzi_On Tour.mp3",
+file_audio":"Night Skinny;Paigey Cakey_Pezzi_On My Case.mp3",
+file_audio":"Nerone_Entertainer_Danè.mp3",
+file_audio":"Dr. Dre;Hittman_2001_Big Ego's.mp3",
+file_audio":"Dr. Dre;Hittman;Six-Two;Nate Dogg;Kurupt_2001_Xxplosive.mp3",
+file_audio":"Dr. Dre;Eminem;Xzibit_2001_What's The Difference.mp3",
+file_audio":"Dr. Dre;Snoop Dogg_2001_The Next Episode.mp3",
+file_audio":"Dr. Dre;Hittman;Ms. Roq;Kurupt_2001_Let's Get High.mp3",
+file_audio":"Dr. Dre;Hittman;Ms. Roq;Knoc-Turn'al;The Time Bomb;Koka Kambon;DEFARI;MC Ren;Xzibit_2001_Some L.A. Niggaz.mp3",
+file_audio":"Dr. Dre;Hittman_2001_Ackrite.mp3",
+file_audio":"Achille Lauro;Boss Doms_Ragazzi madre_Teatro & cinema.mp3",
+file_audio":"Achille Lauro;Boss Doms_Ragazzi madre_Ragazzi madre.mp3",
+file_audio":"Achille Lauro;Boss Doms_Ragazzi madre_Fuc - BPR Squad Remix.mp3",
+file_audio":"Achille Lauro;Boss Doms_Ragazzi madre_Amico del quore.mp3",
+file_audio":"Achille Lauro;Boss Doms;Gow Tribe_Ragazzi madre_Profumo da donna.mp3",
+file_audio":"Achille Lauro;Boss Doms;Fred De Palma_Ragazzi madre_Amore & grammi.mp3",
+file_audio":"Achille Lauro;Boss Doms_Ragazzi madre_CCL.mp3",
+file_audio":"Achille Lauro;Boss Doms_Ragazzi madre_Barabba II.mp3",
+file_audio":"Achille Lauro;Boss Doms;Coez_Ragazzi madre_Ascensore per l'inferno.mp3",
+file_audio":"Achille Lauro;Boss Doms;Cosmo_Pour l'amour_Angelo Blu (feat. Cosmo).mp3",
+file_audio":"Achille Lauro;Boss Doms_Pour l'amour_BVLGARI.mp3",
+file_audio":"Achille Lauro;Boss Doms;Vins_Pour l'amour_Mamacita (feat. Vins).mp3",
+file_audio":"Achille Lauro;Boss Doms_Pour l'amour_Amore mi.mp3",
+file_audio":"Achille Lauro;Boss Doms;Gow Tribe_Pour l'amour_Roba francese (feat. Gow Tribe).mp3",
+file_audio":"Achille Lauro;Boss Doms_Pour l'amour_Burro e marmellata.mp3",
+file_audio":"Achille Lauro;Boss Doms_Pour l'amour_El Ninho.mp3",
+file_audio":"Achille Lauro;Boss Doms_Pour l'amour_Non sei come me.mp3",
+file_audio":"Achille Lauro;Gow Tribe;Boss Doms_Pour l'amour_Midnight Carnival.mp3",
+file_audio":"Achille Lauro;Boss Doms;Rocco Hunt;Clementino_Pour l'amour_Ammo' (feat. Rocco Hunt & Clementino).mp3",
+file_audio":"Achille Lauro;Boss Doms_Pour l'amour_Penelope.mp3",
+file_audio":"Sfera Ebbasta_Sfera Ebbasta_Visiera A Becco.mp3",
+file_audio":"Night Skinny;Ernia_Pezzi_Male.mp3",
+file_audio":"Nerone_Entertainer_Emme I.mp3",
+file_audio":"Dr. Dre;Snoop Dogg_2001_Still D.R.E..mp3",
+file_audio":"Achille Lauro;Boss Doms;Gemitaiz;Frenetik&Orang3_Pour l'amour_Purple Rain (feat. Gemitaiz & Frenetik&Orang3).mp3",
+file_audio":"Rvssian;Sfera Ebbasta_Pablo_Pablo.mp3",
+file_audio":"Quentin40;Dr. Cream_Fahrenheit_Fahrenheit.mp3",
+file_audio":"Vegas Jones_Chic Nisello_Eclipse.mp3",
+file_audio":"Achille Lauro;Boss Doms;Gemitaiz;Quentin40;Puritano_Pour l'amour_Thoiry Remix (Samba Trap Vol. 3 - Mitraglia Rec) (feat. Gemitaiz, Quentin40 & Puritano).mp3",
+file_audio":"Quentin40;Dr. Cream_Giovane1_Giovane1.mp3",
+file_audio":"Achille Lauro;Boss Doms;Gemitaiz_Ragazzi madre_Ulalala.mp3",
+file_audio":"DELTA PRIMO SQUAD_Delta Primo, Vol. 1_Deltazord (Intro).mp3",
+file_audio":"DELTA PRIMO SQUAD_Delta Primo, Vol. 1_La delta.mp3",
+file_audio":"DELTA PRIMO SQUAD_Delta Primo, Vol. 1_All I Got to Say.mp3",
+file_audio":"DELTA PRIMO SQUAD_Delta Primo, Vol. 1_Demoni.mp3",
+file_audio":"DELTA PRIMO SQUAD_Delta Primo, Vol. 1_Project1.mp3",
+file_audio":"DELTA PRIMO SQUAD_Delta Primo, Vol. 1_Papaveri.mp3",
+file_audio":"DELTA PRIMO SQUAD_Delta Primo, Vol. 1_10.4 Mb.mp3",
+file_audio":"DELTA PRIMO SQUAD_Delta Primo, Vol. 1_Staticmesh.mp3",
+file_audio":"DELTA PRIMO SQUAD_Delta Primo, Vol. 1_Snowpiercer.mp3",
+file_audio":"DELTA PRIMO SQUAD_Delta Primo, Vol. 1_Red Moon.mp3",
+file_audio":"DELTA PRIMO SQUAD_Delta Primo, Vol. 1_Crysis (Outro).mp3",
+file_audio":"Nitro;En-gma;Hell Raton;Clementino;Raige_Machete Mixtape Gold Edition_Ready for War (feat. Raige).mp3",
+file_audio":"En-gma;Hell Raton;Nitro_Machete Mixtape Gold Edition_Ganja Boat.mp3",
+file_audio":"Clementino;Salmo;En-gma_Machete Mixtape Gold Edition_Machete State of Mind.mp3",
+file_audio":"Nitro;DJ Shocca;En-gma_Machete Mixtape Gold Edition_Ego Trap.mp3",
+file_audio":"Jack The Smoker_Machete Mixtape Gold Edition_Viaggio nell'Aldilà.mp3",
+file_audio":"Salmo_Machete Mixtape Gold Edition_Nella pancia dello squalo - Remix.mp3",
+file_audio":"En-gma_Machete Mixtape Gold Edition_L'uomo contro l'ombra.mp3",
+file_audio":"Hell Raton_Machete Mixtape Gold Edition_Multicultural - Remix.mp3",
+file_audio":"Salmo_Machete Mixtape Gold Edition_Vai Jack!.mp3",
+file_audio":"Bruno Mars_24K Magic_Chunky.mp3",
+file_audio":"Bruno Mars_24K Magic_Perm.mp3",
+file_audio":"Bruno Mars_24K Magic_That's What I Like.mp3",
+file_audio":"Bruno Mars_24K Magic_Straight up & Down.mp3",
+file_audio":"Bruno Mars_24K Magic_Calling All My Lovelies.mp3",
+file_audio":"Bruno Mars_24K Magic_Finesse.mp3",
+file_audio":"Bruno Mars_24K Magic_Too Good to Say Goodbye.mp3",
+file_audio":"Bruno Mars_Doo-Wops & Hooligans_Just the Way You Are.mp3",
+file_audio":"Bruno Mars_Doo-Wops & Hooligans_Runaway Baby.mp3",
+file_audio":"Bruno Mars_Doo-Wops & Hooligans_Marry You.mp3",
+file_audio":"Bruno Mars_Doo-Wops & Hooligans_Talking to the Moon.mp3",
+file_audio":"Bruno Mars_Doo-Wops & Hooligans_Count on Me.mp3",
+file_audio":"Bruno Mars;B.o.B;CeeLo Green_Doo-Wops & Hooligans_The Other Side (feat. CeeLo Green and B.o.B).mp3",
+file_audio":"Bruno Mars_Doo-Wops & Hooligans_Somewhere in Brooklyn.mp3",
+file_audio":"Bruno Mars_Doo-Wops & Hooligans_Talking to the Moon - Acoustic Piano.mp3",
+file_audio":"Club Dogo_Mi fist (Remastered version)_Intro.mp3",
+file_audio":"Club Dogo_Mi fist (Remastered version)_Cronache di resistenza - Hard to do.mp3",
+file_audio":"Club Dogo_Mi fist (Remastered version)_Rap soprano.mp3",
+file_audio":"Club Dogo_Mi fist (Remastered version)_Qualcosa in mente.mp3",
+file_audio":"Club Dogo;Vincenzo_Mi fist (Remastered version)_Sangue e filigrana - Remix 2k4.mp3",
+file_audio":"Club Dogo_Mi fist (Remastered version)_Note killer.mp3",
+file_audio":"Club Dogo;Lamaislam_Mi fist (Remastered version)_Indecifrabili, dangerous!.mp3",
+file_audio":"Club Dogo_Mi fist (Remastered version)_Vida loca - Remix 2k4.mp3",
+file_audio":"Club Dogo_Mi fist (Remastered version)_Kyobo ni tsuki.mp3",
+file_audio":"Club Dogo;Santy DJ_Mi fist (Remastered version)_02 massive.mp3",
+file_audio":"Club Dogo_Mi fist (Remastered version)_Hardboiled - Sabotatori.mp3",
+file_audio":"Club Dogo_Mi fist (Remastered version)_Totòlude.mp3",
+file_audio":"Club Dogo;Totò Mezzolla_Mi fist (Remastered version)_Ignoranz verse pusherz - 2k.mp3",
+file_audio":"Club Dogo_Mi fist (Remastered version)_La stanza dei fantasmi - Remix 2k4.mp3",
+file_audio":"Club Dogo;Vincenzo_Mi fist (Remastered version)_Phra - Outro.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Eraser.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Castle on the Hill.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Dive.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Shape of You.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Perfect.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Galway Girl.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_New Man.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Hearts Don't Break Around Here.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_What Do I Know-.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Supermarket Flowers.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Barcelona.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Bibia Be Ye Ye.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Nancy Mulligan.mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Save Myself.mp3",
+file_audio":"Eminem_Curtain Call (Deluxe)_Sing For The Moment.mp3",
+file_audio":"Eminem_Curtain Call (Deluxe)_Like Toy Soldiers.mp3",
+file_audio":"Eminem;Dr. Dre_Curtain Call (Deluxe)_Guilty Conscience.mp3",
+file_audio":"Eminem_Curtain Call (Deluxe)_Just Don't Give A Fuck.mp3",
+file_audio":"Eminem_The Eminem Show_White America.mp3",
+file_audio":"Eminem_The Eminem Show_Soldier.mp3",
+file_audio":"Eminem_The Eminem Show_Hailie's Song.mp3",
+file_audio":"Eminem;D12_The Eminem Show_When The Music Stops.mp3",
+file_audio":"Eminem;Dr. Dre_The Eminem Show_Say What You Say.mp3",
+file_audio":"Eminem;Hailie Jade_The Eminem Show_My Dad's Gone Crazy.mp3",
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_Bad Guy.mp3",
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_Survival.mp3",
+file_audio":"Eminem;Skylar Grey_The Marshall Mathers LP2 (Deluxe)_Asshole.mp3",
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_Berzerk.mp3",
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_Stronger Than I Was.mp3",
+file_audio":"Eminem;Rihanna_The Marshall Mathers LP2 (Deluxe)_The Monster.mp3",
+file_audio":"Eminem;Nate Ruess_The Marshall Mathers LP2 (Deluxe)_Headlights.mp3",
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_Baby.mp3",
+file_audio":"Eminem;Sia_The Marshall Mathers LP2 (Deluxe)_Beautiful Pain.mp3",
+file_audio":"Eminem_The Marshall Mathers LP2 (Deluxe)_Wicked Ways.mp3",
+file_audio":"Eminem;Kobe_Recovery_Talkin’ 2 Myself.mp3",
+file_audio":"Eminem_Recovery_Won't Back Down.mp3",
+file_audio":"Eminem_Recovery_Going Through Changes.mp3",
+file_audio":"Eminem_Recovery_Seduction.mp3",
+file_audio":"Eminem;Lil Wayne_Recovery_No Love.mp3",
+file_audio":"Eminem_Recovery_Cinderella Man.mp3",
+file_audio":"Eminem_Recovery_25 To Life.mp3",
+file_audio":"Eminem_Recovery_So Bad.mp3",
+file_audio":"Eminem;Rihanna_Recovery_Love The Way You Lie.mp3",
+file_audio":"Eminem_Recovery_You’re Never Over.mp3",
+file_audio":"Eminem_Recovery_Untitled.mp3",
+file_audio":"Eminem;Beyoncé_Revival_Walk On Water (feat. Beyoncé).mp3",
+file_audio":"Eminem_Revival_Believe.mp3",
+file_audio":"Eminem_Revival_Untouchable.mp3",
+file_audio":"Eminem;Ed Sheeran_Revival_River (feat. Ed Sheeran).mp3",
+file_audio":"Eminem_Revival_Remind Me.mp3",
+file_audio":"Eminem_Revival_Revival (Interlude).mp3",
+file_audio":"Eminem;Alicia Keys_Revival_Like Home (feat. Alicia Keys).mp3",
+file_audio":"Eminem;X Ambassadors_Revival_Bad Husband (feat. X Ambassadors).mp3",
+file_audio":"Eminem;Skylar Grey_Revival_Tragic Endings (feat. Skylar Grey).mp3",
+file_audio":"Eminem;Kehlani_Revival_Nowhere Fast (feat. Kehlani).mp3",
+file_audio":"Eminem_Revival_Heat.mp3",
+file_audio":"Eminem_Revival_Offended.mp3",
+file_audio":"Eminem;Pink_Revival_Need Me (feat. Pink).mp3",
+file_audio":"Eminem_Revival_Arose.mp3",
+file_audio":"Eminem_The Slim Shady LP_Brain Damage.mp3",
+file_audio":"Eminem_The Slim Shady LP_'97 Bonnie & Clyde.mp3",
+file_audio":"Eminem_The Slim Shady LP_Cum On Everybody.mp3",
+file_audio":"Eminem;Royce Da 5'9-_The Slim Shady LP_Bad Meets Evil.mp3",
+file_audio":"Eminem_The Slim Shady LP_Still Don't Give A Fuck.mp3",
+file_audio":"Ernia_Come Uccidere Un Usignolo_QT.mp3",
+file_audio":"Ernia_Come Uccidere Un Usignolo_Gotham.mp3",
+file_audio":"Ernia_Come Uccidere Un Usignolo_Feeling.mp3",
+file_audio":"Ernia_Come Uccidere Un Usignolo_Bella.mp3",
+file_audio":"Ernia_Come Uccidere Un Usignolo_Ehy Boy.mp3",
+file_audio":"Ernia_Come Uccidere Un Usignolo_Amici.mp3",
+file_audio":"Ernia_Come Uccidere Un Usignolo_Come Uccidere Un Usignolo.mp3",
+file_audio":"Fabri Fibra_Bugiardo_La Soluzione.mp3",
+file_audio":"Lazza;Low Kidd_Zzala_Ouverture.mp3",
+file_audio":"Lazza;Low Kidd_Zzala_Maleducati.mp3",
+file_audio":"Lazza;Low Kidd_Zzala_Zzala.mp3",
+file_audio":"Lazza;Low Kidd_Zzala_430.mp3",
+file_audio":"Lazza;Low Kidd;Salmo;Nitro_Zzala_MOB (feat. Salmo & Nitro).mp3",
+file_audio":"En-gma;El Raton;Jack The Smoker_Machete Mixtape Iii_Hi Haters.mp3",
+file_audio":"Salmo;Nitro_Machete Mixtape Iii_Da hardcore wilder.mp3",
+file_audio":"Salmo;Nitro;En-gma_Machete Mixtape Iii_Cruditè.mp3",
+file_audio":"En-gma;Kill Mauri_Machete Mixtape Iii_Coriandoli.mp3",
+file_audio":"Salmo_Machete Mixtape Iii_Venice Beach.mp3",
+file_audio":"Nitro_Machete Mixtape Iii_Phil De Payne.mp3",
+file_audio":"Fabri Fibra;Nitro_Machete Mixtape Iii_Doggy Style.mp3",
+file_audio":"Salmo;Skits Vicious;Nitro_Machete Mixtape Iii_Stanley Kubrick.mp3",
+file_audio":"Rasty Kilo_Machete Mixtape Iii_Figli dell'odio.mp3",
+file_audio":"Salmo;Nitro;Jack The Smoker_Machete Mixtape Iii_Non sopporto.mp3",
+file_audio":"En-gma;Nitro_Machete Mixtape Iii_Au revoir.mp3",
+file_audio":"Clementino;Salmo;Jack The Smoker;Nitro_Machete Mixtape Iii_Purple Haze.mp3",
+file_audio":"El Raton;Bassi Maestro;Rasty Kilo;MadMan;En-gma;Noyz Narcos;Jack The Smoker;Salmo;Rocco Hunt;Gemitaiz_Machete Mixtape Iii_Battle Royale.mp3",
+file_audio":"En-gma;El Raton_Machete Mixtape Iii_Indios.mp3",
+file_audio":"Nitro_Machete Mixtape Iii_Enfant terrible.mp3",
+file_audio":"Salmo_Machete Mixtape Iii_La bestia in me.mp3",
+file_audio":"En-gma_Machete Mixtape Iii_Malessere.mp3",
+file_audio":"MadMan_Back Home_Niente Proprio.mp3",
+file_audio":"MadMan_Back Home_Successo.mp3",
+file_audio":"MadMan_Back Home_Salsa.mp3",
+file_audio":"MadMan_Back Home_Ciò Che Fa Per Me.mp3",
+file_audio":"MadMan;Priestess_Back Home_Extraterrestri (feat. Priestess).mp3",
+file_audio":"MadMan;Coez_Back Home_Centro (feat. Coez).mp3",
+file_audio":"MadMan_Back Home_Niente Da Dividere.mp3",
+file_audio":"MadMan_Back Home_Storie.mp3",
+file_audio":"Marracash_Status_Bruce Willis.mp3",
+file_audio":"Marracash_Status_Bentornato.mp3",
+file_audio":"Marracash;Achille Lauro_Status_Don.mp3",
+file_audio":"Marracash;Fabri Fibra_Status_Vita Da Star.mp3",
+file_audio":"Marracash_Status_20 Anni (Peso).mp3",
+file_audio":"Marracash_Status_Il Nostro Tempo.mp3",
+file_audio":"Marracash;Federica Abbate_Status_In Radio.mp3",
+file_audio":"Marracash_Status_Vendetta.mp3",
+file_audio":"Marracash_Status_Status.mp3",
+file_audio":"Marracash;Luchè_Status_Sushi & Cocaina.mp3",
+file_audio":"Marracash_Status_Crack.mp3",
+file_audio":"Marracash_Status_Sindrome Depressiva Da Social Network.mp3",
+file_audio":"Marracash;Guè_Status_Di Nascosto.mp3",
+file_audio":"Marracash_Status_Sogni Non Tuoi.mp3",
+file_audio":"Marracash_Status_Untitled.mp3",
+file_audio":"Marracash_Status_Vendetta - 2nd Roof Remix.mp3",
+file_audio":"Marracash;Guè_Santeria_Santeria.mp3",
+file_audio":"Marracash;Guè_Santeria_Money.mp3",
+file_audio":"Marracash;Guè_Santeria_Nulla Accade.mp3",
+file_audio":"Marracash;Guè_Santeria_Senza Dio.mp3",
+file_audio":"Marracash;Guè_Santeria_Purdi.mp3",
+file_audio":"Marracash;Guè_Santeria_Insta Lova.mp3",
+file_audio":"Marracash;Guè_Santeria_Maledetto Me.mp3",
+file_audio":"Marracash;Guè_Santeria_Scooteroni.mp3",
+file_audio":"Marracash;Guè_Santeria_Quasi Amici.mp3",
+file_audio":"Marracash;Guè_Santeria_Erba & WiFi.mp3",
+file_audio":"Nerone_Max_Seconda mano.mp3",
+file_audio":"Nerone;Rocco Hunt_Max_Sembra ieri.mp3",
+file_audio":"Nerone_Max_Basta.mp3",
+file_audio":"Nerone;Warez;Secco_Max_La miaccade llade scacru.mp3",
+file_audio":"Nerone_Max_Mollalo Nerone.mp3",
+file_audio":"Nerone_Max_By Myself.mp3",
+file_audio":"Nerone;Remmy_Max_Sale.mp3",
+file_audio":"Nerone;Axos_Max_Nessuno.mp3",
+file_audio":"Nerone;Nitro_Max_Non so più chi sei.mp3",
+file_audio":"Nitro_Danger_0.mp3",
+file_audio":"Nitro_Danger_Back Again.mp3",
+file_audio":"Nitro_Danger_Family Affair.mp3",
+file_audio":"Nitro_Danger_Margot.mp3",
+file_audio":"Nitro_Danger_Kill Them All.mp3",
+file_audio":"Nitro_Danger_Bipolar Mind.mp3",
+file_audio":"Nitro;Belzebass_Danger_Mr. Anderson (feat. Belzebass).mp3",
+file_audio":"Nitro_Suicidol_The Dark Side of the Mood.mp3",
+file_audio":"Nitro_Suicidol_All In.mp3",
+file_audio":"Nitro;Fabri Fibra_Suicidol_Ong Bak (feat. Fabri Fibra).mp3",
+file_audio":"Nitro_Suicidol_L'oracolo di Selfie.mp3",
+file_audio":"Nitro_Suicidol_The Same Old Story.mp3",
+file_audio":"Nitro;Devotion;Skits Vicious;André_Suicidol_Twinbeasts (feat. Devotion, Skits Vicious & André).mp3",
+file_audio":"Nitro_Suicidol_Rivivere.mp3",
+file_audio":"Nitro_Suicidol Post Mortem_Rotten.mp3",
+file_audio":"Nitro_Suicidol Post Mortem_Baba Jaga.mp3",
+file_audio":"Nitro_Suicidol Post Mortem_Suicidol.mp3",
+file_audio":"Nitro_Suicidol Post Mortem_Pleasantville.mp3",
+file_audio":"Nitro;Dj MS_Suicidol Post Mortem_Stronzo (feat. DJ MS).mp3",
+file_audio":"Nitro_Suicidol Post Mortem_Storia di un defunto artista.mp3",
+file_audio":"Nitro_Suicidol Post Mortem_F.P.S..mp3",
+file_audio":"Nitro_Suicidol Post Mortem_Solo quando bevo.mp3",
+file_audio":"Salmo_Hellvisback_Mic Taser.mp3",
+file_audio":"Salmo_Hellvisback_Giuda.mp3",
+file_audio":"Salmo_Hellvisback_Io sono qui.mp3",
+file_audio":"Salmo_Hellvisback_Daytona.mp3",
+file_audio":"Salmo_Hellvisback_7 am.mp3",
+file_audio":"Salmo_Hellvisback_Hellvisback.mp3",
+file_audio":"Salmo_Hellvisback_La festa è finita.mp3",
+file_audio":"Salmo;SBCR_Hellvisback_Peyote (feat. SBCR).mp3",
+file_audio":"Salmo_Hellvisback Platinum_1984.mp3",
+file_audio":"Salmo_Hellvisback Platinum_L'alba.mp3",
+file_audio":"Salmo;Slait_The Island Chainsaw Massacre_Morte in diretta.mp3",
+file_audio":"Salmo_The Island Chainsaw Massacre_L'erba di Grace.mp3",
+file_audio":"Salmo;Enigma_The Island Chainsaw Massacre_Back On Track.mp3",
+file_audio":"Salmo_The Island Chainsaw Massacre_Vuoto.mp3",
+file_audio":"Salmo_The Island Chainsaw Massacre_Dj Valium.mp3",
+file_audio":"Salmo_The Island Chainsaw Massacre_Prima di dormire.mp3",
+file_audio":"Salmo_The Island Chainsaw Massacre_Rancho della luna.mp3",
+file_audio":"Salmo;El Raton_The Island Chainsaw Massacre_Los Ojos del Diablo.mp3",
+file_audio":"Salmo;Enigma_The Island Chainsaw Massacre_Munchies.mp3",
+file_audio":"Salmo_The Island Chainsaw Massacre_Yoko-ono.mp3",
+file_audio":"Salmo_The Island Chainsaw Massacre_Un dio personale.mp3",
+file_audio":"Salmo_The Island Chainsaw Massacre_Nella pancia dello squalo.mp3",
+file_audio":"Salmo;El Raton_The Island Chainsaw Massacre_Machete Flow - Pass Out Remix.mp3",
+file_audio":"Salmo_Midnite (Deluxe Version)_Borderline.mp3",
+file_audio":"Salmo;Noyz Narcos_Midnite (Deluxe Version)_Rob Zombie.mp3",
+file_audio":"Salmo;Nitro_Midnite (Deluxe Version)_Space Invaders.mp3",
+file_audio":"Salmo_Midnite (Deluxe Version)_Redneck.mp3",
+file_audio":"Salmo;Mezzosangue_Midnite (Deluxe Version)_Sadico.mp3",
+file_audio":"Salmo_Midnite (Deluxe Version)_Weishaupt.mp3",
+file_audio":"Salmo;El Raton;En-gma;Slait_Midnite (Deluxe Version)_The Island.mp3",
+file_audio":"Salmo;Dope D.O.D._Midnite (Deluxe Version)_Blood Shake.mp3",
+file_audio":"Sfera Ebbasta_Rockstar_Rockstar.mp3",
+file_audio":"Sfera Ebbasta_Rockstar_Serpenti A Sonagli.mp3",
+file_audio":"Sfera Ebbasta_Rockstar_XNX.mp3",
+file_audio":"Sfera Ebbasta_Rockstar_Uber.mp3",
+file_audio":"Sfera Ebbasta_Rockstar_Leggenda.mp3",
+file_audio":"Sfera Ebbasta_Rockstar_Bancomat.mp3",
+file_audio":"Sfera Ebbasta;DrefGold_Rockstar_Sciroppo (feat. DrefGold).mp3",
+file_audio":"Sfera Ebbasta_Rockstar_20 Collane.mp3",
+file_audio":"Sfera Ebbasta_Rockstar_Tran Tran.mp3",
+file_audio":"Vegas Jones_Malibu_Malibu.mp3",
+file_audio":"Vegas Jones_Bellaria_Bellaria.mp3",
+file_audio":"Vegas Jones_Bellaria_Ice.mp3",
+file_audio":"Vegas Jones_Bellaria_Trappola.mp3",
+file_audio":"Vegas Jones_Bellaria_Nuova Ghini.mp3",
+file_audio":"Vegas Jones;Guè_Bellaria_Mamacita (feat. Guè).mp3",
+file_audio":"Vegas Jones_Bellaria_Il Viaggio.mp3",
+file_audio":"Vegas Jones_Bellaria_Bubble Bubble.mp3",
+file_audio":"Vegas Jones_Bellaria_Yankee Candle.mp3",
+file_audio":"Vegas Jones_Bellaria_Cristo.mp3",
+file_audio":"Vegas Jones_Bellaria_Numeri & Zeri.mp3",
+file_audio":"Vegas Jones;Jenn Morel_Bellaria_Drive By (feat. Jenn Morel).mp3",
+file_audio":"Vegas Jones_Bellaria_Lisha (Su E Giù).mp3",
+file_audio":"Gemitaiz;MadMan_Kepler_Il Giorno Del Giudizio.mp3",
+file_audio":"Gemitaiz;MadMan_Kepler_Non Se Ne Parla.mp3",
+file_audio":"Gemitaiz;MadMan_Kepler_Sigarette.mp3",
+file_audio":"Gemitaiz;MadMan_Kepler_No Comment.mp3",
+file_audio":"Gemitaiz;MadMan_Kepler_Zitto E Guarda.mp3",
+file_audio":"Gemitaiz;MadMan_Kepler_Blue Sky.mp3",
+file_audio":"Gemitaiz;MadMan;Coez_Kepler_Instagrammo.mp3",
+file_audio":"Gemitaiz;MadMan;DJ 2P_Kepler_Smokin' Aces.mp3",
+file_audio":"Gemitaiz;MadMan;Guè_Kepler_Sempre In Giro.mp3",
+file_audio":"Gemitaiz;MadMan_Kepler_Haterproof 2.mp3",
+file_audio":"Gemitaiz;MadMan_Kepler_Il Sesto Elemento.mp3",
+file_audio":"Gemitaiz;MadMan;Jake La Furia_Kepler_Eutanasia.mp3",
+file_audio":"Gemitaiz;MadMan;Jay Reaper_Kepler_Black Mirror.mp3",
+file_audio":"Gemitaiz;MadMan;Clementino_Kepler_Drama.mp3",
+file_audio":"Gemitaiz;MadMan_Kepler_Diario Di Bordo.mp3",
+file_audio":"Gemitaiz;MadMan_Kepler_I Don't Care.mp3",
+file_audio":"Gemitaiz;MadMan;DJ Gengis_Kepler (Gold Edition)_Disco D'Oro.mp3",
+file_audio":"Gemitaiz;MadMan;Coez_Kepler (Gold Edition)_Instagrammo - Shablo Remix.mp3",
+file_audio":"Gemitaiz;MadMan;Ombra_Kepler (Gold Edition)_Il Giorno Del Giudizio - Dyo Remix.mp3",
+file_audio":"Gemitaiz;MadMan;STABBER_Kepler (Gold Edition)_Non Se Ne Parla - Stabber Remix.mp3",
+file_audio":"Gemitaiz;MadMan;Clementino;Ombra_Kepler (Gold Edition)_Drama - Ombra Remix.mp3",
+file_audio":"Crookers;MadMan;Gemitaiz_Kepler (Gold Edition)_Ghetto Guetta.mp3",
+file_audio":"Gemitaiz_Nonostante Tutto_Intro.mp3",
+file_audio":"Gemitaiz_Nonostante Tutto_Bene.mp3",
+file_audio":"Gemitaiz_Nonostante Tutto_Scusa.mp3",
+file_audio":"Gemitaiz_Nonostante Tutto_Cambio Le Regole.mp3",
+file_audio":"Gemitaiz;Fabri Fibra_Nonostante Tutto_Fammi Fuori.mp3",
+file_audio":"Gemitaiz;Dope D.O.D._Nonostante Tutto_N.F.C.N.B..mp3",
+file_audio":"Gemitaiz_Nonostante Tutto_Quando Vuoi.mp3",
+file_audio":"Gemitaiz_Nonostante Tutto_Nonostante Tutto.mp3",
+file_audio":"Gemitaiz;MadMan_Nonostante Tutto_Preso Male.mp3",
+file_audio":"Gemitaiz_Nonostante Tutto_Non Lo So.mp3",
+file_audio":"Gemitaiz;Guè_Nonostante Tutto_Ce L'hanno Con Me.mp3",
+file_audio":"Gemitaiz_Nonostante Tutto_Niente Per Me.mp3",
+file_audio":"Gemitaiz_Nonostante Tutto_È Inutile.mp3",
+file_audio":"Gemitaiz;Emis Killa_Nonostante Tutto_Non Me Ne Vado.mp3",
+file_audio":"Gemitaiz_Nonostante Tutto_Domani.mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_2013 (Accendila).mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_Quando Mai.mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_Fuori Di Qua (Out Of My Way).mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_Lo Stesso.mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_L'Unico Compromesso.mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_La Testa Mia.mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_Mondo Spaccato.mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_Celebrity.mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_Mettere Giù.mp3",
+file_audio":"Gemitaiz;Salmo_L'Unico Compromesso (2016 Version)_K-Hole.mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_Ti Amo.mp3",
+file_audio":"Gemitaiz;Ntò_L'Unico Compromesso (2016 Version)_Occhi Di Vetro.mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_Collier.mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_Lo Faccio Bene.mp3",
+file_audio":"Gemitaiz;Ensi;Bassi Maestro_L'Unico Compromesso (2016 Version)_Forever True.mp3",
+file_audio":"Gemitaiz;Sercho_L'Unico Compromesso (2016 Version)_Winners&Losers.mp3",
+file_audio":"Gemitaiz_L'Unico Compromesso (2016 Version)_Nevermind (Spegnila).mp3",
+file_audio":"Gemitaiz;Victor Kwality_Nonostante Tutto (Inediti, Rarità, Live E Remix)_Coma.mp3",
+file_audio":"Gemitaiz_Nonostante Tutto (Inediti, Rarità, Live E Remix)_Giù (Resto Qua).mp3",
+file_audio":"Gemitaiz_Nonostante Tutto (Inediti, Rarità, Live E Remix)_Rap Doom.mp3",
+file_audio":"Gemitaiz_QVC Collection_Me Basta Questo.mp3",
+file_audio":"Gemitaiz_QVC Collection_Out Of My Way.mp3",
+file_audio":"Gemitaiz_QVC Collection_Vivere.mp3",
+file_audio":"Gemitaiz_QVC Collection_Nato Estremo.mp3",
+file_audio":"Gemitaiz_QVC Collection_Fuori Di Testa.mp3",
+file_audio":"Gemitaiz_QVC Collection_Va Bene Così.mp3",
+file_audio":"Gemitaiz;Primo Brown;Ensi_QVC Collection_Ti Piacerebbe (feat. Primo Brown & Ensi).mp3",
+file_audio":"Gemitaiz_QVC Collection_La Ballata Del Dubbio - Pt.2.mp3",
+file_audio":"Gemitaiz_QVC Collection_Scappo Via.mp3",
+file_audio":"Gemitaiz_QVC Collection_Billy Idol.mp3",
+file_audio":"Gemitaiz;MadMan;Pedar_QVC Collection_Inedito (feat. Madman & Pedar Poy).mp3",
+file_audio":"Gemitaiz;MadMan_L'Unico Compromesso (2016 Version)_Pistorius.mp3",
+file_audio":"Gemitaiz_Davide_Paradise Lost.mp3",
+file_audio":"Gemitaiz_Davide_Fuori.mp3",
+file_audio":"Gemitaiz_Davide_Oro E Argento.mp3",
+file_audio":"Gemitaiz;Achille Lauro_Davide_Keanu Reeves (feat. Achille Lauro).mp3",
+file_audio":"Gemitaiz_Davide_Un Giro Con Noi.mp3",
+file_audio":"Gemitaiz;Fabri Fibra_Davide_Pezzo Trap (feat. Fabri Fibra).mp3",
+file_audio":"Gemitaiz_Davide_Chiamate Perse.mp3",
+file_audio":"Gemitaiz;MadMan_Davide_Holy Grail (feat. Madman).mp3",
+file_audio":"Gemitaiz_Davide_Diverso.mp3",
+file_audio":"Gemitaiz_Davide_Questa Qua.mp3",
+file_audio":"Gemitaiz_Davide_Lo Sai Che Ci Penso.mp3",
+file_audio":"Gemitaiz_Davide_Buonanotte.mp3",
+file_audio":"Bruno Mars_24K Magic_24K Magic.mp3",
+file_audio":"Bruno Mars_24K Magic_Versace on the Floor.mp3",
+file_audio":"Bastille_Oblivion_Oblivion.mp3",
+file_audio":"Bruno Mars_Doo-Wops & Hooligans_The Lazy Song.mp3",
+file_audio":"Bruno Mars_Doo-Wops & Hooligans_Grenade.mp3",
+file_audio":"Royal Rhymes_God Save The Royal (Fred De Palma, Dirty C)_Lucchetti down.mp3",
+file_audio":"Club Dogo;Dargen D'Amico_Mi fist (Remastered version)_Tana 2000.mp3",
+file_audio":"Hell Raton;Ensi;Salmo;En-gma;Bassi Maestro;Rocco Hunt;Gemitaiz_Machete Mixtape Gold Edition_King's Supreme.mp3",
+file_audio":"Dirty;Fred De Palma_Lettera al Successo_Usain bolt.mp3",
+file_audio":"Jason Mraz_We Sing. We Dance. We Steal Things._I'm Yours.mp3",
+file_audio":"Nitro_Suicidol Post Mortem_Stronzo, Pt. 2.mp3",
+file_audio":"Nitro;MadMan;Jake La Furia_Suicidol Post Mortem_Glock Party (feat. Madman & Jake La Furia).mp3",
+file_audio":"Nitro;Dj MS_Suicidol_Dead Body (feat. DJ MS).mp3",
+file_audio":"Fabri Fibra_Bugiardo_Bugiardo - Radio Edit.mp3",
+file_audio":"MadMan;Gemitaiz_Back Home_Hollywood (feat. Gemitaiz).mp3",
+file_audio":"Capo Plaza;AVA;Mojobeatz_Allenamento #3_Allenamento #3.mp3",
+file_audio":"BADA$$ B._Cuba_Cuba.mp3",
+file_audio":"Sfera Ebbasta_Rockstar_Ricchi x Sempre.mp3",
+file_audio":"Eminem;Nate Dogg_The Eminem Show_'Till I Collapse.mp3",
+file_audio":"Dark Polo Gang_British_British.mp3",
+file_audio":"Nitro_Machete Mixtape Gold Edition_We Takin It Back.mp3",
+file_audio":"thasup_scuol4_scuol4.mp3",
+file_audio":"Eminem_Revival_In Your Head.mp3",
+file_audio":"Eminem_Recovery_Not Afraid.mp3",
+file_audio":"Eminem_The Eminem Show_Without Me.mp3",
+file_audio":"Gemitaiz_Nonostante Tutto (Inediti, Rarità, Live E Remix)_Hangover.mp3",
+file_audio":"Eminem_Curtain Call (Deluxe)_When I'm Gone.mp3",
+file_audio":"Nerone;Gemitaiz;Salmo_Max_Papparapa'.mp3",
+file_audio":"MamboLosco;Edo Fendy_Guarda come flexo_Guarda come flexo.mp3",
+file_audio":"Salmo;Gemitaiz;MadMan_Midnite (Deluxe Version)_Killer Game.mp3",
+file_audio":"Lazza;Low Kidd_Zzala_Lario.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Inferno Edition)_Chi mi sfida.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Inferno Edition)_Madafucka.mp3",
+file_audio":"Mostro_Ogni maledetto giorno (Inferno Edition)_Sergio Tacchini.mp3",
+file_audio":"Mostro;Oni One_Ogni maledetto giorno (Inferno Edition)_Malavita.mp3",
+file_audio":"Gemitaiz;Coez_Davide_Davide (feat. Coez).mp3",
+file_audio":"Vegas Jones;MadMan;Gemitaiz_Bellaria_Brillo (feat. Madman & Gemitaiz).mp3",
+file_audio":"Ed Sheeran_÷ (Deluxe)_Happier.mp3",
+file_audio":"BADA$$ B._Lo So Fare_Lo So Fare.mp3",
+file_audio":"Ernia_Come Uccidere Un Usignolo (67 Edition)_EGO.mp3",
+file_audio":"Ernia_Come Uccidere Un Usignolo (67 Edition)_Lei No (Il Tradito).mp3",
+file_audio":"Ernia_Come Uccidere Un Usignolo (67 Edition)_La Ballata Di Mario Rossi.mp3",
+file_audio":"Ernia_Come Uccidere Un Usignolo (67 Edition)_Noia.mp3",
+file_audio":"Sting;Shaggy_44-876 (Deluxe)_Don't Make Me Wait (with Shaggy).mp3",
+file_audio":"Salmo;Nitro;Axos_Hellvisback Platinum_Title- (feat. Nitro & Axos).mp3",
+file_audio":"MadMan_MM Vol. 2_QRGZZ - Remix.mp3",
+file_audio":"MadMan_MM Vol. 2_Mary Jane.mp3",
+file_audio":"Salmo_Midnite (Deluxe Version)_Russell Crowe.mp3",
+file_audio":"Salmo_The Island Chainsaw Massacre_La prima volta.mp3",
+file_audio":"Salmo_Midnite (Deluxe Version)_S.A.L.M.O..mp3",
+file_audio":"Salmo;Rose Villain_Hellvisback Platinum_Don Medellín (feat. Rose Villain).mp3",
+file_audio":"Marracash;Salmo;Coez_Status_A Volte Esagero.mp3",
+file_audio":"Charlie Charles;Sfera Ebbasta;Ghali_Peace & Love_Peace & Love.mp3",
+file_audio":"MadMan_Back Home_Trapano.mp3",
+file_audio":"MadMan_Back Home_Mickey Rourke.mp3",
+file_audio":"Highsnob_Bipopular_Bravo Bravo.mp3",
+file_audio":"Highsnob_Bipopular_Swahili.mp3",
+file_audio":"Highsnob_Bipopular_Poi Ti Spiego.mp3",
+file_audio":"Highsnob_Bipopular_Malandrino.mp3",
+file_audio":"Highsnob_Bipopular_Zombie.mp3",
+file_audio":"Highsnob_Bipopular_Pacman.mp3",
+file_audio":"Highsnob_Bipopular_Kalma.mp3",
+file_audio":"JUNIOR CALLY_Magicabula_Magicabula.mp3",
+file_audio":"Salmo_The Island Chainsaw Massacre_Il senso dell'odio.mp3",
+file_audio":"En-gma;Hell Raton;Jack The Smoker_Machete Mixtape, Vol. 3_Hi Haters.mp3",
+file_audio":"Salmo;Stick Vicious;Nitro;Stereoliez_Machete Mixtape, Vol. 3_Stanley Kubrick (feat. Stereoliez).mp3",
+file_audio":"Salmo;Nitro;Jack The Smoker;Stereoliez;Ceri_Machete Mixtape, Vol. 3_Non sopporto (feat. Stereoliez & Ceri).mp3",
+file_audio":"En-gma;Hell Raton;The Buildzer;Nah_Machete Mixtape, Vol. 3_Indios (feat. The Buildzer & Nah).mp3",
+file_audio":"Nitro;Belzebass;Stereoliez_Machete Mixtape, Vol. 3_Enfant terrible (feat. Belzebass & Stereoliez).mp3",
+file_audio":"Salmo;Belzebass_Machete Mixtape, Vol. 3_La bestia in me (feat. Belzebass).mp3",
+file_audio":"Hell Raton;Bassi Maestro;Rasty Kilo;MadMan;En-gma;Noyz Narcos;Jack The Smoker;Salmo;Rocco Hunt;Gemitaiz_Machete Mixtape, Vol. 3_Battle Royale.mp3",
+file_audio":"Fabri Fibra;Gianna Nannini_Bugiardo_In Italia.mp3",
+file_audio":"Highsnob;JUNIOR CALLY_Wannabe_Wannabe.mp3",
+file_audio":"Highsnob_Spunte blue_Spunte blue.mp3",
+file_audio":"MadMan_Doppelganger_Kournikova.mp3",
+file_audio":"MadMan_Doppelganger_Doppelganger.mp3",
+file_audio":"MadMan;Gemitaiz_Doppelganger_Tutto In Un Giorno.mp3",
+file_audio":"MadMan;Priestess_Doppelganger_Devil May Cry.mp3",
+file_audio":"MadMan_Doppelganger_Patatrac.mp3",
+file_audio":"MadMan;Luchè_Doppelganger_Non Credo.mp3",
+file_audio":"MadMan;Jake La Furia_Doppelganger_Top Player.mp3",
+file_audio":"MadMan_Doppelganger_La Mia Tipa.mp3",
+file_audio":"MadMan;Jack The Smoker_Doppelganger_Tutto Apposto.mp3",
+file_audio":"MadMan_Doppelganger_Dopo Il Rischio.mp3",
+file_audio":"MadMan_Doppelganger_Vai Bro.mp3",
+file_audio":"MadMan_MM Vol. 2_Intro (Madman-MM Vol.2).mp3",
+file_audio":"MadMan_MM Vol. 2_Solo Con Me.mp3",
+file_audio":"MadMan_MM Vol. 2_Il Momento.mp3",
+file_audio":"MadMan;Mattaman_MM Vol. 2_Migliori Dei Miei.mp3",
+file_audio":"MadMan;Blue Virus_MM Vol. 2_Nel Cervello.mp3",
+file_audio":"MadMan;Aquadrop_MM Vol. 2_Fresco Fresco.mp3",
+file_audio":"MadMan;Gemitaiz_MM Vol. 2_Veleno 6.mp3",
+file_audio":"Nitro_No Comment_Infamity Show.mp3",
+file_audio":"Nitro_No Comment_Buio Omega.mp3",
+file_audio":"Nitro_No Comment_Last Man Standing.mp3",
+file_audio":"Nitro_No Comment_Ho fatto bene.mp3",
+file_audio":"Nitro;Salmo_No Comment_Chairaggione (feat. Salmo).mp3",
+file_audio":"Nitro_No Comment_V!olence.mp3",
+file_audio":"Nitro;MadMan_No Comment_Ok Corral (feat. MadMan).mp3",
+file_audio":"Nitro_No Comment_DM.mp3",
+file_audio":"Nitro;Dani Faiv_No Comment_N.V.M.L. (feat. Dani Faiv).mp3",
+file_audio":"Nitro_No Comment_San Junipero I.mp3",
+file_audio":"Nitro_No Comment_San Junipero II.mp3",
+file_audio":"Nitro;Lazza_No Comment_Passepartout (feat. Lazza).mp3",
+file_audio":"Nitro_No Comment_Horror Vacui.mp3",
+file_audio":"Nitro;Jack The Smoker;Izi_Suicidol Post Mortem_VLLBLVCK (feat. Jack The Smoker & Izi).mp3",
+file_audio":"Salmo;Nitro;En-gma_Machete Mixtape, Vol. 3_Crudité.mp3",
+file_audio":"Nitro_Danger_Storia di un presunto artista.mp3"
