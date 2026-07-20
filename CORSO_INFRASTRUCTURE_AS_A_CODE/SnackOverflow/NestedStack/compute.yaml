@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  SnackOverflow - Figlio COMPUTE: tier web. LaunchTemplate con AMI risolta
+  via parametro SSM pubblico (niente Mappings che invecchiano), UserData
+  Fn::Base64 + Fn::Sub, ASG su 2 subnet pubbliche, ALB + Target Group +
+  Listener come porta d'ingresso.
+
+Parameters:
+  EnvType:
+    Type: String
+    AllowedValues: [dev, prod]
+    Default: dev
+  VpcId:
+    Type: String
+  PublicSubnetIds:
+    Type: CommaDelimitedList
+  AlbSecurityGroupId:
+    Type: String
+  AppSecurityGroupId:
+    Type: String
+  # Tipo di parametro che risolve l'ultima AMI Amazon Linux 2023 da SSM
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
+
+Mappings:
+  EnvMap:
+    dev:
+      InstanceType: t3.micro
+      MinSize: '1'
+      MaxSize: '2'
+    prod:
+      InstanceType: t3.small
+      MinSize: '2'
+      MaxSize: '4'
+
+Resources:
+
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: !Sub 'snackoverflow-lt-${EnvType}'
+      LaunchTemplateData:
+        ImageId: !Ref LatestAmiId
+        InstanceType: !FindInMap [EnvMap, !Ref EnvType, InstanceType]
+        IamInstanceProfile:
+          Name: LabInstanceProfile
+        SecurityGroupIds:
+          - !Ref AppSecurityGroupId
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            yum install -y httpd
+            AZ=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)
+            echo "<h1>SnackOverflow - ordini snack (${EnvType}) - AZ: $AZ</h1>" > /var/www/html/index.html
+            systemctl enable httpd
+            systemctl start httpd
+
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: !Sub 'snackoverflow-asg-${EnvType}'
+      VPCZoneIdentifier: !Ref PublicSubnetIds
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt LaunchTemplate.LatestVersionNumber
+      MinSize: !FindInMap [EnvMap, !Ref EnvType, MinSize]
+      MaxSize: !FindInMap [EnvMap, !Ref EnvType, MaxSize]
+      TargetGroupARNs:
+        - !Ref TargetGroup
+      Tags:
+        - Key: Name
+          Value: !Sub 'snackoverflow-app-${EnvType}'
+          PropagateAtLaunch: true
+
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub 'snackoverflow-alb-${EnvType}'
+      Type: application
+      Scheme: internet-facing
+      Subnets: !Ref PublicSubnetIds
+      SecurityGroups:
+        - !Ref AlbSecurityGroupId
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub 'snackoverflow-tg-${EnvType}'
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref VpcId
+      HealthCheckPath: /
+      TargetType: instance
+
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+
+Outputs:
+  AlbUrl:
+    Value: !Sub 'http://${ApplicationLoadBalancer.DNSName}'

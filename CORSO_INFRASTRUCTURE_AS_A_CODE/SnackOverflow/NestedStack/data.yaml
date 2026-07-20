@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >
+  SnackOverflow - Figlio DATA: S3 (asset, Retain), DynamoDB (sessioni,
+  PAY_PER_REQUEST), RDS MySQL (ordini, password via Secrets Manager
+  dynamic reference, mai in chiaro). RDS creabile o meno via Condition,
+  sizing per ambiente via Mapping.
+
+Parameters:
+  EnvType:
+    Type: String
+    AllowedValues: [dev, prod]
+    Default: dev
+  CreateDatabase:
+    Type: String
+    AllowedValues: ['true', 'false']
+    Default: 'true'
+    Description: Interruttore per saltare l'RDS (es. per non aspettare in aula)
+  PrivateSubnetIds:
+    Type: CommaDelimitedList
+    Description: Subnet private esportate dal figlio network
+  DbSecurityGroupId:
+    Type: String
+    Description: SG del DB esportato dal figlio security
+
+Mappings:
+  EnvMap:
+    dev:
+      DbInstanceClass: db.t3.micro
+      DbMultiAZ: 'false'
+    prod:
+      DbInstanceClass: db.t3.small
+      DbMultiAZ: 'false'   # Learner Lab: solo single-AZ anche in "prod disegnato"
+
+Conditions:
+  ShouldCreateDatabase: !Equals [!Ref CreateDatabase, 'true']
+
+Resources:
+
+  AssetBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Sub 'snackoverflow-assets-${AWS::AccountId}-${EnvType}'
+      Tags:
+        - Key: Name
+          Value: snackoverflow-assets
+
+  SessionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'snackoverflow-sessions-${EnvType}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: SessionId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: SessionId
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: ExpiresAt
+        Enabled: true
+
+  DbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Condition: ShouldCreateDatabase
+    Properties:
+      DBSubnetGroupDescription: Subnet private per RDS
+      SubnetIds: !Ref PrivateSubnetIds
+
+  # Il template genera il segreto, non contiene mai la password in chiaro
+  DbSecret:
+    Type: AWS::SecretsManager::Secret
+    Condition: ShouldCreateDatabase
+    Properties:
+      Name: !Sub 'snackoverflow-db-secret-${EnvType}'
+      GenerateSecretString:
+        SecretStringTemplate: '{"username":"admin"}'
+        GenerateStringKey: password
+        PasswordLength: 16
+        ExcludeCharacters: '"@/\'
+
+  Database:
+    Type: AWS::RDS::DBInstance
+    Condition: ShouldCreateDatabase
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      Engine: mysql
+      DBInstanceClass: !FindInMap [EnvMap, !Ref EnvType, DbInstanceClass]
+      MultiAZ: !FindInMap [EnvMap, !Ref EnvType, DbMultiAZ]
+      AllocatedStorage: '20'
+      DBName: snackorders
+      MasterUsername: !Sub '{{resolve:secretsmanager:${DbSecret}:SecretString:username}}'
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${DbSecret}:SecretString:password}}'
+      DBSubnetGroupName: !Ref DbSubnetGroup
+      VPCSecurityGroups:
+        - !Ref DbSecurityGroupId
+      PubliclyAccessible: false
+      BackupRetentionPeriod: 1
+
+Outputs:
+  BucketName:
+    Value: !Ref AssetBucket
+  SessionsTableName:
+    Value: !Ref SessionsTable
+  DbEndpoint:
+    Condition: ShouldCreateDatabase
+    Value: !GetAtt Database.Endpoint.Address

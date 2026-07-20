@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >
+  SnackOverflow - ROOT: orchestra i 4 figli (network, security, data,
+  compute) come nested stack. Ogni freccia del diagramma e' un !GetAtt
+  Figlio.Outputs.X passato come parametro al figlio successivo.
+
+Parameters:
+  TemplateBaseURL:
+    Type: String
+    Description: URL S3 dove sono caricati i template figli (es. https://BUCKET.s3.amazonaws.com/snackoverflow)
+  EnvType:
+    Type: String
+    AllowedValues: [dev, prod]
+    Default: dev
+  CreateDatabase:
+    Type: String
+    AllowedValues: ['true', 'false']
+    Default: 'true'
+
+Resources:
+
+  NetworkStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub '${TemplateBaseURL}/network.yaml'
+
+  SecurityStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub '${TemplateBaseURL}/security.yaml'
+      Parameters:
+        VpcId: !GetAtt NetworkStack.Outputs.VpcId
+
+  DataStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub '${TemplateBaseURL}/data.yaml'
+      Parameters:
+        EnvType: !Ref EnvType
+        CreateDatabase: !Ref CreateDatabase
+        PrivateSubnetIds: !GetAtt NetworkStack.Outputs.PrivateSubnets
+        DbSecurityGroupId: !GetAtt SecurityStack.Outputs.DbSecurityGroupId
+
+  ComputeStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub '${TemplateBaseURL}/compute.yaml'
+      Parameters:
+        EnvType: !Ref EnvType
+        VpcId: !GetAtt NetworkStack.Outputs.VpcId
+        PublicSubnetIds: !GetAtt NetworkStack.Outputs.PublicSubnets
+        AlbSecurityGroupId: !GetAtt SecurityStack.Outputs.AlbSecurityGroupId
+        AppSecurityGroupId: !GetAtt SecurityStack.Outputs.AppSecurityGroupId
+
+Outputs:
+  VpcId:
+    Value: !GetAtt NetworkStack.Outputs.VpcId
+  PublicSubnets:
+    Value: !GetAtt NetworkStack.Outputs.PublicSubnets
+  BucketName:
+    Value: !GetAtt DataStack.Outputs.BucketName
+  AlbUrl:
+    Value: !GetAtt ComputeStack.Outputs.AlbUrl
