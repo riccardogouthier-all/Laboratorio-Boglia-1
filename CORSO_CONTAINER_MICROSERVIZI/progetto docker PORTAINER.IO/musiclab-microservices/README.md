@@ -221,6 +221,50 @@ docker --version
 docker compose version
 ```
 
+Build locale, niente registry (se compose usa solo image:, senza build):
+Aggiungi build: a ogni servizio nel compose, poi:
+
+```bash
+docker compose build
+docker compose up -d
+```
+
+Ripopolare registry locale (se serve mantenere localhost:5000):
+
+# registry deve girare
+
+```bash
+docker run -d -p 5000:5000 --restart=always --name registry registry:2
+```
+
+# per ogni servizio, dentro cartella con Dockerfile:
+
+```bash
+docker build -t localhost:5000/musiclab/songs-service:1.0.0 .
+docker push localhost:5000/musiclab/songs-service:1.0.0
+
+docker build -t localhost:5000/musiclab/api-gateway:1.0.0 .
+docker push localhost:5000/musiclab/api-gateway:1.0.0
+
+docker build -t localhost:5000/musiclab/playlist-service:1.0.0 .
+docker push localhost:5000/musiclab/playlist-service:1.0.0
+
+docker build -t localhost:5000/musiclab/frontend:1.0.0 .
+docker push localhost:5000/musiclab/frontend:1.0.0
+```
+
+Poi:
+
+```bash
+docker compose up -d
+```
+
+Verifica registry attivo:
+
+```bash
+curl http://localhost:5000/v2/_catalog
+```
+
 ### 9.2 Configurazione
 
 ```bash
