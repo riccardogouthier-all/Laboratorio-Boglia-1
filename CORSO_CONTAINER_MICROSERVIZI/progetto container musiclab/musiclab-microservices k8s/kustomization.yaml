@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: musiclab
+resources:
+  - 00-namespace.yaml
+  - 01-secret.yaml
+  - 02-configmap.yaml
+  - 03-pvc.yaml
+  - 10-rabbitmq.yaml
+  - 11-songs-service.yaml
+  - 12-playlist-service.yaml
+  - 13-api-gateway.yaml
+  - 14-frontend.yaml
+  - 20-ingress.yaml

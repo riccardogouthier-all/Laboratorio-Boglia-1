@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: musiclab-config
+  namespace: musiclab
+data:
+  SONGS_DB_PATH: "/app/data/songs.db"
+  PLAYLIST_DB_PATH: "/app/data/playlist.db"
+  # Se usi un registry esterno raggiungibile dal cluster, aggiorna qui:
+  REGISTRY_HOST: "localhost:5000"

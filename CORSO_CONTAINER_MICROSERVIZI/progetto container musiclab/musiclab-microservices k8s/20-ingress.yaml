@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: musiclab-ingress
+  namespace: musiclab
+  annotations:
+    # Se il cluster usa il Traefik Ingress Controller (continuità con il
+    # docker-compose originale) questa annotazione è ridondante ma innocua.
+    # Con ingress-nginx, invece, è necessaria per il rewrite del path.
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: traefik   # cambia in "nginx" se usi ingress-nginx
+  rules:
+    - host: musiclab.local    # aggiungi "127.0.0.1 musiclab.local" a /etc/hosts in locale
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
