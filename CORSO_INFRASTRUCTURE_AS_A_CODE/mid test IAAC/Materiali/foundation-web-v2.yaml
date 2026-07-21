@@ -39,13 +39,13 @@ Resources:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: 0.0.0.0/0
+          CidrIp: 10.0.0.0/8
           Description: HTTP pubblico
         # NOVITA' v2: apertura della porta 443 (questa e' una Modify sul SG)
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
-          CidrIp: 0.0.0.0/0
+          CidrIp: 10.0.0.0/8
           Description: HTTPS pubblico
 
   WebServer:
@@ -55,6 +55,10 @@ Resources:
       ImageId: !Ref LatestAmiId
       SecurityGroupIds:
         - !Ref WebSG
+      SubnetId: !Ref SubnetId
+      IamInstanceProfile: !Ref InstanceProfile
+      Monitoring: true
+      EbsOptimized: true
       UserData:
         # NOVITA' v2: il testo della pagina cambia -> questo modifica la UserData
         # e forza il REPLACEMENT dell'istanza (nuovo ID, nuovo IP).
@@ -80,9 +84,12 @@ Resources:
       Statistic: Average
       Period: 300
       EvaluationPeriods: 1
+      DatapointsToAlarm: 1
       Threshold: 80
       ComparisonOperator: GreaterThanThreshold
       TreatMissingData: notBreaching
+      AlarmActions:
+        - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:ProdAlerts"
 
 Outputs:
   WebURL:
