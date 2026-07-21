@@ -1,0 +1,93 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Verifica Intermedia IaC - Foundation Web v2 (per il Change Set - Fase 2).
+  Rispetto alla v1 completata: (1) il Security Group apre anche la porta 443,
+  (2) la UserData cambia il testo della pagina. NON deployare direttamente:
+  usalo per creare un Change Set sullo stack esistente e leggere la colonna
+  Replacement. Compatibile Learner Lab (us-east-1, AMI via SSM, no ruoli IAM).
+
+Parameters:
+  EnvType:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+    Description: Ambiente di deploy (dev oppure prod).
+
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
+    Description: AMI Amazon Linux 2023 piu' recente, presa via SSM (niente ID a mano).
+
+Mappings:
+  EnvToInstance:
+    dev:
+      InstanceType: t2.micro
+    prod:
+      InstanceType: t2.small
+
+Conditions:
+  IsProd: !Equals [!Ref EnvType, prod]
+
+Resources:
+  WebSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Consente HTTP (porta 80) e HTTPS (porta 443) da Internet
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: HTTP pubblico
+        # NOVITA' v2: apertura della porta 443 (questa e' una Modify sul SG)
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: HTTPS pubblico
+
+  WebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !FindInMap [EnvToInstance, !Ref EnvType, InstanceType]
+      ImageId: !Ref LatestAmiId
+      SecurityGroupIds:
+        - !Ref WebSG
+      UserData:
+        # NOVITA' v2: il testo della pagina cambia -> questo modifica la UserData
+        # e forza il REPLACEMENT dell'istanza (nuovo ID, nuovo IP).
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          dnf install -y httpd
+          systemctl enable --now httpd
+          echo "<h1>ITS ICT Piemonte Foundation - ${EnvType} - versione 2</h1>" > /var/www/html/index.html
+      Tags:
+        - Key: Name
+          Value: !Sub "foundation-web-${EnvType}"
+
+  ProdCpuAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProd
+    Properties:
+      AlarmDescription: CPU media oltre l'80% sul web server di produzione
+      Namespace: AWS/EC2
+      MetricName: CPUUtilization
+      Dimensions:
+        - Name: InstanceId
+          Value: !Ref WebServer
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
+Outputs:
+  WebURL:
+    Description: URL pubblico del web server
+    Value: !Sub "http://${WebServer.PublicDnsName}"
+  AmbienteAttivo:
+    Description: Ambiente con cui e' stato creato lo stack
+    Value: !Ref EnvType

@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  Verifica Intermedia IaC - Foundation Web (VERSIONE DA COMPLETARE).
+  Cosi' com'e' il template gira gia' in dev, ma non e' ancora "furbo": la taglia
+  e' fissa, l'allarme nasce sempre (anche in dev) e l'URL in Output e' finto.
+  Il tuo compito: completare i 3 TODO per renderlo parametrico dev/prod.
+  Ambiente: AWS Academy Learner Lab, Region us-east-1.
+
+Parameters:
+  EnvType:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+    Description: Ambiente di deploy (dev oppure prod).
+
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
+    Description: AMI Amazon Linux 2023 piu' recente, presa via SSM (niente ID a mano).
+
+Mappings:
+  # Tabella gia' pronta: riga = ambiente, colonna = InstanceType.
+  # In TODO 1 la userai con !FindInMap.
+  EnvToInstance:
+    dev:
+      InstanceType: t2.micro
+    prod:
+      InstanceType: t2.small
+
+Conditions:
+  IsProd: !Equals [!Ref EnvType, prod]
+
+Resources:
+  WebSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Consente HTTP (porta 80) da Internet
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: HTTP pubblico
+
+  WebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !FindInMap [EnvToInstance, !Ref EnvType, InstanceType]
+      ImageId: !Ref LatestAmiId
+      SecurityGroupIds:
+        - !Ref WebSG
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          dnf install -y httpd
+          systemctl enable --now httpd
+          echo "<h1>ITS ICT Piemonte Foundation - ${EnvType} - versione 1</h1>" > /var/www/html/index.html
+      Tags:
+        - Key: Name
+          Value: !Sub "foundation-web-${EnvType}"
+
+  # L'allarme e' gia' scritto per te. Cosi' com'e' nasce SEMPRE (anche in dev).
+  ProdCpuAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProd
+    Properties:
+      AlarmDescription: CPU media oltre l'80% sul web server di produzione
+      Namespace: AWS/EC2
+      MetricName: CPUUtilization
+      Dimensions:
+        - Name: InstanceId
+          Value: !Ref WebServer
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
+Outputs:
+  WebURL:
+    Description: URL pubblico del web server
+    Value: !Sub "http://${WebServer.PublicDnsName}"
+  AmbienteAttivo:
+    Description: Ambiente con cui e' stato creato lo stack
+    Value: !Ref EnvType
