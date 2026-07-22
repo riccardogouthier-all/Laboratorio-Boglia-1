@@ -35,7 +35,7 @@ spec:
   selector:
     app: frontend
   ports:
-    - port: 80
+    - port: 8888
       targetPort: 80
   # Per test rapidi senza Ingress, puoi cambiare type in NodePort/LoadBalancer.
   type: ClusterIP

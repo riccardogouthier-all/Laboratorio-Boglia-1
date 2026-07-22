@@ -15,15 +15,15 @@ spec:
       labels:
         app: playlist-service
     spec:
-      initContainers:
-        - name: wait-for-rabbitmq
-          image: busybox:1.36
-          command: ["sh", "-c", "until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done"]
+      # initContainers:
+      #   - name: wait-for-rabbitmq
+      #     image: busybox:1.36
+      #     command: ["sh", "-c", "until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done"]
       containers:
         - name: playlist-service
           image: localhost:5000/musiclab/playlist-service:1.0.0
           ports:
-            - containerPort: 8001
+            - containerPort: 4002
           env:
             - name: DB_PATH
               valueFrom:
@@ -38,18 +38,18 @@ spec:
           volumeMounts:
             - name: playlist-data
               mountPath: /app/data
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 8001
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8001
-            initialDelaySeconds: 10
-            periodSeconds: 20
+          # readinessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: 8001
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 10
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: 8001
+          #   initialDelaySeconds: 10
+          #   periodSeconds: 20
       volumes:
         - name: playlist-data
           persistentVolumeClaim:

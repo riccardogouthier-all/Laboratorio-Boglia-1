@@ -37,7 +37,7 @@ Microservizi:   Deployment/Service/Ingress k8s, PersistentVolumeClaim, Secret/Co
                            │      pubblica eventi           │ consuma eventi
                            │      (song.created/            │ (aggiorna cache
                            │       updated/deleted)         │  locale canzoni)
-                           └───────────►  Service            ◄───────┘
+                           └───────────►  Service   ◄───────┘
                                      "rabbitmq" (broker)
                                      PVC: rabbitmq-data
 
