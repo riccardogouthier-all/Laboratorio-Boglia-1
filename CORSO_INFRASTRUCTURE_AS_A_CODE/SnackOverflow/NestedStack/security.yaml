@@ -1,26 +1,33 @@
-AWSTemplateFormatVersion: 2010-09-09
+AWSTemplateFormatVersion: '2010-09-09'
 Description: >
-  SnackOverflow - Figlio SECURITY: catena di Security Group ALB -> App -> DB.
-  Ogni tier accetta traffico solo dal SG del tier precedente (SG-to-SG, mai
-  CIDR dopo l'ALB). Le regole sono risorse separate (Ingress) per evitare la
-  dipendenza circolare tra App SG e DB SG.
+  SnackOverflow - Figlio 2/4 (security.yaml): catena di Security Group
+  a privilegio minimo. ALB <- Internet:80, App <- ALB SG:80, DB <- App SG:3306.
+  Le regole sono definite inline nel SG di destinazione (non risorse
+  SecurityGroupIngress separate): la catena e' lineare, senza riferimenti
+  reciproci, quindi nessuna dipendenza circolare. Con le regole inline
+  CloudFormation possiede l'intera lista di ingress e la riscrive per
+  intero a ogni update, riconciliando automaticamente eventuali regole
+  aggiunte manualmente in console (drift).
 
 Parameters:
   VpcId:
-    Type: String
-    Description: VpcId esportato dal figlio network
+    Type: AWS::EC2::VPC::Id
+    Description: VPC in cui creare i Security Group (output di network.yaml)
 
 Resources:
 
   AlbSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: ALB - accetta HTTP da Internet
+      GroupDescription: SG del load balancer pubblico - HTTP da Internet
       VpcId: !Ref VpcId
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
@@ -29,8 +36,16 @@ Resources:
   AppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: App tier - accetta solo dall ALB SG
+      GroupDescription: SG delle istanze applicative - solo HTTP da ALB
       VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref AlbSecurityGroup
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
           Value: snackoverflow-app-sg
@@ -38,35 +53,29 @@ Resources:
   DbSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: DB tier - accetta solo dall App SG
+      GroupDescription: SG del database - MySQL solo da app
       VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref AppSecurityGroup
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
           Value: snackoverflow-db-sg
 
-  # Regole come risorse separate: rompe la dipendenza circolare App<->DB
-  AppIngressFromAlb:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      GroupId: !Ref AppSecurityGroup
-      IpProtocol: tcp
-      FromPort: 80
-      ToPort: 80
-      SourceSecurityGroupId: !Ref AlbSecurityGroup
-
-  DbIngressFromApp:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      GroupId: !Ref DbSecurityGroup
-      IpProtocol: tcp
-      FromPort: 3306
-      ToPort: 3306
-      SourceSecurityGroupId: !Ref AppSecurityGroup
-
 Outputs:
   AlbSecurityGroupId:
+    Description: SG ALB
     Value: !Ref AlbSecurityGroup
+
   AppSecurityGroupId:
+    Description: SG istanze app
     Value: !Ref AppSecurityGroup
+
   DbSecurityGroupId:
+    Description: SG database
     Value: !Ref DbSecurityGroup

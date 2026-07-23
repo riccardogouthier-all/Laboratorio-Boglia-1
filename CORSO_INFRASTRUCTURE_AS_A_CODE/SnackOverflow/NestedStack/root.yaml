@@ -1,21 +1,27 @@
-AWSTemplateFormatVersion: 2010-09-09
+AWSTemplateFormatVersion: '2010-09-09'
 Description: >
-  SnackOverflow - ROOT: orchestra i 4 figli (network, security, data,
-  compute) come nested stack. Ogni freccia del diagramma e' un !GetAtt
-  Figlio.Outputs.X passato come parametro al figlio successivo.
+  SnackOverflow - root.yaml: orchestra i 4 nested stack
+  (network, security, data, compute). Un genitore, quattro figli:
+  gli output degli uni diventano i parametri degli altri via !GetAtt.
 
 Parameters:
   TemplateBaseURL:
     Type: String
-    Description: URL S3 dove sono caricati i template figli (es. https://BUCKET.s3.amazonaws.com/snackoverflow)
+    Description: >
+      URL HTTPS della cartella S3 dove sono stati caricati i 4 template
+      figli (es. https://IL_TUO_BUCKET.s3.amazonaws.com/snackoverflow)
+
   EnvType:
     Type: String
     AllowedValues: [dev, prod]
     Default: dev
+    Description: Ambiente - guida il sizing tramite i Mapping nei figli
+
   CreateDatabase:
     Type: String
     AllowedValues: ['true', 'false']
     Default: 'true'
+    Description: Se false, salta la creazione dell'RDS in data.yaml
 
 Resources:
 
@@ -38,7 +44,8 @@ Resources:
       Parameters:
         EnvType: !Ref EnvType
         CreateDatabase: !Ref CreateDatabase
-        PrivateSubnetIds: !GetAtt NetworkStack.Outputs.PrivateSubnets
+        PrivateSubnet1: !GetAtt NetworkStack.Outputs.PrivateSubnet1Id
+        PrivateSubnet2: !GetAtt NetworkStack.Outputs.PrivateSubnet2Id
         DbSecurityGroupId: !GetAtt SecurityStack.Outputs.DbSecurityGroupId
 
   ComputeStack:
@@ -48,16 +55,25 @@ Resources:
       Parameters:
         EnvType: !Ref EnvType
         VpcId: !GetAtt NetworkStack.Outputs.VpcId
-        PublicSubnetIds: !GetAtt NetworkStack.Outputs.PublicSubnets
-        AlbSecurityGroupId: !GetAtt SecurityStack.Outputs.AlbSecurityGroupId
+        PublicSubnet1: !GetAtt NetworkStack.Outputs.PublicSubnet1Id
+        PublicSubnet2: !GetAtt NetworkStack.Outputs.PublicSubnet2Id
         AppSecurityGroupId: !GetAtt SecurityStack.Outputs.AppSecurityGroupId
+        AlbSecurityGroupId: !GetAtt SecurityStack.Outputs.AlbSecurityGroupId
 
 Outputs:
   VpcId:
     Value: !GetAtt NetworkStack.Outputs.VpcId
-  PublicSubnets:
-    Value: !GetAtt NetworkStack.Outputs.PublicSubnets
+
   BucketName:
     Value: !GetAtt DataStack.Outputs.BucketName
-  AlbUrl:
+
+  DbEndpoint:
+    Value: !GetAtt DataStack.Outputs.DbEndpoint
+
+  SiteURL:
+    Description: URL pubblico dell'app - il criterio di accettazione CA3
     Value: !GetAtt ComputeStack.Outputs.AlbUrl
+
+  AlbDnsName:
+    Description: DNS name grezzo dell'ALB
+    Value: !GetAtt ComputeStack.Outputs.AlbDnsName

@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  STEP 1 - Core: crea un bucket S3 ed esporta il nome tramite Outputs/Export.
+  L'export rende il nome consumabile da altri stack via Fn::ImportValue.
+
+Resources:
+  CoreBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      Tags:
+        - Key: Name
+          Value: snackoverflow-core-bucket
+
+Outputs:
+  CoreBucketName:
+    Description: Nome del bucket core - esportato per altri stack
+    Value: !Ref CoreBucket
+    Export:
+      Name: snackoverflow-core-bucket-name

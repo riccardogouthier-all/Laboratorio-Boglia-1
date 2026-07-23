@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  STEP 2 - Consumer: importa il nome del bucket core tramite Fn::ImportValue
+  e lo pubblica come parametro SSM String, consumabile da applicazioni o altri stack.
+
+Resources:
+  BucketNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /snackoverflow/core-bucket-name
+      Type: String
+      Value: !ImportValue snackoverflow-core-bucket-name
+      Description: Nome del bucket core - importato dallo stack snackoverflow-core
+
+Outputs:
+  SsmParameterName:
+    Description: Percorso del parametro SSM che contiene il nome del bucket
+    Value: !Ref BucketNameParameter

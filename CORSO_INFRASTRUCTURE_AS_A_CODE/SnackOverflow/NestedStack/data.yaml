@@ -1,55 +1,68 @@
-AWSTemplateFormatVersion: 2010-09-09
+AWSTemplateFormatVersion: '2010-09-09'
 Description: >
-  SnackOverflow - Figlio DATA: S3 (asset, Retain), DynamoDB (sessioni,
-  PAY_PER_REQUEST), RDS MySQL (ordini, password via Secrets Manager
-  dynamic reference, mai in chiaro). RDS creabile o meno via Condition,
-  sizing per ambiente via Mapping.
+  SnackOverflow - Figlio 3/4 (data.yaml): tier dati.
+  S3 per gli asset (immagini snack, DeletionPolicy Retain),
+  DynamoDB per le sessioni (PAY_PER_REQUEST, chiave-valore),
+  RDS MySQL per gli ordini (dati transazionali, password generata
+  in Secrets Manager e letta a runtime via dynamic reference).
 
 Parameters:
   EnvType:
     Type: String
     AllowedValues: [dev, prod]
     Default: dev
+
   CreateDatabase:
     Type: String
     AllowedValues: ['true', 'false']
     Default: 'true'
-    Description: Interruttore per saltare l'RDS (es. per non aspettare in aula)
-  PrivateSubnetIds:
-    Type: CommaDelimitedList
-    Description: Subnet private esportate dal figlio network
-  DbSecurityGroupId:
-    Type: String
-    Description: SG del DB esportato dal figlio security
+    Description: Se false, salta la creazione dell'RDS (utile in aula)
 
-Mappings:
-  EnvMap:
-    dev:
-      DbInstanceClass: db.t3.micro
-      DbMultiAZ: 'false'
-    prod:
-      DbInstanceClass: db.t3.small
-      DbMultiAZ: 'false'   # Learner Lab: solo single-AZ anche in "prod disegnato"
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet::Id
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet::Id
+
+  DbSecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
 
 Conditions:
   ShouldCreateDatabase: !Equals [!Ref CreateDatabase, 'true']
 
+Mappings:
+  EnvironmentMap:
+    dev:
+      DBInstanceClass: db.t3.micro
+      MultiAZ: false
+    prod:
+      DBInstanceClass: db.t3.small
+      MultiAZ: true
+
 Resources:
 
-  AssetBucket:
+  AssetsBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Properties:
-      BucketName: !Sub 'snackoverflow-assets-${AWS::AccountId}-${EnvType}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       Tags:
         - Key: Name
-          Value: snackoverflow-assets
+          Value: !Sub snackoverflow-assets-${EnvType}
 
   SessionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub 'snackoverflow-sessions-${EnvType}'
+      TableName: !Sub snackoverflow-sessions-${EnvType}
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: SessionId
@@ -61,24 +74,26 @@ Resources:
         AttributeName: ExpiresAt
         Enabled: true
 
-  DbSubnetGroup:
-    Type: AWS::RDS::DBSubnetGroup
-    Condition: ShouldCreateDatabase
-    Properties:
-      DBSubnetGroupDescription: Subnet private per RDS
-      SubnetIds: !Ref PrivateSubnetIds
-
-  # Il template genera il segreto, non contiene mai la password in chiaro
   DbSecret:
     Type: AWS::SecretsManager::Secret
     Condition: ShouldCreateDatabase
     Properties:
-      Name: !Sub 'snackoverflow-db-secret-${EnvType}'
+      Name: !Sub snackoverflow-${EnvType}-db-secret
+      Description: Master password RDS - generata, mai in chiaro nel template
       GenerateSecretString:
         SecretStringTemplate: '{"username":"admin"}'
         GenerateStringKey: password
-        PasswordLength: 16
         ExcludeCharacters: '"@/\'
+        PasswordLength: 20
+
+  DbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Condition: ShouldCreateDatabase
+    Properties:
+      DBSubnetGroupDescription: Subnet private per l'RDS
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
 
   Database:
     Type: AWS::RDS::DBInstance
@@ -87,23 +102,29 @@ Resources:
     UpdateReplacePolicy: Snapshot
     Properties:
       Engine: mysql
-      DBInstanceClass: !FindInMap [EnvMap, !Ref EnvType, DbInstanceClass]
-      MultiAZ: !FindInMap [EnvMap, !Ref EnvType, DbMultiAZ]
+      EngineVersion: '8.0.42'
+      DBInstanceClass: !FindInMap [EnvironmentMap, !Ref EnvType, DBInstanceClass]
+      MultiAZ: !FindInMap [EnvironmentMap, !Ref EnvType, MultiAZ]
       AllocatedStorage: '20'
+      StorageType: gp2
       DBName: snackorders
-      MasterUsername: !Sub '{{resolve:secretsmanager:${DbSecret}:SecretString:username}}'
+      MasterUsername: admin
       MasterUserPassword: !Sub '{{resolve:secretsmanager:${DbSecret}:SecretString:password}}'
-      DBSubnetGroupName: !Ref DbSubnetGroup
       VPCSecurityGroups:
         - !Ref DbSecurityGroupId
+      DBSubnetGroupName: !Ref DbSubnetGroup
       PubliclyAccessible: false
       BackupRetentionPeriod: 1
 
 Outputs:
   BucketName:
-    Value: !Ref AssetBucket
-  SessionsTableName:
+    Description: Bucket S3 per gli asset
+    Value: !Ref AssetsBucket
+
+  TableName:
+    Description: Tabella DynamoDB per le sessioni
     Value: !Ref SessionsTable
+
   DbEndpoint:
-    Condition: ShouldCreateDatabase
-    Value: !GetAtt Database.Endpoint.Address
+    Description: Endpoint RDS (vuoto se CreateDatabase=false)
+    Value: !If [ShouldCreateDatabase, !GetAtt Database.Endpoint.Address, 'none']
