@@ -1,0 +1,15 @@
+# .checkov.yaml — baseline "dev" del lab DriftHunter (Learner Lab).
+# Skip MOTIVATI (decisioni di lab, non bug), stesso principio di L10.
+# ⚠️ Restano attivi i controlli sulle porte pericolose (SSH 22 = CKV_AWS_24,
+#    RDP 3389 = CKV_AWS_25): se "adotti" nel codice una regola aperta pescata
+#    dal drift, il gate te la becca.
+compact: true
+quiet: true
+skip-check:
+  - CKV_AWS_260 # SG ingress 80 da 0.0.0.0/0 -> è un web server, la 80 è attesa
+  - CKV_AWS_382 # SG egress "all" -> uscita libera, standard in dev
+  - CKV2_AWS_5  # SG non attaccato a risorse -> in questo lab il SG è dimostrativo
+  - CKV_AWS_18  # S3 access logging -> non richiesto in dev
+  - CKV_AWS_144 # S3 cross-region replication -> fuori scope dev
+  - CKV2_AWS_61 # S3 lifecycle -> nessuna retention in dev
+  - CKV2_AWS_62 # S3 event notifications -> nessun consumer in dev

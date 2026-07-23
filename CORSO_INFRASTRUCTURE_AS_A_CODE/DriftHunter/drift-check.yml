@@ -1,0 +1,69 @@
+###############################################################################
+# IL GUARDIANO (bonus/demo) — controllo del drift schedulato.
+# Ogni notte fa `terraform plan`: se il cloud si è allontanato dal codice
+# (exit code 2), apre una issue e fa fallire il job. Così il drift lo scopri
+# tu, non un incidente.
+#
+# NB: il guardiano ha senso solo con STATE REMOTO (deve vedere lo stesso stato
+#     dei tuoi apply). Nel lab base usiamo state locale: questo workflow è la
+#     versione "in produzione". Richiede backend S3 + i 3 secret STS.
+###############################################################################
+name: Drift check (il guardiano)
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # ogni giorno alle 06:00 UTC
+  workflow_dispatch: {} # ...o a mano, quando vuoi
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Configure AWS credentials (STS del Learner Lab)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Init
+        run: terraform init -input=false
+
+      - name: Terraform Plan (rileva il drift)
+        id: plan
+        run: terraform plan -detailed-exitcode -no-color -input=false
+        continue-on-error: true
+      # exit code del plan: 0 = nessun drift · 2 = DRIFT · 1 = errore
+
+      - name: Apri una issue se c'è drift
+        if: steps.plan.outputs.exitcode == '2'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "Drift rilevato: infrastruttura diversa dal codice",
+              body: `Il guardiano ha trovato differenze fra codice e cloud.\nControlla il piano nel run: ${runUrl}`
+            });
+
+      - name: Fai fallire il job se c'è drift o errore
+        if: steps.plan.outputs.exitcode != '0'
+        run: exit 1

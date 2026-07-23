@@ -1,0 +1,28 @@
+# --- Terraform ---
+# Cartelle di lavoro locali
+**/.terraform/*
+
+# File di stato: NON vanno mai su Git (stanno su S3, remoti)
+*.tfstate
+*.tfstate.*
+
+# Log di crash
+crash.log
+crash.*.log
+
+# Variabili: possono contenere segreti
+*.tfvars
+*.tfvars.json
+
+# Override locali
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Config CLI
+.terraformrc
+terraform.rc
+
+# Il lockfile dei provider, invece, VA committato: garantisce le stesse versioni a tutti
+!.terraform.lock.hcl
