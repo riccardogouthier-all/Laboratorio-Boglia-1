@@ -1,0 +1,876 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ACA L23-24 — L'architettura ha un prezzo · Capstone Cost-Aware | Paolo Costanzo ITS ICT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700;900&family=Barlow+Condensed:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+html,body{height:100%;overflow-x:hidden;margin:0;padding:0;}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth;}
+.slide{width:100vw;height:100vh;height:100dvh;overflow:hidden;scroll-snap-align:start;display:flex;flex-direction:column;position:relative;}
+.slide-content{flex:1;display:flex;flex-direction:column;justify-content:center;max-height:100%;overflow:hidden;padding:var(--slide-padding);}
+:root{
+  --title-size:clamp(1.8rem,6vw,5rem);
+  --h2-size:clamp(1.1rem,3vw,2.2rem);
+  --body-size:clamp(0.72rem,1.3vw,1rem);
+  --small-size:clamp(0.6rem,0.9vw,0.82rem);
+  --tiny-size:clamp(0.55rem,0.8vw,0.7rem);
+  --slide-padding:clamp(1.5rem,4vw,4rem);
+  --content-gap:clamp(0.5rem,1.5vw,1.5rem);
+  --element-gap:clamp(0.3rem,0.8vw,0.8rem);
+  --orange:#ff6a00;--orange-dim:#cc5500;--orange-faint:rgba(255,106,0,0.07);
+  --black:#080808;--surface:#101010;--surface2:#161616;--border:#242424;
+  --text:#e8e8e8;--muted:#777;--green:#00ff88;--red:#ff3333;--yellow:#ffaa00;
+  --blue:#00aaff;--purple:#b770ff;
+}
+*{box-sizing:border-box;}
+body{background:var(--black);color:var(--text);font-family:'Barlow',sans-serif;}
+.slide::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);pointer-events:none;z-index:50;}
+.slide-counter{position:fixed;bottom:1.2rem;right:1.5rem;font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);z-index:200;letter-spacing:0.1em;}
+.nav-dots{position:fixed;right:1rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;z-index:200;}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:#333;transition:all 0.3s;cursor:pointer;}
+.nav-dot.active{background:var(--orange);transform:scale(1.6);}
+.keyboard-hint{position:fixed;bottom:1.2rem;left:1.5rem;font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:#333;z-index:200;}
+.speaker-notes{display:none;}
+.slide-label{font-family:'Share Tech Mono',monospace;font-size:var(--small-size);color:var(--orange);text-transform:uppercase;letter-spacing:0.2em;margin-bottom:0.4em;}
+.slide-title{font-family:'Barlow Condensed',sans-serif;font-size:var(--h2-size);font-weight:700;line-height:1.1;margin:0 0 var(--element-gap) 0;}
+.slide-title span{color:var(--orange);}
+.accent-line{width:clamp(30px,5vw,60px);height:2px;background:var(--orange);margin-bottom:var(--element-gap);}
+.cursor{display:inline-block;width:0.55em;height:0.9em;background:var(--orange);vertical-align:text-bottom;animation:blink 1s step-end infinite;}
+.tag{display:inline-block;padding:0.18em 0.5em;background:var(--orange-faint);border:1px solid rgba(255,106,0,0.4);border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:var(--small-size);color:var(--orange);}
+.tag.green{color:var(--green);border-color:rgba(0,255,136,0.4);background:rgba(0,255,136,0.05);}
+.tag.red{color:var(--red);border-color:rgba(255,51,51,0.4);background:rgba(255,51,51,0.05);}
+.tag.yellow{color:var(--yellow);border-color:rgba(255,170,0,0.4);background:rgba(255,170,0,0.05);}
+.tag.blue{color:var(--blue);border-color:rgba(0,170,255,0.4);background:rgba(0,170,255,0.05);}
+.center-content{align-items:center;justify-content:center;text-align:center;}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:var(--content-gap);align-items:start;}
+.split-7-3{display:grid;grid-template-columns:7fr 3fr;gap:var(--content-gap);align-items:start;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--element-gap);}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--element-gap);}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--element-gap);}
+.card{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:clamp(0.6rem,1.5vw,1.2rem);position:relative;overflow:hidden;}
+.card-top{border-top:2px solid var(--orange);}
+.card-left{border-left:3px solid var(--orange);border-top:none;border-radius:0 5px 5px 0;}
+.card-glow{border:1px solid var(--orange);box-shadow:0 0 18px rgba(255,106,0,0.25);}
+.meme-box{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:0 4px 4px 0;padding:clamp(0.4rem,1.2vw,0.8rem) clamp(0.6rem,1.5vw,1rem);font-family:'Share Tech Mono',monospace;font-size:var(--small-size);color:var(--muted);line-height:1.6;}
+.meme-box .meme-title{color:var(--orange);display:block;margin-bottom:0.3em;}
+ul.clean{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:var(--element-gap);}
+ul.clean li{font-size:var(--body-size);padding-left:1.4em;position:relative;line-height:1.5;}
+ul.clean li::before{content:'▸';position:absolute;left:0;color:var(--orange);font-family:'Share Tech Mono',monospace;}
+ul.numbered{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:var(--element-gap);counter-reset:step;}
+ul.numbered li{font-size:var(--small-size);padding-left:2.2em;position:relative;line-height:1.55;counter-increment:step;}
+ul.numbered li::before{content:counter(step);position:absolute;left:0;top:0.05em;width:1.6em;height:1.6em;display:flex;align-items:center;justify-content:center;background:var(--orange);color:var(--black);border-radius:50%;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:var(--small-size);}
+.terminal{background:#060606;border:1px solid var(--border);border-radius:5px;overflow:hidden;font-family:'Share Tech Mono',monospace;}
+.terminal-bar{background:var(--surface2);padding:0.35em 0.8em;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--border);}
+.t-dot{width:9px;height:9px;border-radius:50%;}
+.terminal-body{padding:clamp(0.5rem,1.2vw,1rem);font-size:var(--small-size);line-height:1.9;}
+.cmd{color:var(--green);} .out{color:var(--muted);} .hi{color:var(--orange);} .warn{color:var(--yellow);} .err{color:var(--red);}
+.lab-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:var(--small-size);color:var(--orange);background:rgba(255,106,0,0.1);border:1px solid var(--orange);border-radius:3px;padding:0.15em 0.6em;letter-spacing:0.15em;text-transform:uppercase;}
+.step-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:var(--small-size);color:var(--black);background:var(--orange);border-radius:3px;padding:0.2em 0.7em;letter-spacing:0.1em;text-transform:uppercase;font-weight:bold;}
+.quiz-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:var(--small-size);color:var(--yellow);background:rgba(255,170,0,0.1);border:1px solid var(--yellow);border-radius:3px;padding:0.15em 0.7em;letter-spacing:0.1em;text-transform:uppercase;}
+.next-hint{font-family:'Share Tech Mono',monospace;font-size:var(--small-size);color:var(--yellow);border:1px dashed var(--yellow);border-radius:4px;padding:0.3em 0.8em;display:inline-block;background:rgba(255,170,0,0.05);}
+.bg-text{position:absolute;font-family:'Barlow Condensed',sans-serif;font-size:clamp(5rem,22vw,18rem);font-weight:900;color:rgba(255,106,0,0.03);user-select:none;pointer-events:none;white-space:nowrap;bottom:-1vw;right:-1vw;line-height:1;z-index:0;}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.a0{animation:fadeInUp 0.55s ease 0.05s both;}
+.a1{animation:fadeInUp 0.55s ease 0.15s both;}
+.a2{animation:fadeInUp 0.55s ease 0.28s both;}
+.a3{animation:fadeInUp 0.55s ease 0.42s both;}
+@media(max-height:700px){:root{--slide-padding:clamp(0.8rem,3vw,2rem);--content-gap:clamp(0.4rem,1vw,1rem);--h2-size:clamp(1rem,2.5vw,1.8rem);--body-size:clamp(0.65rem,1.2vw,0.9rem);}}
+@media(max-height:600px){.nav-dots,.keyboard-hint{display:none;}}
+@media(max-width:768px){.split,.split-7-3,.grid-2,.grid-4{grid-template-columns:1fr;}.grid-3{grid-template-columns:1fr 1fr;}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms !important;}}
+.code-block{background:#0d0d0d;border:1px solid var(--border);border-radius:5px;padding:0.6em 0.9em;font-family:'Share Tech Mono',monospace;font-size:var(--small-size);color:var(--green);line-height:1.6;white-space:pre;overflow:auto;}
+.code-block .k{color:var(--orange);}
+.code-block .s{color:var(--yellow);}
+.code-block .c{color:var(--muted);}
+.code-block .v{color:var(--blue);}
+.def{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:0.6em 0.9em;font-size:var(--small-size);line-height:1.6;}
+.def strong{color:var(--orange);font-family:'Share Tech Mono',monospace;}
+.timeline{position:relative;display:flex;align-items:center;justify-content:space-between;gap:0.2em;margin:0.4em 0;}
+.timeline .bar{position:absolute;left:0;right:0;top:50%;height:2px;background:var(--border);}
+.tl-node{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:0.25em;text-align:center;flex:1;}
+.tl-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--black);}
+table.compare{width:100%;border-collapse:collapse;font-size:var(--small-size);}
+table.compare th{font-family:'Share Tech Mono',monospace;color:var(--orange);text-align:left;padding:0.4em 0.6em;border-bottom:1px solid var(--orange);}
+table.compare td{padding:0.4em 0.6em;border-bottom:1px solid var(--border);vertical-align:top;}
+table.compare tr:last-child td{border-bottom:none;}
+.online-link{font-family:'Share Tech Mono',monospace;color:var(--blue);font-size:var(--small-size);text-decoration:none;border-bottom:1px dotted var(--blue);}
+</style>
+</head>
+<body>
+<!-- ============================================================= -->
+<!-- SLIDE 01 · COVER (loghi SOLO qui)                             -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content center-content" style="gap:var(--content-gap);">
+  <div style="position:absolute;top:1.5rem;left:1.5rem;"><img src="data:image/png;base64,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" style="height:clamp(28px,5vw,48px);" alt="ITS ICT"></div>
+  <div class="a0" style="font-family:'Share Tech Mono',monospace;font-size:var(--small-size);color:var(--muted);letter-spacing:0.25em;">ACA · AWS CLOUD ARCHITECT · UF1 ARCHITETTURA · L23-24 · 4h · POST-VERIFICA</div>
+  <h1 class="a1" style="font-family:'Barlow Condensed',sans-serif;font-size:var(--title-size);font-weight:900;margin:0;line-height:0.95;">L'ARCHITETTURA<br>HA UN <span style="color:var(--orange);">PREZZO</span></h1>
+  <div class="a2" style="font-size:var(--body-size);max-width:66ch;color:var(--text);line-height:1.6;margin-top:0.5em;">Capstone da consulenti: progettare l'architettura giusta <strong>dentro un budget</strong>. Prima impariamo a leggere il conto AWS, poi lo mettiamo alla prova su un cliente vero.</div>
+  <div class="a3" style="display:flex;gap:0.6em;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:0.3em;">
+    <span class="tag">PRICING</span><span class="tag green">CAPSTONE</span><span class="tag blue">DRAW.IO</span><span class="tag yellow">BUDGET</span>
+  </div>
+  <div style="position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);"><img src="data:image/png;base64,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" style="height:clamp(20px,3vw,36px);opacity:0.6;" alt="Loghi istituzionali"></div>
+</div>
+<aside class="speaker-notes">Ultima lezione della UF, dopo la verifica. Attacco: "Sapete disegnare un'architettura che regge. Ma un architetto vero deve rispondere a un'altra domanda: quanto costa? Oggi diventate consulenti AWS: un cliente, una RFP, un budget da rispettare." Annuncio le 4h: primer sui costi (2h con hands-on Calculator), poi la sfida a squadre. Nota logistica: mentre partiamo, chi deve fare il recupero lo fa in parallelo — a loro do il cheat-sheet costi così si riagganciano. Loghi istituzionali SOLO su questa slide.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 02 · AGENDA                                              -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> agenda</div>
+  <h2 class="slide-title a1">Cosa <span>faremo</span> oggi · 4h</h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="grid-2" style="gap:var(--content-gap);">
+      <div class="card card-left"><div class="tag">PARTE 1 · ~1h</div><p style="font-size:var(--small-size);margin:.4em 0 0;"><strong>Primer pricing.</strong> Come fattura AWS, i cost driver, i costi nascosti (transfer, NAT, Multi-AZ), Savings Plans/Spot. Hands-on <strong>AWS Pricing Calculator</strong>.</p></div>
+      <div class="card card-left"><div class="tag green">PARTE 2 · ~2h</div><p style="font-size:var(--small-size);margin:.4em 0 0;"><strong>Capstone consulenza.</strong> A squadre: rispondete alla RFP di un cliente con una proposta di architettura <em>dentro il budget</em>. Colpo di scena a metà.</p></div>
+      <div class="card card-left"><div class="tag blue">PARTE 3 · ~45m</div><p style="font-size:var(--small-size);margin:.4em 0 0;"><strong>Consegna.</strong> Finalizzate il lavoro e caricatelo sulla <strong>FAD</strong>: un file per gruppo, entro fine lezione. Niente presentazione.</p></div>
+      <div class="card card-left"><div class="tag yellow">PARTE 4 · ~30m</div><p style="font-size:var(--small-size);margin:.4em 0 0;"><strong>Chiusura.</strong> Correzione ragionata della verifica, soluzione-tipo dell'architetto e ponte verso la UF2 (Infrastructure as Code).</p></div>
+    </div>
+    <div class="meme-box"><span class="meme-title">// nota recupero</span>Chi deve recuperare la verifica lo fa <strong>ora</strong>, in parallelo: il capstone è a squadre e modulare, vi riagganciate appena finite. Nessuno perde pezzi.</div>
+  </div>
+</div>
+<aside class="speaker-notes">Do la mappa delle 4h. Insisto: oggi non c'è "materia nuova da esame" — è applicazione e consolidamento, per questo funziona anche a classe divisa. Chi è al recupero: parte subito, gli altri iniziano il primer. Chiedo: "chi di voi ha mai guardato quanto costa una cosa che avete lanciato in Learner Lab?" — di solito nessuno, ed è il gancio.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 03 · FRAMING CONSULENTI                                  -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> il patto di oggi</div>
+  <h2 class="slide-title a1">Oggi non siete studenti.<br>Siete <span>consulenti AWS</span>.</h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="def"><strong>Solutions Architect</strong> = la persona che il cliente paga per rispondere a: «dato questo problema e <em>questo budget</em>, qual è l'architettura giusta su AWS?». Non "la più bella". La <strong>giusta</strong>.</div>
+    <div class="grid-3">
+      <div class="card card-top"><div class="tag">IL CLIENTE</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Ha un problema di business e un tetto di spesa. Non gli importa di "Aurora vs RDS": gli importa che regga e costi il giusto.</p></div>
+      <div class="card card-top"><div class="tag">VOI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Traducete i requisiti in servizi AWS, motivate ogni scelta e <strong>dimostrate</strong> che state nel budget.</p></div>
+      <div class="card card-top"><div class="tag green">L'ESAME SAA</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Le domande vere sono esattamente questo: «dato lo scenario X, quale architettura?». Oggi vi allenate sul formato reale.</p></div>
+    </div>
+    <div class="meme-box"><span class="meme-title">// plot twist</span>C'è un vincolo che finora non avete mai avuto: <strong class="hi">un budget</strong>. E i soldi cambiano <em>tutto</em> il modo di progettare.</div>
+  </div>
+</div>
+<aside class="speaker-notes">Cambio di cornice: passiamo dal "montare pezzi" al "consigliare un cliente". Il concetto chiave da far attecchire: un architetto che non conosce i costi progetta bombe a orologeria — funziona in demo, poi arriva la bolletta. Anticipo il budget come il vincolo nuovo. Collego all'esame SAA (molti puntano alla certificazione): il formato di oggi è quello.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 04 · PRIMER: perché i soldi                             -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> primer · da zero</div>
+  <h2 class="slide-title a1">Perché un architetto deve <span>saper contare</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="grid-2">
+      <div class="card card-left"><div class="tag red">SENZA COSTI</div><p style="font-size:var(--small-size);margin:.4em 0 0;">"Metto tutto Multi-AZ, 3 repliche, istanze grosse, così sono sicuro." → Regge benissimo. Costa <strong>4×</strong> il necessario. Il cliente ti licenzia.</p></div>
+      <div class="card card-left"><div class="tag green">CON I COSTI</div><p style="font-size:var(--small-size);margin:.4em 0 0;">"Multi-AZ dove serve la resilienza, single-AZ dove no, storage a strati." → Regge <em>e</em> costa il giusto. Il cliente ti richiama.</p></div>
+    </div>
+    <div class="def"><strong>Cost Optimization</strong> è uno dei <strong>6 pilastri</strong> del Well-Architected Framework. Non è un optional: è metà del mestiere. Progettare = scegliere <em>trade-off</em>, e ogni trade-off ha un prezzo.</div>
+    <div class="meme-box"><span class="meme-title">// la frase da tatuarsi</span>Su AWS non paghi quello che <strong>usi</strong>. Paghi quello che <strong>lasci acceso</strong>. 💸</div>
+  </div>
+</div>
+<aside class="speaker-notes">Faccio capire perché il costo è competenza architetturale, non contabilità. Esempio concreto: la stessa app "sovra-ingegnerizzata" costa 4x. Richiamo i 6 pilastri (li conoscono dalla UF): Operational Excellence, Security, Reliability, Performance, Cost Optimization, Sustainability. Battuta finale sul "lasci acceso": è il concetto di elasticità che riprenderemo.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 05 · COME FATTURA AWS (modello mentale)                 -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> il modello mentale</div>
+  <h2 class="slide-title a1">Come fattura AWS: <span>4 leve</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="def">Niente "prezzo di listino mensile". Paghi <strong>a consumo</strong>, quasi tutto si riduce a 4 cose che si sommano servizio per servizio:</div>
+    <div class="grid-4">
+      <div class="card card-top"><div style="font-family:'Barlow Condensed';font-weight:900;color:var(--orange);font-size:1.3em;">TEMPO</div><div class="tag">compute</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Ore/secondi di CPU accesa. EC2, RDS, Lambda (GB-secondo).</p></div>
+      <div class="card card-top"><div style="font-family:'Barlow Condensed';font-weight:900;color:var(--orange);font-size:1.3em;">VOLUME</div><div class="tag">storage</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">GB al mese fermi su disco. S3, EBS, snapshot, backup.</p></div>
+      <div class="card card-top"><div style="font-family:'Barlow Condensed';font-weight:900;color:var(--red);font-size:1.3em;">USCITA</div><div class="tag red">transfer</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">GB che <em>escono</em> verso Internet o tra zone. L'entrata è gratis.</p></div>
+      <div class="card card-top"><div style="font-family:'Barlow Condensed';font-weight:900;color:var(--orange);font-size:1.3em;">RICHIESTE</div><div class="tag">operazioni</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">N° di chiamate/operazioni. Richieste S3, API Gateway, DynamoDB.</p></div>
+    </div>
+    <div class="meme-box"><span class="meme-title">// la regola d'oro</span>Entrare (upload) è <strong class="hi">gratis</strong>. Uscire (download) si <strong class="err">paga</strong>. AWS è un motel: entri quando vuoi, per uscire passi dalla cassa.</div>
+  </div>
+</div>
+<aside class="speaker-notes">Questo è IL modello mentale. Se ricordano solo questa slide, hanno già l'80%. Insisto sull'asimmetria ingress/egress: è controintuitiva e alla base dei costi nascosti. Ogni servizio che vedremo è una combinazione di queste 4 leve. Faccio dire a loro, per un paio di servizi, quali leve pesano di più.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 06 · COST DRIVER PER SERVIZIO (tabella)                 -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> chi ti fa pagare cosa</div>
+  <h2 class="slide-title a1">Cost driver per <span>servizio</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <table class="compare">
+      <tr><th>Servizio</th><th>Paghi soprattutto per…</th><th>Trappola</th></tr>
+      <tr><td><strong>EC2</strong></td><td>ore di istanza (tipo × tempo) + EBS</td><td>istanze accese e inutilizzate</td></tr>
+      <tr><td><strong>RDS / Aurora</strong></td><td>ore istanza + storage + I/O · <span class="hi">Multi-AZ ≈ ×2</span></td><td>Multi-AZ "per sicurezza" ovunque</td></tr>
+      <tr><td><strong>S3</strong></td><td>GB/mese + richieste + retrieval per classe</td><td>egress + classe sbagliata</td></tr>
+      <tr><td><strong>DynamoDB</strong></td><td>capacità (on-demand o RCU/WCU) + storage</td><td>provisioned troppo alto</td></tr>
+      <tr><td><strong>Lambda</strong></td><td>richieste + GB-secondo · a riposo <span class="hi">€0</span></td><td>—</td></tr>
+      <tr><td><strong>ALB</strong></td><td>ore + LCU (traffico)</td><td>un ALB per micro-servizio</td></tr>
+      <tr><td><strong>CloudFront</strong></td><td>transfer OUT + richieste · egress <em>più economico</em></td><td>—</td></tr>
+    </table>
+  </div>
+</div>
+<aside class="speaker-notes">Non da imparare a memoria: da capire il pattern. Evidenzio due righe: Aurora/RDS Multi-AZ raddoppia (è la scelta di trade-off più costosa che faranno oggi), e Lambda che a riposo costa zero (leva "tempo" = zero se non gira). CloudFront riduce l'egress: seme per la slide sul data transfer. Faccio notare che "trappola" = errori che vedrò nelle loro proposte.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 07 · ON-DEMAND vs SAVINGS PLANS vs SPOT                 -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> le 3 modalità di acquisto</div>
+  <h2 class="slide-title a1">Stesso server, <span>3 prezzi</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="grid-3">
+      <div class="card card-top"><div class="tag">ON-DEMAND</div><div style="font-family:'Barlow Condensed';font-weight:900;color:var(--text);font-size:1.5em;">prezzo pieno</div><p style="font-size:var(--tiny-size);margin:.3em 0 0;">Paghi al secondo, zero impegni. <strong>Per traffico incerto o picchi.</strong> Il default.</p></div>
+      <div class="card card-top"><div class="tag green">SAVINGS PLANS / RI</div><div style="font-family:'Barlow Condensed';font-weight:900;color:var(--green);font-size:1.5em;">−66/72%</div><p style="font-size:var(--tiny-size);margin:.3em 0 0;">Ti impegni 1–3 anni su una spesa oraria. <strong>Per il carico base sempre acceso.</strong></p></div>
+      <div class="card card-top"><div class="tag yellow">SPOT</div><div style="font-family:'Barlow Condensed';font-weight:900;color:var(--yellow);font-size:1.5em;">−90%</div><p style="font-size:var(--tiny-size);margin:.3em 0 0;">Capacità avanzata, ma AWS te la può togliere con 2 min di preavviso. <strong>Per batch e lavori che tollerano l'interruzione.</strong></p></div>
+    </div>
+    <div class="def">Regola pratica: <strong>base sempre-on → Savings Plans</strong>, <strong>picchi → On-Demand</strong>, <strong>batch tollerante ai guasti → Spot</strong>. Mixarli è il mestiere.</div>
+    <div class="meme-box"><span class="meme-title">// spot instances</span>Spot = affittare la stanza d'albergo all'ultimo minuto a −90%. Fantastico, finché non arriva chi l'ha prenotata e ti sbattono fuori. 🧳</div>
+  </div>
+</div>
+<aside class="speaker-notes">Concetto chiave: il PREZZO dipende dall'impegno che ti prendi. Numeri verificati (indicativi): Spot fino a −90%, Savings Plans fino a −66% Compute / −72% EC2 Instance. Nel capstone possono citarli per rientrare nel budget (es. "il carico base lo metto su Savings Plans"). Battuta sull'albergo per fissare il rischio interruzione dello Spot.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 08 · KILLER SILENZIOSO 1 · DATA TRANSFER                -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> costo nascosto #1</div>
+  <h2 class="slide-title a1">Il killer silenzioso: <span>data transfer OUT</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="grid-2">
+      <div class="card card-left"><div class="tag green">GRATIS</div><p style="font-size:var(--small-size);margin:.4em 0 0;">Dati in <strong>entrata</strong> (upload verso AWS). Primi <strong>100 GB/mese</strong> di uscita verso Internet.</p></div>
+      <div class="card card-left"><div class="tag red">SI PAGA</div><p style="font-size:var(--small-size);margin:.4em 0 0;">Uscita verso Internet oltre i 100 GB: <strong>~$0,09/GB</strong>. Anche tra <strong>AZ diverse</strong> nella stessa regione si paga.</p></div>
+    </div>
+    <div class="def">Esempio: un'app che serve <strong>10 TB/mese</strong> di risposte/immagini → ~<strong class="hi">$900/mese</strong> di solo transfer. Metti <strong>CloudFront</strong> davanti e l'egress costa meno (e alleggerisci i server).</div>
+    <div class="meme-box"><span class="meme-title">// inter-AZ</span>App in AZ-a che parla col DB in AZ-b? Ogni GB tra le due <strong>si paga</strong>. La Multi-AZ ti salva la vita <em>e</em> ti fa la bolletta. ⚖️</div>
+  </div>
+</div>
+<aside class="speaker-notes">Primo dei due "killer" che nessuno mette a budget. Numeri verificati: 100 GB/mese gratis, poi ~$0,09/GB (a scalare per volumi enormi). L'esempio 10TB→$900 li sveglia. Due lezioni: (1) CloudFront non è solo performance, è anche costo egress più basso; (2) l'inter-AZ ha un prezzo, quindi Multi-AZ è un trade-off, non un "gratis". Chiedo al team gaming di ricordarsi questa slide.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 09 · KILLER SILENZIOSO 2 · NAT GATEWAY + MULTI-AZ       -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> costo nascosto #2</div>
+  <h2 class="slide-title a1">La <span>tassa NAT</span> (e il raddoppio Multi-AZ)</h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="def"><strong>NAT Gateway</strong> = fa uscire su Internet le risorse in subnet privata. Comodo, ma caro: <strong>~$0,045/h</strong> (≈$32/mese solo acceso) <strong>+ ~$0,045/GB</strong> processato <strong>+ egress</strong>. Costo reale del traffico Internet-bound ≈ <strong class="hi">$0,135/GB</strong>.</div>
+    <div class="grid-2">
+      <div class="card card-left"><div class="tag red">LA TRAPPOLA</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Un NAT per AZ "per alta disponibilità" → 3 NAT accesi 24/7 prima ancora di passare un byte. E il traffico verso S3/DynamoDB passa dal NAT… inutilmente.</p></div>
+      <div class="card card-left"><div class="tag green">LA CURA</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;"><strong>VPC Endpoint</strong> per S3/DynamoDB: il traffico resta dentro AWS, <em>salta</em> il NAT, gratis. Right-size del numero di NAT.</p></div>
+    </div>
+    <div class="meme-box"><span class="meme-title">// friends don't let friends…</span>…lasciare 3 NAT Gateway accesi in un progetto demo. Il conto di fine mese è il vero boss finale. 👾</div>
+  </div>
+</div>
+<aside class="speaker-notes">Il secondo killer, il più subdolo perché costa anche a traffico zero (la leva "tempo" del NAT gira sempre). Numeri verificati: $0,045/h + $0,045/GB, costo reale ~$0,135/GB Internet-bound. Concetti nuovi da spiegare da zero se serve: subnet privata vs pubblica (ripasso), e i VPC Endpoint (Gateway endpoint per S3/DynamoDB = gratis). Questa entra dritta nella loro tabella costi.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 10 · STORAGE TIERING                                     -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> pagare meno lo stesso GB</div>
+  <h2 class="slide-title a1">Storage a <span>strati</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="def">Non tutti i dati servono "subito e sempre". S3 ha <strong>classi</strong> a prezzo decrescente: paghi meno lo storage, ma il recupero diventa più lento/caro. Una <strong>lifecycle policy</strong> sposta i dati vecchi da sola.</div>
+    <table class="compare">
+      <tr><th>Classe S3</th><th>Per cosa</th><th>Costo storage</th></tr>
+      <tr><td><strong>Standard</strong></td><td>dati usati spesso (hot)</td><td>pieno</td></tr>
+      <tr><td><strong>Standard-IA</strong></td><td>accesso poco frequente</td><td>più basso</td></tr>
+      <tr><td><strong>Glacier / Deep Archive</strong></td><td>backup, archivio legale</td><td><span class="hi">bassissimo</span></td></tr>
+    </table>
+    <div class="meme-box"><span class="meme-title">// anche EBS</span>gp3 al posto di gp2, io2 solo se ti serve davvero l'IOPS. E gli <strong>snapshot dimenticati</strong> pesano: sono GB fermi che paghi ogni mese.</div>
+  </div>
+</div>
+<aside class="speaker-notes">Terza leva di risparmio: il tiering. Concetto: il GB non ha un prezzo unico, dipende da quanto in fretta lo vuoi. Lifecycle policy = automatismo (log a 30gg → IA, a 90gg → Glacier). Accenno EBS gp3 (default sensato) e snapshot orfani (costo silenzioso). Team healthcare: i backup lunghi vanno in Glacier, non in Standard.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 11 · IL PILASTRO COST OPTIMIZATION (5 mosse)           -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> il pilastro, in 5 mosse</div>
+  <h2 class="slide-title a1">Cost Optimization: <span>la cassetta</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <ul class="numbered">
+      <li><strong>Right-sizing</strong> — l'istanza giusta, non la più grande "per sicurezza". Misura, poi scegli.</li>
+      <li><strong>Elasticità</strong> — scala su nei picchi, <em>scala a zero</em> a riposo (Auto Scaling, serverless). Non pagare l'idle.</li>
+      <li><strong>Managed vs self-managed</strong> — un servizio gestito costa di listino ma risparmia ore/persone. Conta il TCO, non solo l'istanza.</li>
+      <li><strong>Commitment</strong> — Savings Plans/RI sul carico base prevedibile.</li>
+      <li><strong>Storage & transfer</strong> — tiering, CloudFront, VPC endpoint, niente NAT inutili.</li>
+    </ul>
+    <div class="meme-box"><span class="meme-title">// il mantra</span><strong>"Right-size, then commit."</strong> Prima aggiusti la taglia, POI ti impegni sul prezzo. Impegnarsi su una taglia sbagliata = pagare a sconto una cosa che non ti serve.</div>
+  </div>
+</div>
+<aside class="speaker-notes">Sintesi operativa del pilastro: 5 mosse che possono usare oggi nella proposta. La #2 (elasticità/scala a zero) è quella che l'e-commerce Black Friday deve usare: non dimensionare per il picco 24/7. La #3 (managed vs self) sfata il "Lambda costa" — conta anche il costo del personale. Chiudo col mantra "right-size then commit". Fine primer teorico: ora hands-on Calculator.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 12 · LAB · AWS PRICING CALCULATOR (intro)              -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="a0"><span class="lab-badge">LAB · HANDS-ON</span></div>
+  <h2 class="slide-title a1" style="margin-top:.3em;">Lo strumento del mestiere: <span>Pricing Calculator</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="card card-glow"><p style="font-size:var(--small-size);margin:0;"><a class="online-link" href="https://calculator.aws" target="_blank" rel="noopener">calculator.aws</a> — gratis, no login. Componi la tua architettura servizio per servizio, lui somma il costo mensile stimato. È quello che allegherete alla proposta come <strong>prova</strong> del costo.</p></div>
+    <div class="grid-3">
+      <div class="card card-top"><div class="tag">A COSA SERVE</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Trasformare un disegno in un numero difendibile. "Costa ~X€/mese, ecco il link."</p></div>
+      <div class="card card-top"><div class="tag">REGIONE</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Sempre <strong>Europe (Milan) eu-south-1</strong> — bassa latenza in Italia e dati in UE.</p></div>
+      <div class="card card-top"><div class="tag green">OUTPUT</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Un link condivisibile + un totale mensile. Lo incollate nella tabella costi.</p></div>
+    </div>
+    <div class="meme-box"><span class="meme-title">// perché la regione conta</span>Stesso servizio, prezzo diverso per regione. Milano ≠ Virginia. Scegliere la regione sbagliata = stima sbagliata (e latenza sbagliata).</div>
+  </div>
+</div>
+<aside class="speaker-notes">Proietto e faccio io la demo dal vivo mentre loro guardano (poi la useranno). Apro calculator.aws. Spiego che non serve account. Insisto sulla regione Milano: la cambio davanti a loro e faccio vedere che il numero cambia. Obiettivo: alla fine del LAB ognuno sa aggiungere un servizio e leggere il totale.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 13 · LAB · Step 1/3                                     -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="a0"><span class="step-badge">STEP 1/3</span> <span class="lab-badge">CALCULATOR</span></div>
+  <h2 class="slide-title a1" style="margin-top:.3em;">Crea la stima e aggiungi il <span>compute</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <ul class="numbered">
+      <li>Vai su <a class="online-link" href="https://calculator.aws" target="_blank" rel="noopener">calculator.aws</a> → <strong>Create estimate</strong>.</li>
+      <li>In alto scegli la regione <strong>Europe (Milan)</strong>.</li>
+      <li><strong>Add service → Amazon EC2</strong>. Scegli tipo istanza (es. <code style="color:var(--green)">t3.medium</code>), quantità e <strong>ore/mese</strong> (24/7 = 730h).</li>
+      <li>Guarda comparire il <strong>costo mensile</strong> di quel blocco.</li>
+    </ul>
+    <div class="def">Prova subito il trade-off: metti <strong>2 istanze</strong> invece di 1, o passa da <code style="color:var(--green)">t3.medium</code> a <code style="color:var(--green)">t3.large</code>. Vedi come raddoppia? Questo è il right-sizing in diretta.</div>
+  </div>
+</div>
+<aside class="speaker-notes">Step atomico 1. Faccio fare a loro sul proprio portatile. Giro tra i tavoli (e tengo d'occhio il recupero). Punto didattico: cambiare tipo/quantità e VEDERE il numero muoversi rende tangibile il costo del compute. Se qualcuno è lento, il vicino lo aiuta. 730h = mese pieno, lo scrivo alla lavagna.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 14 · LAB · Step 2/3                                     -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="a0"><span class="step-badge">STEP 2/3</span> <span class="lab-badge">CALCULATOR</span></div>
+  <h2 class="slide-title a1" style="margin-top:.3em;">Aggiungi dati, storage e i <span>costi nascosti</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <ul class="numbered">
+      <li><strong>Add service → RDS</strong> (o Aurora). Attiva <strong>Multi-AZ</strong> e guarda il prezzo <span class="hi">raddoppiare</span>.</li>
+      <li><strong>Add service → S3</strong>: metti i GB/mese + numero richieste.</li>
+      <li><strong>Add service → Data Transfer</strong>: imposta i GB in <strong>uscita</strong> verso Internet.</li>
+      <li><strong>Add service → NAT Gateway</strong>: 1 gateway + i GB processati. Ecco la "tassa".</li>
+    </ul>
+    <div class="meme-box"><span class="meme-title">// il momento aha</span>Guardate il totale in alto salire mentre aggiungete transfer e NAT. <strong>Quelli</strong> sono i costi che nelle demo non vedete mai — finché non arriva la bolletta.</div>
+  </div>
+</div>
+<aside class="speaker-notes">Step atomico 2: qui collego il primer ai numeri veri. Faccio attivare Multi-AZ su RDS e vedere il ×2 (collegamento diretto alla slide cost driver). Poi transfer e NAT: il totale sale, e loro toccano con mano i "killer silenziosi". Chi è tornato dal recupero si aggancia qui: basta questo step per capire il gioco.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 15 · LAB · Step 3/3                                     -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="a0"><span class="step-badge">STEP 3/3</span> <span class="lab-badge">CALCULATOR</span></div>
+  <h2 class="slide-title a1" style="margin-top:.3em;">Salva, condividi, <span>allega alla proposta</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <ul class="numbered">
+      <li>In alto: <strong>Save and share</strong> → conferma → ottieni un <strong>link pubblico</strong>.</li>
+      <li>Copia il <strong>totale mensile</strong> e il link nella vostra <strong>tabella costi</strong>.</li>
+      <li>Confronta col <strong>budget del cliente</strong>: sei dentro? Sopra? Di quanto?</li>
+    </ul>
+    <div class="card card-glow"><p style="font-size:var(--small-size);margin:0;">✅ <strong>Traguardo LAB:</strong> ora sapete costare un'architettura e <em>dimostrarlo</em>. È la competenza che userete tutta la seconda parte — e che il cliente si aspetta da un consulente.</p></div>
+  </div>
+</div>
+<aside class="speaker-notes">Step 3: il costo diventa un artefatto condivisibile e verificabile (il link). Questo è ciò che rende la loro proposta professionale, non un'opinione. Chiudo il LAB assicurandomi che tutti abbiano fatto almeno un "save and share". Da qui in poi il Calculator è il loro strumento per il capstone.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 16 · CAMBIO CAPPELLO · inizia il capstone              -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content center-content">
+  <div class="a0" style="font-family:'Share Tech Mono',monospace;color:var(--orange);letter-spacing:0.25em;font-size:var(--small-size);">> git checkout -b consulenza</div>
+  <h2 class="a1" style="font-family:'Barlow Condensed';font-weight:900;font-size:clamp(1.8rem,5.5vw,4rem);margin:.2em 0;line-height:1;">CAMBIO CAPPELLO:<br><span style="color:var(--orange);">la sfida</span></h2>
+  <div class="a2" style="font-size:var(--body-size);max-width:70ch;color:var(--text);line-height:1.6;">Primer finito. Ora è tutto vostro. <strong>Squadre da 3-4</strong>, che formate voi. Ogni team è una società di consulenza e riceve un <strong>cliente diverso</strong> con la sua <strong>RFP</strong> e il suo <strong>budget</strong>.</div>
+  <div class="a3" style="display:flex;gap:0.6em;flex-wrap:wrap;justify-content:center;margin-top:.5em;">
+    <span class="tag">🏦 FINTECH</span><span class="tag blue">🎮 GAMING</span><span class="tag green">🏥 HEALTHCARE</span><span class="tag yellow">🛒 E-COMMERCE</span>
+  </div>
+</div>
+<aside class="speaker-notes">Slide-cesura: cambia l'energia della stanza. Faccio formare le squadre (auto-selezione, 3-4). Assegno un cliente diverso a ogni team — se ci sono più team dello stesso vertical va bene, competono. Chi è ancora al recupero: il suo team parte, si aggancerà. Tengo il ritmo: 2 minuti per formare i gruppi, poi consegno RFP e template.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 17 · LA COMMESSA (cos'è una RFP)                        -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> la commessa</div>
+  <h2 class="slide-title a1">Rispondete a una <span>RFP</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="def"><strong>RFP</strong> (Request For Proposal) = il documento con cui un cliente chiede un'offerta. Contiene <em>cosa gli serve</em> (requisiti), <em>i vincoli</em> (SLA, compliance, budget) e <em>cosa vuole ricevere</em> da voi. Il vostro lavoro: rispondere con un'architettura.</div>
+    <div class="grid-3">
+      <div class="card card-top"><div class="tag">REQUISITI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Funzionali (cosa deve fare) e non-funzionali (quanto veloce, quanto disponibile, quanto sicuro).</p></div>
+      <div class="card card-top"><div class="tag yellow">VINCOLI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Compliance (es. dati in UE), obiettivi DR (RPO/RTO) e soprattutto <strong>il budget mensile</strong>.</p></div>
+      <div class="card card-top"><div class="tag green">DELIVERABLE</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Il "pacchetto proposta" che consegnate e poi difendete davanti al cliente.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="speaker-notes">Spiego cos'è una RFP — parola che sentiranno nel mondo del lavoro. Sottolineo la distinzione requisiti funzionali vs non-funzionali (quest'ultimi guidano l'architettura: disponibilità, latenza, sicurezza). Il budget è un vincolo di primo livello, non un dettaglio. Prossima slide: cosa devono consegnare esattamente.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 18 · IL PACCHETTO DA CONSEGNARE                         -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> il deliverable</div>
+  <h2 class="slide-title a1">Il pacchetto <span>proposta</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="grid-2">
+      <div class="card card-left"><div class="tag blue">1 · DIAGRAMMA</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Architettura su <strong>draw.io</strong>: VPC, subnet, compute, DB, storage, CDN, sicurezza, DR.</p></div>
+      <div class="card card-left"><div class="tag">2 · TABELLA DECISIONI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Per ogni scelta: <em>cosa · perché · quale pilastro</em> Well-Architected soddisfa.</p></div>
+      <div class="card card-left"><div class="tag green">3 · SECURITY & DR</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">IAM, cifratura (KMS), WAF/GuardDuty + strategia DR con <strong>RPO/RTO</strong>.</p></div>
+      <div class="card card-left"><div class="tag yellow">4 · TABELLA COSTI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Voci + totale dal <strong>Calculator</strong>, confrontato col budget. Link allegato.</p></div>
+    </div>
+    <div class="card card-glow"><p style="font-size:var(--small-size);margin:0;">📄 <strong>5 · Consegna su FAD</strong> — un unico file per gruppo con i 4 punti qui sopra, da caricare a fine lezione. Gli strumenti (coi link) sono nella prossima slide; i template Word/Excel sono opzionali.</p></div>
+  </div>
+</div>
+<aside class="speaker-notes">Elenco chiaro dei 5 pezzi del deliverable. Mostro fisicamente i due template (proposta 1 pagina + calcolatore xlsx). Il diagramma draw.io è il centro; la tabella decisioni è ciò che li costringe a MOTIVARE (non basta "ho messo Aurora"). I template Word/Excel sono opzionali (tutto è nel deck). Dico che la tabella costi senza link al Calculator non vale.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 18b · CASSETTA ATTREZZI / LINK (self-contained)         -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> tutto quello che vi serve è qui</div>
+  <h2 class="slide-title a1">La <span>cassetta degli attrezzi</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="grid-2">
+      <div class="card card-left"><div class="tag">🧮 STIMA COSTI (budget)</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">La stima ufficiale del costo mensile, da allegare alla proposta.<br><a class="online-link" href="https://calculator.aws" target="_blank" rel="noopener">calculator.aws</a></p></div>
+      <div class="card card-left"><div class="tag blue">🎨 DIAGRAMMA</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Disegnate l'architettura (libreria icone AWS inclusa).<br><a class="online-link" href="https://app.diagrams.net" target="_blank" rel="noopener">app.diagrams.net</a> · draw.io</p></div>
+      <div class="card card-left"><div class="tag green">🧊 DISEGNA + COSTA</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Alternativa che disegna E stima il costo insieme (free).<br><a class="online-link" href="https://www.cloudcraft.co" target="_blank" rel="noopener">cloudcraft.co</a></p></div>
+      <div class="card card-left"><div class="tag yellow">🔎 PREZZI ISTANZE</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Confronto rapido prezzi EC2/RDS (on-demand/spot).<br><a class="online-link" href="https://instances.vantage.sh" target="_blank" rel="noopener">instances.vantage.sh</a></p></div>
+    </div>
+    <div class="meme-box"><span class="meme-title">// regola fissa</span>Regione sempre <strong>Europe (Milan) eu-south-1</strong>. Il <strong>totale ufficiale</strong> del budget nella proposta viene dal Pricing Calculator (bottone “Save & share” → link).</div>
+  </div>
+</div>
+<aside class="speaker-notes">Slide-hub dei link: tutto ciò che serve per il capstone è dentro il deck, questi sono gli strumenti online. Il Pricing Calculator è la fonte del totale ufficiale; Cloudcraft è comodo per chi vuole disegnare e vedere il costo insieme; Vantage per confrontare al volo i prezzi delle istanze. Ribadisco la regione Milano. I file Word/Excel sono un extra opzionale.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 19 · REGOLE D'ORO                                        -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> le regole d'oro</div>
+  <h2 class="slide-title a1">Come si <span>vince</span> la commessa</h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <ul class="clean">
+      <li><strong>Stare NEL budget.</strong> Sforare è ammesso solo se giustificato meglio di un concorrente che rientra.</li>
+      <li><strong>Motivare ogni scelta.</strong> "Multi-AZ perché l'SLA chiede 99,95%", non "perché sì".</li>
+      <li><strong>I costi nascosti contano.</strong> Transfer, NAT, inter-AZ, snapshot: se li dimenticate, la stima è falsa.</li>
+      <li><strong>Il giusto, non il massimo.</strong> Sovra-ingegnerizzare è un errore quanto sotto-dimensionare.</li>
+    </ul>
+    <div class="meme-box"><span class="meme-title">// come vi valuto</span>Non vince chi mette più servizi. Vince chi fa le scelte più <strong>difendibili</strong> per <em>quel</em> cliente e <em>quel</em> budget. La rubrica è pubblica (fra 2 slide).</div>
+  </div>
+</div>
+<aside class="speaker-notes">Le regole che orientano il lavoro e prevengono l'errore tipico (buttare dentro servizi). Insisto sul "motivare": è la differenza tra uno studente e un consulente. Anticipo che la rubrica è trasparente. Queste 4 regole sono anche i criteri con cui valuterò il file caricato su FAD.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 20 · I 4 CLIENTI (overview)                             -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> i committenti</div>
+  <h2 class="slide-title a1">4 clienti, 4 <span>budget</span>, 4 sfide</h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="grid-4">
+      <div class="card card-top"><div style="font-size:1.5em;">🏦</div><div style="font-family:'Barlow Condensed';font-weight:900;color:var(--orange);font-size:1.1em;">NimbusPay</div><div class="tag red" style="margin:.2em 0;">Fintech</div><p style="font-size:var(--tiny-size);margin:0;">Compliance & sicurezza. <br><strong>€4.500/mese</strong></p></div>
+      <div class="card card-top"><div style="font-size:1.5em;">🎮</div><div style="font-family:'Barlow Condensed';font-weight:900;color:var(--blue);font-size:1.1em;">PixelForge</div><div class="tag blue" style="margin:.2em 0;">Gaming</div><p style="font-size:var(--tiny-size);margin:0;">Latenza globale & picchi. <br><strong>€6.000/mese</strong></p></div>
+      <div class="card card-top"><div style="font-size:1.5em;">🏥</div><div style="font-family:'Barlow Condensed';font-weight:900;color:var(--green);font-size:1.1em;">MediSafe</div><div class="tag green" style="margin:.2em 0;">Healthcare</div><p style="font-size:var(--tiny-size);margin:0;">Dati protetti & DR. <br><strong>€3.500/mese</strong></p></div>
+      <div class="card card-top"><div style="font-size:1.5em;">🛒</div><div style="font-family:'Barlow Condensed';font-weight:900;color:var(--yellow);font-size:1.1em;">BlackFridayBox</div><div class="tag yellow" style="margin:.2em 0;">E-commerce</div><p style="font-size:var(--tiny-size);margin:0;">Elasticità & picchi 20×. <br><strong>€3.000/mese</strong></p></div>
+    </div>
+    <div class="def">Ogni team prende <strong>una</strong> RFP (prossime slide). Budget diversi apposta: ognuno stressa un pilastro diverso. Non esiste "la soluzione" — esiste la migliore <em>per quel vincolo</em>.</div>
+  </div>
+</div>
+<aside class="speaker-notes">Panoramica dei 4 clienti prima delle schede singole. Faccio notare che i budget sono diversi per far emergere pilastri diversi: fintech=sicurezza, gaming=performance/costo transfer, healthcare=affidabilità/DR, e-commerce=elasticità. Assegno un cliente a ciascun team ora. Le prossime 4 slide sono le RFP dettagliate — ogni team guarda la sua (ma vederle tutte è utile).</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 21 · RFP A · NimbusPay (Fintech)                        -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="a0" style="display:flex;align-items:center;gap:.5em;"><span style="font-size:1.4em;">🏦</span><span class="slide-label" style="margin:0;">> RFP · cliente A</span><span class="tag red">FINTECH</span></div>
+  <h2 class="slide-title a1" style="margin-top:.2em;">NimbusPay — <span>wallet & pagamenti</span> UE</h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="def">Startup fintech: app wallet per <strong>500k utenti</strong> in UE, con <strong>picchi 10× nei giorni di paga</strong>. I soldi delle persone. Zero margine sugli errori.</div>
+    <div class="grid-2">
+      <div class="card card-left"><div class="tag">FUNZIONALI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Onboarding/KYC · saldi wallet · storico transazioni · dashboard admin · notifiche push.</p></div>
+      <div class="card card-left"><div class="tag yellow">NON-FUNZIONALI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Disponibilità <strong>99,95%</strong> (sopravvivere alla perdita di un'AZ) · API <strong>&lt;150ms</strong> · <strong>dati solo in UE</strong> + cifratura ovunque + audit trail · DR <strong>RPO 15m / RTO 1h</strong>.</p></div>
+    </div>
+    <div class="card card-glow"><p style="font-size:var(--small-size);margin:0;">💰 Budget <strong>€4.500/mese</strong> · 🎯 sfida chiave: <strong>sicurezza e resilienza</strong> senza far esplodere il conto (Multi-AZ costa: dove serve davvero?).</p></div>
+  </div>
+</div>
+<aside class="speaker-notes">RFP del team fintech. Il tema è Security + Reliability: KYC, cifratura KMS, WAF, Multi-AZ su Aurora, audit con CloudTrail. Il trade-off costoso è il Multi-AZ (×2): devono decidere dove sì e dove no. Data residency UE = regione Milano/Francoforte/Irlanda, niente us-east-1. Se sforano, è qui che il change request (taglio budget) morderà.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 22 · RFP B · PixelForge (Gaming)                        -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="a0" style="display:flex;align-items:center;gap:.5em;"><span style="font-size:1.4em;">🎮</span><span class="slide-label" style="margin:0;">> RFP · cliente B</span><span class="tag blue">GAMING</span></div>
+  <h2 class="slide-title a1" style="margin-top:.2em;">PixelForge — <span>game streaming</span> EU</h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="def">Piattaforma di gioco multiplayer + streaming di asset e video. Giocatori in <strong>tutta Europa</strong>, picchi serali e durante i <strong>tornei</strong>. Enorme traffico in uscita.</div>
+    <div class="grid-2">
+      <div class="card card-left"><div class="tag">FUNZIONALI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">API matchmaking · streaming asset/video · leaderboard · chat · store in-game.</p></div>
+      <div class="card card-left"><div class="tag yellow">NON-FUNZIONALI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Latenza <strong>&lt;50ms</strong> per i giocatori · contenuti serviti <strong>globalmente</strong> · scalare <strong>5×</strong> nei picchi · molti TB/mese in <strong>uscita</strong>.</p></div>
+    </div>
+    <div class="card card-glow"><p style="font-size:var(--small-size);margin:0;">💰 Budget <strong>€6.000/mese</strong> · 🎯 sfida chiave: il <strong>data transfer</strong> divora il budget. Senza CloudFront davanti, il conto egress vi affonda.</p></div>
+  </div>
+</div>
+<aside class="speaker-notes">Team gaming: il tema è Performance + Cost, e il boss è il transfer OUT (richiamano la slide 8). CloudFront non è opzionale: taglia latenza E costo egress. Autoscaling per i picchi dei tornei, magari Spot per lavori batch (encoding). Budget più alto ma anche costi più alti: la trappola è ignorare l'egress e mettere tutto su EC2 diretto.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 23 · RFP C · MediSafe (Healthcare)                      -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="a0" style="display:flex;align-items:center;gap:.5em;"><span style="font-size:1.4em;">🏥</span><span class="slide-label" style="margin:0;">> RFP · cliente C</span><span class="tag green">HEALTHCARE</span></div>
+  <h2 class="slide-title a1" style="margin-top:.2em;">MediSafe — <span>telemedicina</span> & referti</h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="def">Piattaforma per ospedali italiani: cartelle cliniche, referti/immagini, video-visite. Dati sanitari = i più sensibili che esistano. Non si perdono <em>mai</em>.</div>
+    <div class="grid-2">
+      <div class="card card-left"><div class="tag">FUNZIONALI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Upload referti/immagini · prenotazioni · video-visite · portale paziente e medico.</p></div>
+      <div class="card card-left"><div class="tag yellow">NON-FUNZIONALI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Cifratura + accesso <strong>audit-abile</strong> · alta disponibilità · DR robusto <strong>RPO 5m / RTO 30m</strong> · retention lunga (archivio legale anni).</p></div>
+    </div>
+    <div class="card card-glow"><p style="font-size:var(--small-size);margin:0;">💰 Budget <strong>€3.500/mese</strong> · 🎯 sfida chiave: <strong>DR severo e archivio lungo</strong> con budget contenuto → storage a strati (Glacier) è vitale.</p></div>
+  </div>
+</div>
+<aside class="speaker-notes">Team healthcare: tema Reliability + Security + gestione dati nel tempo. RPO/RTO molto stretti → warm standby o backup frequenti (costa). L'archivio legale lungo va in Glacier/Deep Archive, non in S3 Standard (richiamano slide 10). Budget medio-basso a fronte di requisiti duri: li costringe a essere chirurgici. Cifratura KMS obbligatoria per i dati clinici.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 24 · RFP D · BlackFridayBox (E-commerce)               -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="a0" style="display:flex;align-items:center;gap:.5em;"><span style="font-size:1.4em;">🛒</span><span class="slide-label" style="margin:0;">> RFP · cliente D</span><span class="tag yellow">E-COMMERCE</span></div>
+  <h2 class="slide-title a1" style="margin-top:.2em;">BlackFridayBox — <span>picco 20×</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="def">E-commerce di moda. Traffico normale <strong>modesto</strong>… tranne il <strong>Black Friday</strong>: <strong>20× in 48 ore</strong>. Il resto dell'anno deve costare poco.</div>
+    <div class="grid-2">
+      <div class="card card-left"><div class="tag">FUNZIONALI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Catalogo · ricerca · carrello · checkout/pagamenti · account cliente.</p></div>
+      <div class="card card-left"><div class="tag yellow">NON-FUNZIONALI</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Reggere il <strong>picco 20×</strong> senza cadere · pagine veloci · tornare <strong>economico</strong> fuori dal picco (no over-provisioning 24/7).</p></div>
+    </div>
+    <div class="card card-glow"><p style="font-size:var(--small-size);margin:0;">💰 Budget <strong>€3.000/mese</strong> (baseline) · 🎯 sfida chiave: <strong>elasticità</strong> vera. Dimensionare per il picco 24/7 = budget bruciato. Scala su e giù.</p></div>
+  </div>
+</div>
+<aside class="speaker-notes">Team e-commerce: tema Cost + Elasticità, il budget più basso di baseline. La trappola classica è dimensionare per il picco e tenerlo acceso tutto l'anno. Soluzione: Auto Scaling aggressivo, o serverless (Lambda/Fargate) che scala a zero, CloudFront per assets, magari DynamoDB on-demand. Il picco 20x è breve → paghi tanto solo 48h. Questo è il caso-scuola dell'elasticità.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 25 · SCAFFOLD TABELLA COSTI                             -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> non dimenticate niente</div>
+  <h2 class="slide-title a1">La <span>tabella costi</span>: le voci</h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <table class="compare">
+      <tr><th>Voce</th><th>Leva</th><th>Nota</th></tr>
+      <tr><td>EC2 / Fargate / Lambda</td><td>tempo</td><td>tipo × ore, o GB-secondo</td></tr>
+      <tr><td>RDS / Aurora / DynamoDB</td><td>tempo+storage</td><td><span class="hi">Multi-AZ = ×2</span></td></tr>
+      <tr><td>EBS + snapshot</td><td>volume</td><td>gp3; snapshot orfani?</td></tr>
+      <tr><td>S3 (+ classe)</td><td>volume+richieste</td><td>tiering: IA/Glacier</td></tr>
+      <tr><td>ALB</td><td>tempo+traffico</td><td>ore + LCU</td></tr>
+      <tr><td style="color:var(--red)">NAT Gateway</td><td>tempo+volume</td><td class="err">costo nascosto!</td></tr>
+      <tr><td style="color:var(--red)">Data transfer OUT</td><td>uscita</td><td class="err">CloudFront lo abbassa</td></tr>
+      <tr><td>CloudFront · KMS · Secrets</td><td>varie</td><td>spesso piccole ma ci sono</td></tr>
+    </table>
+    <div class="next-hint">→ replicate queste voci su <a class="online-link" href="https://calculator.aws" target="_blank" rel="noopener">calculator.aws</a> e confrontate col budget. (Foglio Excel pronto = extra opzionale.)</div>
+  </div>
+</div>
+<aside class="speaker-notes">Questa è la checklist anti-dimenticanza. Le due righe rosse (NAT + transfer) sono quelle che tutti scordano: se non ci sono, la stima è finta e in correzione le "buco". Rimando al foglio xlsx che ho preparato: le voci sono già lì con la formula di somma e il confronto col budget (verde se dentro, rosso se sopra). Loro mettono solo le quantità.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 26 · RUBRICA                                             -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> come vi valuto (trasparente)</div>
+  <h2 class="slide-title a1">La <span>rubrica</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <table class="compare">
+      <tr><th>Criterio</th><th>Cosa guardo</th><th>Peso</th></tr>
+      <tr><td><strong>Rispetto del budget</strong></td><td>ci stai dentro? costi nascosti inclusi?</td><td><span class="hi">25%</span></td></tr>
+      <tr><td><strong>Scelte motivate</strong></td><td>ogni scelta legata a un requisito/pilastro</td><td>25%</td></tr>
+      <tr><td><strong>Reliability & DR</strong></td><td>Multi-AZ dove serve, RPO/RTO sensati</td><td>20%</td></tr>
+      <tr><td><strong>Security</strong></td><td>IAM, cifratura, WAF, dati in UE</td><td>15%</td></tr>
+      <tr><td><strong>Performance & chiarezza</strong></td><td>latenza/CDN/scaling + proposta leggibile</td><td>15%</td></tr>
+    </table>
+    <div class="meme-box"><span class="meme-title">// nota bene</span>Il <strong>25% è il budget</strong>. Un'architettura bellissima ma fuori budget perde contro una buona che rientra. Benvenuti nel mondo reale.</div>
+  </div>
+</div>
+<aside class="speaker-notes">Rubrica pubblica: la proietto e la lascio visibile durante il lavoro (e la do stampata). Il peso più alto (25%) è sul budget di proposito — è il messaggio della giornata. La uso io per valutare il file che ogni gruppo carica su FAD. Dico che "scelte motivate" 25% premia il ragionamento sopra il numero di servizi.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 27 · TIMELINE DELLA SFIDA                               -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> come si svolge</div>
+  <h2 class="slide-title a1">Il <span>piano</span> della sfida</h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="timeline">
+      <div class="bar"></div>
+      <div class="tl-node"><div class="tl-dot" style="background:var(--orange);"></div><div style="font-family:'Share Tech Mono';font-size:var(--tiny-size);color:var(--orange);">SPRINT 1</div><div style="font-size:var(--tiny-size);color:var(--muted);">~45m<br>disegno + costi</div></div>
+      <div class="tl-node"><div class="tl-dot" style="background:var(--red);"></div><div style="font-family:'Share Tech Mono';font-size:var(--tiny-size);color:var(--red);">CHANGE REQ</div><div style="font-size:var(--tiny-size);color:var(--muted);">la mail<br>del cliente</div></div>
+      <div class="tl-node"><div class="tl-dot" style="background:var(--orange);"></div><div style="font-family:'Share Tech Mono';font-size:var(--tiny-size);color:var(--orange);">SPRINT 2</div><div style="font-size:var(--tiny-size);color:var(--muted);">~45m<br>adatti + rifinisci</div></div>
+      <div class="tl-node"><div class="tl-dot" style="background:var(--green);"></div><div style="font-family:'Share Tech Mono';font-size:var(--tiny-size);color:var(--green);">CONSEGNA</div><div style="font-size:var(--tiny-size);color:var(--muted);">finalizza<br>+ upload FAD</div></div>
+    </div>
+    <div class="def">A metà dello Sprint 1 il cliente vi manderà una <strong>richiesta di modifica</strong>. Come nella vita reale: i requisiti cambiano. Chi ha progettato in modo flessibile se la cava; chi ha incastrato tutto, soffre.</div>
+    <div class="meme-box"><span class="meme-title">// requirements be like</span>«È perfetto! Solo una piccola modifica…» — ogni cliente, sempre, a lavoro quasi finito. 📩</div>
+  </div>
+</div>
+<aside class="speaker-notes">Do la struttura temporale così sanno cosa aspettarsi. Anticipo (senza svelare) che arriva un change request: crea tensione buona e li spinge a non over-ingegnerizzare subito. È anche il punto di rientro per chi torna dal recupero ("il tuo team ha appena ricevuto una modifica, aiutali"). Faccio partire lo Sprint 1 dopo questa slide: cronometro ~45 min.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 28 · TEASER CHANGE REQUEST (hint, slide separata)       -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content center-content">
+  <div class="a0" style="font-size:clamp(3rem,10vw,6rem);">📩</div>
+  <h2 class="a1" style="font-family:'Barlow Condensed';font-weight:900;font-size:clamp(1.8rem,5.5vw,4rem);margin:.1em 0;line-height:1;">1 NUOVO MESSAGGIO<br><span style="color:var(--orange);">dal cliente</span></h2>
+  <div class="a2" style="font-size:var(--body-size);max-width:60ch;color:var(--muted);line-height:1.6;">Stop alle tastiere per 60 secondi. Il committente ha scritto. E come sempre… «è tutto bellissimo, solo una piccola modifica».</div>
+  <div class="a3 next-hint" style="margin-top:.6em;">↓ la richiesta è nella slide successiva ↓</div>
+</div>
+<aside class="speaker-notes">Slide-cesura che proietto a metà Sprint 1 (dopo ~35-40 min) per creare il momento. Fermo le tastiere, faccio ridere con "solo una piccola modifica". Tengo la suspense un attimo prima di girare. È anche il momento in cui riaggancio chi è tornato dal recupero al proprio team. Poi svelo le richieste.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 29 · CHANGE REQUEST (reveal, 4 varianti)               -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="a0"><span class="lab-badge" style="color:var(--red);border-color:var(--red);background:rgba(255,51,51,0.1);">CHANGE REQUEST</span></div>
+  <h2 class="slide-title a1" style="margin-top:.2em;">«Solo una <span>piccola</span> modifica…»</h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="grid-2">
+      <div class="card card-left"><div class="tag red">🏦 NimbusPay</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">«Ci espandiamo in <strong>Germania</strong>: serve presenza multi-region con dati DE. <strong>Rientrate ancora nei €4.500?</strong>»</p></div>
+      <div class="card card-left"><div class="tag blue">🎮 PixelForge</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">«<strong>Torneo mondiale</strong>: utenti ×2 per una settimana. E no, <strong>il budget non aumenta</strong>. Come reggete?»</p></div>
+      <div class="card card-left"><div class="tag green">🏥 MediSafe</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">«Nuova norma: <strong>copia DR in una seconda regione</strong>. Come cambia l'architettura e <strong>quanto costa</strong> in più?»</p></div>
+      <div class="card card-left"><div class="tag yellow">🛒 BlackFridayBox</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">«Il CFO <strong>taglia il budget del 30%</strong> a due settimane dal Black Friday. <strong>Dove risparmiate</strong> senza rischiare il crash?»</p></div>
+    </div>
+    <div class="next-hint">Sprint 2: aggiornate diagramma <em>e</em> tabella costi. Non ricominciate — <strong>adattate</strong> e mostrate il ragionamento.</div>
+  </div>
+</div>
+<aside class="speaker-notes">Ogni team legge SOLO la propria riga. Tutte le modifiche sono a tema soldi: è il cuore didattico della giornata. Faccio partire lo Sprint 2 (~45 min). Giro e faccio da "cliente esigente". Punto chiave: non devono buttare via il lavoro, devono capire l'IMPATTO su costo e pilastri e aggiornare la tabella. Chi ha progettato flessibile (es. e-commerce con auto-scaling) se la cava; chi ha incastrato tutto soffre — ed è una lezione.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 30 · CONSEGNA SU FAD                                    -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> la consegna</div>
+  <h2 class="slide-title a1">Si chiude in classe: <span>caricate su FAD</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="def">Niente presentazione. Finite il lavoro <strong>ora, in aula</strong>, ed esportatelo: <strong>un file per gruppo</strong> (con i nomi di tutti), da caricare sulla <strong>FAD entro fine lezione</strong>.</div>
+    <div class="grid-2">
+      <div class="card card-left"><div class="tag green">COSA CARICARE</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Un unico PDF/Word con: screenshot del <strong>diagramma</strong>, <strong>tabella decisioni</strong>, <strong>security &amp; DR</strong>, <strong>tabella costi</strong> + link al Calculator.</p></div>
+      <div class="card card-left"><div class="tag yellow">NOME FILE</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;"><code style="color:var(--green)">ACA_Capstone_[Cliente]_[Cognomi].pdf</code></p></div>
+    </div>
+    <div class="card card-glow"><p style="font-size:var(--small-size);margin:0;">✅ <strong>Prima di caricare, checklist:</strong> siete dentro il budget? costi nascosti inclusi (NAT, transfer, Multi-AZ)? ogni scelta è motivata? avete gestito il change request?</p></div>
+  </div>
+</div>
+<aside class="speaker-notes">Niente pitch: la consegna è il file caricato su FAD, uno per gruppo, entro fine lezione. Ultimi ~20 min: finalizzano ed esportano (diagramma + costi + link dentro il documento). Giro a controllare che il file sia completo prima dell'upload. Ricordo la checklist. Valuterò io dai file su FAD con la griglia. Chi finisce prima rifinisce la tabella costi.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 31 · CORREZIONE VERIFICA (recupero chiuso)             -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> ora che il recupero è chiuso</div>
+  <h2 class="slide-title a1">Verifica: gli <span>errori comuni</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <ul class="clean">
+      <li><strong>IAM troppo largo</strong> — policy con <code style="color:var(--green)">*</code> dove bastava il least-privilege.</li>
+      <li><strong>Single-AZ dove serviva HA</strong> — "99,9%" non si ottiene con una sola AZ.</li>
+      <li><strong>Cifratura dimenticata</strong> — dati a riposo senza KMS, o TLS non menzionato.</li>
+      <li><strong>RPO/RTO confusi</strong> — RPO = quanti dati perdo; RTO = in quanto torno su.</li>
+      <li><strong>Costo ignorato</strong> — l'errore che oggi non farete più. 😉</li>
+    </ul>
+    <div class="meme-box"><span class="meme-title">// nota docente</span>[Personalizza dai fogli soluzioni: cita 2-3 errori reali più frequenti visti in correzione, senza fare nomi.]</div>
+  </div>
+</div>
+<aside class="speaker-notes">Questa parte SOLO dopo che il recupero è concluso (altrimenti anticipo le risposte). Uso il file ACA_Verifica_Finale_Soluzioni_Docente per citare gli errori reali più frequenti — la meme-box è un promemoria per me di personalizzare. Gli errori elencati sono anche un ripasso mascherato. L'ultimo punto (costo) chiude il cerchio con la lezione di oggi.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 32 · SOLUZIONE-TIPO DELL'ARCHITETTO                     -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> cosa avremmo risposto noi</div>
+  <h2 class="slide-title a1">La <span>soluzione-tipo</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="grid-2">
+      <div class="card card-top"><div class="tag red">🏦 Fintech</div><p style="font-size:var(--tiny-size);margin:.3em 0 0;">Aurora Multi-AZ, KMS, WAF+GuardDuty, WD in seconda AZ. Multi-region SOLO dopo la modifica.</p></div>
+      <div class="card card-top"><div class="tag blue">🎮 Gaming</div><p style="font-size:var(--tiny-size);margin:.3em 0 0;">CloudFront davanti a tutto, ASG per i picchi, Spot per l'encoding. L'egress è il budget.</p></div>
+      <div class="card card-top"><div class="tag green">🏥 Healthcare</div><p style="font-size:var(--tiny-size);margin:.3em 0 0;">Backup frequenti + warm standby, S3→Glacier per l'archivio, tutto cifrato e audit-abile.</p></div>
+      <div class="card card-top"><div class="tag yellow">🛒 E-commerce</div><p style="font-size:var(--tiny-size);margin:.3em 0 0;">Serverless/Auto Scaling che scala a zero, CloudFront, DynamoDB on-demand. Paghi il picco solo 48h.</p></div>
+    </div>
+    <div class="next-hint">Dettaglio completo + costo di riferimento nel doc <strong>Soluzione-tipo (docente)</strong>. Non esiste "la" risposta: esiste il ragionamento giusto.</div>
+  </div>
+</div>
+<aside class="speaker-notes">Confronto le loro proposte con una traccia di riferimento (ho il documento soluzione-tipo con architettura e costo indicativo per ognuno dei 4). Sottolineo che è UNA soluzione valida, non l'unica: premio il ragionamento. Collego ogni traccia al pilastro dominante del cliente. Questo è anche il momento in cui riconosco le scelte brillanti viste nei team.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 33 · RECAP                                               -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> what you learned today</div>
+  <h2 class="slide-title a1">Cosa vi <span>portate a casa</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <ul class="clean">
+      <li><strong>AWS fattura a consumo</strong> — 4 leve: tempo, volume, uscita, richieste.</li>
+      <li><strong>I costi nascosti</strong> — transfer OUT, NAT Gateway, inter-AZ, Multi-AZ ×2.</li>
+      <li><strong>Le 3 modalità</strong> — On-Demand, Savings Plans/RI, Spot: ognuna al posto giusto.</li>
+      <li><strong>Cost Optimization</strong> — right-size, elasticità, tiering, commitment.</li>
+      <li><strong>Progettare col vincolo</strong> — l'architettura giusta è quella che regge <em>dentro il budget</em>.</li>
+    </ul>
+    <div class="meme-box"><span class="meme-title">// da oggi</span>Quando lanciate qualcosa in Learner Lab, la prima domanda non è "funziona?" ma "<strong>quanto costerebbe in produzione?</strong>". Mentalità da architetto. 🧠</div>
+  </div>
+</div>
+<aside class="speaker-notes">Recap dei concetti chiave. Faccio ripetere a loro le "4 leve" e i "2 killer nascosti" — verifica veloce di ritenzione. Il messaggio finale: da oggi guardano ogni risorsa anche col cappello del costo. Ponte alla prossima e ultima slide di contenuto: dal disegno a mano all'automazione.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 34 · PONTE A UF2 · IaC                                   -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content">
+  <div class="slide-label a0">> dove andiamo adesso</div>
+  <h2 class="slide-title a1">L'avete disegnata a mano.<br>Ora la <span>fate costruire</span></h2>
+  <div class="accent-line a1"></div>
+  <div class="a2" style="display:flex;flex-direction:column;gap:var(--content-gap);min-height:0;">
+    <div class="def">Oggi avete progettato e stimato <strong>a mano</strong>. Nella prossima UF — <strong>Infrastructure as Code</strong> — quell'architettura la scrivete in un file e la <strong>macchina la costruisce</strong>: ripetibile, versionata, e con stima costi e <em>drift detection</em> integrate.</div>
+    <div class="grid-3">
+      <div class="card card-top"><div class="tag">A MANO (oggi)</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">draw.io + Calculator. Ottimo per pensare, lento e non ripetibile.</p></div>
+      <div class="card card-top"><div class="tag green">CON IaC (poi)</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">CloudFormation / Terraform: la stessa rete in un <code style="color:var(--green)">.yaml</code>, deploy in un click.</p></div>
+      <div class="card card-top"><div class="tag blue">BONUS</div><p style="font-size:var(--tiny-size);margin:.4em 0 0;">Il codice ti dice il costo e ti avvisa se qualcuno cambia le cose a mano.</p></div>
+    </div>
+    <div class="meme-box"><span class="meme-title">// teaser</span>La 3-tier che avete costruito cliccando? In IaC diventa <strong>40 righe di YAML</strong>. E si ricrea identica in 3 minuti, in qualsiasi regione.</div>
+  </div>
+</div>
+<aside class="speaker-notes">Ponte narrativo verso la UF2 (IaC), che alcuni hanno già iniziato: chiudo l'arco "disegno→automazione". Richiamo la 3-tier che hanno costruito a mano nel capstone precedente (deck 12): in IaC diventa un file. Anticipo drift detection e cost estimation come motivatori. Lascio la sensazione che oggi è il "prima" e IaC è il "dopo" naturale.</aside>
+</section>
+
+<!-- ============================================================= -->
+<!-- SLIDE 35 · FINE / Q&A                                          -->
+<!-- ============================================================= -->
+<section class="slide">
+<div class="slide-content center-content">
+  <div class="a0" style="font-family:'Share Tech Mono',monospace;color:var(--green);font-size:var(--small-size);">paolo@its-ict:~$ ./fine_lezione.sh --uf1</div>
+  <h2 class="a1" style="font-family:'Barlow Condensed';font-weight:900;font-size:clamp(2rem,7vw,5rem);margin:.15em 0;line-height:.95;">DOMANDE?<span class="cursor"></span></h2>
+  <div class="a2" style="font-size:var(--body-size);max-width:64ch;color:var(--text);line-height:1.6;">…o è tutto chiaro come una bolletta AWS di fine mese? 😏<br>Grazie a tutti — bella UF. Ci vediamo a costruire la roba in <strong>Infrastructure as Code</strong>.</div>
+  <div class="a3" style="font-family:'Share Tech Mono',monospace;color:var(--muted);font-size:var(--tiny-size);margin-top:.6em;">ACA · UF1 Architettura e Progettazione · Paolo Costanzo · paolo.costanzo@its-ictpiemonte.it</div>
+</div>
+<aside class="speaker-notes">Chiusura leggera con la battuta sulla bolletta AWS (notoriamente illeggibile). Ringrazio: è l'ultima della UF1, chiudo l'arco. Spazio a domande, feedback sulla giornata e sul capstone. Rilancio su IaC. Se avanza tempo: giro di "una cosa che vi portate a casa" da ciascuno.</aside>
+</section>
+
+<div class="nav-dots"></div>
+<div class="slide-counter">01</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var total=slides.length;
+  var dotsC=document.querySelector('.nav-dots');
+  var counter=document.querySelector('.slide-counter');
+  var cur=0;
+  slides.forEach(function(_,i){var d=document.createElement('div');d.className='nav-dot';d.addEventListener('click',function(){go(i,true);});dotsC.appendChild(d);});
+  var dots=[].slice.call(dotsC.querySelectorAll('.nav-dot'));
+  function pad(n){n=''+n;return n.length<2?('0'+n):n;}
+  function paint(i){cur=i;for(var k=0;k<dots.length;k++){dots[k].classList.toggle('active',k===i);}counter.textContent=pad(i+1)+' / '+pad(total);}
+  // key/telecomando = salto ISTANTANEO (robusto anche a click rapidi/ripetuti, niente lag).
+  // mouse sui dot = smooth. In ogni caso si atterra SEMPRE sulla slide giusta.
+  function go(i,sm){i=Math.max(0,Math.min(total-1,i));slides[i].scrollIntoView({behavior:(sm?'smooth':'auto')});paint(i);}
+  var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){paint(slides.indexOf(e.target));}});},{threshold:0.6});
+  slides.forEach(function(s){obs.observe(s);});
+  paint(0);
+  var NEXT=['ArrowRight','ArrowDown','PageDown',' ','Spacebar','Enter','Right','Down'];
+  var PREV=['ArrowLeft','ArrowUp','PageUp','Backspace','Left','Up'];
+  document.addEventListener('keydown',function(e){
+    if(NEXT.indexOf(e.key)>-1){e.preventDefault();go(cur+1);}
+    else if(PREV.indexOf(e.key)>-1){e.preventDefault();go(cur-1);}
+    else if(e.key==='Home'){e.preventDefault();go(0);}
+    else if(e.key==='End'){e.preventDefault();go(total-1);}
+    else if(e.key==='n'||e.key==='N'){var ns=document.querySelectorAll('.speaker-notes');for(var j=0;j<ns.length;j++){ns[j].style.display=(ns[j].style.display==='block'?'none':'block');}}
+    else if(e.key==='b'||e.key==='B'||e.key==='.'){e.preventDefault();document.body.style.background=(document.body.style.background==='black'?'':'black');}
+  },true);
+  // swipe touch / trackpad-friendly: click sui bordi laterali
+});
+</script>
+</body>
+</html>
