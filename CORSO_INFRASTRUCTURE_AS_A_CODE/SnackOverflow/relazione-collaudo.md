@@ -170,3 +170,43 @@ AWS CLI: in particolare la composizione corretta di `--parameters`, l'aggiunta d
 comportamento asincrono di `delete-stack` (nessun output immediato è il comportamento
 atteso, non un errore).
 Nessun problema architetturale o di logica nei template.
+
+Comandi usati per l'esecuzione
+```bash
+aws s3 mb s3://snackoverflow-tpl-bucket
+
+aws s3 cp NestedStack/ s3://snackoverflow-tpl-bucket/snackoverflow/ --recursive --exclude "root.yaml"
+
+aws cloudformation deploy --stack-name snackoverflow --template-file NestedStack/root.yaml --parameter-overrides TemplateBaseURL=https://snackoverflow-tpl-bucket.s3.amazonaws.com/snackoverflow --capabilities CAPABILITY_NAMED_IAM
+
+aws cloudformation deploy --stack-name snackoverflow --template-file NestedStack/root.yaml --parameter-overrides TemplateBaseURL=https://snackoverflow-tpl-bucket.s3.amazonaws.com/snackoverflow EnvType=dev CreateDatabase=true
+
+aws cloudformation describe-stacks --stack-name snackoverflow --query "Stacks[0].Outputs" --output table
+
+aws cloudformation create-change-set --stack-name snackoverflow --change-set-name to-prod --template-body file://NestedStack/root.yaml --parameters   ParameterKey=TemplateBaseURL,ParameterValue=https://snackoverflow-tpl-bucket.s3.amazonaws.com/snackoverflow   ParameterKey=EnvType,ParameterValue=prod   ParameterKey=CreateDatabase,ParameterValue=true --change-set-type UPDATE --capabilities CAPABILITY_AUTO_EXPAND CAPABILITY_IAM
+
+aws cloudformation describe-change-set --change-set-name to-prod --stack-name snackoverflow --query "Changes[].ResourceChange.[Action,LogicalResourceId,Replacement]" --output table
+
+aws cloudformation list-stack-resources --stack-name snackoverflow --query "StackResourceSummaries[?ResourceType=='AWS::CloudFormation::Stack'].{Nome:LogicalResourceId,ARN:PhysicalResourceId}" --output table
+
+aws cloudformation describe-stack-drift-detection-status --stack-name snackoverflow
+
+aws cloudformation update-termination-protection --stack-name snackoverflow --enable-termination-protection
+
+
+aws cloudformation deploy --stack-name snackoverflow-core --template-file 10-core-exports.yaml
+
+aws cloudformation list-exports --query "Exports[?Name=='snackoverflow-core-bucket-name']" --output table
+
+
+aws cloudformation deploy --stack-name snackoverflow-consumer --template-file 20-consumer.yaml
+
+aws ssm get-parameter --name /snackoverflow/core-bucket-name --query "Parameter.Value" --output text
+
+
+aws cloudformation delete-stack --stack-name snackoverflow-core
+
+aws cloudformation describe-stacks --stack-name snackoverflow-core --query "Stacks[0].StackStatus" --output text
+
+aws cloudformation describe-stack-events --stack-name snackoverflow-core --query "StackEvents[0].{Stato:ResourceStatus,Motivo:ResourceStatusReason}" --output table
+```
