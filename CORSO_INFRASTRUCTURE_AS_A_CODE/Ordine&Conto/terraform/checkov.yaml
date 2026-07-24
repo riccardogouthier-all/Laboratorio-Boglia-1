@@ -1,0 +1,14 @@
+# Baseline "dev" — skip motivati per le risorse dimostrative del lab.
+compact: true
+quiet: true
+skip-check:
+  - CKV_AWS_18 # S3 access logging -> non richiesto in dev
+  - CKV_AWS_144 # S3 cross-region replication -> fuori scope dev
+  - CKV2_AWS_61 # S3 lifecycle -> nessuna retention in dev
+  - CKV2_AWS_62 # S3 event notifications -> nessun consumer in dev
+  - CKV_AWS_79 # EC2 IMDSv1 -> l'istanza è solo per la STIMA (non si applica)
+  - CKV_AWS_88 # EC2 IP pubblico -> idem, risorsa di stima
+  - CKV_AWS_126 # EC2 detailed monitoring -> idem
+  - CKV_AWS_135 # EC2 EBS-optimized -> idem
+  - CKV_AWS_8   # EBS encryption sull istanza di stima -> non applicata
+  - CKV2_AWS_41 # EC2 senza IAM role -> vietato creare ruoli nel Learner Lab

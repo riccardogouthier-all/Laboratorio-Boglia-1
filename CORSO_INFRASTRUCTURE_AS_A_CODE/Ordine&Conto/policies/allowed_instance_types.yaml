@@ -1,0 +1,13 @@
+metadata:
+  id: "CKV_ACME_INSTANCE_SIZE"
+  name: "L'istanza EC2 deve usare una taglia economica approvata (t3.micro/t3.small)"
+  category: "CONVENTION"
+definition:
+  cond_type: "attribute"
+  resource_types:
+    - "aws_instance"
+  attribute: "instance_type"
+  operator: "within"
+  value:
+    - "t3.micro"
+    - "t3.small"

@@ -1,0 +1,16 @@
+metadata:
+  id: "CKV_ACME_TAGS"
+  name: "Ogni bucket S3 deve avere i tag di governance Owner e CostCenter"
+  category: "CONVENTION"
+definition:
+  and:
+    - cond_type: "attribute"
+      resource_types:
+        - "aws_s3_bucket"
+      attribute: "tags.Owner"
+      operator: "exists"
+    - cond_type: "attribute"
+      resource_types:
+        - "aws_s3_bucket"
+      attribute: "tags.CostCenter"
+      operator: "exists"

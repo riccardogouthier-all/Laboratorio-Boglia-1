@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"logs_dev","Source":"./modules/secure-bucket","Dir":"modules/secure-bucket"},{"Key":"logs_prod","Source":"./modules/secure-bucket","Dir":"modules/secure-bucket"}]}
