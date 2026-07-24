@@ -1,0 +1,74 @@
+Step 1 — Compute (EC2 con Auto Scaling)
+Amazon EC2
+Modalità: describe your usage (più semplice) oppure advanced
+Inserisci:
+Tipo istanza: t3.medium
+Quantità: 2 (baseline, min ASG)
+Utilization: 100% (24/7, quindi 730h/mese)
+Aggiungi seconda riga stesso servizio per il picco:
+Tipo istanza: t3.medium
+Quantità aggiuntiva: 8-10 istanze
+Ore: solo 48h (durata Black Friday) — cambia da "730" a "48" nel campo ore
+
+Calculator
+istanze perpetue:
+t3.medium x2 macchine (100% use 730h)
+on-demand x12 mesi 63€ 
+(756€ x anno) 
+(2270€ x 3anni)
+saving plan x anno 445€
+saving plan x 3anni 850€
+
+t3.medium x10 macchine (7% use 48h)
+on-demand x1mese (in aggiunta alle 2 sempre accese) 
+20€
+
+
+Step 2 — Database (Aurora Serverless)
+Aurora
+Modalità: Serverless v2
+ACU min: 0.5, ACU max: 8-16 (per gestire il picco)
+Storage: 20 GB (dal dimensionamento fatto prima)
+I/O richieste: stima ~500.000/giorno normale, ×20 nel picco
+
+215€ x mese 
+220 picco
+
+Step 3 — DynamoDB (sessioni/carrello)
+DynamoDB
+Modalità capacità: On-demand
+Storage: 1 GB
+Write request units: stima in base a ~6.000 utenti concorrenti nel picco
+Read request units: proporzionale
+
+Calculator:
+30ct x mese normale
+40ct x mese con picco
+3,70 € x anno
+
+
+Step 4 — Storage immagini (S3)
+Amazon S3
+Storage class: S3 Standard
+Quantità: 28 GB (dal dimensionamento)
+Richieste PUT/GET: stima in base al traffico (es. 1M GET/mese)
+
+
+Step 5 — CDN (CloudFront)
+Amazon CloudFront
+Data transfer out: 500 GB/mese normale + 2.500 GB extra nel mese del picco (sommali o fai riga separata)
+Richieste HTTP/HTTPS: stima proporzionale al traffico
+
+
+Step 6 — Load Balancer
+Elastic Load Balancing → Application Load Balancer
+Ore: 730 (sempre acceso)
+LCU: stima in base al traffico medio/picco
+
+
+Step 7 — NAT Gateway (costo nascosto)
+NAT Gateway
+Quantità: 1 (right-sizing, non uno per AZ se non necessario)
+Ore: 730
+Dati processati: stima GB traffico interno verso Internet (patch, aggiornamenti)
+
