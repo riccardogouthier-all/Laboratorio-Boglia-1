@@ -32,7 +32,7 @@ Storage: 20 GB (dal dimensionamento fatto prima)
 I/O richieste: stima ~500.000/giorno normale, ×20 nel picco
 
 215€ x mese 
-220 picco
+220€ picco
 
 Step 3 — DynamoDB (sessioni/carrello)
 DynamoDB
