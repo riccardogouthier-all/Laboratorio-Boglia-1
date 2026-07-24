@@ -1,4 +1,4 @@
-# LAB L13 — Governance & FinOps: metti in ordine, e sotto controllo la spesa
+# Governance & FinOps: metti in ordine, e sotto controllo la spesa
 
 Fin qui hai imparato a **costruire** e **operare** l'infrastruttura. Oggi le due cose che servono quando il parco cresce:
 
