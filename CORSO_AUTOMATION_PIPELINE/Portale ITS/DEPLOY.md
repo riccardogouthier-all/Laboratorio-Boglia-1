@@ -18,4 +18,4 @@
 - Non esiste una copia del sito precedente. Una volta si e persa la pagina dei corsi per due giorni.
 - La tabella delle iscrizioni non l'ha mai guardata nessuno, ma c'e.
 
-## Ciao
+## Cia
