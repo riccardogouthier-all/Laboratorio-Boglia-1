@@ -63,7 +63,7 @@ jobs:
         run: npm run build
 
       - name: Nessun segreto nel sito pubblicato
-        run: bash CORSO_AUTOMATION_PIPELINE/Portale ITS/script/sniffa-segreti.sh dist
+        run: bash "CORSO_AUTOMATION_PIPELINE/Portale ITS/script/sniffa-segreti.sh" "CORSO_AUTOMATION_PIPELINE/Portale ITS/dist"
 
       - uses: actions/upload-artifact@v4
         with:
