@@ -11,9 +11,7 @@ SCHEMI="$SCHEMI|-----BEGIN [A-Z ]*PRIVATE KEY"  # chiave privata
 SCHEMI="$SCHEMI|AWS_SECRET_ACCESS_KEY[[:space:]]*[:=][[:space:]]*[A-Za-z0-9/+]{40}"
 SCHEMI="$SCHEMI|(password|passwd|api[_-]?token)[[:space:]]*[:=][[:space:]]*.{8,}"
 
-TROVATI=$(grep -rInE "$SCHEMI" "$CARTELLA" \
-  --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.terraform \
-  --exclude-dir=dist --exclude=package-lock.json --exclude=sniffa-segreti.sh 2>/dev/null)
+TROVATI=$(grep -rInE "$SCHEMI" "$CARTELLA" --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.terraform --exclude-dir=dist --exclude=package-lock.json --exclude=sniffa-segreti.sh 2>/dev/null)
 
 if [ -n "$TROVATI" ]; then
   echo "SEGRETI TROVATI - la pipeline si ferma:"
