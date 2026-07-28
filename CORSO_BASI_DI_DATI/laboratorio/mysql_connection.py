@@ -1,12 +1,9 @@
 import mysql.connector
 import json
 
-db = mysql.connector.connect(
-host = 'localhost',
-user = 'host',
-password = 'root',
-database = 'its2026'
-)
+# db = mysql.connector.connect(
+# metti dati per collegare db
+# )
 
 
 cursor = db.cursor()

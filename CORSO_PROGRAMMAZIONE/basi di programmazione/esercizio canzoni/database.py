@@ -2,10 +2,7 @@ import mysql.connector
 
 def connetti():
     DB = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password= "root",
-        database = "Chinook"
+# dati collegamento db
     )
     return DB
 

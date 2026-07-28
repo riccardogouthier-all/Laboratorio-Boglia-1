@@ -2,10 +2,7 @@ import mysql.connector
 from libro import Libro
 
 db = mysql.connector.connect(
-    host = 'localhost',
-    user = 'root',
-    password = 'root',
-    database = 'biblioteca'
+# dati collegamento db
 )
 
 cursor = db.cursor()

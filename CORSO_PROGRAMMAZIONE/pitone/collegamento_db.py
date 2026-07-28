@@ -8,10 +8,7 @@ class Prodotto:
     giacenza : int
 
 magazzino = mysql.connector.connect(
-    host = 'localhost',
-    user = 'root',
-    password = 'root',
-    database = 'magazzino'
+# credeniali db
 )
 
 cursore = magazzino.cursor()
@@ -38,4 +35,3 @@ with open("Esercitazione_magazzino.txt", "w") as f:
         f.write(f"{p.nome:30} {p.prezzo:10} {p.giacenza:10} '\n'") # per elementi in una lista
 
 
- 
