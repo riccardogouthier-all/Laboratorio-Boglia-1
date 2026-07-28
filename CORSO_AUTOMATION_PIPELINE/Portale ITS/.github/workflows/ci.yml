@@ -29,13 +29,13 @@ jobs:
       - name: Quale binario di infrastruttura c'e in questo repo?
         id: binario
         run: |
-          if [ -f infra/portale-its.yaml ]; then echo "cfn=true" >> "$GITHUB_OUTPUT"; else echo "cfn=false" >> "$GITHUB_OUTPUT"; fi
-          if [ -f infra/tf/main.tf ];      then echo "tf=true"  >> "$GITHUB_OUTPUT"; else echo "tf=false"  >> "$GITHUB_OUTPUT"; fi
-          if [ ! -f infra/portale-its.yaml ] && [ ! -f infra/tf/main.tf ]; then
+          if [ -f CORSO_AUTOMATION_PIPELINE/Portale ITS/infra/portale-its.yaml ]; then echo "cfn=true" >> "$GITHUB_OUTPUT"; else echo "cfn=false" >> "$GITHUB_OUTPUT"; fi
+          if [ -f CORSO_AUTOMATION_PIPELINE/Portale ITS/infra/tf/main.tf ];      then echo "tf=true"  >> "$GITHUB_OUTPUT"; else echo "tf=false"  >> "$GITHUB_OUTPUT"; fi
+          if [ ! -f CORSO_AUTOMATION_PIPELINE/Portale ITS/infra/portale-its.yaml ] && [ ! -f CORSO_AUTOMATION_PIPELINE/Portale ITS/infra/tf/main.tf ]; then
             echo "::error::Nessun file di infrastruttura: qualcuno ha cancellato il codice IaC."
             exit 1
           fi
-          echo "trovato:"; ls -1 infra infra/tf 2>/dev/null || true
+          echo "trovato:"; ls -1 CORSO_AUTOMATION_PIPELINE/Portale ITS/infra CORSO_AUTOMATION_PIPELINE/Portale ITS/infra/tf 2>/dev/null || true
 
   # ---------- Gate 1: l'applicazione ----------
   applicazione:
@@ -58,7 +58,7 @@ jobs:
         run: npm run build
 
       - name: Nessun segreto nel sito pubblicato
-        run: bash script/sniffa-segreti.sh dist
+        run: bash CORSO_AUTOMATION_PIPELINE/Portale ITS/script/sniffa-segreti.sh dist
 
       - uses: actions/upload-artifact@v4
         with:
@@ -78,7 +78,7 @@ jobs:
           python-version: '3.12'
 
       - name: Sniffer fatto in casa (tre righe di grep)
-        run: bash script/sniffa-segreti.sh .
+        run: bash CORSO_AUTOMATION_PIPELINE/Portale ITS/script/sniffa-segreti.sh .
 
       - name: Scansione con checkov
         run: |
@@ -103,17 +103,17 @@ jobs:
         run: pip install --quiet cfn-lint checkov
 
       - name: Sintassi e buone pratiche del template
-        run: cfn-lint infra/portale-its.yaml
+        run: cfn-lint CORSO_AUTOMATION_PIPELINE/Portale ITS/infra/portale-its.yaml
 
       - name: Regole del capitolato (policy as code)
         run: |
-          checkov -f infra/portale-its.yaml \
+          checkov -f CORSO_AUTOMATION_PIPELINE/Portale ITS/infra/portale-its.yaml \
             --external-checks-dir policy \
             --check "$(echo $GATE_CHECKS | tr -d ' ')" \
             --compact
 
       - name: Audit completo (informativo, non blocca)
-        run: checkov -f infra/portale-its.yaml --compact --soft-fail
+        run: checkov -f CORSO_AUTOMATION_PIPELINE/Portale ITS/infra/portale-its.yaml --compact --soft-fail
 
   # ---------- Gate 3B: infrastruttura Terraform ----------
   infra-terraform:
@@ -135,11 +135,11 @@ jobs:
           rm tf.zip && terraform version
 
       - name: Formattazione
-        working-directory: infra/tf
+        working-directory: CORSO_AUTOMATION_PIPELINE/Portale ITS/infra/tf
         run: terraform fmt -check -recursive
 
       - name: Inizializzazione e validazione
-        working-directory: infra/tf
+        working-directory: CORSO_AUTOMATION_PIPELINE/Portale ITS/infra/tf
         run: |
           terraform init -input=false -backend=false
           terraform validate
@@ -147,10 +147,10 @@ jobs:
       - name: Regole del capitolato (policy as code)
         run: |
           pip install --quiet checkov
-          checkov -d infra/tf --framework terraform \
+          checkov -d CORSO_AUTOMATION_PIPELINE/Portale ITS/infra/tf --framework terraform \
             --external-checks-dir policy \
             --check "$(echo $GATE_CHECKS | tr -d ' ')" \
             --compact
 
       - name: Audit completo (informativo, non blocca)
-        run: checkov -d infra/tf --framework terraform --compact --soft-fail
+        run: checkov -d CORSO_AUTOMATION_PIPELINE/Portale ITS/infra/tf --framework terraform --compact --soft-fail

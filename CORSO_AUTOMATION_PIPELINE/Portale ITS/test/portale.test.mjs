@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { render, totaleOre } from "../src/build.mjs";
 
-const dati = JSON.parse(readFileSync("data/corsi.json", "utf8"));
+const dati = JSON.parse(readFileSync("CORSO_AUTOMATION_PIPELINE/Portale ITS/data/corsi.json", "utf8"));
 
 test("il catalogo non e vuoto", () => {
   assert.ok(dati.corsi.length > 0, "nessun corso nel catalogo");
