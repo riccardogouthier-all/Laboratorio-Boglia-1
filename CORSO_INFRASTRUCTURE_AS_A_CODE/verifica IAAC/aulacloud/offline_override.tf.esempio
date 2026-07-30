@@ -1,0 +1,13 @@
+# PIANO B - da usare SOLO se il Learner Lab non parte.
+# Rinomina questo file in offline_override.tf: Terraform lo fonde col
+# blocco provider di main.tf e smette di cercare credenziali vere.
+# ATTENZIONE: offline i data source NON funzionano, quindi si arriva
+# fino a "terraform validate". Segui le istruzioni del documento.
+provider "aws" {
+  region                      = "us-east-1"
+  access_key                  = "finta"
+  secret_key                  = "finta"
+  skip_credentials_validation = true
+  skip_metadata_api_check     = true
+  skip_requesting_account_id  = true
+}
