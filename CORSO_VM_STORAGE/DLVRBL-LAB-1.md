@@ -21,13 +21,13 @@ aws ec2 describe-instances `
 ```
 Output atteso:
 ```
-----------------------------------------------------
-|               DescribeInstances                  |
-+----------------+------------+--------------------+
-|   PublicIP     |  State     |       Type         |
-+----------------+------------+--------------------+
-| 34.229.140.141 |  running   |  t3.micro          |
-+----------------+------------+--------------------+
+------------------------------------------------
+|           DescribeInstances                  |
++------------+------------+--------------------+
+|  PublicIP  |  State     |       Type         |
++------------+------------+--------------------+
+|  X.X.X.X   |  running   |  t3.micro          |
++------------+------------+--------------------+
 ```
 
 ## Connessione SSH
@@ -35,7 +35,7 @@ Output atteso:
 $key = "$env:USERPROFILE\Downloads\demo-key.pem"
 icacls $key /inheritance:r
 icacls $key /grant:r "${env:USERNAME}:R"
-ssh -i $key ec2-user@34.229.140.141
+ssh -i $key ec2-user@X.X.X.X
 ```
 Output atteso: prompt `[ec2-user@ip-10-0-1-25 ~]$` → conferma AMI, SG, key pair corretti.
 
