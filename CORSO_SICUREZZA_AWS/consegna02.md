@@ -2,7 +2,10 @@
 
 ## Zone (us-east-1)
 
-Comando: `aws ec2 describe-availability-zones --region us-east-1 --query 'AvailabilityZones[].[ZoneName,ZoneId,State]' --output table`
+Comando: 
+```
+aws ec2 describe-availability-zones --region us-east-1 --query 'AvailabilityZones[].[ZoneName,ZoneId,State]' --output table
+```
 
 | Zone name  | Zone ID  | State     |
 |------------|----------|-----------|
