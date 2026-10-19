@@ -14,10 +14,7 @@
 
 ## Verifica raggiungibilità (CLI)
 ```bash
-aws ec2 describe-instances `
-  --filters "Name=tag:Name,Values=demo-web-01" `
-  --query "Reservations[].Instances[].{State:State.Name,Type:InstanceType,PublicIP:PublicIpAddress}" `
-  --output table
+aws ec2 describe-instances --filters "Name=tag:Name,Values=demo-web-01" --query "Reservations[].Instances[].{State:State.Name,Type:InstanceType,PublicIP:PublicIpAddress}" --output table
 ```
 Output atteso:
 ```
