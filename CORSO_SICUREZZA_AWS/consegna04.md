@@ -67,19 +67,19 @@
 ```
 
 ## Casi base (policy base)
-| # | Azione | ARN risorsa | Previsto | Ottenuto | Motivo |
-|--:|---|---|---|---|---|
-| 1 | `s3:GetObject` | `arn:aws:s3:::didattica-esempio/report/a.txt` | `allowed` | _da compilare_ | Allow sul prefisso `report/` |
-| 2 | `s3:DeleteObject` | `arn:aws:s3:::didattica-esempio/report/a.txt` | `explicitDeny` | _da compilare_ | Deny sulla cancellazione |
-| 3 | `s3:GetObject` | `arn:aws:s3:::didattica-esempio/privato/a.txt` | `implicitDeny` | _da compilare_ | Nessun Allow su `privato/` |
-| 4 | `s3:ListBucket` | `arn:aws:s3:::didattica-esempio` | `implicitDeny` | _da compilare_ | Nessun Allow per elencare il bucket |
+| # | Azione | ARN risorsa | Valore | Motivo |
+|--:|---|---|---|---|
+| 1 | `s3:GetObject` | `arn:aws:s3:::didattica-esempio/report/a.txt` | `allowed` | Allow sul prefisso `report/` |
+| 2 | `s3:DeleteObject` | `arn:aws:s3:::didattica-esempio/report/a.txt` | `explicitDeny` | Deny sulla cancellazione |
+| 3 | `s3:GetObject` | `arn:aws:s3:::didattica-esempio/privato/a.txt` | `implicitDeny` | Nessun Allow su `privato/` |
+| 4 | `s3:ListBucket` | `arn:aws:s3:::didattica-esempio` | `implicitDeny` | Nessun Allow per elencare il bucket |
 
 ## Casi MFA (policy MFA, `s3:GetObject` su `report/a.txt`)
-| # | `aws:MultiFactorAuthPresent` | Previsto | Ottenuto | Motivo |
-|--:|---|---|---|---|
-| 5 | `true` | `allowed` | _da compilare_ | Deny condizionale non si applica, Allow consente lettura |
-| 6 | `false` | `explicitDeny` | _da compilare_ | Condizione `BoolIfExists` soddisfatta → Deny |
-| 7 | chiave omessa | `explicitDeny` | _da compilare_ | `BoolIfExists` tratta chiave assente come match → Deny |
+| # | `aws:MultiFactorAuthPresent` | Valore | Motivo |
+|--:|---|---|---|
+| 5 | `true` | `allowed` | Deny condizionale non si applica, Allow consente lettura |
+| 6 | `false` | `explicitDeny` | Condizione `BoolIfExists` soddisfatta → Deny |
+| 7 | chiave omessa | `explicitDeny` | `BoolIfExists` tratta chiave assente come match → Deny |
 
 Il valore MFA è simulato: nessun dispositivo MFA reale abilitato o verificato.
 
