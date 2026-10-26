@@ -32,7 +32,7 @@ Output atteso:
 $key = "$env:USERPROFILE\Downloads\demo-key.pem"
 icacls $key /inheritance:r
 icacls $key /grant:r "${env:USERNAME}:R"
-ssh -i $key ec2-user@X.X.X.X
+ssh -i $key ec2-user@ X.X.X.X .computex.amazon.com
 ```
 Output atteso: prompt `[ec2-user@ip-10-0-1-25 ~]$` → conferma AMI, SG, key pair corretti.
 
