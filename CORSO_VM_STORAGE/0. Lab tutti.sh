@@ -1,0 +1,251 @@
+Lab 01-02
+
+0
+export AWS_DEFAULT_REGION=us-east-1
+VPC_ID=$(aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query "Vpcs[0].VpcId" --output text)
+read SUB1 SUB2 <<< $(aws ec2 describe-subnets --filters Name=vpc-id,Values=$VPC_ID Name=default-for-az,Values=true --query "sort_by(Subnets,&AvailabilityZone)[0:2].SubnetId" --output text)
+echo $VPC_ID $SUB1 $SUB2
+
+1
+aws ec2 create-key-pair --key-name demo-key --query KeyMaterial --output text > demo-key.pem
+chmod 400 demo-key.pem
+
+2
+SG_ID=$(aws ec2 create-security-group --group-name demo-sg-web --description "demo web" --vpc-id $VPC_ID --query GroupId --output text)
+MYIP=$(curl -s https://checkip.amazonaws.com)
+aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 22 --cidr $MYIP/32
+aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 80 --cidr 0.0.0.0/0
+
+3
+BASE_AMI=$(aws ssm get-parameter --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 --query Parameter.Value --output text)
+
+cat > ud01.sh <<'EOF'
+#!/bin/bash
+dnf install -y httpd
+echo 'Servizio web del laboratorio AWS' > /var/www/html/index.html
+systemctl enable --now httpd
+EOF
+
+ID1=$(aws ec2 run-instances --image-id $BASE_AMI --instance-type t3.micro --key-name demo-key --security-group-ids $SG_ID --subnet-id $SUB1 --user-data file://ud01.sh --block-device-mappings 'DeviceName=/dev/xvda,Ebs={VolumeSize=8,VolumeType=gp3}' --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demo-web-01}]' --query "Instances[0].InstanceId" --output text)
+aws ec2 wait instance-status-ok --instance-ids $ID1
+
+IP1=$(aws ec2 describe-instances --instance-ids $ID1 --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
+sleep 30; curl -sI http://$IP1/ | head -1
+
+4
+aws ec2 stop-instances --instance-ids $ID1
+aws ec2 wait instance-stopped --instance-ids $ID1
+AMI_ID=$(aws ec2 create-image --instance-id $ID1 --name demo-web-ami-v1 --description "AL2023 httpd" --query ImageId --output text)
+aws ec2 wait image-available --image-ids $AMI_ID
+aws ec2 start-instances --instance-ids $ID1
+aws ec2 wait instance-running --instance-ids $ID1
+echo $AMI_ID
+
+5
+cat > ud02.sh <<'EOF'
+#!/bin/bash
+hostname > /var/www/html/index.html
+EOF
+
+ID2=$(aws ec2 run-instances --image-id $AMI_ID --instance-type t3.micro --key-name demo-key --security-group-ids $SG_ID --subnet-id $SUB2 --user-data file://ud02.sh --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demo-web-02}]' --query "Instances[0].InstanceId" --output text)
+aws ec2 wait instance-status-ok --instance-ids $ID2
+
+6
+TG_ARN=$(aws elbv2 create-target-group --name demo-tg-web --protocol HTTP --port 80 --vpc-id $VPC_ID --target-type instance --health-check-path / --query "TargetGroups[0].TargetGroupArn" --output text)
+aws elbv2 register-targets --target-group-arn $TG_ARN --targets Id=$ID1 Id=$ID2
+
+7
+ALB_ARN=$(aws elbv2 create-load-balancer --name demo-alb --type application --scheme internet-facing --subnets $SUB1 $SUB2 --security-groups $SG_ID --query "LoadBalancers[0].LoadBalancerArn" --output text)
+aws elbv2 wait load-balancer-available --load-balancer-arns $ALB_ARN
+aws elbv2 create-listener --load-balancer-arn $ALB_ARN --protocol HTTP --port 80 --default-actions Type=forward,TargetGroupArn=$TG_ARN
+
+8
+aws elbv2 describe-target-health --target-group-arn $TG_ARN --query "TargetHealthDescriptions[].[Target.Id,TargetHealth.State]" --output table
+DNS=$(aws elbv2 describe-load-balancers --load-balancer-arns $ALB_ARN --query "LoadBalancers[0].DNSName" --output text)
+curl -s http://$DNS/
+
+
+Lab 03
+
+1
+AMI_ID=$(aws ec2 describe-images --owners self --filters Name=name,Values=demo-web-ami-v1 --query "Images[0].ImageId" --output text)
+aws ec2 describe-images --image-ids $AMI_ID --query "Images[0].State" --output text   # atteso: available
+
+TG_ARN=$(aws elbv2 describe-target-groups --names demo-tg-web --query "TargetGroups[0].TargetGroupArn" --output text)
+SG_ID=$(aws ec2 describe-security-groups --filters Name=group-name,Values=demo-sg-web --query "SecurityGroups[0].GroupId" --output text)
+SUBNETS=$(aws elbv2 describe-load-balancers --names demo-alb --query "LoadBalancers[0].AvailabilityZones[].SubnetId" --output text | tr '\t' ',')
+echo $AMI_ID $TG_ARN $SG_ID $SUBNETS
+
+2
+aws ec2 create-launch-template --launch-template-name demo-lt-web --version-description v1 --launch-template-data "{\"ImageId\":\"$AMI_ID\",\"InstanceType\":\"t3.micro\",\"KeyName\":\"demo-key\",\"SecurityGroupIds\":[\"$SG_ID\"]}"
+
+3
+aws autoscaling create-auto-scaling-group --auto-scaling-group-name demo-asg-web --launch-template 'LaunchTemplateName=demo-lt-web,Version=$Latest' --min-size 1 --desired-capacity 2 --max-size 3 --vpc-zone-identifier "$SUBNETS" --target-group-arns "$TG_ARN" --health-check-type ELB --health-check-grace-period 300
+
+4
+aws autoscaling put-scaling-policy --auto-scaling-group-name demo-asg-web --policy-name demo-cpu-target --policy-type TargetTrackingScaling --target-tracking-configuration '{"PredefinedMetricSpecification":{"PredefinedMetricType":"ASGAverageCPUUtilization"},"TargetValue":70.0}'
+
+5
+aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names demo-asg-web --query "AutoScalingGroups[0].Instances[].[InstanceId,LifecycleState,HealthStatus]" --output table
+
+aws elbv2 describe-target-health --target-group-arn $TG_ARN --query "TargetHealthDescriptions[].[Target.Id,TargetHealth.State]" --output table
+
+              Ripeti finché 2 InService + healthy. Istanze originali Lab 02 nel target group: non nell’ASG. Dopo verifica, deregistra:
+aws elbv2 deregister-targets --target-group-arn $TG_ARN --targets Id=i-ORIGINALE1 Id=i-ORIGINALE2
+
+6
+IDS=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names demo-asg-web --query "AutoScalingGroups[0].Instances[].InstanceId" --output text)
+INST1=$(echo $IDS | awk '{print $1}'); INST2=$(echo $IDS | awk '{print $2}')
+
+aws cloudwatch put-metric-alarm --alarm-name demo-cpu-alta --namespace AWS/EC2 --metric-name CPUUtilization --dimensions Name=InstanceId,Value=$INST1 --statistic Average --period 300 --evaluation-periods 1 --datapoints-to-alarm 1 --threshold 70 --comparison-operator GreaterThanThreshold
+
+aws cloudwatch describe-alarms --alarm-names demo-cpu-alta --query "MetricAlarms[].{Name:AlarmName,State:StateValue,Threshold:Threshold}"
+
+7
+aws ec2 terminate-instances --instance-ids $INST2
+
+aws autoscaling describe-scaling-activities --auto-scaling-group-name demo-asg-web --max-items 3
+
+
+Lab 04
+
+1
+export AWS_DEFAULT_REGION=us-east-1
+VPC4=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --instance-tenancy default --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=demo-vpc}]' --query Vpc.VpcId --output text)
+aws ec2 wait vpc-available --vpc-ids $VPC4
+echo $VPC4
+
+2
+Nome	                CIDR	        AZ  	        Tipo
+demo-vpc	            10.0.0.0/16	    -	            -
+demo-subnet-public-1a	10.0.1.0/24	    us-east-1a	    pubblica (pianificata)
+demo-subnet-private-1a	10.0.2.0/24	    us-east-1a	    privata
+
+3
+PUB=$(aws ec2 create-subnet --vpc-id $VPC4 --cidr-block 10.0.1.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=demo-subnet-public-1a}]' --query Subnet.SubnetId --output text)
+PRIV=$(aws ec2 create-subnet --vpc-id $VPC4 --cidr-block 10.0.2.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=demo-subnet-private-1a}]' --query Subnet.SubnetId --output text)
+echo $PUB $PRIV
+
+4
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC4" --query "Subnets[].{Name:Tags[?Key=='Name']|[0].Value,CIDR:CidrBlock,AZ:AvailabilityZone}" --output table
+
+5
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC4" "Name=association.main,Values=true" --query "RouteTables[].Routes"
+
+6
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC4" "Name=association.subnet-id,Values=$PUB,$PRIV" --query "RouteTables[].RouteTableId"
+
+7
+Nessuna subnet realmente pubblica: manca rotta 0.0.0.0/0 → IGW. public = solo nome.
+
+
+Lb 05
+
+0
+export AWS_DEFAULT_REGION=us-east-1
+VPC4=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=demo-vpc --query "Vpcs[0].VpcId" --output text)
+PUB=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=demo-subnet-public-1a --query "Subnets[0].SubnetId" --output text)
+PRIV=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=demo-subnet-private-1a --query "Subnets[0].SubnetId" --output text)
+echo $VPC4 $PUB $PRIV; ls -l demo-key.pem
+
+1
+IGW=$(aws ec2 create-internet-gateway --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=demo-igw}]' --query InternetGateway.InternetGatewayId --output text)
+aws ec2 attach-internet-gateway --internet-gateway-id $IGW --vpc-id $VPC4
+
+2
+RT_PUB=$(aws ec2 create-route-table --vpc-id $VPC4 --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=demo-rt-public}]' --query RouteTable.RouteTableId --output text)
+aws ec2 create-route --route-table-id $RT_PUB --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW
+aws ec2 associate-route-table --route-table-id $RT_PUB --subnet-id $PUB
+
+3
+EIP=$(aws ec2 allocate-address --domain vpc --query AllocationId --output text)
+NAT=$(aws ec2 create-nat-gateway --subnet-id $PUB --allocation-id $EIP --connectivity-type public --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=demo-nat}]' --query NatGateway.NatGatewayId --output text)
+aws ec2 wait nat-gateway-available --nat-gateway-ids $NAT
+echo $IGW $RT_PUB $EIP $NAT
+
+4
+RT_MAIN=$(aws ec2 describe-route-tables --filters Name=vpc-id,Values=$VPC4 Name=association.main,Values=true --query "RouteTables[0].RouteTableId" --output text)
+aws ec2 create-route --route-table-id $RT_MAIN --destination-cidr-block 0.0.0.0/0 --nat-gateway-id $NAT
+
+5
+aws ec2 describe-route-tables --filters Name=vpc-id,Values=$VPC4 --query "RouteTables[].[RouteTableId,Routes[?DestinationCidrBlock=='0.0.0.0/0'].[GatewayId,NatGatewayId,State]]" --output json
+
+6
+MYIP=$(curl -s https://checkip.amazonaws.com)
+SG_B=$(aws ec2 create-security-group --group-name demo-sg-bastion --description "demo bastion" --vpc-id $VPC4 --query GroupId --output text)
+aws ec2 authorize-security-group-ingress --group-id $SG_B --protocol tcp --port 22 --cidr $MYIP/32
+
+SG_P=$(aws ec2 create-security-group --group-name demo-sg-private --description "demo private" --vpc-id $VPC4 --query GroupId --output text)
+aws ec2 authorize-security-group-ingress --group-id $SG_P --protocol tcp --port 22 --source-group $SG_B
+
+7
+BASE_AMI=$(aws ssm get-parameter --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 --query Parameter.Value --output text)
+
+BID=$(aws ec2 run-instances --image-id $BASE_AMI --instance-type t3.micro --key-name demo-key --subnet-id $PUB --security-group-ids $SG_B --associate-public-ip-address --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demo-bastion}]' --query "Instances[0].InstanceId" --output text)
+
+PID=$(aws ec2 run-instances --image-id $BASE_AMI --instance-type t3.micro --key-name demo-key --subnet-id $PRIV --security-group-ids $SG_P --no-associate-public-ip-address --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demo-private-test}]' --query "Instances[0].InstanceId" --output text)
+
+aws ec2 wait instance-status-ok --instance-ids $BID $PID
+
+BIP=$(aws ec2 describe-instances --instance-ids $BID --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
+PIP=$(aws ec2 describe-instances --instance-ids $PID --query "Reservations[0].Instances[0].PrivateIpAddress" --output text)
+PPUB=$(aws ec2 describe-instances --instance-ids $PID --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
+echo bastion=$BIP privata=$PIP pubblico_privata=$PPUB
+
+8
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
+cat >> ~/.ssh/config <<EOF
+Host lab-bastion
+    HostName $BIP
+    User ec2-user
+    IdentityFile ~/demo-key.pem
+    IdentitiesOnly yes
+    StrictHostKeyChecking accept-new
+
+Host lab-private
+    HostName $PIP
+    User ec2-user
+    IdentityFile ~/demo-key.pem
+    IdentitiesOnly yes
+    StrictHostKeyChecking accept-new
+    ProxyJump lab-bastion
+EOF
+chmod 600 ~/.ssh/config
+
+ssh lab-bastion 'hostname'
+ssh lab-private 'hostname; curl -sI https://aws.amazon.com | head -1'
+
+9
+Rotte: pubblica 0.0.0.0/0 → demo-igw; privata 0.0.0.0/0 → demo-nat
+demo-sg-bastion: 22 da $MYIP/32; demo-sg-private: 22 da $SG_B
+Salto SSH + curl annotati
+
+
+Lab 06 
+
+0
+
+
+1
+
+
+2
+
+
+3
+
+
+4
+
+
+5
+
+
+6
+
+
+7
+
+
+8
+
