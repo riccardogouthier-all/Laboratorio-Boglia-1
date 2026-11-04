@@ -223,29 +223,102 @@ Salto SSH + curl annotati
 
 Lab 06 
 
-0
-
-
+PRE-LAB
 1
-
+VPC4=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --instance-tenancy default --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=demo-vpc}]' --query Vpc.VpcId --output text)
+aws ec2 wait vpc-available --vpc-ids $VPC4
 
 2
-
+Nome	                CIDR	        AZ  	        Tipo
+demo-vpc	            10.0.0.0/16	    -	            -
+demo-subnet-public-1a	10.0.1.0/24	    us-east-1a	    pubblica (pianificata)
+demo-subnet-private-1a	10.0.2.0/24	    us-east-1a	    privata
 
 3
-
+PUB=$(aws ec2 create-subnet --vpc-id $VPC4 --cidr-block 10.0.1.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=demo-subnet-public-1a}]' --query Subnet.SubnetId --output text)
+PRIV=$(aws ec2 create-subnet --vpc-id $VPC4 --cidr-block 10.0.2.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=demo-subnet-private-1a}]' --query Subnet.SubnetId --output text)
+echo $VPC4 $PUB $PRIV
 
 4
-
+IGW=$(aws ec2 create-internet-gateway --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=demo-igw}]' --query InternetGateway.InternetGatewayId --output text)
+aws ec2 attach-internet-gateway --internet-gateway-id $IGW --vpc-id $VPC4
+RT_PUB=$(aws ec2 create-route-table --vpc-id $VPC4 --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=demo-rt-public}]' --query RouteTable.RouteTableId --output text)
+aws ec2 create-route --route-table-id $RT_PUB --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW
+aws ec2 associate-route-table --route-table-id $RT_PUB --subnet-id $PUB
+aws ec2 modify-subnet-attribute --subnet-id $PUB --map-public-ip-on-launch
 
 5
-
+MYIP=$(curl -s https://checkip.amazonaws.com)
+SG_B=$(aws ec2 create-security-group --group-name demo-sg-bastion --description "demo bastion" --vpc-id $VPC4 --query GroupId --output text)
+aws ec2 authorize-security-group-ingress --group-id $SG_B --protocol tcp --port 22 --cidr $MYIP/32
 
 6
+BASE_AMI=$(aws ssm get-parameter --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 --query Parameter.Value --output text)
+BID=$(aws ec2 run-instances --image-id $BASE_AMI --instance-type t3.micro --key-name demo-key --subnet-id $PUB --security-group-ids $SG_B --associate-public-ip-address --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demo-bastion}]' --query "Instances[0].InstanceId" --output text)
+aws ec2 wait instance-status-ok --instance-ids $BID
+BIP=$(aws ec2 describe-instances --instance-ids $BID --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
+echo bastion=$BIP
 
+Verifica
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC4" --query "Subnets[].{Name:Tags[?Key=='Name']|[0].Value,CIDR:CidrBlock,AZ:AvailabilityZone}" --output table
+ssh -i demo-key.pem -o StrictHostKeyChecking=accept-new ec2-user@$BIP hostname
+
+0
+export AWS_DEFAULT_REGION=us-east-1
+VPC4=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=demo-vpc --query "Vpcs[0].VpcId" --output text)
+PRIV=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=demo-subnet-private-1a --query "Subnets[0].SubnetId" --output text)
+SG_B=$(aws ec2 describe-security-groups --filters Name=vpc-id,Values=$VPC4 Name=group-name,Values=demo-sg-bastion --query "SecurityGroups[0].GroupId" --output text)
+SG_P=$(aws ec2 describe-security-groups --filters Name=vpc-id,Values=$VPC4 Name=group-name,Values=demo-sg-private --query "SecurityGroups[0].GroupId" --output text)
+echo $VPC4 $PRIV $SG_B $SG_P
+
+aws ec2 describe-instances --filters Name=vpc-id,Values=$VPC4 Name=instance-state-name,Values=running --query "Reservations[].Instances[].[Tags[?Key=='Name']|[0].Value,InstanceId,PublicIpAddress,PrivateIpAddress]" --output table
+
+1
+ssh -o ConnectTimeout=5 lab-private 'hostname'
+
+MYIP=$(curl -s https://checkip.amazonaws.com)
+aws ec2 authorize-security-group-ingress --group-id $SG_B --protocol tcp --port 22 --cidr $MYIP/32
+
+2
+aws ec2 describe-security-groups --group-ids $SG_B $SG_P --query "SecurityGroups[].[GroupName,IpPermissions[].[FromPort,IpRanges[].CidrIp,UserIdGroupPairs[].GroupId],IpPermissionsEgress[].IpProtocol]" --output json
+
+3
+OLD_ASSOC=$(aws ec2 describe-network-acls --filters Name=association.subnet-id,Values=$PRIV --query "NetworkAcls[0].Associations[?SubnetId=='$PRIV'].NetworkAclAssociationId" --output text)
+OLD_NACL=$(aws ec2 describe-network-acls --filters Name=association.subnet-id,Values=$PRIV --query "NetworkAcls[0].NetworkAclId" --output text)
+echo $OLD_ASSOC $OLD_NACL
+
+NACL=$(aws ec2 create-network-acl --vpc-id $VPC4 --tag-specifications 'ResourceType=network-acl,Tags=[{Key=Name,Value=demo-nacl-private}]' --query NetworkAcl.NetworkAclId --output text)
+NEW_ASSOC=$(aws ec2 replace-network-acl-association --association-id $OLD_ASSOC --network-acl-id $NACL --query NewAssociationId --output text)
+echo $NACL $NEW_ASSOC
+
+4
+aws ec2 create-network-acl-entry --network-acl-id $NACL --ingress --rule-number 100 --protocol 6 --port-range From=22,To=22 --cidr-block 10.0.1.0/24 --rule-action allow
+
+ssh -o ConnectTimeout=5 lab-private 'hostname'
+
+5
+aws ec2 create-network-acl-entry --network-acl-id $NACL --egress --rule-number 100 --protocol 6 --port-range From=1024,To=65535 --cidr-block 10.0.1.0/24 --rule-action allow
+
+ssh -o ConnectTimeout=5 lab-private 'hostname'
+
+6
+aws ec2 create-network-acl-entry --network-acl-id $NACL --ingress --rule-number 50 --protocol=-1 --cidr-block 10.0.1.0/24 --rule-action deny
+
+ssh -o ConnectTimeout=5 lab-private 'hostname'
 
 7
-
+aws ec2 delete-network-acl-entry --network-acl-id $NACL --ingress --rule-number 50
+ssh -o ConnectTimeout=5 lab-private 'hostname'
 
 8
+aws ec2 describe-network-acls --network-acl-ids $NACL --query "NetworkAcls[0].Entries[?RuleNumber!=\`32767\`].[RuleNumber,Egress,Protocol,PortRange,CidrBlock,RuleAction]" --output json
 
+9
+aws ec2 replace-network-acl-association --association-id $NEW_ASSOC --network-acl-id $OLD_NACL
+aws ec2 delete-network-acl --network-acl-id $NACL
+
+ssh -o ConnectTimeout=5 lab-private 'hostname; curl -sI https://aws.amazon.com | head -1'
+
+NACL=$(aws ec2 describe-network-acls --filters Name=tag:Name,Values=demo-nacl-private --query "NetworkAcls[0].NetworkAclId" --output text)
+NEW_ASSOC=$(aws ec2 describe-network-acls --network-acl-ids $NACL --query "NetworkAcls[0].Associations[0].NetworkAclAssociationId" --output text)
+OLD_NACL=$(aws ec2 describe-network-acls --filters Name=vpc-id,Values=$VPC4 Name=default,Values=true --query "NetworkAcls[0].NetworkAclId" --output text)
