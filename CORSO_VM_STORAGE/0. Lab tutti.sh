@@ -80,13 +80,13 @@ echo $AMI_ID $TG_ARN $SG_ID $SUBNETS
 aws ec2 create-launch-template --launch-template-name demo-lt-web --version-description v1 --launch-template-data "{\"ImageId\":\"$AMI_ID\",\"InstanceType\":\"t3.micro\",\"KeyName\":\"demo-key\",\"SecurityGroupIds\":[\"$SG_ID\"]}"
 
 3
-aws autoscaling create-auto-scaling-group --auto-scaling-group-name demo-asg-web --launch-template 'LaunchTemplateName=demo-lt-web,Version=$Latest' --min-size 1 --desired-capacity 2 --max-size 3 --vpc-zone-identifier "$SUBNETS" --target-group-arns "$TG_ARN" --health-check-type ELB --health-check-grace-period 300
+aws autoscaling create-auto-scaling-group --auto-scaling-group-name demo-asg-web-2 --launch-template 'LaunchTemplateName=demo-lt-web,Version=$Latest' --min-size 1 --desired-capacity 2 --max-size 3 --vpc-zone-identifier "$SUBNETS" --target-group-arns "$TG_ARN" --health-check-type ELB --health-check-grace-period 300
 
 4
-aws autoscaling put-scaling-policy --auto-scaling-group-name demo-asg-web --policy-name demo-cpu-target --policy-type TargetTrackingScaling --target-tracking-configuration '{"PredefinedMetricSpecification":{"PredefinedMetricType":"ASGAverageCPUUtilization"},"TargetValue":70.0}'
+aws autoscaling put-scaling-policy --auto-scaling-group-name demo-asg-web-2 --policy-name demo-cpu-target --policy-type TargetTrackingScaling --target-tracking-configuration '{"PredefinedMetricSpecification":{"PredefinedMetricType":"ASGAverageCPUUtilization"},"TargetValue":70.0}'
 
 5
-aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names demo-asg-web --query "AutoScalingGroups[0].Instances[].[InstanceId,LifecycleState,HealthStatus]" --output table
+aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names demo-asg-web-2 --query "AutoScalingGroups[0].Instances[].[InstanceId,LifecycleState,HealthStatus]" --output table
 
 aws elbv2 describe-target-health --target-group-arn $TG_ARN --query "TargetHealthDescriptions[].[Target.Id,TargetHealth.State]" --output table
 
@@ -139,7 +139,7 @@ aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC4" "Name=associa
 Nessuna subnet realmente pubblica: manca rotta 0.0.0.0/0 → IGW. public = solo nome.
 
 
-Lb 05
+Lab 05
 
 0
 export AWS_DEFAULT_REGION=us-east-1
@@ -220,105 +220,82 @@ Rotte: pubblica 0.0.0.0/0 → demo-igw; privata 0.0.0.0/0 → demo-nat
 demo-sg-bastion: 22 da $MYIP/32; demo-sg-private: 22 da $SG_B
 Salto SSH + curl annotati
 
-
-Lab 06 
-
-PRE-LAB
-1
-VPC4=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --instance-tenancy default --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=demo-vpc}]' --query Vpc.VpcId --output text)
-aws ec2 wait vpc-available --vpc-ids $VPC4
-
-2
-Nome	                CIDR	        AZ  	        Tipo
-demo-vpc	            10.0.0.0/16	    -	            -
-demo-subnet-public-1a	10.0.1.0/24	    us-east-1a	    pubblica (pianificata)
-demo-subnet-private-1a	10.0.2.0/24	    us-east-1a	    privata
-
-3
-PUB=$(aws ec2 create-subnet --vpc-id $VPC4 --cidr-block 10.0.1.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=demo-subnet-public-1a}]' --query Subnet.SubnetId --output text)
-PRIV=$(aws ec2 create-subnet --vpc-id $VPC4 --cidr-block 10.0.2.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=demo-subnet-private-1a}]' --query Subnet.SubnetId --output text)
-echo $VPC4 $PUB $PRIV
-
-4
-IGW=$(aws ec2 create-internet-gateway --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=demo-igw}]' --query InternetGateway.InternetGatewayId --output text)
-aws ec2 attach-internet-gateway --internet-gateway-id $IGW --vpc-id $VPC4
-RT_PUB=$(aws ec2 create-route-table --vpc-id $VPC4 --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=demo-rt-public}]' --query RouteTable.RouteTableId --output text)
-aws ec2 create-route --route-table-id $RT_PUB --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW
-aws ec2 associate-route-table --route-table-id $RT_PUB --subnet-id $PUB
-aws ec2 modify-subnet-attribute --subnet-id $PUB --map-public-ip-on-launch
-
-5
-MYIP=$(curl -s https://checkip.amazonaws.com)
-SG_B=$(aws ec2 create-security-group --group-name demo-sg-bastion --description "demo bastion" --vpc-id $VPC4 --query GroupId --output text)
-aws ec2 authorize-security-group-ingress --group-id $SG_B --protocol tcp --port 22 --cidr $MYIP/32
-
-6
-BASE_AMI=$(aws ssm get-parameter --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 --query Parameter.Value --output text)
-BID=$(aws ec2 run-instances --image-id $BASE_AMI --instance-type t3.micro --key-name demo-key --subnet-id $PUB --security-group-ids $SG_B --associate-public-ip-address --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demo-bastion}]' --query "Instances[0].InstanceId" --output text)
-aws ec2 wait instance-status-ok --instance-ids $BID
-BIP=$(aws ec2 describe-instances --instance-ids $BID --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
-echo bastion=$BIP
-
-Verifica
-aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC4" --query "Subnets[].{Name:Tags[?Key=='Name']|[0].Value,CIDR:CidrBlock,AZ:AvailabilityZone}" --output table
-ssh -i demo-key.pem -o StrictHostKeyChecking=accept-new ec2-user@$BIP hostname
-
-0
-export AWS_DEFAULT_REGION=us-east-1
-VPC4=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=demo-vpc --query "Vpcs[0].VpcId" --output text)
-PRIV=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=demo-subnet-private-1a --query "Subnets[0].SubnetId" --output text)
-SG_B=$(aws ec2 describe-security-groups --filters Name=vpc-id,Values=$VPC4 Name=group-name,Values=demo-sg-bastion --query "SecurityGroups[0].GroupId" --output text)
-SG_P=$(aws ec2 describe-security-groups --filters Name=vpc-id,Values=$VPC4 Name=group-name,Values=demo-sg-private --query "SecurityGroups[0].GroupId" --output text)
-echo $VPC4 $PRIV $SG_B $SG_P
-
-aws ec2 describe-instances --filters Name=vpc-id,Values=$VPC4 Name=instance-state-name,Values=running --query "Reservations[].Instances[].[Tags[?Key=='Name']|[0].Value,InstanceId,PublicIpAddress,PrivateIpAddress]" --output table
+Lab 06
 
 1
-ssh -o ConnectTimeout=5 lab-private 'hostname'
-
-MYIP=$(curl -s https://checkip.amazonaws.com)
-aws ec2 authorize-security-group-ingress --group-id $SG_B --protocol tcp --port 22 --cidr $MYIP/32
+ssh -o ConnectTimeout=5 lab-private hostname
+aws ec2 describe-security-groups --group-ids $SG_B $SG_P --query "SecurityGroups[].[GroupName,IpPermissions[].[FromPort,IpRanges[].CidrIp|join(',',@),UserIdGroupPairs[].GroupId|join(',',@)]]" --output json
 
 2
-aws ec2 describe-security-groups --group-ids $SG_B $SG_P --query "SecurityGroups[].[GroupName,IpPermissions[].[FromPort,IpRanges[].CidrIp,UserIdGroupPairs[].GroupId],IpPermissionsEgress[].IpProtocol]" --output json
-
-3
 OLD_ASSOC=$(aws ec2 describe-network-acls --filters Name=association.subnet-id,Values=$PRIV --query "NetworkAcls[0].Associations[?SubnetId=='$PRIV'].NetworkAclAssociationId" --output text)
 OLD_NACL=$(aws ec2 describe-network-acls --filters Name=association.subnet-id,Values=$PRIV --query "NetworkAcls[0].NetworkAclId" --output text)
 echo $OLD_ASSOC $OLD_NACL
 
 NACL=$(aws ec2 create-network-acl --vpc-id $VPC4 --tag-specifications 'ResourceType=network-acl,Tags=[{Key=Name,Value=demo-nacl-private}]' --query NetworkAcl.NetworkAclId --output text)
 NEW_ASSOC=$(aws ec2 replace-network-acl-association --association-id $OLD_ASSOC --network-acl-id $NACL --query NewAssociationId --output text)
-echo $NACL $NEW_ASSOC
+echo NACL=$NACL NEW_ASSOC=$NEW_ASSOC
+
+3
+aws ec2 create-network-acl-entry --network-acl-id $NACL --ingress --rule-number 100 --protocol 6 --port-range From=22,To=22 --cidr-block 10.0.1.0/24 --rule-action allow
+ssh -o ConnectTimeout=5 lab-private hostname
 
 4
-aws ec2 create-network-acl-entry --network-acl-id $NACL --ingress --rule-number 100 --protocol 6 --port-range From=22,To=22 --cidr-block 10.0.1.0/24 --rule-action allow
-
-ssh -o ConnectTimeout=5 lab-private 'hostname'
+aws ec2 create-network-acl-entry --network-acl-id $NACL --egress --rule-number 100 --protocol 6 --port-range From=1024,To=65535 --cidr-block 10.0.1.0/24 --rule-action allow
+ssh -o ConnectTimeout=5 lab-private hostname
 
 5
-aws ec2 create-network-acl-entry --network-acl-id $NACL --egress --rule-number 100 --protocol 6 --port-range From=1024,To=65535 --cidr-block 10.0.1.0/24 --rule-action allow
-
-ssh -o ConnectTimeout=5 lab-private 'hostname'
+aws ec2 create-network-acl-entry --network-acl-id $NACL --ingress --rule-number 50 --protocol=-1 --cidr-block 10.0.1.0/24 --rule-action deny
+ssh -o ConnectTimeout=5 lab-private hostname
 
 6
-aws ec2 create-network-acl-entry --network-acl-id $NACL --ingress --rule-number 50 --protocol=-1 --cidr-block 10.0.1.0/24 --rule-action deny
-
-ssh -o ConnectTimeout=5 lab-private 'hostname'
+aws ec2 delete-network-acl-entry --network-acl-id $NACL --ingress --rule-number 50
+ssh -o ConnectTimeout=5 lab-private hostname
 
 7
-aws ec2 delete-network-acl-entry --network-acl-id $NACL --ingress --rule-number 50
-ssh -o ConnectTimeout=5 lab-private 'hostname'
-
-8
 aws ec2 describe-network-acls --network-acl-ids $NACL --query "NetworkAcls[0].Entries[?RuleNumber!=\`32767\`].[RuleNumber,Egress,Protocol,PortRange,CidrBlock,RuleAction]" --output json
 
-9
-aws ec2 replace-network-acl-association --association-id $NEW_ASSOC --network-acl-id $OLD_NACL
-aws ec2 delete-network-acl --network-acl-id $NACL
 
-ssh -o ConnectTimeout=5 lab-private 'hostname; curl -sI https://aws.amazon.com | head -1'
+Lab 07
 
-NACL=$(aws ec2 describe-network-acls --filters Name=tag:Name,Values=demo-nacl-private --query "NetworkAcls[0].NetworkAclId" --output text)
-NEW_ASSOC=$(aws ec2 describe-network-acls --network-acl-ids $NACL --query "NetworkAcls[0].Associations[0].NetworkAclAssociationId" --output text)
-OLD_NACL=$(aws ec2 describe-network-acls --filters Name=vpc-id,Values=$VPC4 Name=default,Values=true --query "NetworkAcls[0].NetworkAclId" --output text)
+R=us-east-1
+ID=<instance-id-demo-web-02>
+
+AZ=$(aws ec2 describe-instances --instance-ids $ID --region $R \
+  --query "Reservations[0].Instances[0].Placement.AvailabilityZone" --output text)
+echo $AZ
+
+VOL=$(aws ec2 create-volume --availability-zone $AZ --volume-type gp3 --size 10 \
+  --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=demo-data-vol}]' \
+  --query VolumeId --output text --region $R)
+echo $VOL
+
+aws ec2 wait volume-available --volume-ids $VOL --region $R
+aws ec2 attach-volume --volume-id $VOL --instance-id $ID --device /dev/sdf --region $R
+aws ec2 wait volume-in-use --volume-ids $VOL --region $R
+
+
+SSH
+
+lsblk -f                       # trova disco 10G senza FS (xvdf o nvme1n1)
+LAB_DATA_DEVICE=/dev/xvdf      # adatta al device reale
+sudo blkid "$LAB_DATA_DEVICE"  # vuoto = nessun output
+sudo mkfs -t ext4 "$LAB_DATA_DEVICE"   # solo se vuoto
+sudo mkdir -p /mnt/demo-data
+sudo mount "$LAB_DATA_DEVICE" /mnt/demo-data
+findmnt /mnt/demo-data
+echo "demo storage EBS" | sudo tee /mnt/demo-data/test.txt
+cat /mnt/demo-data/test.txt
+sync
+
+
+SNAP=$(aws ec2 create-snapshot --volume-id $VOL --region $R \
+  --description "backup volume dati del laboratorio" \
+  --query SnapshotId --output text)
+echo $SNAP
+
+aws ec2 wait snapshot-completed --snapshot-ids $SNAP --region $R
+
+aws ec2 describe-volumes --volume-ids $VOL --region $R \
+  --query "Volumes[].{State:State,Size:Size,Type:VolumeType,AZ:AvailabilityZone}"
+aws ec2 describe-snapshots --snapshot-ids $SNAP --region $R \
+  --query "Snapshots[].{State:State,Progress:Progress}"
