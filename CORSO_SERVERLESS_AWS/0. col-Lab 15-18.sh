@@ -436,104 +436,15 @@ aws logs filter-log-events --log-group-name step-functions-lab17 --max-items 30 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Lab 18
 export AWS_DEFAULT_REGION=us-east-1
 ACC=$(aws sts get-caller-identity --query Account --output text)
 sam --version
 aws iam get-role --role-name LabRole --query Role.Arn --output text
 
-
 cd ~
-sam init --runtime python3.12 --name order-api --app-template hello-world \
-  --package-type Zip --dependency-manager pip --no-tracing --no-application-insights --no-interactive
+sam init --runtime python3.12 --name order-api --app-template hello-world --package-type Zip --dependency-manager pip --no-tracing --no-application-insights --no-interactive
 cd order-api && ls
-
-
 
 cat > template.yaml <<'EOF'
 AWSTemplateFormatVersion: "2010-09-09"
@@ -594,9 +505,6 @@ Outputs:
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
 EOF
 
-
-
-
 mkdir -p src
 cat > src/app.py <<'EOF'
 import json
@@ -655,50 +563,23 @@ def get_order(event, context):
         }
 EOF
 
-
 sam validate --region us-east-1
 sam build
 
-
-sam deploy --stack-name order-api-lab18 --region us-east-1 \
-  --capabilities CAPABILITY_IAM --resolve-s3 \
-  --no-disable-rollback --confirm-changeset --save-params
-
+sam deploy --stack-name order-api-lab18 --region us-east-1 --capabilities CAPABILITY_IAM --resolve-s3 --no-disable-rollback --confirm-changeset --save-params
 
 aws cloudformation describe-stacks --stack-name order-api-lab18 --query "Stacks[0].StackStatus" --output text
-API_URL=$(aws cloudformation describe-stacks --stack-name order-api-lab18 \
-  --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" --output text)
+API_URL=$(aws cloudformation describe-stacks --stack-name order-api-lab18 --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" --output text)
 echo $API_URL
 
-
-
-
-RES=$(curl -s -X POST ${API_URL}orders -H "Content-Type: application/json" \
-  -d '{"customer": "Bob", "total": 150}')
+RES=$(curl -s -X POST ${API_URL}orders -H "Content-Type: application/json" -d '{"customer": "Bob", "total": 150}')
 echo $RES
 OID=$(echo $RES | jq -r .order.order_id)
 curl -s ${API_URL}orders/$OID
 curl -s -o /dev/null -w "%{http_code}\n" ${API_URL}orders/nonexistent
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 cd ~
-sam init --runtime python3.12 --name monitored-api --app-template hello-world \
-  --package-type Zip --dependency-manager pip --no-tracing --no-application-insights --no-interactive
+sam init --runtime python3.12 --name monitored-api --app-template hello-world --package-type Zip --dependency-manager pip --no-tracing --no-application-insights --no-interactive
 cd monitored-api
 
 cat > template.yaml <<'EOF'
@@ -753,68 +634,32 @@ def handler(event, context):
 EOF
 
 sam build
-sam deploy --stack-name monitored-api-lab18 --region us-east-1 \
-  --capabilities CAPABILITY_IAM --resolve-s3 \
-  --no-disable-rollback --confirm-changeset --save-params
+sam deploy --stack-name monitored-api-lab18 --region us-east-1 --capabilities CAPABILITY_IAM --resolve-s3 --no-disable-rollback --confirm-changeset --save-params
 
-
-
-
-API2=$(aws cloudformation describe-stacks --stack-name monitored-api-lab18 \
-  --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" --output text)
-FN=$(aws cloudformation describe-stack-resource --stack-name monitored-api-lab18 \
-  --logical-resource-id ProcessFunction --query StackResourceDetail.PhysicalResourceId --output text)
+API2=$(aws cloudformation describe-stacks --stack-name monitored-api-lab18 --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" --output text)
+FN=$(aws cloudformation describe-stack-resource --stack-name monitored-api-lab18 --logical-resource-id ProcessFunction --query StackResourceDetail.PhysicalResourceId --output text)
 LG=/aws/lambda/$FN
 echo $API2 $FN
-
-
-
 
 for i in {1..10}; do curl -s -X POST "${API2}process" -H "Content-Type: application/json" -d '{"action": "fast"}' & done; wait
 for i in {1..3};  do curl -s -X POST "${API2}process" -H "Content-Type: application/json" -d '{"action": "slow"}' & done; wait
 for i in {1..5};  do curl -s -X POST "${API2}process" -H "Content-Type: application/json" -d '{"action": "error"}' & done; wait
 
-
-
-
-aws cloudformation describe-stack-resources --stack-name monitored-api-lab18 \
-  --query "StackResources[].[LogicalResourceId,ResourceType,ResourceStatus]" --output table
-aws cloudformation describe-stack-events --stack-name monitored-api-lab18 \
-  --query "reverse(StackEvents)[].[Timestamp,LogicalResourceId,ResourceStatus]" --output table
-
-
-
-
+aws cloudformation describe-stack-resources --stack-name monitored-api-lab18 --query "StackResources[].[LogicalResourceId,ResourceType,ResourceStatus]" --output table
+aws cloudformation describe-stack-events --stack-name monitored-api-lab18 --query "reverse(StackEvents)[].[Timestamp,LogicalResourceId,ResourceStatus]" --output table
 
 q() {
-  local QID=$(aws logs start-query --log-group-name "$LG" \
-    --start-time $(date -d '-1 hour' +%s) --end-time $(date +%s) \
-    --query-string "$1" --query queryId --output text)
+  local QID=$(aws logs start-query --log-group-name "$LG" --start-time $(date -d '-1 hour' +%s) --end-time $(date +%s) --query-string "$1" --query queryId --output text)
   sleep 5
-  aws logs get-query-results --query-id $QID --query "results[]" --output json | \
-    jq -r '.[] | map(.field + "=" + .value) | join(" | ")'
+  aws logs get-query-results --query-id $QID --query "results[]" --output json | jq -r '.[] | map(.field + "=" + .value) | join(" | ")'
 }
 
 q 'filter @type = "REPORT" | sort @duration desc | limit 10'
 q 'filter @type = "REPORT" | stats count() as total, sum(@duration > 1000) as slow, count(@initDuration) as coldStarts'
 q 'filter @message like /ERROR/ | fields @timestamp, @message | sort @timestamp desc | limit 10'
 
-
-
-
-aws cloudwatch put-metric-alarm --alarm-name lab18-lambda-errors \
-  --namespace AWS/Lambda --metric-name Errors \
-  --dimensions Name=FunctionName,Value=$FN \
-  --statistic Sum --period 300 --evaluation-periods 1 \
-  --threshold 2 --comparison-operator GreaterThanThreshold \
-  --treat-missing-data notBreaching
-aws cloudwatch describe-alarms --alarm-names lab18-lambda-errors \
-  --query "MetricAlarms[].[AlarmName,StateValue,Threshold]" --output table
-
-
-
-
-
+aws cloudwatch put-metric-alarm --alarm-name lab18-lambda-errors --namespace AWS/Lambda --metric-name Errors --dimensions Name=FunctionName,Value=$FN --statistic Sum --period 300 --evaluation-periods 1 --threshold 2 --comparison-operator GreaterThanThreshold --treat-missing-data notBreaching
+aws cloudwatch describe-alarms --alarm-names lab18-lambda-errors --query "MetricAlarms[].[AlarmName,StateValue,Threshold]" --output table
 
 cat > dash.json <<EOF
 {
@@ -831,18 +676,6 @@ cat > dash.json <<EOF
   ]
 }
 EOF
+
 aws cloudwatch put-dashboard --dashboard-name lab18-serverless --dashboard-body file://dash.json
 aws cloudwatch list-dashboards --query "DashboardEntries[].DashboardName" --output text
-
-
-
-
-
-
-
-
-
-
-
-
-
