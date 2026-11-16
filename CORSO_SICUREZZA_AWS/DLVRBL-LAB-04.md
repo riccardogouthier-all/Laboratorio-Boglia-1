@@ -101,3 +101,49 @@ aws iam simulate-custom-policy --policy-input-list file://policy04_mfa.json --ac
 - [ ] Chiave MFA impostata nel contesto della simulazione, non in Edit resources
 - [ ] Previsioni confrontate con risultati
 - [ ] Dichiarato se simulazione AWS eseguita
+
+Procedura di esecuzione in CLI Cloudshell:
+
+Il lab usa l'IAM Policy Simulator; da CloudShell lo stesso esito si ottiene con `aws iam simulate-custom-policy` (nessuna risorsa creata, nessun costo).
+
+```bash
+export AWS_DEFAULT_REGION=us-east-1
+
+# Policy base (punto 1)
+cat > policy04.json <<'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {"Sid": "AllowReadReports", "Effect": "Allow", "Action": "s3:GetObject", "Resource": "arn:aws:s3:::didattica-esempio/report/*"},
+    {"Sid": "DenyDeleteObjects", "Effect": "Deny", "Action": "s3:DeleteObject", "Resource": "arn:aws:s3:::didattica-esempio/*"}
+  ]
+}
+EOF
+
+# Policy MFA (punto 3)
+cat > policy04_mfa.json <<'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {"Sid": "AllowReadReports", "Effect": "Allow", "Action": "s3:GetObject", "Resource": "arn:aws:s3:::didattica-esempio/report/*"},
+    {"Sid": "DenyDeleteObjects", "Effect": "Deny", "Action": "s3:DeleteObject", "Resource": "arn:aws:s3:::didattica-esempio/*"},
+    {"Sid": "DenyReadReportsWithoutMFA", "Effect": "Deny", "Action": "s3:GetObject", "Resource": "arn:aws:s3:::didattica-esempio/report/*",
+     "Condition": {"BoolIfExists": {"aws:MultiFactorAuthPresent": "false"}}}
+  ]
+}
+EOF
+
+# Casi base 1-4
+sim() { aws iam simulate-custom-policy --policy-input-list file://$1 --action-names $2 --resource-arns $3 "${@:4}" --query 'EvaluationResults[].[EvalActionName,EvalResourceName,EvalDecision]' --output text; }
+sim policy04.json s3:GetObject    arn:aws:s3:::didattica-esempio/report/a.txt     # allowed
+sim policy04.json s3:DeleteObject arn:aws:s3:::didattica-esempio/report/a.txt     # explicitDeny
+sim policy04.json s3:GetObject    arn:aws:s3:::didattica-esempio/privato/a.txt    # implicitDeny
+sim policy04.json s3:ListBucket   arn:aws:s3:::didattica-esempio                  # implicitDeny
+
+# Casi MFA 5-7 (chiave MFA nel contesto della simulazione)
+sim policy04_mfa.json s3:GetObject arn:aws:s3:::didattica-esempio/report/a.txt --context-entries ContextKeyName=aws:MultiFactorAuthPresent,ContextKeyValues=true,ContextKeyType=boolean    # allowed
+sim policy04_mfa.json s3:GetObject arn:aws:s3:::didattica-esempio/report/a.txt --context-entries ContextKeyName=aws:MultiFactorAuthPresent,ContextKeyValues=false,ContextKeyType=boolean   # explicitDeny
+sim policy04_mfa.json s3:GetObject arn:aws:s3:::didattica-esempio/report/a.txt                                                                                                         # chiave omessa: explicitDeny
+```
+
+Se il ruolo del Learner Lab non permette `iam:SimulateCustomPolicy`, usare il Policy Simulator in console (modalita Custom) e dichiarare la valutazione manuale. Cleanup: `rm policy04.json policy04_mfa.json`.

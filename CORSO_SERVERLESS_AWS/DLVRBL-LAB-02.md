@@ -103,3 +103,85 @@ Ipotesi: us-east-1, EC2 t3.medium on-demand, Lambda 256 MB, 100.000 invocazioni/
 - Break-even serverless: immediato per questo carico.
 - Su 10 pipeline: EC2 ~$3.644/anno vs Lambda ~$25/anno, risparmio ~$3.619/anno (crescita lineare).
 - Raccomandazione per EcoTech: approccio **serverless-first** per i nuovi workload event-driven, in linea con economia circolare e dismissione responsabile degli asset IT (Step 1).
+
+Procedura di esecuzione in CLI Cloudshell:
+
+La classificazione RAEE (Step 1) e documentale. Lo Step 2 (POC CSV -> S3 -> Lambda -> DynamoDB + SNS) si riproduce da CloudShell; lo Step 3 e un calcolo di costo.
+
+### Step 2 - POC pipeline CSV
+
+```bash
+export AWS_DEFAULT_REGION=us-east-1
+ROLE_ARN=$(aws iam get-role --role-name LabRole --query Role.Arn --output text)
+ACC=$(aws sts get-caller-identity --query Account --output text)
+BUCKET=lab02-csv-riccardogouthier
+
+# Risorse: bucket, tabella, topic SNS
+aws s3api create-bucket --bucket $BUCKET
+aws dynamodb create-table --table-name lab02-records --attribute-definitions AttributeName=id,AttributeType=S --key-schema AttributeName=id,KeyType=HASH --billing-mode PAY_PER_REQUEST
+aws dynamodb wait table-exists --table-name lab02-records
+TOPIC_ARN=$(aws sns create-topic --name lab02-csv-done --query TopicArn --output text)
+
+# Lambda: parsing CSV, write su DynamoDB, publish su SNS
+mkdir -p lab02 && cd lab02
+cat > lambda_function.py <<'EOF'
+import csv, io, os, urllib.parse
+import boto3
+
+s3 = boto3.client('s3')
+table = boto3.resource('dynamodb').Table('lab02-records')
+sns = boto3.client('sns')
+
+def lambda_handler(event, context):
+    total = 0
+    for rec in event['Records']:
+        bucket = rec['s3']['bucket']['name']
+        key = urllib.parse.unquote_plus(rec['s3']['object']['key'])
+        body = s3.get_object(Bucket=bucket, Key=key)['Body'].read().decode('utf-8')
+        with table.batch_writer() as batch:
+            for row in csv.DictReader(io.StringIO(body)):
+                batch.put_item(Item={'id': row['id'], 'name': row['name'].strip().title()})
+                total += 1
+        sns.publish(TopicArn=os.environ['TOPIC_ARN'], Subject='CSV elaborato', Message=f'{key}: {total} righe')
+    return {'statusCode': 200, 'body': f'Processed {total} rows'}
+EOF
+zip -q function.zip lambda_function.py
+aws lambda create-function --function-name csv-poc --runtime python3.12 --role $ROLE_ARN --handler lambda_function.lambda_handler --zip-file fileb://function.zip --environment "Variables={TOPIC_ARN=$TOPIC_ARN}"
+aws lambda wait function-active-v2 --function-name csv-poc
+
+# Trigger S3 ObjectCreated
+aws lambda add-permission --function-name csv-poc --statement-id s3-invoke --action lambda:InvokeFunction --principal s3.amazonaws.com --source-arn arn:aws:s3:::$BUCKET --source-account $ACC
+FN_ARN=$(aws lambda get-function --function-name csv-poc --query Configuration.FunctionArn --output text)
+aws s3api put-bucket-notification-configuration --bucket $BUCKET --notification-configuration "{\"LambdaFunctionConfigurations\":[{\"LambdaFunctionArn\":\"$FN_ARN\",\"Events\":[\"s3:ObjectCreated:*\"]}]}"
+
+# Test: upload del CSV e verifica
+printf 'id,name\n1,mario rossi\n2,anna verdi\n' > clienti.csv
+aws s3 cp clienti.csv s3://$BUCKET/clienti.csv
+sleep 10
+aws dynamodb scan --table-name lab02-records --query "Items[].[id.S,name.S]" --output table
+aws logs tail /aws/lambda/csv-poc --since 5m
+cd ..
+```
+
+### Step 3 - Confronto costi EC2 vs Lambda
+
+```bash
+awk 'BEGIN {
+  ec2_h = 0.0416; ec2_mese = ec2_h*24*365/12; ec2_anno = ec2_h*24*365
+  gbs = 100000 * 0.5 * 0.25                  # 12.500 GB-s/mese
+  lam_mese = 0.21                            # valore del deliverable (richieste + compute)
+  printf "EC2 t3.medium: %.2f $/mese, %.2f $/anno\n", ec2_mese, ec2_anno
+  printf "Lambda: %d GB-s/mese, %.2f $/mese, %.2f $/anno\n", gbs, lam_mese, lam_mese*12
+  printf "Risparmio annuo: %.2f $ (%.1f%%)\n", ec2_anno-lam_mese*12, (ec2_anno-lam_mese*12)/ec2_anno*100
+}'
+```
+
+### Cleanup
+
+```bash
+aws s3 rm s3://$BUCKET --recursive && aws s3api delete-bucket --bucket $BUCKET
+aws lambda delete-function --function-name csv-poc
+aws dynamodb delete-table --table-name lab02-records
+aws sns delete-topic --topic-arn $TOPIC_ARN
+aws logs delete-log-group --log-group-name /aws/lambda/csv-poc
+```

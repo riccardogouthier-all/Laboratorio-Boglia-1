@@ -54,3 +54,40 @@ Tecnico --(upload)  -->   Archivio S3 --(read)    -->     Analista
 ## Nota
 
 Nessuna risorsa AWS creata. Nessuna credenziale reale presente in questo documento.
+
+Procedura di esecuzione in CLI Cloudshell:
+
+Il laboratorio non richiede risorse AWS: la consegna si compila in locale. Da CloudShell si puo creare lo scheletro del documento e raccogliere l'identita con cui si opera (utile alla prova di attribuzione).
+
+```bash
+export AWS_DEFAULT_REGION=us-east-1
+
+# Identita della sessione: e il dato che permette di attribuire le operazioni a un singolo attore
+aws sts get-caller-identity
+
+# Scheletro di consegna01.md con le otto componenti della responsabilita condivisa
+cat > consegna01.md <<'EOF'
+# Consegna 01 - Fondamenti di sicurezza
+
+## Scenario
+Tecnico carica rapporti in S3; analista li legge; responsabile autorizza la cancellazione; app EC2 li elabora.
+
+## Responsabilita
+| # | Componente | Responsabile | Controllo | Evidenza |
+|--:|---|---|---|---|
+| 1 | Edifici (data center) | AWS | Controllo fisico e ambientale | Documentazione di conformita AWS |
+| 2 | Host fisico | AWS | Hardware e hypervisor | Modello di responsabilita condivisa |
+| 3 | Guest OS su EC2 | Cliente | Patching e hardening | Piano di aggiornamento |
+| 4 | Libreria applicativa | Cliente | Aggiornamento dipendenze | Versione installata / changelog |
+| 5 | Accesso ai rapporti | Cliente | Permessi minimi su S3 | Lettura consentita, cancellazione negata all'analista |
+| 6 | Classificazione dati | Cliente | Etichetta "sintetici" | Etichetta nella consegna |
+| 7 | Configurazione di rete | Cliente | Regole coerenti con il flusso | Diagramma |
+| 8 | Credenziali e sessioni | Cliente | Identita distinte | Log attribuibile |
+EOF
+cat consegna01.md
+
+# (Opzionale) prova di attribuzione: ultimi eventi della propria identita in CloudTrail
+aws cloudtrail lookup-events --max-results 5 --query "Events[].[EventTime,EventName,Username]" --output table
+```
+
+Le sei prove (positive/negative per lettura, cancellazione e attribuzione) sono descritte nel deliverable; non c'e nulla da cancellare (nessuna risorsa creata). Eliminare `consegna01.md` se contiene dati non sintetici.

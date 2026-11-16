@@ -71,3 +71,39 @@ Output atteso: due voci, inbound 100 allow 22, outbound 100 allow 1024-65535 (re
 
 ## Nota metodologica
 ID NACL e IP privati illustrativi, da sostituire con valori reali. Fallback se Learner Lab non raggiungibile: tabella regole pianificate (porta, protocollo, origine, motivazione), nessuna risorsa reale.
+
+Procedura di esecuzione in CLI Cloudshell:
+
+```bash
+# --- Passo 1 ---
+ssh -o ConnectTimeout=5 lab-private hostname
+aws ec2 describe-security-groups --group-ids $SG_B $SG_P --query "SecurityGroups[].[GroupName,IpPermissions[].[FromPort,IpRanges[].CidrIp|join(',',@),UserIdGroupPairs[].GroupId|join(',',@)]]" --output json
+
+# --- Passo 2 ---
+OLD_ASSOC=$(aws ec2 describe-network-acls --filters Name=association.subnet-id,Values=$PRIV --query "NetworkAcls[0].Associations[?SubnetId=='$PRIV'].NetworkAclAssociationId" --output text)
+OLD_NACL=$(aws ec2 describe-network-acls --filters Name=association.subnet-id,Values=$PRIV --query "NetworkAcls[0].NetworkAclId" --output text)
+echo $OLD_ASSOC $OLD_NACL
+
+NACL=$(aws ec2 create-network-acl --vpc-id $VPC4 --tag-specifications 'ResourceType=network-acl,Tags=[{Key=Name,Value=demo-nacl-private}]' --query NetworkAcl.NetworkAclId --output text)
+NEW_ASSOC=$(aws ec2 replace-network-acl-association --association-id $OLD_ASSOC --network-acl-id $NACL --query NewAssociationId --output text)
+echo NACL=$NACL NEW_ASSOC=$NEW_ASSOC
+
+# --- Passo 3 ---
+aws ec2 create-network-acl-entry --network-acl-id $NACL --ingress --rule-number 100 --protocol 6 --port-range From=22,To=22 --cidr-block 10.0.1.0/24 --rule-action allow
+ssh -o ConnectTimeout=5 lab-private hostname
+
+# --- Passo 4 ---
+aws ec2 create-network-acl-entry --network-acl-id $NACL --egress --rule-number 100 --protocol 6 --port-range From=1024,To=65535 --cidr-block 10.0.1.0/24 --rule-action allow
+ssh -o ConnectTimeout=5 lab-private hostname
+
+# --- Passo 5 ---
+aws ec2 create-network-acl-entry --network-acl-id $NACL --ingress --rule-number 50 --protocol=-1 --cidr-block 10.0.1.0/24 --rule-action deny
+ssh -o ConnectTimeout=5 lab-private hostname
+
+# --- Passo 6 ---
+aws ec2 delete-network-acl-entry --network-acl-id $NACL --ingress --rule-number 50
+ssh -o ConnectTimeout=5 lab-private hostname
+
+# --- Passo 7 ---
+aws ec2 describe-network-acls --network-acl-ids $NACL --query "NetworkAcls[0].Entries[?RuleNumber!=\`32767\`].[RuleNumber,Egress,Protocol,PortRange,CidrBlock,RuleAction]" --output json
+```

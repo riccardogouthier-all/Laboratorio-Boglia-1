@@ -76,3 +76,39 @@ Accesso pubblico (`get-public-access-block`): tutte e 4 le opzioni `true`.
   aws s3api head-bucket --bucket sicurezza02-$SUF
   rm rapporto.txt scaricato.txt
 ```
+
+Procedura di esecuzione in CLI Cloudshell:
+
+```bash
+export AWS_DEFAULT_REGION=us-east-1
+SUF=riccardogouthier
+
+# Step 1-2 - Zone name e Zone ID
+aws ec2 describe-availability-zones --region us-east-1 --query 'AvailabilityZones[].[ZoneName,ZoneId,State]' --output table
+
+# Step 3-9 - Bucket privato con SSE-S3, ACL disabilitate, Block Public Access, versioning non abilitato
+aws s3api create-bucket --bucket sicurezza02-$SUF --region us-east-1
+aws s3api put-bucket-ownership-controls --bucket sicurezza02-$SUF --ownership-controls 'Rules=[{ObjectOwnership=BucketOwnerEnforced}]'
+aws s3api put-public-access-block --bucket sicurezza02-$SUF --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+aws s3api put-bucket-encryption --bucket sicurezza02-$SUF --server-side-encryption-configuration '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
+
+# Step 10-12 - Oggetto sintetico e verifica della cifratura a riposo
+echo "Rapporto manutenzione sintetico" > rapporto.txt
+aws s3 cp rapporto.txt s3://sicurezza02-$SUF/rapporto.txt
+aws s3api head-object --bucket sicurezza02-$SUF --key rapporto.txt --region us-east-1 --query '{Encryption:ServerSideEncryption,Size:ContentLength}'
+
+# Step 13 - Download autenticato e confronto del contenuto
+aws s3 cp s3://sicurezza02-$SUF/rapporto.txt scaricato.txt
+sha256sum rapporto.txt scaricato.txt
+
+# Accesso pubblico bloccato
+aws s3api get-public-access-block --bucket sicurezza02-$SUF
+```
+
+### Cleanup
+
+```bash
+aws s3 rm s3://sicurezza02-$SUF --recursive
+aws s3api delete-bucket --bucket sicurezza02-$SUF
+rm -f rapporto.txt scaricato.txt
+```

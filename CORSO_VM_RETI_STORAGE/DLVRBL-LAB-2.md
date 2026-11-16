@@ -76,3 +76,60 @@ Dopo stop di `demo-web-02`:
 
 ## Nota metodologica
 Valori (ID AMI, ID istanze, DNS ALB) illustrativi, coerenti con doc ufficiale EC2/ELB. Sostituire con valori reali osservati nel Learner Lab. Se Learner Lab non raggiungibile: fallback, nessuna risorsa reale creata.
+
+Procedura di esecuzione in CLI Cloudshell:
+
+Passi 4-8 dello script: AMI da `demo-web-01`, seconda istanza, target group, ALB e verifica.
+
+```bash
+# Se la sessione CloudShell e nuova, ricostruire le variabili del Lab 01
+export AWS_DEFAULT_REGION=us-east-1
+VPC_ID=$(aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query "Vpcs[0].VpcId" --output text)
+read SUB1 SUB2 <<< $(aws ec2 describe-subnets --filters Name=vpc-id,Values=$VPC_ID Name=default-for-az,Values=true --query "sort_by(Subnets,&AvailabilityZone)[0:2].SubnetId" --output text)
+SG_ID=$(aws ec2 describe-security-groups --filters Name=group-name,Values=demo-sg-web --query "SecurityGroups[0].GroupId" --output text)
+ID1=$(aws ec2 describe-instances --filters Name=tag:Name,Values=demo-web-01 Name=instance-state-name,Values=running,stopped --query "Reservations[0].Instances[0].InstanceId" --output text)
+
+# --- Passo 4 ---
+aws ec2 stop-instances --instance-ids $ID1
+aws ec2 wait instance-stopped --instance-ids $ID1
+AMI_ID=$(aws ec2 create-image --instance-id $ID1 --name demo-web-ami-v1 --description "AL2023 httpd" --query ImageId --output text)
+aws ec2 wait image-available --image-ids $AMI_ID
+aws ec2 start-instances --instance-ids $ID1
+aws ec2 wait instance-running --instance-ids $ID1
+echo $AMI_ID
+
+# --- Passo 5 ---
+cat > ud02.sh <<'EOF'
+#!/bin/bash
+hostname > /var/www/html/index.html
+EOF
+
+ID2=$(aws ec2 run-instances --image-id $AMI_ID --instance-type t3.micro --key-name demo-key --security-group-ids $SG_ID --subnet-id $SUB2 --user-data file://ud02.sh --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demo-web-02}]' --query "Instances[0].InstanceId" --output text)
+aws ec2 wait instance-status-ok --instance-ids $ID2
+
+# --- Passo 6 ---
+TG_ARN=$(aws elbv2 create-target-group --name demo-tg-web --protocol HTTP --port 80 --vpc-id $VPC_ID --target-type instance --health-check-path / --query "TargetGroups[0].TargetGroupArn" --output text)
+aws elbv2 register-targets --target-group-arn $TG_ARN --targets Id=$ID1 Id=$ID2
+
+# --- Passo 7 ---
+ALB_ARN=$(aws elbv2 create-load-balancer --name demo-alb --type application --scheme internet-facing --subnets $SUB1 $SUB2 --security-groups $SG_ID --query "LoadBalancers[0].LoadBalancerArn" --output text)
+aws elbv2 wait load-balancer-available --load-balancer-arns $ALB_ARN
+aws elbv2 create-listener --load-balancer-arn $ALB_ARN --protocol HTTP --port 80 --default-actions Type=forward,TargetGroupArn=$TG_ARN
+
+# --- Passo 8 ---
+aws elbv2 describe-target-health --target-group-arn $TG_ARN --query "TargetHealthDescriptions[].[Target.Id,TargetHealth.State]" --output table
+DNS=$(aws elbv2 describe-load-balancers --load-balancer-arns $ALB_ARN --query "LoadBalancers[0].DNSName" --output text)
+curl -s http://$DNS/
+```
+
+### Cleanup
+
+```bash
+# Cleanup a fine percorso (ordine: listener/ALB, target group, istanze, AMI e snapshot, key pair, SG)
+aws elbv2 delete-load-balancer --load-balancer-arn $ALB_ARN
+aws elbv2 delete-target-group --target-group-arn $TG_ARN
+aws ec2 terminate-instances --instance-ids $ID1 $ID2
+aws ec2 deregister-image --image-id $AMI_ID
+aws ec2 delete-key-pair --key-name demo-key
+aws ec2 delete-security-group --group-id $SG_ID
+```

@@ -85,3 +85,85 @@ Trigger: regola EventBridge `every-5-min-rule` (ogni 5 minuti).
 1. Lo stesso modello a eventi serve sia per eventi di dati (S3) sia per eventi temporali (EventBridge).
 2. Il payload dell'evento cambia per sorgente: `Records[]` per S3, `Scheduled Event` per EventBridge.
 3. I cold start (Init Duration) compaiono nella prima esecuzione dopo il deploy; le successive sono warm.
+
+Procedura di esecuzione in CLI Cloudshell:
+
+```bash
+export AWS_DEFAULT_REGION=us-east-1
+ROLE_ARN=$(aws iam get-role --role-name LabRole --query Role.Arn --output text)
+ACC=$(aws sts get-caller-identity --query Account --output text)
+BUCKET=lab07-trigger-gouthier
+mkdir -p lab07 && cd lab07
+
+# Step 1 - Bucket
+aws s3api create-bucket --bucket $BUCKET
+
+# Step 2 - Funzione process-s3-upload
+cat > lambda_function.py <<'EOF'
+import json
+import urllib.parse
+
+def lambda_handler(event, context):
+    for record in event['Records']:
+        bucket = record['s3']['bucket']['name']
+        key = urllib.parse.unquote_plus(record['s3']['object']['key'])
+        size = record['s3']['object']['size']
+
+        print(f"File uploaded: s3://{bucket}/{key} (size: {size} bytes)")
+        print(f"Dimensione: {size} bytes")
+
+    return {'statusCode': 200, 'body': f'Processed {len(event["Records"])} files'}
+EOF
+zip -q s3fn.zip lambda_function.py
+aws lambda create-function --function-name process-s3-upload --runtime python3.12 --role $ROLE_ARN --handler lambda_function.lambda_handler --zip-file fileb://s3fn.zip
+aws lambda wait function-active-v2 --function-name process-s3-upload
+
+# Step 3 - Trigger S3 (All object create events)
+aws lambda add-permission --function-name process-s3-upload --statement-id s3-invoke --action lambda:InvokeFunction --principal s3.amazonaws.com --source-arn arn:aws:s3:::$BUCKET --source-account $ACC
+FN1=$(aws lambda get-function --function-name process-s3-upload --query Configuration.FunctionArn --output text)
+aws s3api put-bucket-notification-configuration --bucket $BUCKET --notification-configuration "{\"LambdaFunctionConfigurations\":[{\"Id\":\"upload-trigger\",\"LambdaFunctionArn\":\"$FN1\",\"Events\":[\"s3:ObjectCreated:*\"]}]}"
+
+# Step 4 - Test: upload di un file con spazio nel nome e lettura dei log
+echo "comando di test per l'hypervisor" > "comando hypervisor.txt"
+aws s3 cp "comando hypervisor.txt" s3://$BUCKET/
+sleep 10
+aws logs tail /aws/lambda/process-s3-upload --since 5m
+
+# Step 5 - Funzione scheduled-task
+cat > lambda_function.py <<'EOF'
+import json
+from datetime import datetime
+
+def lambda_handler(event, context):
+    now = datetime.utcnow().isoformat()
+    print(f"Scheduled execution at {now}")
+    print(f"Event source: {json.dumps(event)}")
+    return {'statusCode': 200, 'body': f'Executed at {now}'}
+EOF
+zip -q schedfn.zip lambda_function.py
+aws lambda create-function --function-name scheduled-task --runtime python3.12 --role $ROLE_ARN --handler lambda_function.lambda_handler --zip-file fileb://schedfn.zip
+aws lambda wait function-active-v2 --function-name scheduled-task
+
+# Step 6 - Trigger EventBridge ogni 5 minuti
+RULE_ARN=$(aws events put-rule --name every-5-min-rule --schedule-expression "rate(5 minutes)" --state ENABLED --query RuleArn --output text)
+aws lambda add-permission --function-name scheduled-task --statement-id eventbridge-invoke --action lambda:InvokeFunction --principal events.amazonaws.com --source-arn $RULE_ARN
+FN2=$(aws lambda get-function --function-name scheduled-task --query Configuration.FunctionArn --output text)
+aws events put-targets --rule every-5-min-rule --targets "Id=scheduled-task,Arn=$FN2"
+
+# Dopo 5-10 minuti: esecuzioni periodiche nei log
+sleep 360
+aws logs tail /aws/lambda/scheduled-task --since 15m
+cd ..
+```
+
+### Cleanup
+
+```bash
+aws events remove-targets --rule every-5-min-rule --ids scheduled-task
+aws events delete-rule --name every-5-min-rule
+aws lambda delete-function --function-name process-s3-upload
+aws lambda delete-function --function-name scheduled-task
+aws s3 rm s3://$BUCKET --recursive && aws s3api delete-bucket --bucket $BUCKET
+aws logs delete-log-group --log-group-name /aws/lambda/process-s3-upload
+aws logs delete-log-group --log-group-name /aws/lambda/scheduled-task
+```

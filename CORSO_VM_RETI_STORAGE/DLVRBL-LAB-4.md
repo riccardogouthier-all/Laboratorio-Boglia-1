@@ -62,3 +62,36 @@ Secondo comando: output vuoto → nessuna associazione esplicita, entrambe le su
 
 ## Nota metodologica
 ID VPC/subnet non riportati: variano a ogni creazione, sostituire con valori reali del Learner Lab. Fallback se Learner Lab non raggiungibile: tabella CIDR + confronto con documentazione VPC, nessuna risorsa reale.
+
+Procedura di esecuzione in CLI Cloudshell:
+
+```bash
+# --- Passo 1 ---
+export AWS_DEFAULT_REGION=us-east-1
+VPC4=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --instance-tenancy default --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=demo-vpc}]' --query Vpc.VpcId --output text)
+aws ec2 wait vpc-available --vpc-ids $VPC4
+echo $VPC4
+
+# --- Passo 2 ---
+# Nome	                CIDR	        AZ  	        Tipo
+# demo-vpc	            10.0.0.0/16	    -	            -
+# demo-subnet-public-1a	10.0.1.0/24	    us-east-1a	    pubblica (pianificata)
+# demo-subnet-private-1a	10.0.2.0/24	    us-east-1a	    privata
+
+# --- Passo 3 ---
+PUB=$(aws ec2 create-subnet --vpc-id $VPC4 --cidr-block 10.0.1.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=demo-subnet-public-1a}]' --query Subnet.SubnetId --output text)
+PRIV=$(aws ec2 create-subnet --vpc-id $VPC4 --cidr-block 10.0.2.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=demo-subnet-private-1a}]' --query Subnet.SubnetId --output text)
+echo $PUB $PRIV
+
+# --- Passo 4 ---
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC4" --query "Subnets[].{Name:Tags[?Key=='Name']|[0].Value,CIDR:CidrBlock,AZ:AvailabilityZone}" --output table
+
+# --- Passo 5 ---
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC4" "Name=association.main,Values=true" --query "RouteTables[].Routes"
+
+# --- Passo 6 ---
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC4" "Name=association.subnet-id,Values=$PUB,$PRIV" --query "RouteTables[].RouteTableId"
+
+# --- Passo 7 ---
+# Nessuna subnet realmente pubblica: manca rotta 0.0.0.0/0 → IGW. public = solo nome.
+```

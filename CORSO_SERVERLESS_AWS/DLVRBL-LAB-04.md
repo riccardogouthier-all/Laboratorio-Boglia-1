@@ -86,3 +86,45 @@ Confronto Lambda (200 ms, 256 MB) vs EC2 t3.medium 24/7.
 | C - Stagionale | Picchi estivi, inverno quasi nullo | Serverless (-87%) |
 
 Regola pratica: serverless conviene con traffico basso, irregolare o stagionale; EC2 conviene con carico alto, costante e prevedibile (sopra ~19M richieste/mese a parita di profilo Lambda).
+
+Procedura di esecuzione in CLI Cloudshell:
+
+Le stime ufficiali vengono dall'AWS Pricing Calculator. In CloudShell si riproducono i calcoli principali con `awk`.
+
+```bash
+# Scenario A - blog (900.000 richieste/mese), cifre Calculator
+awk 'BEGIN {
+  ec2 = 8.23 + 15.44                          # EC2 t3.micro + RDS db.t3.micro
+  sl  = 0.00 + 0.37 + 0.90                    # Lambda + DynamoDB + HTTP API
+  printf "A) EC2 %.2f $/mese (%.2f/anno) | Serverless %.2f $/mese (%.2f/anno) | risparmio %.0f%%\n", ec2, ec2*12, sl, sl*12, (ec2-sl)/ec2*100
+}'
+
+# Scenario B - e-commerce 720M richieste/mese
+awk 'BEGIN {
+  ec2 = 626.90 + 22.27                        # 10x c5.large + ALB
+  sl  = 1337.14 + 678.00                      # Lambda + HTTP API
+  printf "B) EC2 %.2f | Serverless %.2f | serverless = %.1fx\n", ec2, sl, sl/ec2
+}'
+
+# Scenario C - stagionale: 4 mesi estate, 8 mesi inverno
+awk 'BEGIN {
+  ec2 = 270.47 * 12
+  sl  = 96.33*4 + 0.36*8
+  printf "C) EC2 %.0f $/anno | Serverless %.0f $/anno | risparmio %.0f%%\n", ec2, sl, (ec2-sl)/ec2*100
+}'
+
+# Break-even Lambda (200 ms, 256 MB) vs EC2 t3.medium 24/7 (~33 $/mese)
+awk 'BEGIN {
+  ec2 = 33
+  for (n = 1000000; n <= 40000000; n += 500000) {
+    req  = (n-1000000) * 0.23/1000000          # richieste oltre il free tier
+    gbs  = n * 0.2 * 0.25; extra = (gbs>400000) ? gbs-400000 : 0
+    comp = extra * 0.0000195172
+    api  = n/1000000 * 1.00                    # HTTP API: 1 $ per milione
+    tot  = req + comp + api
+    if (tot >= ec2) { printf "Break-even ~%.1f M richieste/mese (serverless %.2f $ vs EC2 %d $)\n", n/1000000, tot, ec2; break }
+  }
+}'
+```
+
+Il break-even calcolato (~19-20 M richieste/mese) conferma l'ordine di grandezza del deliverable (~19 M).

@@ -75,3 +75,28 @@ Il traffico e spiky (500 ordini/giorno in media, fino a 3.000 ordini/ora nel wee
 - **Time-to-market**: una startup paga ~$0/mese e si concentra sul prodotto, non sull'infrastruttura.
 
 **Limite**: cold start Lambda (~200-500 ms) per richieste rare. Mitigabile con **Provisioned Concurrency** (pre-inizializza un numero definito di ambienti di esecuzione, eliminando i cold start).
+
+Procedura di esecuzione in CLI Cloudshell:
+
+Il laboratorio confronta tre architetture con AWS Pricing Calculator (nessuna risorsa da creare). In CloudShell si riproduce il calcolo del carico Lambda e il confronto con le cifre del Calculator.
+
+```bash
+awk 'BEGIN {
+  # Richieste mensili per servizio (256 MB, 200 ms)
+  utenti=5000; catalogo=30000; ordini=15000; pagamenti=15000
+  req = utenti + catalogo + ordini + pagamenti
+  gbs = req * 0.2 * 0.25
+  free_gbs = 400000; free_req = 1000000
+  printf "Richieste Lambda/mese: %d (free tier %d)\n", req, free_req
+  printf "GB-s/mese: %.0f (free tier %d) -> compute a pagamento: %.0f GB-s\n", gbs, free_gbs, (gbs>free_gbs)?gbs-free_gbs:0
+  api = 0.02                                  # stima Calculator del deliverable
+  printf "API Gateway: ~%.2f $/mese (stima Calculator)\n", api
+
+  # Cifre dal Pricing Calculator (stime del deliverable)
+  mono=181; micro=124; sless=0
+  printf "Monolitica %d $ | Microservizi %d $ | Serverless ~%d $\n", mono, micro, sless
+  printf "Risparmio serverless vs monolite: ~%d $/mese\n", mono - sless
+}'
+```
+
+Il costo serverless e ~0 $ perche il carico resta nel free tier di Lambda e DynamoDB on-demand; API Gateway pesa pochi centesimi.

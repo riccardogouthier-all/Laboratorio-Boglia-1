@@ -90,3 +90,55 @@ Output atteso (illustrativo):
 
 ## Nota metodologica
 ID istanza, tempi e timestamp illustrativi, da sostituire con valori osservati nel Learner Lab. Nome ASG uniformato a `demo-asg-web` (nello script `0. Lab tutti.sh` compare anche `demo-asg-web-2` in creazione: usare un solo nome coerente nei comandi successivi).
+
+Procedura di esecuzione in CLI Cloudshell:
+
+```bash
+# --- Passo 1 ---
+AMI_ID=$(aws ec2 describe-images --owners self --filters Name=name,Values=demo-web-ami-v1 --query "Images[0].ImageId" --output text)
+aws ec2 describe-images --image-ids $AMI_ID --query "Images[0].State" --output text   # atteso: available
+
+TG_ARN=$(aws elbv2 describe-target-groups --names demo-tg-web --query "TargetGroups[0].TargetGroupArn" --output text)
+SG_ID=$(aws ec2 describe-security-groups --filters Name=group-name,Values=demo-sg-web --query "SecurityGroups[0].GroupId" --output text)
+SUBNETS=$(aws elbv2 describe-load-balancers --names demo-alb --query "LoadBalancers[0].AvailabilityZones[].SubnetId" --output text | tr '\t' ',')
+echo $AMI_ID $TG_ARN $SG_ID $SUBNETS
+
+# --- Passo 2 ---
+aws ec2 create-launch-template --launch-template-name demo-lt-web --version-description v1 --launch-template-data "{\"ImageId\":\"$AMI_ID\",\"InstanceType\":\"t3.micro\",\"KeyName\":\"demo-key\",\"SecurityGroupIds\":[\"$SG_ID\"]}"
+
+# --- Passo 3 ---
+aws autoscaling create-auto-scaling-group --auto-scaling-group-name demo-asg-web-2 --launch-template 'LaunchTemplateName=demo-lt-web,Version=$Latest' --min-size 1 --desired-capacity 2 --max-size 3 --vpc-zone-identifier "$SUBNETS" --target-group-arns "$TG_ARN" --health-check-type ELB --health-check-grace-period 300
+
+# --- Passo 4 ---
+aws autoscaling put-scaling-policy --auto-scaling-group-name demo-asg-web-2 --policy-name demo-cpu-target --policy-type TargetTrackingScaling --target-tracking-configuration '{"PredefinedMetricSpecification":{"PredefinedMetricType":"ASGAverageCPUUtilization"},"TargetValue":70.0}'
+
+# --- Passo 5 ---
+aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names demo-asg-web-2 --query "AutoScalingGroups[0].Instances[].[InstanceId,LifecycleState,HealthStatus]" --output table
+
+aws elbv2 describe-target-health --target-group-arn $TG_ARN --query "TargetHealthDescriptions[].[Target.Id,TargetHealth.State]" --output table
+
+# Ripeti finché 2 InService + healthy. Istanze originali Lab 02 nel target group: non nell’ASG. Dopo verifica, deregistra:
+aws elbv2 deregister-targets --target-group-arn $TG_ARN --targets Id=i-ORIGINALE1 Id=i-ORIGINALE2
+
+# --- Passo 6 ---
+IDS=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names demo-asg-web --query "AutoScalingGroups[0].Instances[].InstanceId" --output text)
+INST1=$(echo $IDS | awk '{print $1}'); INST2=$(echo $IDS | awk '{print $2}')
+
+aws cloudwatch put-metric-alarm --alarm-name demo-cpu-alta --namespace AWS/EC2 --metric-name CPUUtilization --dimensions Name=InstanceId,Value=$INST1 --statistic Average --period 300 --evaluation-periods 1 --datapoints-to-alarm 1 --threshold 70 --comparison-operator GreaterThanThreshold
+
+aws cloudwatch describe-alarms --alarm-names demo-cpu-alta --query "MetricAlarms[].{Name:AlarmName,State:StateValue,Threshold:Threshold}"
+
+# --- Passo 7 ---
+aws ec2 terminate-instances --instance-ids $INST2
+
+aws autoscaling describe-scaling-activities --auto-scaling-group-name demo-asg-web --max-items 3
+```
+
+### Cleanup
+
+```bash
+# Cleanup: eliminare l'ASG (termina le istanze), la launch template e l'allarme
+aws autoscaling delete-auto-scaling-group --auto-scaling-group-name demo-asg-web-2 --force-delete
+aws ec2 delete-launch-template --launch-template-name demo-lt-web
+aws cloudwatch delete-alarms --alarm-names demo-cpu-alta
+```

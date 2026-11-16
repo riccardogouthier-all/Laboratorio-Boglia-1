@@ -85,3 +85,63 @@ Output atteso:
 
 ## Nota metodologica
 `<instance-id>`, `<snapshot-id>`, device reale: da compilare con valori osservati. Volume ID e AZ da screenshot del PDF di svolgimento.
+
+Procedura di esecuzione in CLI Cloudshell:
+
+Il lab si esegue in due ambienti: CloudShell (CLI) e SSH sull'istanza (formattazione e mount).
+Sostituire `<instance-id-demo-web-02>` con l'ID reale dell'istanza.
+
+```bash
+R=us-east-1
+ID=<instance-id-demo-web-02>
+
+AZ=$(aws ec2 describe-instances --instance-ids $ID --region $R \
+  --query "Reservations[0].Instances[0].Placement.AvailabilityZone" --output text)
+echo $AZ
+
+VOL=$(aws ec2 create-volume --availability-zone $AZ --volume-type gp3 --size 10 \
+  --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=demo-data-vol}]' \
+  --query VolumeId --output text --region $R)
+echo $VOL
+
+aws ec2 wait volume-available --volume-ids $VOL --region $R
+aws ec2 attach-volume --volume-id $VOL --instance-id $ID --device /dev/sdf --region $R
+aws ec2 wait volume-in-use --volume-ids $VOL --region $R
+
+
+# --- Dentro l'istanza (sessione SSH) ---
+
+lsblk -f                       # trova disco 10G senza FS (xvdf o nvme1n1)
+LAB_DATA_DEVICE=/dev/xvdf      # adatta al device reale
+sudo blkid "$LAB_DATA_DEVICE"  # vuoto = nessun output
+sudo mkfs -t ext4 "$LAB_DATA_DEVICE"   # solo se vuoto
+sudo mkdir -p /mnt/demo-data
+sudo mount "$LAB_DATA_DEVICE" /mnt/demo-data
+findmnt /mnt/demo-data
+echo "demo storage EBS" | sudo tee /mnt/demo-data/test.txt
+cat /mnt/demo-data/test.txt
+sync
+
+
+# --- Di nuovo in CloudShell (snapshot e verifica) ---
+
+SNAP=$(aws ec2 create-snapshot --volume-id $VOL --region $R \
+  --description "backup volume dati del laboratorio" \
+  --query SnapshotId --output text)
+echo $SNAP
+
+aws ec2 wait snapshot-completed --snapshot-ids $SNAP --region $R
+
+aws ec2 describe-volumes --volume-ids $VOL --region $R \
+  --query "Volumes[].{State:State,Size:Size,Type:VolumeType,AZ:AvailabilityZone}"
+aws ec2 describe-snapshots --snapshot-ids $SNAP --region $R \
+  --query "Snapshots[].{State:State,Progress:Progress}"
+```
+
+### Cleanup
+
+```bash
+aws ec2 detach-volume --volume-id $VOL && aws ec2 wait volume-available --volume-ids $VOL
+aws ec2 delete-volume --volume-id $VOL
+aws ec2 delete-snapshot --snapshot-id $SNAP
+```
