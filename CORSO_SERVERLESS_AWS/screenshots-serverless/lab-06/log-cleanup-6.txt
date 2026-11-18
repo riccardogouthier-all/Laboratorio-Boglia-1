@@ -1,8 +1,0 @@
-===== passo 1: passo 1
-aws lambda delete-function --function-name hello-serverless
-aws logs delete-log-group --log-group-name /aws/lambda/hello-serverless
---- output (exit 0, 10s)
-{
-    "StatusCode": 204
-}
-

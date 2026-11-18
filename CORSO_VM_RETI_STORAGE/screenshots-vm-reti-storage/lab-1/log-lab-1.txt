@@ -1,7 +1,0 @@
-===== passo 5: User data (dnf install httpd) può finire dopo lo status check: si riprova fino a 20 volte invece di un solo tentativo dopo 30 s
-# User data (dnf install httpd) può finire dopo lo status check: si riprova fino a 20 volte invece di un solo tentativo dopo 30 s
-for i in $(seq 1 20); do curl -sI -m 5 http://$IP1/ | head -1 | grep -q "200 OK" && break; sleep 15; done
-curl -sI http://$IP1/ | head -1
---- output (exit 0, 1s)
-HTTP/1.1 200 OK
-
