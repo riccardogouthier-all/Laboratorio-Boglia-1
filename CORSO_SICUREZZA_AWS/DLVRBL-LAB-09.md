@@ -1,19 +1,24 @@
 # Consegna Lab 09 - AWS WAF e Secrets Manager
 
 ## WAF
-Web ACL `sicurezza09-rg`, creata con Terraform: Regional, `us-east-1`, nessuna risorsa associata (associazioni: 0, screenshot), default action `Allow`.
+Web ACL `sicurezza09-rg`, creata con Terraform: Regional, `us-east-1`, nessuna risorsa associata (associazioni: 0), default action `Allow`.
 
 Regola `osserva-admin`: URI path `starts with` `/admin`, text transformation `NONE`, action `Count`, priority 0.
 
-| Percorso | Corrisponde | Nota |
+| Percorso | Corrisponde (atteso dalla regola) | Nota |
 |---|---|---|
-| `/` | no | Count 0 |
-| `/admin` | si | Count |
-| `/admin/report` | si | Count |
-| `/administrator` | si | possibile falso positivo: il confronto e per prefisso |
+| `/` | no | non incrementa il contatore `Count` |
+| `/admin` | sì | incrementerebbe `Count`, senza bloccare |
+| `/admin/report` | sì | incrementerebbe `Count`, senza bloccare |
+| `/administrator` | sì | possibile falso positivo: il confronto è per prefisso |
 | `/Admin` | no | confronto case-sensitive |
 
 `Count` osserva senza bloccare: serve a tarare la regola prima di passare a `Block`.
+
+## Scelta motivata dei controlli
+- **WAF con `Count` e non `Block`**: la regola `/admin` può dare falsi positivi (per esempio `/administrator`). Con `Count` si misura quanto traffico legittimo colpirebbe e si corregge la regola prima di bloccare.
+- **Secrets Manager invece di una variabile d'ambiente o del codice**: il valore è cifrato con KMS, ha versioni (`AWSCURRENT`, `AWSPREVIOUS`) e l'accesso si controlla e si registra con IAM e CloudTrail.
+- **Shield Advanced non attivato**: protegge da attacchi DDoS di livello avanzato ma ha un costo mensile fisso e non serve a un lab senza traffico reale. Shield Standard è incluso per tutti gli utenti AWS.
 
 ## Secrets Manager
 Segreto `sicurezza09/rg`: chiave `aws/secretsmanager`, rotazione e replica disabilitate.
@@ -23,16 +28,16 @@ Segreto `sicurezza09/rg`: chiave `aws/secretsmanager`, rotazione e replica disab
 | v1 | `DEMO-NON-VALIDO-v1` | `AWSPREVIOUS` |
 | v2 | `DEMO-NON-VALIDO-v2` | `AWSCURRENT` |
 
-(screenshot delle versioni)
+La tabella sopra riassume le versioni; per verificarle: `aws secretsmanager list-secret-version-ids --secret-id sicurezza09/rg`.
 
-Il valore e fittizio: nessun segreto reale.
+Il valore è fittizio: nessun segreto reale.
 
 ## Cleanup
-Il segreto e in eliminazione pianificata con 7 giorni di recupero, non forzata. Web ACL rimossa con `terraform destroy`.
+Il segreto è in eliminazione pianificata con 7 giorni di recupero, non forzata. Web ACL rimossa con `terraform destroy`.
 
 ## Limiti
-- Nessuna protezione del traffico reale e stata collaudata (Web ACL senza risorse associate).
-- Shield Advanced non attivato.
+- Nessun traffico è stato inviato e la Web ACL non è associata a risorse: i contatori `Count` restano a 0 e gli esiti della tabella sono dedotti dalla regola, non osservati.
+- Shield Advanced non attivato: protegge da DDoS di livello avanzato ma ha un costo mensile fisso elevato e non serve in questo lab; AWS Shield Standard è già incluso senza attivazione.
 
 ## Checkpoint
 - [x] Web ACL con regola `Count` e 5 esiti attesi motivati
@@ -48,6 +53,7 @@ SUF=rg
 
 # ---------- WAF ----------
 # Steps 1-13 - Web ACL regionale sicurezza09-SUFFISSO: default Allow, regola osserva-admin (URI path starts with /admin, NONE, Count, priority 0)
+# Nota: nel JSON per la CLI v2 SearchString e un blob in base64: "L2FkbWlu" = "/admin" (con "/admin" in chiaro: Invalid base64)
 cat > rules.json <<'EOF'
 [
   {
@@ -55,7 +61,7 @@ cat > rules.json <<'EOF'
     "Priority": 0,
     "Statement": {
       "ByteMatchStatement": {
-        "SearchString": "/admin",
+        "SearchString": "L2FkbWlu",
         "FieldToMatch": {"UriPath": {}},
         "TextTransformations": [{"Priority": 0, "Type": "NONE"}],
         "PositionalConstraint": "STARTS_WITH"
@@ -80,11 +86,11 @@ aws wafv2 list-resources-for-web-acl --web-acl-arn $(aws wafv2 get-web-acl --nam
 aws secretsmanager create-secret --name sicurezza09/$SUF --secret-string '{"password":"DEMO-NON-VALIDO-v1"}' --region us-east-1
 # Steps 22-23 - Aggiornare a v2
 aws secretsmanager put-secret-value --secret-id sicurezza09/$SUF --secret-string '{"password":"DEMO-NON-VALIDO-v2"}' --region us-east-1
-# Step 24 - Versioni: la v2 e AWSCURRENT, la v1 e AWSPREVIOUS
+# Step 24 - Versioni: la v2 è AWSCURRENT, la v1 è AWSPREVIOUS
 aws secretsmanager list-secret-version-ids --secret-id sicurezza09/$SUF --region us-east-1 --query "Versions[].[VersionId,VersionStages]" --output json
 ```
 
-Match WAF attesi (osservati dalle metriche Count, nessun traffico reale): `/` no, `/admin` si, `/admin/report` si, `/administrator` si (possibile falso positivo: confronto per prefisso), `/Admin` no (case-sensitive). Non attivare Shield Advanced ne test di carico.
+Match WAF attesi (dedotti dalla regola: nessun traffico reale, quindi le metriche `Count` restano a 0): `/` no, `/admin` sì, `/admin/report` sì, `/administrator` sì (possibile falso positivo: confronto per prefisso), `/Admin` no (case-sensitive). Non attivare Shield Advanced né test di carico.
 
 ### Cleanup
 

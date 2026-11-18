@@ -1,0 +1,20 @@
+===== passo 1: Cleanup: eliminare l'ASG (termina le istanze), la launch template e l'allarme
+# Cleanup: eliminare l'ASG (termina le istanze), la launch template e l'allarme
+aws autoscaling delete-auto-scaling-group --auto-scaling-group-name demo-asg-web --force-delete
+aws ec2 delete-launch-template --launch-template-name demo-lt-web
+aws cloudwatch delete-alarms --alarm-names demo-cpu-alta
+--- output (exit 0, 15s)
+{
+    "LaunchTemplate": {
+        "LaunchTemplateId": "lt-0503bf3140a591e86",
+        "LaunchTemplateName": "demo-lt-web",
+        "CreateTime": "2026-11-17T20:39:08+00:00",
+        "CreatedBy": "arn:aws:sts::533267308404:assumed-role/voclabs/user4792014=riccardo.gouthier@edu-its.it",
+        "DefaultVersionNumber": 1,
+        "LatestVersionNumber": 1,
+        "Operator": {
+            "Managed": false
+        }
+    }
+}
+

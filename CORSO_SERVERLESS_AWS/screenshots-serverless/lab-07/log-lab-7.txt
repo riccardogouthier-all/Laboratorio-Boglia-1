@@ -1,0 +1,193 @@
+===== passo 1: passo 1
+export AWS_DEFAULT_REGION=us-east-1
+ROLE_ARN=$(aws iam get-role --role-name LabRole --query Role.Arn --output text)
+ACC=$(aws sts get-caller-identity --query Account --output text)
+BUCKET=lab07-trigger-gouthier533267
+mkdir -p lab07 && cd lab07
+--- output (exit 0, 12s)
+
+
+===== passo 2: Step 1 - Bucket
+# Step 1 - Bucket
+aws s3api create-bucket --bucket $BUCKET
+--- output (exit 0, 5s)
+{
+    "Location": "/lab07-trigger-gouthier533267",
+    "BucketArn": "arn:aws:s3:::lab07-trigger-gouthier533267"
+}
+
+===== passo 3: Step 2 - Funzione process-s3-upload
+# Step 2 - Funzione process-s3-upload
+cat > lambda_function.py <<'EOF'
+import json
+import urllib.parse
+
+def lambda_handler(event, context):
+    for record in event['Records']:
+        bucket = record['s3']['bucket']['name']
+        key = urllib.parse.unquote_plus(record['s3']['object']['key'])
+        size = record['s3']['object']['size']
+
+        print(f"File uploaded: s3://{bucket}/{key} (size: {size} bytes)")
+        print(f"Dimensione: {size} bytes")
+
+    return {'statusCode': 200, 'body': f'Processed {len(event["Records"])} files'}
+EOF
+zip -q s3fn.zip lambda_function.py
+aws lambda create-function --function-name process-s3-upload --runtime python3.12 --role $ROLE_ARN --handler lambda_function.lambda_handler --zip-file fileb://s3fn.zip
+aws lambda wait function-active-v2 --function-name process-s3-upload
+--- output (exit 0, 10s)
+{
+    "FunctionName": "process-s3-upload",
+    "FunctionArn": "arn:aws:lambda:us-east-1:533267308404:function:process-s3-upload",
+    "Runtime": "python3.12",
+    "Role": "arn:aws:iam::533267308404:role/LabRole",
+    "Handler": "lambda_function.lambda_handler",
+    "CodeSize": 410,
+    "Description": "",
+    "Timeout": 3,
+    "MemorySize": 128,
+    "LastModified": "2026-11-17T22:34:38.605+0000",
+    "CodeSha256": "fFH00r5vn7t4YRZEZbqg9MfjCIleCmpuz3VXMPkgLqQ=",
+    "Version": "$LATEST",
+    "TracingConfig": {
+        "Mode": "PassThrough"
+    },
+    "RevisionId": "e5a6f78b-2ad8-4698-86fe-db9bbd724a97",
+    "State": "Pending",
+    "StateReason": "The function is being created.",
+    "StateReasonCode": "Creating",
+    "PackageType": "Zip",
+    "Architectures": [
+        "x86_64"
+    ],
+    "EphemeralStorage": {
+        "Size": 512
+    },
+    "SnapStart": {
+        "ApplyOn": "None",
+        "OptimizationStatus": "Off"
+    },
+    "RuntimeVersionConfig": {
+        "RuntimeVersionArn": "arn:aws:lambda:us-east-1::runtime:9d15a516fef11563a8c452bd8d3fe5a5a120b73013e74783e925235557467534"
+    },
+    "LoggingConfig": {
+        "LogFormat": "Text",
+        "LogGroup": "/aws/lambda/process-s3-upload"
+    }
+}
+
+===== passo 4: Step 3 - Trigger S3 (All object create events)
+# Step 3 - Trigger S3 (All object create events)
+aws lambda add-permission --function-name process-s3-upload --statement-id s3-invoke --action lambda:InvokeFunction --principal s3.amazonaws.com --source-arn arn:aws:s3:::$BUCKET --source-account $ACC
+FN1=$(aws lambda get-function --function-name process-s3-upload --query Configuration.FunctionArn --output text)
+aws s3api put-bucket-notification-configuration --bucket $BUCKET --notification-configuration "{\"LambdaFunctionConfigurations\":[{\"Id\":\"upload-trigger\",\"LambdaFunctionArn\":\"$FN1\",\"Events\":[\"s3:ObjectCreated:*\"]}]}"
+--- output (exit 0, 17s)
+{
+    "Statement": "{\"Sid\":\"s3-invoke\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"s3.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-east-1:533267308404:function:process-s3-upload\",\"Condition\":{\"StringEquals\":{\"AWS:SourceAccount\":\"533267308404\"},\"ArnLike\":{\"AWS:SourceArn\":\"arn:aws:s3:::lab07-trigger-gouthier533267\"}}}"
+}
+
+===== passo 5: Step 4 - Test: upload di un file con spazio nel nome e lettura dei log
+# Step 4 - Test: upload di un file con spazio nel nome e lettura dei log
+echo "comando di test per l'hypervisor" > "comando hypervisor.txt"
+aws s3 cp "comando hypervisor.txt" s3://$BUCKET/
+sleep 10
+aws logs tail /aws/lambda/process-s3-upload --since 5m
+--- output (exit 0, 20s)
+Completed 33 Bytes/33 Bytes (52 Bytes/s) with 1 file(s) remainingupload: .\comando hypervisor.txt to s3://lab07-trigger-gouthier533267/comando hypervisor.txt
+2026-11-17T22:35:05.606000+00:00 2026/11/17/[$LATEST]b21715f44a614a45b8a8475d806dffbd INIT_START Runtime Version: python:3.12.mainlinev2.v86	Runtime Version ARN: arn:aws:lambda:us-east-1::runtime:9d15a516fef11563a8c452bd8d3fe5a5a120b73013e74783e925235557467534
+2026-11-17T22:35:05.695000+00:00 2026/11/17/[$LATEST]b21715f44a614a45b8a8475d806dffbd START RequestId: 3f2b51a8-ba66-4eaf-9db0-36108bd2b362 Version: $LATEST
+2026-11-17T22:35:05.695000+00:00 2026/11/17/[$LATEST]b21715f44a614a45b8a8475d806dffbd File uploaded: s3://lab07-trigger-gouthier533267/comando hypervisor.txt (size: 33 bytes)
+2026-11-17T22:35:05.695000+00:00 2026/11/17/[$LATEST]b21715f44a614a45b8a8475d806dffbd Dimensione: 33 bytes
+2026-11-17T22:35:05.697000+00:00 2026/11/17/[$LATEST]b21715f44a614a45b8a8475d806dffbd END RequestId: 3f2b51a8-ba66-4eaf-9db0-36108bd2b362
+2026-11-17T22:35:05.697000+00:00 2026/11/17/[$LATEST]b21715f44a614a45b8a8475d806dffbd REPORT RequestId: 3f2b51a8-ba66-4eaf-9db0-36108bd2b362	Duration: 1.78 ms	Billed Duration: 88 ms	Memory Size: 128 MB	Max Memory Used: 33 MB	Init Duration: 85.25 ms
+
+===== passo 6: Step 5 - Funzione scheduled-task
+# Step 5 - Funzione scheduled-task
+cat > lambda_function.py <<'EOF'
+import json
+from datetime import datetime
+
+def lambda_handler(event, context):
+    now = datetime.utcnow().isoformat()
+    print(f"Scheduled execution at {now}")
+    print(f"Event source: {json.dumps(event)}")
+    return {'statusCode': 200, 'body': f'Executed at {now}'}
+EOF
+zip -q schedfn.zip lambda_function.py
+aws lambda create-function --function-name scheduled-task --runtime python3.12 --role $ROLE_ARN --handler lambda_function.lambda_handler --zip-file fileb://schedfn.zip
+aws lambda wait function-active-v2 --function-name scheduled-task
+--- output (exit 0, 11s)
+{
+    "FunctionName": "scheduled-task",
+    "FunctionArn": "arn:aws:lambda:us-east-1:533267308404:function:scheduled-task",
+    "Runtime": "python3.12",
+    "Role": "arn:aws:iam::533267308404:role/LabRole",
+    "Handler": "lambda_function.lambda_handler",
+    "CodeSize": 319,
+    "Description": "",
+    "Timeout": 3,
+    "MemorySize": 128,
+    "LastModified": "2026-11-17T22:35:26.005+0000",
+    "CodeSha256": "jIuqaypoNUuuFCVA3mEqAgclgpJGy8WeFtPkzEzzQnM=",
+    "Version": "$LATEST",
+    "TracingConfig": {
+        "Mode": "PassThrough"
+    },
+    "RevisionId": "66621e56-ec11-4673-973b-51ebc152bffb",
+    "State": "Pending",
+    "StateReason": "The function is being created.",
+    "StateReasonCode": "Creating",
+    "PackageType": "Zip",
+    "Architectures": [
+        "x86_64"
+    ],
+    "EphemeralStorage": {
+        "Size": 512
+    },
+    "SnapStart": {
+        "ApplyOn": "None",
+        "OptimizationStatus": "Off"
+    },
+    "RuntimeVersionConfig": {
+        "RuntimeVersionArn": "arn:aws:lambda:us-east-1::runtime:9d15a516fef11563a8c452bd8d3fe5a5a120b73013e74783e925235557467534"
+    },
+    "LoggingConfig": {
+        "LogFormat": "Text",
+        "LogGroup": "/aws/lambda/scheduled-task"
+    }
+}
+
+===== passo 7: Step 6 - Trigger EventBridge ogni 5 minuti
+# Step 6 - Trigger EventBridge ogni 5 minuti
+RULE_ARN=$(aws events put-rule --name every-5-min-rule --schedule-expression "rate(5 minutes)" --state ENABLED --query RuleArn --output text)
+aws lambda add-permission --function-name scheduled-task --statement-id eventbridge-invoke --action lambda:InvokeFunction --principal events.amazonaws.com --source-arn $RULE_ARN
+FN2=$(aws lambda get-function --function-name scheduled-task --query Configuration.FunctionArn --output text)
+aws events put-targets --rule every-5-min-rule --targets "Id=scheduled-task,Arn=$FN2"
+--- output (exit 0, 20s)
+{
+    "Statement": "{\"Sid\":\"eventbridge-invoke\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"events.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-east-1:533267308404:function:scheduled-task\",\"Condition\":{\"ArnLike\":{\"AWS:SourceArn\":\"arn:aws:events:us-east-1:533267308404:rule/every-5-min-rule\"}}}"
+}
+{
+    "FailedEntryCount": 0,
+    "FailedEntries": []
+}
+
+===== passo 8: Dopo 5-10 minuti: esecuzioni periodiche nei log
+# Dopo 5-10 minuti: esecuzioni periodiche nei log
+sleep 360
+aws logs tail /aws/lambda/scheduled-task --since 15m
+cd ..
+--- output (exit 0, 366s)
+2026-11-17T22:32:19.263000+00:00 2026/11/17/[$LATEST]9c6232522ea44833953d76dee8856b27 START RequestId: 7518001e-4a4e-41b4-aec2-ecd21d4273d8 Version: $LATEST
+2026-11-17T22:32:19.264000+00:00 2026/11/17/[$LATEST]9c6232522ea44833953d76dee8856b27 Scheduled execution at 2026-11-17T22:32:19.263833
+2026-11-17T22:32:19.264000+00:00 2026/11/17/[$LATEST]9c6232522ea44833953d76dee8856b27 Event source: {"version": "0", "id": "97f4390e-7447-2447-ddf0-f0d8969e0dfb", "detail-type": "Scheduled Event", "source": "aws.events", "account": "533267308404", "time": "2026-11-17T22:31:58Z", "region": "us-east-1", "resources": ["arn:aws:events:us-east-1:533267308404:rule/every-5-min-rule"], "detail": {}}
+2026-11-17T22:32:19.278000+00:00 2026/11/17/[$LATEST]9c6232522ea44833953d76dee8856b27 END RequestId: 7518001e-4a4e-41b4-aec2-ecd21d4273d8
+2026-11-17T22:32:19.278000+00:00 2026/11/17/[$LATEST]9c6232522ea44833953d76dee8856b27 REPORT RequestId: 7518001e-4a4e-41b4-aec2-ecd21d4273d8	Duration: 14.28 ms	Billed Duration: 15 ms	Memory Size: 128 MB	Max Memory Used: 32 MB
+2026-11-17T22:40:41.929000+00:00 2026/11/17/[$LATEST]835be9c7147f43c5a3fefddd7af01076 INIT_START Runtime Version: python:3.12.mainlinev2.v86	Runtime Version ARN: arn:aws:lambda:us-east-1::runtime:9d15a516fef11563a8c452bd8d3fe5a5a120b73013e74783e925235557467534
+2026-11-17T22:40:42.020000+00:00 2026/11/17/[$LATEST]835be9c7147f43c5a3fefddd7af01076 START RequestId: 23288105-ffcd-4efc-9b4e-ef1406b050bd Version: $LATEST
+2026-11-17T22:40:42.021000+00:00 2026/11/17/[$LATEST]835be9c7147f43c5a3fefddd7af01076 Scheduled execution at 2026-11-17T22:40:42.021552
+2026-11-17T22:40:42.021000+00:00 2026/11/17/[$LATEST]835be9c7147f43c5a3fefddd7af01076 Event source: {"version": "0", "id": "6e5d8b0e-5e82-861b-661e-d24616fe9230", "detail-type": "Scheduled Event", "source": "aws.events", "account": "533267308404", "time": "2026-11-17T22:40:37Z", "region": "us-east-1", "resources": ["arn:aws:events:us-east-1:533267308404:rule/every-5-min-rule"], "detail": {}}
+2026-11-17T22:40:42.037000+00:00 2026/11/17/[$LATEST]835be9c7147f43c5a3fefddd7af01076 END RequestId: 23288105-ffcd-4efc-9b4e-ef1406b050bd
+2026-11-17T22:40:42.037000+00:00 2026/11/17/[$LATEST]835be9c7147f43c5a3fefddd7af01076 REPORT RequestId: 23288105-ffcd-4efc-9b4e-ef1406b050bd	Duration: 2.10 ms	Billed Duration: 90 ms	Memory Size: 128 MB	Max Memory Used: 33 MB	Init Duration: 87.05 ms
+

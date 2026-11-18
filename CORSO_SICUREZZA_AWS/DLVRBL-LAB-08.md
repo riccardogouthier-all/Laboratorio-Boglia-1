@@ -7,32 +7,32 @@
 
 | Valore pubblicato | Stato allarme |
 |---|---|
-| 5 | `ALARM` (screenshot) |
+| 5 | `ALARM` (somma 5 > soglia 3 nel periodo di 1 minuto) |
 | 0 (periodo successivo) | `OK` atteso (non osservato) |
 
 ## AWS Config
-Nella console AWS Config risulta non attivo in `us-east-1` (nessun recorder, schermata di benvenuto). Non sono stati creati recorder ne canali di consegna.
+Nella console AWS Config risulta non attivo in `us-east-1` (nessun recorder, schermata di benvenuto). Non sono stati creati recorder né canali di consegna.
 
 ### Progetto locale della regola `ENCRYPTED_VOLUMES`
 - Prerequisiti: recorder, service-linked role, delivery channel S3
 - Scope: `AWS::EC2::Volume`
 
-| Caso | Volume | Valutazione |
-|---|---|---|
-| A | cifrato e collegato | conforme |
-| B | non cifrato e collegato | non conforme |
-| C | non collegato | non applicabile |
-| D | non registrato | non valutabile |
+| Caso | Volume | Valutazione | Motivazione |
+|---|---|---|---|
+| A | cifrato e collegato | conforme | la regola `ENCRYPTED_VOLUMES` controlla che i volumi collegati a un'istanza siano cifrati: qui lo sono |
+| B | non cifrato e collegato | non conforme | il volume è collegato ma non cifrato: viola la regola |
+| C | non collegato | non applicabile | `ENCRYPTED_VOLUMES` valuta solo i volumi in stato `in-use`, quindi un volume `available` resta fuori dalla valutazione |
+| D | non registrato | non valutabile | Config valuta solo le risorse che il recorder ha registrato; senza recorder (o senza il tipo `AWS::EC2::Volume`) non esiste un elemento di configurazione da valutare |
 
 ## Limite
-Un allarme `OK` non prova la conformita dei volumi: monitoraggio e conformita sono controlli diversi.
+Un allarme `OK` non prova la conformità dei volumi: monitoraggio e conformità sono controlli diversi.
 
 ## Checkpoint
 - [x] Metrica custom pubblicata, allarme in `ALARM` con valore 5
 - [x] Ritorno a `OK` dichiarato come atteso, non osservato
 - [x] Config non attivo: nessuna risorsa creata, regola solo progettata
 - [x] Quattro casi di valutazione motivati
-- [x] Allarme rimosso nel cleanup finale (Lab 6-10); le metriche restano secondo la retention AWS
+- [x] Cleanup descritto nel documento (eliminazione dell'allarme); le metriche restano secondo la retention AWS
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -61,7 +61,7 @@ aws configservice describe-configuration-recorders --region us-east-1        # l
 aws configservice describe-config-rules --region us-east-1 --query "ConfigRules[].ConfigRuleName" 2>/dev/null
 ```
 
-Steps 17-19 (regola `ENCRYPTED_VOLUMES`): se Config non e attivo, nessun recorder ne delivery channel viene creato; la regola e un progetto con scope `AWS::EC2::Volume` e quattro valutazioni (A conforme, B non conforme, C non applicabile, D non valutabile). Un allarme `OK` non prova la conformita dei volumi.
+Steps 17-19 (regola `ENCRYPTED_VOLUMES`): se Config non è attivo, nessun recorder né delivery channel viene creato; la regola è un progetto con scope `AWS::EC2::Volume` e quattro valutazioni (A conforme, B non conforme, C non applicabile, D non valutabile). Un allarme `OK` non prova la conformità dei volumi.
 
 ### Cleanup
 
@@ -70,4 +70,4 @@ aws cloudwatch delete-alarms --alarm-names sicurezza08-$SUF --region us-east-1
 aws cloudwatch describe-alarms --alarm-names sicurezza08-$SUF --query "MetricAlarms" --output text    # atteso: vuoto
 ```
 
-Le metriche gia pubblicate in `Sicurezza08` non si cancellano manualmente e restano secondo la retention AWS.
+Le metriche già pubblicate in `Sicurezza08` non si cancellano manualmente e restano secondo la retention AWS.

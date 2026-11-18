@@ -1,0 +1,33 @@
+===== passo 1: passo 1
+aws ec2 delete-volume --volume-id $VOL
+aws s3api delete-object --bucket $BUCKET --key test-cifratura.txt
+aws s3api delete-objects --bucket $BUCKET --delete "$(aws s3api list-object-versions --bucket $BUCKET --query '{Objects: [Versions,DeleteMarkers][][].{Key:Key,VersionId:VersionId}}' --output json)"
+aws s3api delete-bucket --bucket $BUCKET
+--- output (exit 0, 24s)
+{
+    "DeleteMarker": true,
+    "VersionId": "5rjXkb_bi5aYSt6AOi5Dt52p3UUVxvXs"
+}
+{
+    "Deleted": [
+        {
+            "Key": "test-cifratura.txt",
+            "VersionId": "CzmYK9PRlT9Y4ICPQLuqXJSa9WMcU.7v"
+        },
+        {
+            "Key": "report.txt",
+            "VersionId": "HeTaF56x9giFwyWZfHMR3FMNJM6zDAXS"
+        },
+        {
+            "Key": "test-cifratura.txt",
+            "VersionId": "5rjXkb_bi5aYSt6AOi5Dt52p3UUVxvXs",
+            "DeleteMarker": true,
+            "DeleteMarkerVersionId": "5rjXkb_bi5aYSt6AOi5Dt52p3UUVxvXs"
+        },
+        {
+            "Key": "report.txt",
+            "VersionId": "LLMVEhKDbzETmC2csf3DEbpUunL3DTh8"
+        }
+    ]
+}
+

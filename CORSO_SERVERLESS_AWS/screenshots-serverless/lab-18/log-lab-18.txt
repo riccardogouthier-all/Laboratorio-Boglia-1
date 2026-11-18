@@ -1,0 +1,606 @@
+===== passo 1: passo 1
+export AWS_DEFAULT_REGION=us-east-1
+ACC=$(aws sts get-caller-identity --query Account --output text)
+sam --version
+aws iam get-role --role-name LabRole --query Role.Arn --output text
+
+cd ~
+sam init --runtime python3.12 --name order-api --app-template hello-world --package-type Zip --dependency-manager pip --no-tracing --no-application-insights --no-interactive
+cd order-api && ls
+
+cat > template.yaml <<'EOF'
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Order API - SAM Lab 18
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 10
+    MemorySize: 128
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref OrdersTable
+
+Resources:
+  CreateOrderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.create_order
+      CodeUri: src/
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole
+      Events:
+        CreateOrder:
+          Type: Api
+          Properties:
+            Path: /orders
+            Method: post
+
+  GetOrderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.get_order
+      CodeUri: src/
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole
+      Events:
+        GetOrder:
+          Type: Api
+          Properties:
+            Path: /orders/{order_id}
+            Method: get
+
+  OrdersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: sam-lab18-orders
+      AttributeDefinitions:
+        - AttributeName: order_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: order_id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+  ApiUrl:
+    Description: API endpoint URL
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+EOF
+
+mkdir -p src
+cat > src/app.py <<'EOF'
+import json
+import os
+import boto3
+import uuid
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table(os.environ['TABLE_NAME'])
+
+def create_order(event, context):
+    try:
+        body = json.loads(event.get('body', '{}'))
+        order_id = str(uuid.uuid4())[:8]
+
+        item = {
+            'order_id': order_id,
+            'customer': body.get('customer', 'unknown'),
+            'total': str(body.get('total', 0)),
+            'status': 'created'
+        }
+
+        table.put_item(Item=item)
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps({'message': 'Order created', 'order': item})
+        }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'error': str(e)})
+        }
+
+def get_order(event, context):
+    try:
+        order_id = event['pathParameters']['order_id']
+
+        response = table.get_item(Key={'order_id': order_id})
+        item = response.get('Item')
+
+        if not item:
+            return {
+                'statusCode': 404,
+                'body': json.dumps({'error': 'Order not found'})
+            }
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps({'order': item})
+        }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'error': str(e)})
+        }
+EOF
+
+sam validate --region us-east-1
+sam build
+
+sam deploy --stack-name order-api-lab18 --region us-east-1 --capabilities CAPABILITY_IAM --resolve-s3 --no-disable-rollback --no-confirm-changeset --save-params
+
+aws cloudformation describe-stacks --stack-name order-api-lab18 --query "Stacks[0].StackStatus" --output text
+API_URL=$(aws cloudformation describe-stacks --stack-name order-api-lab18 --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" --output text)
+echo $API_URL
+
+RES=$(curl -s -X POST ${API_URL}orders -H "Content-Type: application/json" -d '{"customer": "Bob", "total": 150}')
+echo $RES
+OID=$(echo $RES | jq -r .order.order_id)
+curl -s ${API_URL}orders/$OID
+curl -s -o /dev/null -w "%{http_code}\n" ${API_URL}orders/nonexistent
+
+cd ~
+sam init --runtime python3.12 --name monitored-api --app-template hello-world --package-type Zip --dependency-manager pip --no-tracing --no-application-insights --no-interactive
+cd monitored-api
+
+cat > template.yaml <<'EOF'
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Monitored API - Lab 18
+
+Resources:
+  ProcessFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      CodeUri: src/
+      Runtime: python3.12
+      Timeout: 10
+      MemorySize: 128
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole
+      Events:
+        Process:
+          Type: Api
+          Properties:
+            Path: /process
+            Method: post
+
+Outputs:
+  ApiUrl:
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+EOF
+
+mkdir -p src
+cat > src/app.py <<'EOF'
+import json
+import time
+import random
+
+def handler(event, context):
+    body = json.loads(event.get('body', '{}'))
+    action = body.get('action', 'fast')
+
+    if action == 'error':
+        raise ValueError("Simulated error for monitoring test")
+    elif action == 'slow':
+        time.sleep(3)
+    elif action == 'random':
+        if random.random() < 0.3:
+            raise RuntimeError("Random failure")
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps({'status': 'ok', 'action': action})
+    }
+EOF
+
+sam build
+sam deploy --stack-name monitored-api-lab18 --region us-east-1 --capabilities CAPABILITY_IAM --resolve-s3 --no-disable-rollback --no-confirm-changeset --save-params
+
+API2=$(aws cloudformation describe-stacks --stack-name monitored-api-lab18 --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" --output text)
+FN=$(aws cloudformation describe-stack-resource --stack-name monitored-api-lab18 --logical-resource-id ProcessFunction --query StackResourceDetail.PhysicalResourceId --output text)
+LG=/aws/lambda/$FN
+echo $API2 $FN
+
+for i in {1..10}; do curl -s -X POST "${API2}process" -H "Content-Type: application/json" -d '{"action": "fast"}' & done; wait
+for i in {1..3};  do curl -s -X POST "${API2}process" -H "Content-Type: application/json" -d '{"action": "slow"}' & done; wait
+for i in {1..5};  do curl -s -X POST "${API2}process" -H "Content-Type: application/json" -d '{"action": "error"}' & done; wait
+
+aws cloudformation describe-stack-resources --stack-name monitored-api-lab18 --query "StackResources[].[LogicalResourceId,ResourceType,ResourceStatus]" --output table
+aws cloudformation describe-stack-events --stack-name monitored-api-lab18 --query "reverse(StackEvents)[].[Timestamp,LogicalResourceId,ResourceStatus]" --output table
+
+q() {
+  local QID=$(aws logs start-query --log-group-name "$LG" --start-time $(date -d '-1 hour' +%s) --end-time $(date +%s) --query-string "$1" --query queryId --output text)
+  # attende lo stato Complete (le query Logs Insights sono asincrone)
+  until [ "$(aws logs get-query-results --query-id $QID --query status --output text)" = "Complete" ]; do sleep 2; done
+  # "results" (non "results[]"): ogni riga è un array di {field,value}; con "results[]" l'array si appiattisce e jq fallisce
+  aws logs get-query-results --query-id $QID --query "results" --output json | jq -r '.[] | map(.field + "=" + .value) | join(" | ")'
+}
+
+q 'filter @type = "REPORT" | sort @duration desc | limit 10'
+q 'filter @type = "REPORT" | stats count() as total, sum(@duration > 1000) as slow, count(@initDuration) as coldStarts'
+q 'filter @message like /ERROR/ | fields @timestamp, @message | sort @timestamp desc | limit 10'
+
+aws cloudwatch put-metric-alarm --alarm-name lab18-lambda-errors --namespace AWS/Lambda --metric-name Errors --dimensions Name=FunctionName,Value=$FN --statistic Sum --period 300 --evaluation-periods 1 --threshold 2 --comparison-operator GreaterThanThreshold --treat-missing-data notBreaching
+aws cloudwatch describe-alarms --alarm-names lab18-lambda-errors --query "MetricAlarms[].[AlarmName,StateValue,Threshold]" --output table
+--- output (exit 0, 223s)
+SAM CLI, version 1.172.1
+arn:aws:iam::533267308404:role/LabRole
+README.md
+__init__.py
+events
+hello_world
+samconfig.toml
+template.yaml
+tests
+C:\Users\Riccardo\AppData\Local\Temp\claude\f3818f1616c21066\42a541a1-278f-49ac-986a-0f8567aa69ba\scratchpad\home-sl\order-api\template.yaml is a valid SAM Template
+Starting Build use cache
+Building codeuri: C:\Users\Riccardo\AppData\Local\Temp\claude\f3818f1616c21066\42a541a1-278f-49ac-986a-0f8567aa69ba\scratchpad\home-sl\order-api\src runtime: python3.12 architecture: x86_64 functions: CreateOrderFunction, GetOrderFunction
+requirements.txt file not found. Continuing the build without dependencies.
+ Running PythonPipBuilder:CopySource
+
+Build Succeeded
+
+Built Artifacts  : .aws-sam\build
+Built Template   : .aws-sam\build\template.yaml
+
+Commands you can use next
+=========================
+[*] Validate SAM template: sam validate
+
+[*] Invoke Function: sam local invoke
+
+[*] Test Function in the Cloud: sam sync --stack-name {{stack-name}} --watch
+
+[*] Deploy: sam deploy --guided
+Saved parameters to config file 'samconfig.toml' under environment 'default': {'stack_name': 'order-api-lab18', 'capabilities': ('CAPABILITY_IAM',), 'resolve_s3': True, 'disable_rollback': False, 'confirm_changeset': False, 'region': 'us-east-1'}
+
+	Managed S3 bucket: aws-sam-cli-managed-default-samclisourcebucket-wlhgtr5u1gn6
+	Auto resolution of buckets can be turned off by setting resolve_s3=False
+	To use a specific S3 bucket, set --s3-bucket=<bucket_name>
+	Above settings can be stored in samconfig.toml
+
+	File with same data already exists at e5e359908e362426a71cd63cbf372bcc, skipping upload
+
+	File with same data already exists at e5e359908e362426a71cd63cbf372bcc, skipping upload
+
+	Deploying with following values
+	===============================
+	Stack name                   : order-api-lab18
+	Region                       : us-east-1
+	Confirm changeset            : False
+	Disable rollback             : False
+	Deployment s3 bucket         : aws-sam-cli-managed-default-samclisourcebucket-wlhgtr5u1gn6
+	Capabilities                 : ["CAPABILITY_IAM"]
+	Parameter overrides          : {}
+	Signing Profiles             : {}
+
+Initiating deployment
+=====================
+
+
+	File with same data already exists at a21d552476cabdf3e74b8f774ee16496.template, skipping upload
+
+
+Waiting for changeset to be created..
+
+CloudFormation stack changeset
+-------------------------------------------------------------------------------------------------
+Operation                LogicalResourceId        ResourceType             Replacement            
+-------------------------------------------------------------------------------------------------
++ Add                    CreateOrderFunctionCre   AWS::Lambda::Permissio   N/A                    
+                         ateOrderPermissionProd   n                                               
++ Add                    CreateOrderFunction      AWS::Lambda::Function    N/A                    
++ Add                    GetOrderFunctionGetOrd   AWS::Lambda::Permissio   N/A                    
+                         erPermissionProd         n                                               
++ Add                    GetOrderFunction         AWS::Lambda::Function    N/A                    
++ Add                    OrdersTable              AWS::DynamoDB::Table     N/A                    
++ Add                    ServerlessRestApiDeplo   AWS::ApiGateway::Deplo   N/A                    
+                         yment6cb573bb72          yment                                           
++ Add                    ServerlessRestApiProdS   AWS::ApiGateway::Stage   N/A                    
+                         tage                                                                     
++ Add                    ServerlessRestApi        AWS::ApiGateway::RestA   N/A                    
+                                                  pi                                              
+-------------------------------------------------------------------------------------------------
+
+
+Changeset created successfully. arn:aws:cloudformation:us-east-1:533267308404:changeSet/samcli-deploy1794969027/603cf539-6075-4c4a-9976-889596a592e0
+
+
+2026-11-18 03:30:34 - Waiting for stack create/update to complete
+
+CloudFormation events from stack operations (refresh every 5.0 seconds)
+-------------------------------------------------------------------------------------------------
+ResourceStatus           ResourceType             LogicalResourceId        ResourceStatusReason   
+-------------------------------------------------------------------------------------------------
+CREATE_IN_PROGRESS       AWS::CloudFormation::S   order-api-lab18          User Initiated         
+                         tack                                                                     
+CREATE_IN_PROGRESS       AWS::DynamoDB::Table     OrdersTable              -                      
+CREATE_IN_PROGRESS       AWS::DynamoDB::Table     OrdersTable              Resource creation      
+                                                                           Initiated              
+CREATE_COMPLETE          AWS::DynamoDB::Table     OrdersTable              -                      
+CREATE_IN_PROGRESS       AWS::Lambda::Function    CreateOrderFunction      -                      
+CREATE_IN_PROGRESS       AWS::Lambda::Function    GetOrderFunction         -                      
+CREATE_IN_PROGRESS       AWS::Lambda::Function    CreateOrderFunction      Resource creation      
+                                                                           Initiated              
+CREATE_IN_PROGRESS       AWS::Lambda::Function    GetOrderFunction         Resource creation      
+                                                                           Initiated              
+CREATE_IN_PROGRESS -     AWS::Lambda::Function    CreateOrderFunction      Eventual consistency   
+CONFIGURATION_COMPLETE                                                     check initiated        
+CREATE_IN_PROGRESS -     AWS::Lambda::Function    GetOrderFunction         Eventual consistency   
+CONFIGURATION_COMPLETE                                                     check initiated        
+CREATE_IN_PROGRESS       AWS::ApiGateway::RestA   ServerlessRestApi        -                      
+                         pi                                                                       
+CREATE_IN_PROGRESS       AWS::ApiGateway::RestA   ServerlessRestApi        Resource creation      
+                         pi                                                Initiated              
+CREATE_COMPLETE          AWS::ApiGateway::RestA   ServerlessRestApi        -                      
+                         pi                                                                       
+CREATE_IN_PROGRESS       AWS::ApiGateway::Deplo   ServerlessRestApiDeplo   -                      
+                         yment                    yment6cb573bb72                                 
+CREATE_IN_PROGRESS       AWS::Lambda::Permissio   CreateOrderFunctionCre   -                      
+                         n                        ateOrderPermissionProd                          
+CREATE_IN_PROGRESS       AWS::Lambda::Permissio   GetOrderFunctionGetOrd   -                      
+                         n                        erPermissionProd                                
+CREATE_IN_PROGRESS       AWS::Lambda::Permissio   CreateOrderFunctionCre   Resource creation      
+                         n                        ateOrderPermissionProd   Initiated              
+CREATE_IN_PROGRESS       AWS::Lambda::Permissio   GetOrderFunctionGetOrd   Resource creation      
+                         n                        erPermissionProd         Initiated              
+CREATE_IN_PROGRESS       AWS::ApiGateway::Deplo   ServerlessRestApiDeplo   Resource creation      
+                         yment                    yment6cb573bb72          Initiated              
+CREATE_COMPLETE          AWS::Lambda::Permissio   CreateOrderFunctionCre   -                      
+                         n                        ateOrderPermissionProd                          
+CREATE_COMPLETE          AWS::Lambda::Permissio   GetOrderFunctionGetOrd   -                      
+                         n                        erPermissionProd                                
+CREATE_COMPLETE          AWS::ApiGateway::Deplo   ServerlessRestApiDeplo   -                      
+                         yment                    yment6cb573bb72                                 
+CREATE_COMPLETE          AWS::Lambda::Function    CreateOrderFunction      -                      
+CREATE_COMPLETE          AWS::Lambda::Function    GetOrderFunction         -                      
+CREATE_IN_PROGRESS       AWS::ApiGateway::Stage   ServerlessRestApiProdS   -                      
+                                                  tage                                            
+CREATE_IN_PROGRESS       AWS::ApiGateway::Stage   ServerlessRestApiProdS   Resource creation      
+                                                  tage                     Initiated              
+CREATE_COMPLETE          AWS::ApiGateway::Stage   ServerlessRestApiProdS   -                      
+                                                  tage                                            
+CREATE_COMPLETE          AWS::CloudFormation::S   order-api-lab18          -                      
+                         tack                                                                     
+-------------------------------------------------------------------------------------------------
+
+CloudFormation outputs from deployed stack
+-------------------------------------------------------------------------------------------------
+Outputs                                                                                         
+-------------------------------------------------------------------------------------------------
+Key                 ApiUrl                                                                      
+Description         API endpoint URL                                                            
+Value               https://6n5sklnf22.execute-api.us-east-1.amazonaws.com/Prod/                
+-------------------------------------------------------------------------------------------------
+
+
+Successfully created/updated stack - order-api-lab18 in us-east-1
+
+CREATE_COMPLETE
+https://6n5sklnf22.execute-api.us-east-1.amazonaws.com/Prod/
+{"message": "Order created", "order": {"order_id": "80726843", "customer": "Bob", "total": "150", "status": "created"}}
+{"order": {"total": "150", "customer": "Bob", "order_id": "80726843", "status": "created"}}404
+Starting Build use cache
+Building codeuri: C:\Users\Riccardo\AppData\Local\Temp\claude\f3818f1616c21066\42a541a1-278f-49ac-986a-0f8567aa69ba\scratchpad\home-sl\monitored-api\src runtime: python3.12 architecture: x86_64 functions: ProcessFunction
+requirements.txt file not found. Continuing the build without dependencies.
+ Running PythonPipBuilder:CopySource
+
+Build Succeeded
+
+Built Artifacts  : .aws-sam\build
+Built Template   : .aws-sam\build\template.yaml
+
+Commands you can use next
+=========================
+[*] Validate SAM template: sam validate
+
+[*] Invoke Function: sam local invoke
+
+[*] Test Function in the Cloud: sam sync --stack-name {{stack-name}} --watch
+
+[*] Deploy: sam deploy --guided
+Saved parameters to config file 'samconfig.toml' under environment 'default': {'stack_name': 'monitored-api-lab18', 'capabilities': ('CAPABILITY_IAM',), 'resolve_s3': True, 'disable_rollback': False, 'confirm_changeset': False, 'region': 'us-east-1'}
+
+	Managed S3 bucket: aws-sam-cli-managed-default-samclisourcebucket-wlhgtr5u1gn6
+	Auto resolution of buckets can be turned off by setting resolve_s3=False
+	To use a specific S3 bucket, set --s3-bucket=<bucket_name>
+	Above settings can be stored in samconfig.toml
+
+	Uploading to 6c550eb7c84f02776241ae1c0d6293ce  383 / 383  (100.00%)
+
+
+	Deploying with following values
+	===============================
+	Stack name                   : monitored-api-lab18
+	Region                       : us-east-1
+	Confirm changeset            : False
+	Disable rollback             : False
+	Deployment s3 bucket         : aws-sam-cli-managed-default-samclisourcebucket-wlhgtr5u1gn6
+	Capabilities                 : ["CAPABILITY_IAM"]
+	Parameter overrides          : {}
+	Signing Profiles             : {}
+
+Initiating deployment
+=====================
+
+
+	Uploading to e8dd455e0c5a8a47307f871ad20cfd74.template  811 / 811  (100.00%)
+
+
+
+Waiting for changeset to be created..
+
+CloudFormation stack changeset
+-------------------------------------------------------------------------------------------------
+Operation                LogicalResourceId        ResourceType             Replacement            
+-------------------------------------------------------------------------------------------------
++ Add                    ProcessFunctionProcess   AWS::Lambda::Permissio   N/A                    
+                         PermissionProd           n                                               
++ Add                    ProcessFunction          AWS::Lambda::Function    N/A                    
++ Add                    ServerlessRestApiDeplo   AWS::ApiGateway::Deplo   N/A                    
+                         ymentb45c8fface          yment                                           
++ Add                    ServerlessRestApiProdS   AWS::ApiGateway::Stage   N/A                    
+                         tage                                                                     
++ Add                    ServerlessRestApi        AWS::ApiGateway::RestA   N/A                    
+                                                  pi                                              
+-------------------------------------------------------------------------------------------------
+
+
+Changeset created successfully. arn:aws:cloudformation:us-east-1:533267308404:changeSet/samcli-deploy1794969101/7462e9cb-dbe8-4b70-9bae-34a94a9436d0
+
+
+2026-11-18 03:31:49 - Waiting for stack create/update to complete
+
+CloudFormation events from stack operations (refresh every 5.0 seconds)
+-------------------------------------------------------------------------------------------------
+ResourceStatus           ResourceType             LogicalResourceId        ResourceStatusReason   
+-------------------------------------------------------------------------------------------------
+CREATE_IN_PROGRESS       AWS::CloudFormation::S   monitored-api-lab18      User Initiated         
+                         tack                                                                     
+CREATE_IN_PROGRESS       AWS::Lambda::Function    ProcessFunction          -                      
+CREATE_IN_PROGRESS       AWS::Lambda::Function    ProcessFunction          Resource creation      
+                                                                           Initiated              
+CREATE_IN_PROGRESS -     AWS::Lambda::Function    ProcessFunction          Eventual consistency   
+CONFIGURATION_COMPLETE                                                     check initiated        
+CREATE_IN_PROGRESS       AWS::ApiGateway::RestA   ServerlessRestApi        -                      
+                         pi                                                                       
+CREATE_IN_PROGRESS       AWS::ApiGateway::RestA   ServerlessRestApi        Resource creation      
+                         pi                                                Initiated              
+CREATE_COMPLETE          AWS::ApiGateway::RestA   ServerlessRestApi        -                      
+                         pi                                                                       
+CREATE_IN_PROGRESS       AWS::ApiGateway::Deplo   ServerlessRestApiDeplo   -                      
+                         yment                    ymentb45c8fface                                 
+CREATE_IN_PROGRESS       AWS::Lambda::Permissio   ProcessFunctionProcess   -                      
+                         n                        PermissionProd                                  
+CREATE_IN_PROGRESS       AWS::Lambda::Permissio   ProcessFunctionProcess   Resource creation      
+                         n                        PermissionProd           Initiated              
+CREATE_IN_PROGRESS       AWS::ApiGateway::Deplo   ServerlessRestApiDeplo   Resource creation      
+                         yment                    ymentb45c8fface          Initiated              
+CREATE_COMPLETE          AWS::Lambda::Permissio   ProcessFunctionProcess   -                      
+                         n                        PermissionProd                                  
+CREATE_COMPLETE          AWS::ApiGateway::Deplo   ServerlessRestApiDeplo   -                      
+                         yment                    ymentb45c8fface                                 
+CREATE_COMPLETE          AWS::Lambda::Function    ProcessFunction          -                      
+CREATE_IN_PROGRESS       AWS::ApiGateway::Stage   ServerlessRestApiProdS   -                      
+                                                  tage                                            
+CREATE_IN_PROGRESS       AWS::ApiGateway::Stage   ServerlessRestApiProdS   Resource creation      
+                                                  tage                     Initiated              
+CREATE_COMPLETE          AWS::ApiGateway::Stage   ServerlessRestApiProdS   -                      
+                                                  tage                                            
+CREATE_COMPLETE          AWS::CloudFormation::S   monitored-api-lab18      -                      
+                         tack                                                                     
+-------------------------------------------------------------------------------------------------
+
+CloudFormation outputs from deployed stack
+-------------------------------------------------------------------------------------------------
+Outputs                                                                                         
+-------------------------------------------------------------------------------------------------
+Key                 ApiUrl                                                                      
+Description         -                                                                           
+Value               https://y5ihchtgfd.execute-api.us-east-1.amazonaws.com/Prod/                
+-------------------------------------------------------------------------------------------------
+
+
+Successfully created/updated stack - monitored-api-lab18 in us-east-1
+
+https://y5ihchtgfd.execute-api.us-east-1.amazonaws.com/Prod/ monitored-api-lab18-ProcessFunction-ygR8PBpDn3L0
+{"status": "ok", "action": "fast"}{"status": "ok", "action": "fast"}{"status": "ok", "action": "fast"}{"status": "ok", "action": "fast"}{"status": "ok", "action": "fast"}{"status": "ok", "action": "fast"}{"status": "ok", "action": "fast"}{"status": "ok", "action": "fast"}{"status": "ok", "action": "fast"}{"status": "ok", "action": "fast"}{"status": "ok", "action": "slow"}{"status": "ok", "action": "slow"}{"status": "ok", "action": "slow"}{"message": "Internal server error"}{"message": "Internal server error"}{"message": "Internal server error"}{"message": "Internal server error"}{"message": "Internal server error"}---------------------------------------------------------------------------------------------
+|                                  DescribeStackResources                                   |
++----------------------------------------+-------------------------------+------------------+
+|  ProcessFunction                       |  AWS::Lambda::Function        |  CREATE_COMPLETE |
+|  ProcessFunctionProcessPermissionProd  |  AWS::Lambda::Permission      |  CREATE_COMPLETE |
+|  ServerlessRestApi                     |  AWS::ApiGateway::RestApi     |  CREATE_COMPLETE |
+|  ServerlessRestApiDeploymentb45c8fface |  AWS::ApiGateway::Deployment  |  CREATE_COMPLETE |
+|  ServerlessRestApiProdStage            |  AWS::ApiGateway::Stage       |  CREATE_COMPLETE |
++----------------------------------------+-------------------------------+------------------+
+-----------------------------------------------------------------------------------------------------
+|                                        DescribeStackEvents                                        |
++-----------------------------------+-----------------------------------------+---------------------+
+|  2026-11-18T02:31:43.826000+00:00 |  monitored-api-lab18                    |  REVIEW_IN_PROGRESS |
+|  2026-11-18T02:31:50.389000+00:00 |  monitored-api-lab18                    |  CREATE_IN_PROGRESS |
+|  2026-11-18T02:31:52.241000+00:00 |  ProcessFunction                        |  CREATE_IN_PROGRESS |
+|  2026-11-18T02:31:53.951000+00:00 |  ProcessFunction                        |  CREATE_IN_PROGRESS |
+|  2026-11-18T02:31:54.810000+00:00 |  ProcessFunction                        |  CREATE_IN_PROGRESS |
+|  2026-11-18T02:31:55.103000+00:00 |  ServerlessRestApi                      |  CREATE_IN_PROGRESS |
+|  2026-11-18T02:31:56.721000+00:00 |  ServerlessRestApi                      |  CREATE_IN_PROGRESS |
+|  2026-11-18T02:31:57.316000+00:00 |  ServerlessRestApi                      |  CREATE_COMPLETE    |
+|  2026-11-18T02:31:57.652000+00:00 |  ServerlessRestApiDeploymentb45c8fface  |  CREATE_IN_PROGRESS |
+|  2026-11-18T02:31:57.683000+00:00 |  ProcessFunctionProcessPermissionProd   |  CREATE_IN_PROGRESS |
+|  2026-11-18T02:31:58.766000+00:00 |  ProcessFunctionProcessPermissionProd   |  CREATE_IN_PROGRESS |
+|  2026-11-18T02:31:58.790000+00:00 |  ServerlessRestApiDeploymentb45c8fface  |  CREATE_IN_PROGRESS |
+|  2026-11-18T02:31:59.314000+00:00 |  ProcessFunctionProcessPermissionProd   |  CREATE_COMPLETE    |
+|  2026-11-18T02:31:59.380000+00:00 |  ServerlessRestApiDeploymentb45c8fface  |  CREATE_COMPLETE    |
+|  2026-11-18T02:32:00.285000+00:00 |  ProcessFunction                        |  CREATE_COMPLETE    |
+|  2026-11-18T02:32:00.626000+00:00 |  ServerlessRestApiProdStage             |  CREATE_IN_PROGRESS |
+|  2026-11-18T02:32:01.461000+00:00 |  ServerlessRestApiProdStage             |  CREATE_IN_PROGRESS |
+|  2026-11-18T02:32:03.568000+00:00 |  ServerlessRestApiProdStage             |  CREATE_COMPLETE    |
+|  2026-11-18T02:32:04.400000+00:00 |  monitored-api-lab18                    |  CREATE_COMPLETE    |
++-----------------------------------+-----------------------------------------+---------------------+
+@timestamp=2026-11-18 02:32:23.001 | @message=REPORT RequestId: f48284c1-dca0-4e3e-81dc-c1355db897c3	Duration: 3002.21 ms	Billed Duration: 3003 ms	Memory Size: 128 MB	Max Memory Used: 33 MB	
+ | @ptr=hotstore:NTMzMjY3MzA4NDA0Oi9hd3MvbGFtYmRhL21vbml0b3JlZC1hcGktbGFiMTgtUHJvY2Vzc0Z1bmN0aW9uLXlnUjhQQnBEbjNMMB8xNzk0OTY5MTQ1HzE3OTQ5NjkxNDUyMjMfOTE3MTMxMjM5Mjc4NjI5NjcwNB82HzE3OTQ5NjkxNDMwMDE=
+@timestamp=2026-11-18 02:32:23.185 | @message=REPORT RequestId: 6c120653-c7d9-42f0-8187-0dffab70c8d2	Duration: 3002.13 ms	Billed Duration: 3003 ms	Memory Size: 128 MB	Max Memory Used: 33 MB	
+ | @ptr=hotstore:NTMzMjY3MzA4NDA0Oi9hd3MvbGFtYmRhL21vbml0b3JlZC1hcGktbGFiMTgtUHJvY2Vzc0Z1bmN0aW9uLXlnUjhQQnBEbjNMMB8xNzk0OTY5MTUyHzE3OTQ5NjkxNTIyMDkfNTI1OTcyOTcxNTAwMzIwOTQ5OB8xHzE3OTQ5NjkxNDMxODU=
+@timestamp=2026-11-18 02:32:22.986 | @message=REPORT RequestId: 2a0c133d-4876-4e46-a2d8-a0886be3dbda	Duration: 3002.12 ms	Billed Duration: 3003 ms	Memory Size: 128 MB	Max Memory Used: 33 MB	
+ | @ptr=hotstore:NTMzMjY3MzA4NDA0Oi9hd3MvbGFtYmRhL21vbml0b3JlZC1hcGktbGFiMTgtUHJvY2Vzc0Z1bmN0aW9uLXlnUjhQQnBEbjNMMB8xNzk0OTY5MTUyHzE3OTQ5NjkxNTIwMTYfMTcxMjU2NzI1NzQ2NjI5ODcwMh8xHzE3OTQ5NjkxNDI5ODY=
+@timestamp=2026-11-18 02:32:19.640 | @message=REPORT RequestId: 9eeae2d6-06de-405b-9f38-1168df968e70	Duration: 16.13 ms	Billed Duration: 17 ms	Memory Size: 128 MB	Max Memory Used: 33 MB	
+ | @ptr=hotstore:NTMzMjY3MzA4NDA0Oi9hd3MvbGFtYmRhL21vbml0b3JlZC1hcGktbGFiMTgtUHJvY2Vzc0Z1bmN0aW9uLXlnUjhQQnBEbjNMMB8xNzk0OTY5MTQ3HzE3OTQ5NjkxNDczMTgfNjk5MDk1Mjg0MDk3MTIyNDY1Mh82HzE3OTQ5NjkxMzk2NDA=
+@timestamp=2026-11-18 02:32:23.815 | @message=REPORT RequestId: 241f3e28-8650-4bcf-8125-e2542038a538	Duration: 6.46 ms	Billed Duration: 7 ms	Memory Size: 128 MB	Max Memory Used: 33 MB	
+ | @ptr=hotstore:NTMzMjY3MzA4NDA0Oi9hd3MvbGFtYmRhL21vbml0b3JlZC1hcGktbGFiMTgtUHJvY2Vzc0Z1bmN0aW9uLXlnUjhQQnBEbjNMMB8xNzk0OTY5MTUyHzE3OTQ5NjkxNTIyMDkfNTI1OTcyOTcxNTAwMzIwOTQ5OB8yMR8xNzk0OTY5MTQzODE1
+@timestamp=2026-11-18 02:32:23.553 | @message=REPORT RequestId: 99317077-89c3-421c-aad2-8dc3c7d5f813	Duration: 2.33 ms	Billed Duration: 3 ms	Memory Size: 128 MB	Max Memory Used: 33 MB	
+ | @ptr=hotstore:NTMzMjY3MzA4NDA0Oi9hd3MvbGFtYmRhL21vbml0b3JlZC1hcGktbGFiMTgtUHJvY2Vzc0Z1bmN0aW9uLXlnUjhQQnBEbjNMMB8xNzk0OTY5MTUyHzE3OTQ5NjkxNTIyMDkfNTI1OTcyOTcxNTAwMzIwOTQ5OB81HzE3OTQ5NjkxNDM1NTM=
+@timestamp=2026-11-18 02:32:19.630 | @message=REPORT RequestId: bbbe28af-5c2e-4eed-86cb-006799372e38	Duration: 2.28 ms	Billed Duration: 91 ms	Memory Size: 128 MB	Max Memory Used: 33 MB	Init Duration: 88.48 ms	
+ | @ptr=hotstore:NTMzMjY3MzA4NDA0Oi9hd3MvbGFtYmRhL21vbml0b3JlZC1hcGktbGFiMTgtUHJvY2Vzc0Z1bmN0aW9uLXlnUjhQQnBEbjNMMB8xNzk0OTY5MTQ0HzE3OTQ5NjkxNDQzNTcfNDQyMjQ5OTUwODQ5NjMwNjEwOB8zHzE3OTQ5NjkxMzk2MzA=
+@timestamp=2026-11-18 02:32:19.623 | @message=REPORT RequestId: f56143e7-fa04-4600-a4f5-0e594d1ec861	Duration: 2.01 ms	Billed Duration: 87 ms	Memory Size: 128 MB	Max Memory Used: 33 MB	Init Duration: 84.92 ms	
+ | @ptr=hotstore:NTMzMjY3MzA4NDA0Oi9hd3MvbGFtYmRhL21vbml0b3JlZC1hcGktbGFiMTgtUHJvY2Vzc0Z1bmN0aW9uLXlnUjhQQnBEbjNMMB8xNzk0OTY5MTQxHzE3OTQ5NjkxNDE0OTQfNTIwMTgyNzI0NzUwOTU3NTg3Nh8zHzE3OTQ5NjkxMzk2MjM=
+@timestamp=2026-11-18 02:32:19.641 | @message=REPORT RequestId: 9c339303-8b72-4ae4-9853-550feecabf97	Duration: 2.01 ms	Billed Duration: 100 ms	Memory Size: 128 MB	Max Memory Used: 33 MB	Init Duration: 97.65 ms	
+ | @ptr=hotstore:NTMzMjY3MzA4NDA0Oi9hd3MvbGFtYmRhL21vbml0b3JlZC1hcGktbGFiMTgtUHJvY2Vzc0Z1bmN0aW9uLXlnUjhQQnBEbjNMMB8xNzk0OTY5MTQzHzE3OTQ5NjkxNDMzNTAfNjEyNjI3MzM5OTY3MjgxMjQ1OB8zHzE3OTQ5NjkxMzk2NDE=
+@timestamp=2026-11-18 02:32:19.640 | @message=REPORT RequestId: 1f370231-7f48-4165-8053-8dc2bfbe3fad	Duration: 2.00 ms	Billed Duration: 98 ms	Memory Size: 128 MB	Max Memory Used: 33 MB	Init Duration: 95.99 ms	
+ | @ptr=hotstore:NTMzMjY3MzA4NDA0Oi9hd3MvbGFtYmRhL21vbml0b3JlZC1hcGktbGFiMTgtUHJvY2Vzc0Z1bmN0aW9uLXlnUjhQQnBEbjNMMB8xNzk0OTY5MTQwHzE3OTQ5NjkxNDA4NTgfMTAzMDMxODQ2OTUwODQ1Mjg0Nx8zHzE3OTQ5NjkxMzk2NDA=
+total=18 | slow=3 | coldStarts=9
+Traceback (most recent call last):
+  File "C:\Users\Riccardo\AppData\Local\Temp\claude\f3818f1616c21066\42a541a1-278f-49ac-986a-0f8567aa69ba\scratchpad\tool\bin\jqwrap.py", line 5, in <module>
+    data = open(args[1], encoding='utf-8').read() if len(args) > 1 else sys.stdin.read()
+                                                                        ~~~~~~~~~~~~~~^^
+  File "<frozen codecs>", line 325, in decode
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xa0 in position 269: invalid start byte
+-----------------------------------------------------
+|                  DescribeAlarms                   |
++----------------------+---------------------+------+
+|  lab18-lambda-errors |  INSUFFICIENT_DATA  |  2.0 |
++----------------------+---------------------+------+
+
+===== passo 2: Prova dell'allarme: le 5 chiamate "error" sopra superano la soglia (> 2). Dopo 5-10 minuti lo stato deve passare a ALARM
+# Prova dell'allarme: le 5 chiamate "error" sopra superano la soglia (> 2). Dopo 5-10 minuti lo stato deve passare a ALARM
+sleep 300; aws cloudwatch describe-alarms --alarm-names lab18-lambda-errors --query "MetricAlarms[].[AlarmName,StateValue]" --output table
+
+cat > dash.json <<EOF
+{
+  "widgets": [
+    {"type":"metric","x":0,"y":0,"width":12,"height":6,
+     "properties":{"title":"Invocations","view":"timeSeries","region":"us-east-1","stat":"Sum","period":60,
+       "metrics":[["AWS/Lambda","Invocations","FunctionName","$FN"]]}},
+    {"type":"metric","x":12,"y":0,"width":12,"height":6,
+     "properties":{"title":"Errors","view":"timeSeries","region":"us-east-1","stat":"Sum","period":60,
+       "metrics":[["AWS/Lambda","Errors","FunctionName","$FN"]]}},
+    {"type":"metric","x":0,"y":6,"width":12,"height":4,
+     "properties":{"title":"Duration (Average)","view":"singleValue","region":"us-east-1","stat":"Average","period":300,
+       "metrics":[["AWS/Lambda","Duration","FunctionName","$FN"]]}}
+  ]
+}
+EOF
+
+aws cloudwatch put-dashboard --dashboard-name lab18-serverless --dashboard-body file://dash.json
+aws cloudwatch list-dashboards --query "DashboardEntries[].DashboardName" --output text
+--- output (exit 0, 314s)
+----------------------------------
+|         DescribeAlarms         |
++----------------------+---------+
+|  lab18-lambda-errors |  ALARM  |
++----------------------+---------+
+{
+    "DashboardValidationMessages": []
+}
+lab18-serverless
+

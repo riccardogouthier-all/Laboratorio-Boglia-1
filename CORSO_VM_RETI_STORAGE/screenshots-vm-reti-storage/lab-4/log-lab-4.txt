@@ -1,0 +1,57 @@
+===== passo 1: --- Passo 1 ---
+# --- Passo 1 ---
+export AWS_DEFAULT_REGION=us-east-1
+VPC4=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --instance-tenancy default --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=demo-vpc}]' --query Vpc.VpcId --output text)
+aws ec2 wait vpc-available --vpc-ids $VPC4
+echo $VPC4
+--- output (exit 0, 14s)
+vpc-075e0a75c881b21ab
+
+===== passo 2: --- Passo 2 ---
+# --- Passo 2 ---
+# Piano dei CIDR (vedi tabella "Pianificazione CIDR" sopra):
+#   demo-vpc                10.0.0.0/16
+#   demo-subnet-public-1a   10.0.1.0/24   us-east-1a   pubblica (pianificata)
+#   demo-subnet-private-1a  10.0.2.0/24   us-east-1a   privata
+
+# --- Passo 3 ---
+PUB=$(aws ec2 create-subnet --vpc-id $VPC4 --cidr-block 10.0.1.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=demo-subnet-public-1a}]' --query Subnet.SubnetId --output text)
+PRIV=$(aws ec2 create-subnet --vpc-id $VPC4 --cidr-block 10.0.2.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=demo-subnet-private-1a}]' --query Subnet.SubnetId --output text)
+echo $PUB $PRIV
+--- output (exit 0, 12s)
+subnet-0def1818da03df983 subnet-0d2fe5bbccc67f401
+
+===== passo 3: --- Passo 4 ---
+# --- Passo 4 ---
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC4" --query "Subnets[].{Name:Tags[?Key=='Name']|[0].Value,CIDR:CidrBlock,AZ:AvailabilityZone}" --output table
+--- output (exit 0, 6s)
+---------------------------------------------------------
+|                    DescribeSubnets                    |
++------------+---------------+--------------------------+
+|     AZ     |     CIDR      |          Name            |
++------------+---------------+--------------------------+
+|  us-east-1a|  10.0.2.0/24  |  demo-subnet-private-1a  |
+|  us-east-1a|  10.0.1.0/24  |  demo-subnet-public-1a   |
++------------+---------------+--------------------------+
+
+===== passo 4: --- Passo 5 ---
+# --- Passo 5 ---
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC4" "Name=association.main,Values=true" --query "RouteTables[].Routes"
+--- output (exit 0, 5s)
+[
+    [
+        {
+            "DestinationCidrBlock": "10.0.0.0/16",
+            "GatewayId": "local",
+            "Origin": "CreateRouteTable",
+            "State": "active"
+        }
+    ]
+]
+
+===== passo 5: --- Passo 6 ---
+# --- Passo 6 ---
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC4" "Name=association.subnet-id,Values=$PUB,$PRIV" --query "RouteTables[].RouteTableId"
+--- output (exit 0, 5s)
+[]
+

@@ -15,7 +15,7 @@ Lambda Python (`lambda_handler`) che:
 - crea client e tabella DynamoDB (`orders`) dentro l'handler;
 - legge `order_id` e `amount` da `event['body']` senza validazione;
 - scrive su DynamoDB salvando nell'item anche `db_password`;
-- importa `pymysql` a meta handler e si connette a RDS con password in chiaro;
+- importa `pymysql` a metà handler e si connette a RDS con password in chiaro;
 - esegue `INSERT INTO orders VALUES ('{order_id}', {amount})` costruita con f-string;
 - non gestisce errori e restituisce sempre `{'statusCode': 200, 'body': 'OK'}`.
 
@@ -25,23 +25,28 @@ Lambda Python (`lambda_handler`) che:
 |---|---|---|---|---|
 | 1 | Credenziali hardcoded: `DB_PASSWORD` nel sorgente, visibile a chiunque acceda al repository | Rimuoverla dal codice; leggerla da un servizio dedicato (es. Secrets Manager) | Sicurezza | Alto |
 | 2 | Password salvata in DynamoDB: `db_password` scritto come attributo dell'item | Non salvare mai credenziali nei dati | Sicurezza | Alto |
-| 3 | Librerie inutilizzate (`pandas`, `numpy`) | Rimuovere gli import: aumentano dimensione del package e tempo di cold start senza utilita | Performance | Basso |
-| 4 | Init di client DynamoDB e connessione DB dentro l'handler: eseguiti a ogni invocazione | Portarli fuori dall'handler: vengono eseguiti solo alla creazione del container e riutilizzati per 5-15 min | Performance | - |
-| 5 | Nessuna validazione dell'input (`order_id`, `amount`) | Validare presenza, tipo e formato prima di usarli; insieme alla query in chiaro espone a SQL injection | Sicurezza | - |
-| 6 | Query SQL costruita con f-string (in chiaro) | Evitare la concatenazione di input nella query (query parametrizzata) | Sicurezza | - |
-| 7 | Nessuna gestione errori nell'inizializzazione/connessione al DB (nessun fallback) | `try: ... except` attorno alla connessione | Affidabilita | - |
-| 8 | Nessuna gestione errori sulla query MySQL | `try: ... except MySQLdb.Error` | Affidabilita | - |
-| 9 | Il `return` non tiene conto degli errori (sempre 200 `OK`) | Restituire status code coerenti con l'esito | Affidabilita | - |
-| 10 | `import pymysql` a meta codice | Spostare gli import in cima al file per chiarezza | Stile | Basso |
-| 11 | Nessun log su CloudWatch | Usare il modulo `logging` | Osservabilita | - |
+| 3 | Librerie inutilizzate (`pandas`, `numpy`) | Rimuovere gli import: aumentano dimensione del package e tempo di cold start senza utilità | Performance | Basso |
+| 4 | Init di client DynamoDB e connessione DB dentro l'handler: eseguiti a ogni invocazione | Portarli fuori dall'handler: vengono eseguiti solo alla creazione del container e riutilizzati finché il container resta attivo (alcuni minuti, non garantito) | Performance | Medio |
+| 5 | Nessuna validazione dell'input (`order_id`, `amount`) | Validare presenza, tipo e formato prima di usarli; insieme alla query in chiaro espone a SQL injection | Sicurezza | Alto |
+| 6 | Query SQL costruita con f-string (in chiaro) | Evitare la concatenazione di input nella query (query parametrizzata) | Sicurezza | Alto |
+| 7 | Nessuna gestione errori nell'inizializzazione/connessione al DB (nessun fallback) | `try: ... except` attorno alla connessione | Affidabilità | Medio |
+| 8 | Nessuna gestione errori sulla query MySQL | `try: ... except pymysql.MySQLError` | Affidabilità | Medio |
+| 9 | Il `return` non tiene conto degli errori (sempre 200 `OK`) | Restituire status code coerenti con l'esito | Affidabilità | Medio |
+| 10 | `import pymysql` a metà codice | Spostare gli import in cima al file per chiarezza | Stile | Basso |
+| 11 | Nessun log su CloudWatch | Usare il modulo `logging` | Osservabilità | Medio |
+| 12 | La Lambda usa un ruolo IAM non descritto (nel lab, `LabRole`, molto ampio) | Ruolo dedicato con minimo privilegio: `dynamodb:PutItem` sulla tabella `orders`, `secretsmanager:GetSecretValue` sul segreto, permessi di log | Sicurezza | Alto |
+| 13 | Connessione MySQL mai chiusa e nuova connessione a ogni invocazione (o container riusato con connessione scaduta) | `conn.close()` in un blocco `finally`; con molte invocazioni parallele valutare RDS Proxy per non esaurire le connessioni | Affidabilità | Medio |
+| 14 | Timeout e memoria della funzione non configurati | Impostare timeout coerente con la query e memoria adeguata (meno di 3 s per un INSERT semplice), così un DB lento non fa pagare invocazioni lunghe | Performance | Medio |
+| 15 | Scrittura prima su DynamoDB e poi su MySQL: se la seconda fallisce restano dati incoerenti (non atomica) | Scegliere un solo archivio per l'ordine oppure gestire l'errore con compensazione (cancellare l'item) | Affidabilità | Medio |
 
-Nota: categoria e rischio sono riportati come nel documento di gruppo per i punti 1-3; per gli altri la categoria e dedotta, il rischio non era indicato.
+Il rischio è una valutazione (Alto = espone dati o permette attacchi, Medio = causa errori o costi, Basso = stile o dimensioni).
 
 ## Conclusioni
 
-1. Priorita alta: eliminare credenziali hardcoded e password nel DB (punti 1-2).
+1. Priorità alta: eliminare credenziali hardcoded e password nel DB (punti 1-2).
 2. Spostare l'inizializzazione fuori dall'handler sfrutta il riuso dei container Lambda.
 3. Validazione input + query sicure + gestione errori + logging rendono la funzione sicura e diagnosticabile.
+4. Ruolo IAM a minimo privilegio, timeout/memoria configurati e chiusura della connessione completano la revisione (punti 12-15).
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -83,7 +88,7 @@ grep -c 'logging' lambda_bad.py                     # 0 = nessun log
 
 # 3) Versione corretta
 cat > lambda_good.py <<'EOF'
-import json, logging, os
+import json, logging, os, re
 import boto3
 import pymysql
 
@@ -94,6 +99,8 @@ logger.setLevel(logging.INFO)
 table = boto3.resource('dynamodb').Table('orders')
 secrets = boto3.client('secretsmanager')
 
+ORDER_ID = re.compile(r'^[A-Za-z0-9_-]{1,64}$')   # accetta anche '-' e '_' negli id
+
 def get_db_password():
     return json.loads(secrets.get_secret_value(SecretId=os.environ['DB_SECRET'])['SecretString'])['password']
 
@@ -102,16 +109,22 @@ def lambda_handler(event, context):
         body = json.loads(event.get('body') or '{}')
         order_id = str(body.get('order_id', ''))
         amount = body.get('amount')
-        if not order_id.isalnum() or not isinstance(amount, (int, float)):
+        if not ORDER_ID.match(order_id) or isinstance(amount, bool) or not isinstance(amount, (int, float)):
             return {'statusCode': 400, 'body': json.dumps({'error': 'Invalid input'})}
 
         table.put_item(Item={'order_id': order_id, 'amount': str(amount)})   # nessuna credenziale nei dati
 
         conn = pymysql.connect(host=os.environ['DB_HOST'], user=os.environ['DB_USER'],
-                               password=get_db_password(), database='shop')
-        with conn.cursor() as cur:
-            cur.execute("INSERT INTO orders VALUES (%s, %s)", (order_id, amount))   # query parametrizzata
-        conn.commit()
+                               password=get_db_password(), database='shop', connect_timeout=5)
+        try:
+            with conn.cursor() as cur:
+                cur.execute("INSERT INTO orders VALUES (%s, %s)", (order_id, amount))   # query parametrizzata
+            conn.commit()
+        except pymysql.MySQLError:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()                                                             # la connessione non resta aperta
         logger.info("Order %s saved", order_id)
         return {'statusCode': 200, 'body': json.dumps({'message': 'OK'})}
     except Exception:
@@ -123,4 +136,4 @@ python3 -m py_compile lambda_good.py && echo "sintassi OK"
 cd ..
 ```
 
-Nota: la versione corretta e un esempio da review; non viene deployata (richiede un'istanza RDS).
+Nota: la versione corretta è un esempio da review; non viene deployata (richiede un'istanza RDS).

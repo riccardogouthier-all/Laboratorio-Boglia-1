@@ -1,0 +1,16 @@
+===== passo 3: Steps 7-12 - Evento CloudTrail CreateLogGroup (puo richiedere alcuni minuti per comparire)
+# Steps 7-12 - Evento CloudTrail CreateLogGroup (puo richiedere alcuni minuti per comparire)
+sleep 60
+aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,AttributeValue=CreateLogGroup --region us-east-1 --max-results 5 \
+  --query "Events[].[EventTime,EventName,EventSource,Username]" --output table
+--- output (exit 0, 65s)
+-------------------------------------------------------------------------------------------------------------------
+|                                                  LookupEvents                                                   |
++----------------------------+-----------------+---------------------+--------------------------------------------+
+|  2026-11-17T20:43:43+01:00 |  CreateLogGroup |  logs.amazonaws.com |  user4792014=riccardo.gouthier@edu-its.it  |
+|  2026-11-17T20:41:57+01:00 |  CreateLogGroup |  logs.amazonaws.com |  user4792014=riccardo.gouthier@edu-its.it  |
+|  2026-11-17T20:33:21+01:00 |  CreateLogGroup |  logs.amazonaws.com |  user4792014=riccardo.gouthier@edu-its.it  |
+|  2026-11-17T20:30:00+01:00 |  CreateLogGroup |  logs.amazonaws.com |  user4792014=riccardo.gouthier@edu-its.it  |
+|  2026-11-17T20:18:26+01:00 |  CreateLogGroup |  logs.amazonaws.com |  RedshiftOverwatch                         |
++----------------------------+-----------------+---------------------+--------------------------------------------+
+

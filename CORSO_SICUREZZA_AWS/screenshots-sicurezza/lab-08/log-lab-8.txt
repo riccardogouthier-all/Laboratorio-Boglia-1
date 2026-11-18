@@ -1,0 +1,62 @@
+===== passo 1: passo 1
+cd "C:/Users/Riccardo/AppData/Local/Temp/claude/f3818f1616c21066/42a541a1-278f-49ac-986a-0f8567aa69ba/scratchpad/work-sic"
+export AWS_DEFAULT_REGION=us-east-1
+SUF=rg
+--- output (exit 0, 0s)
+
+
+===== passo 2: Steps 1-2 - Metrica custom: valore 5
+# Steps 1-2 - Metrica custom: valore 5
+aws cloudwatch put-metric-data --namespace Sicurezza08 --metric-name ErroriAccesso --dimensions Studente=$SUF --value 5 --unit Count --region us-east-1
+--- output (exit 0, 5s)
+
+
+===== passo 3: Steps 3-10 - Allarme: Sum, periodo 1 minuto, soglia > 3, nessuna azione/notifica
+# Steps 3-10 - Allarme: Sum, periodo 1 minuto, soglia > 3, nessuna azione/notifica
+aws cloudwatch put-metric-alarm --alarm-name sicurezza08-$SUF --namespace Sicurezza08 --metric-name ErroriAccesso --dimensions Name=Studente,Value=$SUF --statistic Sum --period 60 --evaluation-periods 1 --threshold 3 --comparison-operator GreaterThanThreshold --treat-missing-data missing --no-actions-enabled --region us-east-1
+--- output (exit 0, 5s)
+
+
+===== passo 4: Step 11 - Stato dell'allarme (atteso ALARM dopo la valutazione) e cronologia
+# Step 11 - Stato dell'allarme (atteso ALARM dopo la valutazione) e cronologia
+sleep 90
+aws cloudwatch describe-alarms --alarm-names sicurezza08-$SUF --query "MetricAlarms[].[AlarmName,StateValue,Threshold]" --output table
+aws cloudwatch describe-alarm-history --alarm-name sicurezza08-$SUF --max-items 5 --query "AlarmHistoryItems[].[Timestamp,HistorySummary]" --output table
+--- output (exit 0, 101s)
+------------------------------------
+|          DescribeAlarms          |
++-----------------+---------+------+
+|  sicurezza08-rg |  ALARM  |  3.0 |
++-----------------+---------+------+
+---------------------------------------------------------------------------------------
+|                                DescribeAlarmHistory                                 |
++-----------------------------------+-------------------------------------------------+
+|  2026-11-17T20:35:31.391000+01:00 |  Alarm updated from INSUFFICIENT_DATA to ALARM  |
+|  2026-11-17T20:34:51.853000+01:00 |  Alarm "sicurezza08-rg" created                 |
+|  2026-11-16T20:38:59.453000+01:00 |  Alarm "sicurezza08-rg" deleted                 |
+|  2026-11-16T20:23:07.749000+01:00 |  Alarm updated from OK to INSUFFICIENT_DATA     |
+|  2026-11-16T20:17:07.747000+01:00 |  Alarm updated from ALARM to OK                 |
++-----------------------------------+-------------------------------------------------+
+
+===== passo 5: Step 12 - Valore 0 in un periodo successivo: ritorno atteso a OK
+# Step 12 - Valore 0 in un periodo successivo: ritorno atteso a OK
+aws cloudwatch put-metric-data --namespace Sicurezza08 --metric-name ErroriAccesso --dimensions Studente=$SUF --value 0 --unit Count --region us-east-1
+sleep 120
+aws cloudwatch describe-alarms --alarm-names sicurezza08-$SUF --query "MetricAlarms[].[AlarmName,StateValue]" --output table
+--- output (exit 0, 129s)
+--------------------------
+|     DescribeAlarms     |
++------------------+-----+
+|  sicurezza08-rg  |  OK |
++------------------+-----+
+
+===== passo 6: Steps 13-16 - AWS Config: verifica dello stato (sola lettura)
+# Steps 13-16 - AWS Config: verifica dello stato (sola lettura)
+aws configservice describe-configuration-recorders --region us-east-1        # lista vuota = Config non attivo
+aws configservice describe-config-rules --region us-east-1 --query "ConfigRules[].ConfigRuleName" 2>/dev/null
+--- output (exit 0, 9s)
+{
+    "ConfigurationRecorders": []
+}
+[]
+

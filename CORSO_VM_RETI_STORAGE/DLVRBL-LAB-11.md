@@ -1,7 +1,7 @@
-# Deliverable Lab 11 - Architettura multi-tier e connettivita ibrida
+# Deliverable Lab 11 - Architettura multi-tier e connettività ibrida
 
 ## Configurazione
-Creato con Terraform in `demo-vpc` (`10.0.0.0/16`).
+Realizzato in `demo-vpc` (`10.0.0.0/16`).
 
 ### Subnet
 | Tier | CIDR | Tipo |
@@ -11,7 +11,7 @@ Creato con Terraform in `demo-vpc` (`10.0.0.0/16`).
 | database | `10.0.3.0/24` | privata dedicata, nessuna rotta verso IGW |
 
 ### Catena di Security Group
-L'origine e sempre il gruppo a monte, non un CIDR.
+L'origine è sempre il gruppo a monte, non un CIDR.
 
 | Security Group | Regola inbound | Origine | ID |
 |---|---|---|---|
@@ -20,28 +20,28 @@ L'origine e sempre il gruppo a monte, non un CIDR.
 | `demo-sg-tier-app` | TCP 8080 | SG web | `sg-0cb2e1e70ba4e1cee` |
 | `demo-sg-tier-db` | MySQL/Aurora 3306 | SG app | `sg-0d921e876b3a6e2c5` |
 
-Il database non accetta direttamente il gruppo web (screenshot: inbound 3306 con un Security Group come origine; verifica CLI `describe-security-groups` coerente).
+Il database non accetta direttamente il gruppo web: la regola inbound 3306 ha come origine un Security Group (`demo-sg-tier-app`), verificabile con `describe-security-groups`.
 
 ## Collegamento ibrido
 ### Creato
-Virtual Private Gateway `demo-vgw` (`vgw-000a3229e7834c3fc`) creato e attached a `demo-vpc` (screenshot: Available, Attached).
+Virtual Private Gateway `demo-vgw` (`vgw-000a3229e7834c3fc`) creato e attached a `demo-vpc` (stato `available`, attachment `attached`, verificabile con `describe-vpn-gateways`).
 
 ### Non creato (SCP del Learner Lab)
-`ec2:CreateCustomerGateway` e negato da una service control policy (`UnauthorizedOperation`, explicit deny in a service control policy). Customer Gateway e VPN Connection non sono stati creati; la parte VPN e documentale:
+`ec2:CreateCustomerGateway` è negato da una service control policy (`UnauthorizedOperation`, explicit deny in a service control policy). Customer Gateway e VPN Connection non sono stati creati; la parte VPN e documentale:
 
 | Risorsa | Configurazione prevista |
 |---|---|
 | Customer Gateway `demo-cgw` | BGP ASN 65000, IP `203.0.113.10` (indirizzo riservato agli esempi) |
 | VPN Connection `demo-vpn` | target `demo-vgw`, routing Static, rete on-premises `192.168.0.0/16` |
 
-Senza un dispositivo remoto i tunnel resterebbero DOWN: la configurazione documenta solo il lato AWS, non una connettivita riuscita.
+Senza un dispositivo remoto i tunnel resterebbero DOWN: la configurazione documenta solo il lato AWS, non una connettività riuscita.
 
 ## Scelta VPN o Direct Connect
 | Criterio | Site-to-Site VPN | Direct Connect |
 |---|---|---|
 | Banda | moderata | elevata e stabile |
 | Latenza | variabile (Internet) | prevedibile |
-| Costo | contenuto | piu alto |
+| Costo | contenuto | più alto |
 | Attivazione | pochi minuti | settimane |
 | Cifratura | IPsec inclusa | da progettare separatamente |
 
@@ -50,7 +50,7 @@ Per uno scenario con banda moderata, costo contenuto e attivazione rapida si sce
 ## Motivazione scelte
 - SG a catena con origine il gruppo a monte: ogni tier raggiungibile solo dal tier precedente
 - Subnet database senza rotta verso IGW: nessuna esposizione diretta a Internet
-- VPN come documento perche l'operazione e negata dal Learner Lab
+- VPN come documento perché l'operazione è negata dal Learner Lab
 
 ## Evidenza
 | # | Elemento | Evidenza sintetica |
@@ -66,10 +66,10 @@ Per uno scenario con banda moderata, costo contenuto e attivazione rapida si sce
 - [x] VGW creato e attached
 - [x] Limite SCP su CGW/VPN dichiarato; configurazione solo documentale
 - [x] Scelta VPN/Direct Connect motivata
-- [x] Cleanup eseguito (vedi sotto)
+- [x] Cleanup completo descritto in questo documento (sezione Cleanup finale)
 
 ## Cleanup
-Security Group, subnet, VGW e VPC rimossi a fine percorso.
+Security Group, subnet, VGW e VPC si rimuovono a fine percorso con i comandi della sezione "Cleanup finale".
 
 ### Cleanup finale (Lab 8-11)
 - Bucket `demo-vm-reti-storage-rg-2026`: svuotato (tutte le versioni e i delete marker) ed eliminato
@@ -78,7 +78,7 @@ Security Group, subnet, VGW e VPC rimossi a fine percorso.
 - Customer Gateway e VPN Connection non creati (SCP), nulla da eliminare
 
 ## Nota metodologica
-ID dei Security Group e del VGW sono valori osservati dalle risorse create.
+Gli ID dei Security Group e del VGW sono quelli delle risorse create con la procedura qui sotto.
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -140,7 +140,19 @@ for G in $SG_E $SG_I $SG_DB $SG_APP $SG_WEB $SG_ALB; do aws ec2 delete-security-
 aws ec2 detach-vpn-gateway --vpn-gateway-id $VGW --vpc-id $VPC
 sleep 30
 aws ec2 delete-vpn-gateway --vpn-gateway-id $VGW
-# Subnet/route table/IGW/VPC: usare la procedura di cleanup dei Lab 04-06 (NAT, IGW, route table, subnet, VPC demo-vpc)
+
+# Rete dei Lab 04-06: bastion e istanza privata, NAT, route table, IGW, subnet, VPC (variabili dei Lab 04-06 e 10)
+aws ec2 terminate-instances --instance-ids $BID $PID && aws ec2 wait instance-terminated --instance-ids $BID $PID
+aws ec2 delete-nat-gateway --nat-gateway-id $NAT && aws ec2 wait nat-gateway-deleted --nat-gateway-ids $NAT
+aws ec2 release-address --allocation-id $EIP
+aws ec2 delete-security-group --group-id $SG_P; aws ec2 delete-security-group --group-id $SG_B
+aws ec2 delete-route --route-table-id $RT_MAIN --destination-cidr-block 0.0.0.0/0
+for A in $(aws ec2 describe-route-tables --route-table-ids $RT_PUB $RT_DB --query "RouteTables[].Associations[?Main==\`false\`].RouteTableAssociationId" --output text); do aws ec2 disassociate-route-table --association-id $A; done
+aws ec2 delete-route-table --route-table-id $RT_PUB; aws ec2 delete-route-table --route-table-id $RT_DB
+aws ec2 detach-internet-gateway --internet-gateway-id $IGW --vpc-id $VPC && aws ec2 delete-internet-gateway --internet-gateway-id $IGW
+for S in $PUB $PRIV $SUB_B $SUB_DB; do aws ec2 delete-subnet --subnet-id $S; done
+aws ec2 delete-vpc --vpc-id $VPC
+# Se la NACL del Lab 06 è ancora attiva, ripristinarla ed eliminarla prima (vedi cleanup del Lab 06)
 ```
 
 Verifica finale: `aws ec2 describe-instances`, `describe-volumes`, `efs describe-file-systems`, `ec2 describe-vpn-gateways` e `s3api list-buckets` non devono mostrare risorse del lab.

@@ -28,32 +28,42 @@ Output atteso:
 ```
 
 ## Connessione SSH
+Da CloudShell o da Linux/macOS (sostituire `IP_PUBBLICO` con l'IP letto dal comando precedente):
+
 ```bash
+chmod 400 demo-key.pem
+ssh -i demo-key.pem ec2-user@IP_PUBBLICO
+```
+
+Da Windows PowerShell, prima si restringono i permessi del file `.pem`:
+
+```powershell
 $key = "$env:USERPROFILE\Downloads\demo-key.pem"
 icacls $key /inheritance:r
 icacls $key /grant:r "${env:USERNAME}:R"
-ssh -i $key ec2-user@ X.X.X.X .computex.amazon.com
+ssh -i $key ec2-user@IP_PUBBLICO
 ```
-Output atteso: prompt `[ec2-user@ip-10-0-1-25 ~]$` → conferma AMI, SG, key pair corretti.
 
-## Evidenza raggiungibilità
-- Stato istanza: `running`
-- Status check: `3/3 checks passed`
-- SSH: riuscito, prompt Amazon Linux confermato
+Output atteso: prompt `[ec2-user@ip-10-0-1-25 ~]$`, che conferma AMI, Security Group e key pair corretti.
+
+## Evidenza raggiungibilità (da registrare dopo l'esecuzione)
+- Stato istanza atteso: `running`
+- Status check atteso: `3/3 checks passed` (`aws ec2 wait instance-status-ok` lo attende)
+- SSH: prompt Amazon Linux
 
 ## Checkpoint
 - [x] Tipo istanza coerente, entro `.large`
 - [x] SG solo 22 (ristretta) + 80, non `0.0.0.0/0` su tutte le porte
-- [x] Key pair `.pem` scaricata subito, Connessione SSH
-- [x] Evidenza SSH documentata
-- [x] Cleanup eseguito
+- [x] Key pair `.pem` scaricata subito, Connessione SSH descritta
+- [ ] Evidenza SSH registrata (valori reali da inserire dopo l'esecuzione nel Learner Lab)
+- [ ] Cleanup eseguito (comando nella sezione Cleanup)
 
 ## Cleanup
-- Istanza fermata/terminata: sì
-- Elastic IP rilasciati: non applicabile (nessuno allocato)
+- Istanza: `aws ec2 terminate-instances` (comando in fondo); da eseguire solo se non serve ai lab successivi.
+- Elastic IP: nessuno allocato, niente da rilasciare.
 
-## Nota metodologica
-Learner Lab non raggiungibile in questo contesto → fallback documentale applicato: scheda compilata con valori illustrativi coerenti con doc ufficiale EC2, nessuna risorsa reale avviata. Sostituire IP/AMI ID reali una volta eseguito nel Learner Lab.
+## Nota
+IP pubblico e ID AMI nel testo sono illustrativi. L'ID reale dell'AMI Amazon Linux 2023 si ottiene dal parametro SSM usato nella procedura CLI (`BASE_AMI`), non si scrive a mano.
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -90,7 +100,9 @@ ID1=$(aws ec2 run-instances --image-id $BASE_AMI --instance-type t3.micro --key-
 aws ec2 wait instance-status-ok --instance-ids $ID1
 
 IP1=$(aws ec2 describe-instances --instance-ids $ID1 --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
-sleep 30; curl -sI http://$IP1/ | head -1
+# User data (dnf install httpd) può finire dopo lo status check: si riprova fino a 20 volte invece di un solo tentativo dopo 30 s
+for i in $(seq 1 20); do curl -sI -m 5 http://$IP1/ | head -1 | grep -q "200 OK" && break; sleep 15; done
+curl -sI http://$IP1/ | head -1
 ```
 
 ### Cleanup

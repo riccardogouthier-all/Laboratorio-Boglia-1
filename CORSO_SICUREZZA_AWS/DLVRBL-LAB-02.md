@@ -45,8 +45,8 @@ Accesso pubblico (`get-public-access-block`): tutte e 4 le opzioni `true`.
 
 ## Conclusioni
 
-1. **Posizione**: oggetto in `us-east-1`. Zone name e Zone ID sono coppie distinte; Zone ID (es. `us-east-1a` = `use1-az2`) identifica la zona fisica in modo stabile, il Zone name puo mappare zone diverse tra account.
-2. **Cifratura**: `ServerSideEncryption: AES256` = SSE-S3, protegge i dati a riposo. Non limita i lettori gia autorizzati: chi ha permessi di lettura riceve il contenuto in chiaro.
+1. **Posizione**: oggetto in `us-east-1`. Zone name e Zone ID sono coppie distinte; Zone ID (es. `us-east-1a` = `use1-az2`) identifica la zona fisica in modo stabile, il Zone name può mappare zone diverse tra account.
+2. **Cifratura**: `ServerSideEncryption: AES256` = SSE-S3, protegge i dati a riposo. Non limita i lettori già autorizzati: chi ha permessi di lettura riceve il contenuto in chiaro.
 3. **Accesso**: bucket privato, Block Public Access completo; lettura solo con credenziali autenticate, download riuscito e contenuto coincidente con l'originale.
 
 

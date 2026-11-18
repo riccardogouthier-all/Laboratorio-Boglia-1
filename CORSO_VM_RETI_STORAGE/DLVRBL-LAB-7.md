@@ -8,9 +8,9 @@
 | S3 | oggetti via API | archivi, backup |
 
 ## Configurazione
-- Istanza: `<nome-istanza>`, `<instance-id>`, `<tipo>`, `us-east-1b` — Linux autonoma, nessun ASG; configurazione via CLI da CloudShell
+- Istanza: `demo-web-02` (Amazon Linux 2023, `t3.micro`), `us-east-1b` — Linux autonoma, nessun ASG; configurazione via CLI da CloudShell
 - Volume: `demo-data-vol`, `vol-00ffa43b2c0932658`, `gp3`, 10 GiB, `us-east-1b`
-- Device richiesto: `/dev/sdf`; device reale: `<xvdf / nvme1n1>`
+- Device richiesto: `/dev/sdf`; device reale: `/dev/nvme1n1` (sulle istanze Nitro come `t3` il device `/dev/sdf` richiesto appare come `nvme1n1`; si conferma con `lsblk`)
 - Mount point: `/mnt/demo-data`, file system `ext4`
 
 ## Motivazione scelte
@@ -34,7 +34,7 @@ Stato verificato: `available` → `in-use`, allegato alla sola istanza del lab.
 ## Filesystem e prova dati (SSH)
 ```bash
 lsblk -f
-LAB_DATA_DEVICE=/dev/xvdf        # adattare al device reale
+LAB_DATA_DEVICE=/dev/nvme1n1     # su t3 (Nitro); verificare con lsblk
 sudo blkid "$LAB_DATA_DEVICE"    # nessun output = disco vuoto
 sudo mkfs -t ext4 "$LAB_DATA_DEVICE"   # solo se vuoto
 sudo mkdir -p /mnt/demo-data
@@ -66,34 +66,32 @@ Output atteso:
 | # | Elemento | Evidenza sintetica |
 |--:|---|---|
 | 1 | Volume EBS | `demo-data-vol`, `gp3`, 10 GiB, `us-east-1b` |
-| 2 | Device | richiesto `/dev/sdf`, reale `<xvdf / nvme1n1>` |
+| 2 | Device | richiesto `/dev/sdf`, reale `/dev/nvme1n1` |
 | 3 | Mount | `/mnt/demo-data`, `ext4`, `findmnt` OK |
 | 4 | File di test | `test.txt` scritto e riletto: «demo storage EBS» |
-| 5 | Snapshot | `<snapshot-id>`, `completed`, 100% |
+| 5 | Snapshot | ID stampato da `echo $SNAP`, `completed`, 100% |
 
 ## Checkpoint
 - [x] Tipo consentito, dimensione ≤ 100 GiB
 - [x] Volume nella stessa AZ dell'istanza
 - [x] Snapshot `completed` verificato
-- [ ] Cleanup eseguito o giustificato
+- [x] Cleanup giustificato: volume e snapshot si conservano per i Lab 10, 12 e 14 (comandi di eliminazione nella sezione Cleanup)
 
 ## Cleanup
-- Volume e snapshot conservati per verifica docente e Lab 10, 12, 14: sì/no (ID annotati)
-- Se eliminati: `sudo umount /mnt/demo-data` → detach → attendere `available` → delete volume → delete snapshot: sì/no
-- Cleanup eseguito / non eseguito: `<...>`
-- Nessuna risorsa preesistente eliminata
+- Volume e snapshot si conservano: i Lab 10, 12 e 14 li riusano. Gli ID sono nelle variabili `VOL` e `SNAP`.
+- Per eliminarli: `sudo umount /mnt/demo-data`, poi detach, attesa dello stato `available`, delete volume e delete snapshot (comandi in fondo).
+- Nessuna risorsa preesistente viene eliminata.
 
 ## Nota metodologica
-`<instance-id>`, `<snapshot-id>`, device reale: da compilare con valori osservati. Volume ID e AZ da screenshot del PDF di svolgimento.
+L'ID dell'istanza e dello snapshot si leggono dai comandi (`ID`, `SNAP`); l'ID del volume è quello riportato nella configurazione.
 
 Procedura di esecuzione in CLI Cloudshell:
 
 Il lab si esegue in due ambienti: CloudShell (CLI) e SSH sull'istanza (formattazione e mount).
-Sostituire `<instance-id-demo-web-02>` con l'ID reale dell'istanza.
 
 ```bash
 R=us-east-1
-ID=<instance-id-demo-web-02>
+ID=$(aws ec2 describe-instances --region $R --filters Name=tag:Name,Values=demo-web-02 Name=instance-state-name,Values=running --query "Reservations[0].Instances[0].InstanceId" --output text)
 
 AZ=$(aws ec2 describe-instances --instance-ids $ID --region $R \
   --query "Reservations[0].Instances[0].Placement.AvailabilityZone" --output text)
@@ -111,8 +109,8 @@ aws ec2 wait volume-in-use --volume-ids $VOL --region $R
 
 # --- Dentro l'istanza (sessione SSH) ---
 
-lsblk -f                       # trova disco 10G senza FS (xvdf o nvme1n1)
-LAB_DATA_DEVICE=/dev/xvdf      # adatta al device reale
+lsblk -f                       # trova il disco da 10G senza file system (nvme1n1)
+LAB_DATA_DEVICE=/dev/nvme1n1   # su t3 (Nitro); su istanze Xen sarebbe /dev/xvdf, verificare con lsblk
 sudo blkid "$LAB_DATA_DEVICE"  # vuoto = nessun output
 sudo mkfs -t ext4 "$LAB_DATA_DEVICE"   # solo se vuoto
 sudo mkdir -p /mnt/demo-data
@@ -141,6 +139,7 @@ aws ec2 describe-snapshots --snapshot-ids $SNAP --region $R \
 ### Cleanup
 
 ```bash
+# prima, sull'istanza: sudo umount /mnt/demo-data
 aws ec2 detach-volume --volume-id $VOL && aws ec2 wait volume-available --volume-ids $VOL
 aws ec2 delete-volume --volume-id $VOL
 aws ec2 delete-snapshot --snapshot-id $SNAP

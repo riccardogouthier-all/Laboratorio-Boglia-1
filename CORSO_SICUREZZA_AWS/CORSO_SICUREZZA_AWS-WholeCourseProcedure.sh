@@ -133,7 +133,7 @@ cat > policy04_mfa.json <<'EOF'
 EOF
 
 # Casi base 1-4
-sim() { aws iam simulate-custom-policy --policy-input-list file://$1 --action-names $2 --resource-arns $3 "${@:4}" --query 'EvaluationResults[].[EvalActionName,EvalResourceName,EvalDecision]' --output text; }
+sim() { aws iam simulate-custom-policy --policy-input-list "$(cat $1)" --action-names $2 --resource-arns $3 "${@:4}" --query 'EvaluationResults[].[EvalActionName,EvalResourceName,EvalDecision]' --output text; }
 sim policy04.json s3:GetObject    arn:aws:s3:::didattica-esempio/report/a.txt     # allowed
 sim policy04.json s3:DeleteObject arn:aws:s3:::didattica-esempio/report/a.txt     # explicitDeny
 sim policy04.json s3:GetObject    arn:aws:s3:::didattica-esempio/privato/a.txt    # implicitDeny
@@ -162,14 +162,14 @@ EOF
 
 sim() { aws iam simulate-custom-policy --policy-input-list "$@" --action-names s3:GetObject s3:DeleteObject s3:PutObject --resource-arns arn:aws:s3:::rapporti-demo/a.txt --query 'EvaluationResults[].[EvalActionName,EvalDecision]' --output table; }
 
-echo "== Con SCP Deny attiva =="    ; sim file://iam-ruolo.json file://scp-ou.json   # Get allowed, Delete explicitDeny, Put implicitDeny
-echo "== Senza SCP Deny =="         ; sim file://iam-ruolo.json                       # Get allowed, Delete allowed, Put implicitDeny
+echo "== Con SCP Deny attiva =="    ; sim "$(cat iam-ruolo.json)" "$(cat scp-ou.json)"   # Get allowed, Delete explicitDeny, Put implicitDeny
+echo "== Senza SCP Deny =="         ; sim "$(cat iam-ruolo.json)"                       # Get allowed, Delete allowed, Put implicitDeny
 # Finding A - correzione: partner limitato a export/*
 cat > partner-corretta.json <<'EOF'
 {"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:GetObject","Resource":"arn:aws:s3:::rapporti-demo/export/*"}]}
 EOF
 for K in export/a.txt interno/b.txt; do
-  aws iam simulate-custom-policy --policy-input-list file://partner-corretta.json --action-names s3:GetObject --resource-arns arn:aws:s3:::rapporti-demo/$K --query 'EvaluationResults[].[EvalResourceName,EvalDecision]' --output text
+  aws iam simulate-custom-policy --policy-input-list "$(cat partner-corretta.json)" --action-names s3:GetObject --resource-arns arn:aws:s3:::rapporti-demo/$K --query 'EvaluationResults[].[EvalResourceName,EvalDecision]' --output text
 done     # export/a.txt allowed (prova positiva), interno/b.txt implicitDeny (prova negativa)
 
 #==============================================================================
@@ -282,6 +282,7 @@ SUF=rg
 
 # ---------- WAF ----------
 # Steps 1-13 - Web ACL regionale sicurezza09-SUFFISSO: default Allow, regola osserva-admin (URI path starts with /admin, NONE, Count, priority 0)
+# Nota: nel JSON per la CLI v2 SearchString e un blob in base64: "L2FkbWlu" = "/admin" (con "/admin" in chiaro: Invalid base64)
 cat > rules.json <<'EOF'
 [
   {
@@ -289,7 +290,7 @@ cat > rules.json <<'EOF'
     "Priority": 0,
     "Statement": {
       "ByteMatchStatement": {
-        "SearchString": "/admin",
+        "SearchString": "L2FkbWlu",
         "FieldToMatch": {"UriPath": {}},
         "TextTransformations": [{"Priority": 0, "Type": "NONE"}],
         "PositionalConstraint": "STARTS_WITH"
@@ -353,7 +354,7 @@ aws guardduty create-sample-findings --detector-id $DETECTOR_ID \
 sleep 15
 FIDS=$(aws guardduty list-findings --detector-id $DETECTOR_ID --region us-east-1 --query "FindingIds" --output text)
 aws guardduty get-findings --detector-id $DETECTOR_ID --finding-ids $FIDS --region us-east-1 \
-  --query "Findings[].[Title,Type,Severity,Resource.ResourceType,Region,Service.AdditionalInfo.sample]" --output table
+  --query "Findings[].[Title,Type,Severity,Resource.ResourceType,Region,Service.AdditionalInfo.Value]" --output table
 aws inspector2 batch-get-account-status --region us-east-1 2>&1 | head -20      # se Inspector non e attivo / accesso negato: registrare l'errore, non modificare IAM
 
 # --- Cleanup finale (Lab 6-10) ---

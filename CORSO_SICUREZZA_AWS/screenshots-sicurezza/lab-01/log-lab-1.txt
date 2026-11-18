@@ -1,0 +1,69 @@
+===== passo 1: passo 1
+cd "$HOME"
+export AWS_DEFAULT_REGION=us-east-1
+--- output (exit 0, 0s)
+
+
+===== passo 2: Identita della sessione: e il dato che permette di attribuire le operazioni a un singolo attore
+# Identita della sessione: e il dato che permette di attribuire le operazioni a un singolo attore
+aws sts get-caller-identity
+--- output (exit 0, 7s)
+{
+    "UserId": "AROAXYKJVL52DEHWI2QTU:user4792014=riccardo.gouthier@edu-its.it",
+    "Account": "533267308404",
+    "Arn": "arn:aws:sts::533267308404:assumed-role/voclabs/user4792014=riccardo.gouthier@edu-its.it"
+}
+
+===== passo 3: Scheletro di consegna01.md con le otto componenti della responsabilita condivisa
+# Scheletro di consegna01.md con le otto componenti della responsabilita condivisa
+cat > consegna01.md <<'EOF'
+# Consegna 01 - Fondamenti di sicurezza
+
+## Scenario
+Tecnico carica rapporti in S3; analista li legge; responsabile autorizza la cancellazione; app EC2 li elabora.
+
+## Responsabilita
+| # | Componente | Responsabile | Controllo | Evidenza |
+|--:|---|---|---|---|
+| 1 | Edifici (data center) | AWS | Controllo fisico e ambientale | Documentazione di conformita AWS |
+| 2 | Host fisico | AWS | Hardware e hypervisor | Modello di responsabilita condivisa |
+| 3 | Guest OS su EC2 | Cliente | Patching e hardening | Piano di aggiornamento |
+| 4 | Libreria applicativa | Cliente | Aggiornamento dipendenze | Versione installata / changelog |
+| 5 | Accesso ai rapporti | Cliente | Permessi minimi su S3 | Lettura consentita, cancellazione negata all'analista |
+| 6 | Classificazione dati | Cliente | Etichetta "sintetici" | Etichetta nella consegna |
+| 7 | Configurazione di rete | Cliente | Regole coerenti con il flusso | Diagramma |
+| 8 | Credenziali e sessioni | Cliente | Identita distinte | Log attribuibile |
+EOF
+cat consegna01.md
+--- output (exit 0, 0s)
+# Consegna 01 - Fondamenti di sicurezza
+
+## Scenario
+Tecnico carica rapporti in S3; analista li legge; responsabile autorizza la cancellazione; app EC2 li elabora.
+
+## Responsabilita
+| # | Componente | Responsabile | Controllo | Evidenza |
+|--:|---|---|---|---|
+| 1 | Edifici (data center) | AWS | Controllo fisico e ambientale | Documentazione di conformita AWS |
+| 2 | Host fisico | AWS | Hardware e hypervisor | Modello di responsabilita condivisa |
+| 3 | Guest OS su EC2 | Cliente | Patching e hardening | Piano di aggiornamento |
+| 4 | Libreria applicativa | Cliente | Aggiornamento dipendenze | Versione installata / changelog |
+| 5 | Accesso ai rapporti | Cliente | Permessi minimi su S3 | Lettura consentita, cancellazione negata all'analista |
+| 6 | Classificazione dati | Cliente | Etichetta "sintetici" | Etichetta nella consegna |
+| 7 | Configurazione di rete | Cliente | Regole coerenti con il flusso | Diagramma |
+| 8 | Credenziali e sessioni | Cliente | Identita distinte | Log attribuibile |
+
+===== passo 4: (Opzionale) prova di attribuzione: ultimi eventi della propria identita in CloudTrail
+# (Opzionale) prova di attribuzione: ultimi eventi della propria identita in CloudTrail
+aws cloudtrail lookup-events --max-results 5 --query "Events[].[EventTime,EventName,Username]" --output table
+--- output (exit 0, 5s)
+--------------------------------------------------------------------------------------------------
+|                                          LookupEvents                                          |
++----------------------------+----------------------+--------------------------------------------+
+|  2026-11-17T20:25:15+01:00 |  DeleteAlias         |  user4792014=riccardo.gouthier@edu-its.it  |
+|  2026-11-17T20:24:56+01:00 |  Decrypt             |  user4792014=riccardo.gouthier@edu-its.it  |
+|  2026-11-17T20:24:52+01:00 |  Encrypt             |  user4792014=riccardo.gouthier@edu-its.it  |
+|  2026-11-17T20:24:42+01:00 |  CreateKey           |  user4792014=riccardo.gouthier@edu-its.it  |
+|  2026-11-17T20:24:16+01:00 |  PutBucketEncryption |  user4792014=riccardo.gouthier@edu-its.it  |
++----------------------------+----------------------+--------------------------------------------+
+

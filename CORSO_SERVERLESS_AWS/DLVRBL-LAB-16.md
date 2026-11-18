@@ -52,7 +52,7 @@ Input `{"order_id":"ORD-001","total":50}` (esecuzione `exec-ord-001`):
 
 Input `{"order_id":"ORD-002","total":200}` (esecuzione `exec-ord-002`):
 
-- Stato: `Succeeded`, durata 0,678 s, 7 transizioni (una in piu: `ApplyDiscount`)
+- Stato: `Succeeded`, durata 0,678 s, 7 transizioni (una in più: `ApplyDiscount`)
 - Percorso: `ValidateOrder` -> `CheckAmount` -> `ApplyDiscount` -> `ConfirmOrder` -> `Success`
 
 ## Step 5 - Errore

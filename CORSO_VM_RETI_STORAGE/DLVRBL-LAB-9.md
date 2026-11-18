@@ -7,11 +7,17 @@
 | Volume Gateway | iSCSI | dischi a blocchi |
 | Tape Gateway | nastri virtuali | applicazione di backup con nastri virtuali |
 
-La scelta si fa in base all'interfaccia richiesta dall'applicazione.
+La scelta si fa in base all'interfaccia che l'applicazione già usa, così non va modificata.
+
+**Scenario ipotetico scelto per la motivazione**: un'azienda ha un'applicazione di backup che scrive su nastri e vuole spostare l'archivio su AWS senza cambiare il software.
+- **Scelta: Tape Gateway.** Espone nastri virtuali al software di backup (interfaccia compatibile con le librerie a nastro) e conserva i nastri in S3 e S3 Glacier.
+- **Scartati**: S3 File Gateway, perché l'applicazione non parla NFS/SMB; Volume Gateway, perché fornisce dischi iSCSI e non nastri.
+- **Se lo scenario fosse un file server con condivisioni di rete**: S3 File Gateway, che salva ogni file come oggetto S3.
+- **Se fosse un database on-premises da proteggere a livello di disco**: Volume Gateway, con snapshot su AWS.
 
 ## Configurazione
-### Volume EBS cifrato (Terraform)
-- Nome `demo-encrypted-vol`, `gp3`, 10 GiB, `us-east-1a`
+### Volume EBS cifrato
+- Nome `demo-encrypted-vol`, `gp3`, 10 GiB, nella stessa AZ dell'istanza a cui sarà collegato (nel documento: `us-east-1a`)
 - `Encrypted = Yes`, chiave `aws/ebs` (KMS key id `ac8cde50-ebef-427c-839c-507c08c27833`)
 - Stato `available`
 
@@ -21,7 +27,7 @@ La scelta si fa in base all'interfaccia richiesta dall'applicazione.
 
 ## Verifica (CLI)
 ```bash
-aws ec2 describe-volumes --volume-ids <vol-id> --query "Volumes[].Encrypted"
+aws ec2 describe-volumes --volume-ids $VOL --query "Volumes[].Encrypted"
 aws s3api head-object --bucket demo-vm-reti-storage-rg-2026 --key test-cifratura.txt
 aws s3api get-bucket-encryption --bucket demo-vm-reti-storage-rg-2026
 ```
@@ -39,20 +45,20 @@ Esito: `describe-volumes` -> `Encrypted: true`; `head-object` -> `ServerSideEncr
 | 3 | Oggetto | `test-cifratura.txt` cifrato (`head-object`: `AES256`) |
 
 ## Limite
-La cifratura a riposo e verificata su volume e oggetto. HTTPS protegge il trasferimento ed e una cosa distinta, non provata da queste verifiche.
+La cifratura a riposo è verificata su volume e oggetto. HTTPS protegge il trasferimento ed è una cosa distinta, non provata da queste verifiche.
 
 ## Checkpoint
 - [x] Tipi di Storage Gateway confrontati e scelta motivata
 - [x] Volume EBS cifrato verificato via CLI
 - [x] Cifratura di bucket e oggetto verificata
 - [x] Cifratura a riposo distinta dal trasferimento
-- [x] Cleanup eseguito (vedi sotto)
+- [x] Cleanup descritto in questo documento (sezione Cleanup)
 
 ## Cleanup
-Volume e bucket rimossi a fine percorso (cleanup finale Lab 8-11, nel Lab 11).
+Il volume `demo-encrypted-vol` si elimina subito con i comandi in fondo se non serve. Il bucket è quello del Lab 08 e si elimina a fine percorso con i comandi indicati in fondo (svuotamento di tutte le versioni, poi `delete-bucket`).
 
 ## Nota metodologica
-`<vol-id>` da sostituire con l'ID osservato del volume. Nessun Storage Gateway creato.
+`$VOL` è l'ID del volume creato dalla procedura CLI. Nessun Storage Gateway creato.
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -63,8 +69,9 @@ BUCKET=demo-vm-reti-storage-rg-2026      # bucket del Lab 08
 # Steps 1-2 - Storage Gateway: solo esame dei tipi (nessun gateway creato).
 # S3 File Gateway = NFS/SMB | Volume Gateway = iSCSI | Tape Gateway = nastri virtuali (app di backup)
 
-# Step 3 - Volume EBS cifrato gp3 10 GiB in us-east-1a, chiave aws/ebs
-VOL=$(aws ec2 create-volume --availability-zone us-east-1a --volume-type gp3 --size 10 --encrypted \
+# Step 3 - Volume EBS cifrato gp3 10 GiB nella AZ dell'istanza di destinazione (qui demo-web-02), chiave aws/ebs
+AZ=$(aws ec2 describe-instances --filters Name=tag:Name,Values=demo-web-02 --query "Reservations[0].Instances[0].Placement.AvailabilityZone" --output text)
+VOL=$(aws ec2 create-volume --availability-zone $AZ --volume-type gp3 --size 10 --encrypted \
   --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=demo-encrypted-vol}]' \
   --query VolumeId --output text)
 aws ec2 wait volume-available --volume-ids $VOL
@@ -80,13 +87,18 @@ aws s3api put-object --bucket $BUCKET --key test-cifratura.txt --body test-cifra
 aws s3api head-object --bucket $BUCKET --key test-cifratura.txt --query ServerSideEncryption
 ```
 
-Output atteso: `Encrypted: true` con KMS key `aws/ebs`, `SSEAlgorithm: AES256`, `ServerSideEncryption: "AES256"`. La verifica riguarda la cifratura a riposo; HTTPS (trasferimento) e un controllo distinto.
+Output atteso: `Encrypted: true` con KMS key `aws/ebs`, `SSEAlgorithm: AES256`, `ServerSideEncryption: "AES256"`. La verifica riguarda la cifratura a riposo; HTTPS (trasferimento) è un controllo distinto.
 
-### Cleanup (se il volume non serve piu)
+### Cleanup (se il volume non serve più)
 
 ```bash
 aws ec2 delete-volume --volume-id $VOL
 aws s3api delete-object --bucket $BUCKET --key test-cifratura.txt
 ```
 
-Il bucket resta fino al cleanup finale (procedura del Lab 11).
+Eliminazione del bucket a fine percorso (il bucket ha il versioning attivo dal Lab 08, quindi vanno rimosse tutte le versioni e i delete marker):
+
+```bash
+aws s3api delete-objects --bucket $BUCKET --delete "$(aws s3api list-object-versions --bucket $BUCKET --query '{Objects: [Versions,DeleteMarkers][][].{Key:Key,VersionId:VersionId}}' --output json)"
+aws s3api delete-bucket --bucket $BUCKET
+```

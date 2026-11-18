@@ -31,7 +31,7 @@ def lambda_handler(event, context):
 
 - API: `multi-stage-api` (ID `rq0xcn5br4`), risorsa `/status`, metodo `GET`.
 - Stage creati: `dev` e `prod`.
-- Dev: cache cluster provisioned, default method-level caching **Active**. Prod (dallo screenshot): cache cluster e default method-level caching **Inactive**.
+- Dev: cache cluster provisioned, default method-level caching **Active**. Prod: cache cluster e default method-level caching **Inactive**.
 - Limiti stage: rate 10000, burst 5000.
 - Deployment attivi: `dev` = `v5191a` (14:22), `prod` = `eviq4m` (14:23).
 
@@ -40,7 +40,7 @@ def lambda_handler(event, context):
 | Stage | Nome | Valore |
 |---|---|---|
 | `prod` | `environment` | `production` |
-| `dev` | `environment` | (impostata anche per `dev`) |
+| `dev` | `environment` | `development` (come nello script CLI) |
 
 ### Step 4 - Log di accesso
 
@@ -76,6 +76,8 @@ fields @timestamp, @message
 | 200 | 5 |
 | 403 | 1 |
 
+Il 403 è la richiesta a un percorso inesistente (`/dev/nonesiste`): API Gateway risponde `403 Missing Authentication Token` quando la risorsa non esiste. Non è un errore della Lambda.
+
 ## Parte B - Caching, Monitoraggio Avanzato e Revisione
 
 ### Step 7 - Infrastruttura per il caching
@@ -86,7 +88,7 @@ fields @timestamp, @message
 
 ### Step 8 - Abilitare il caching
 
-- Stage `dev`: cache cluster **Provisioned**, default method-level caching **Active**.
+- Stage `dev`: cache cluster **Provisioned**, default method-level caching **Active**. Il TTL predefinito è 300 s; per la prova si imposta **60 s** (comando nella procedura CLI, Step 8b). Il cache cluster costa a ore: va eliminato a fine lab.
 - URL: `https://vhpizbfc2c.execute-api.us-east-1.amazonaws.com/dev`
 
 ### Step 9 - Logging e X-Ray su API Gateway
@@ -105,7 +107,7 @@ Risultato: `"TracingConfig": { "Mode": "Active" }`.
 
 ### Step 11 - Ping alla Lambda
 
-Sei richieste con query string diversa (ogni valore genera una chiave di cache diversa, quindi una cache miss):
+Sei richieste con query string diversa (ogni valore genera una chiave di cache diversa, quindi una cache miss). Questa misura da sola non dimostra il caching: la prova di cache hit è nello Step 12.
 
 ```
 for i in 1 2 3 4 5 6; do curl -s -o /dev/null -w "miss$i: %{http_code} %{time_total}s\n" "https://vhpizbfc2c.execute-api.us-east-1.amazonaws.com/dev/products?category=xray$i"; done
@@ -120,11 +122,20 @@ for i in 1 2 3 4 5 6; do curl -s -o /dev/null -w "miss$i: %{http_code} %{time_to
 | miss5 | 200 | 0,537894 s |
 | miss6 | 200 | 0,540394 s |
 
+### Step 12 - Prova di cache hit e metriche (comandi nella procedura CLI)
+
+1. Con TTL 60 s: due richieste identiche a `?category=xray1` entro 60 s devono restituire lo stesso `generated_at` (la seconda risposta viene dalla cache, senza chiamare la Lambda) e un tempo molto più basso di ~0,54 s (la Lambda ha `time.sleep(0.5)`).
+2. Dopo 60 s la stessa richiesta torna a essere una miss: `generated_at` cambia.
+3. Metriche CloudWatch dello stage (`AWS/ApiGateway`, dimensioni `ApiName=cache-test-api` e `Stage=dev`): `CacheHitCount` e `CacheMissCount`. Dopo la prova ci si aspetta più miss (le 6 richieste diverse e quella iniziale) e almeno 1 hit.
+4. X-Ray: dopo l'attivazione su stage e Lambda, il Service Map (`aws xray get-service-graph`) mostra il client, API Gateway e la funzione `cache-demo`.
+
+Nel documento consegnato le sei richieste sono tutte miss e non c'è ancora l'evidenza di hit: questa è la parte da annotare dopo l'esecuzione.
+
 ## Conclusioni
 
 1. Gli stage permettono di servire lo stesso backend con configurazioni diverse (stage variables, caching, logging).
 2. I log di accesso in formato JSON si interrogano con Logs Insights (es. conteggio per status code: 5 x 200, 1 x 403).
-3. La prima richiesta e piu lenta (0,775 s) delle successive (~0,54 s); ogni richiesta con query string diversa e una cache miss e raggiunge la Lambda.
+3. La prima richiesta è più lenta (0,775 s) delle successive (~0,54 s): è la prima chiamata (cold start della Lambda e primo handshake TLS dal client). Ogni richiesta con query string diversa è una cache miss e raggiunge la Lambda, quindi i ~0,54 s corrispondono al `sleep(0.5)` più il tempo di rete; il caching è dimostrato solo dallo Step 12.
 4. X-Ray va attivato sia sullo stage API Gateway sia sulla funzione Lambda per tracciare l'intera catena.
 
 Procedura di esecuzione in CLI Cloudshell:
@@ -173,16 +184,20 @@ aws lambda add-permission --function-name stage-demo --statement-id apigw-invoke
 
 # Step 3 - Stage variables (environment) al deploy
 aws apigateway create-deployment --rest-api-id $API_ID --stage-name dev  --variables environment=development
+sleep 10   # CreateDeployment è limitato (1 richiesta ogni pochi secondi): senza pausa il secondo comando dà TooManyRequestsException
 aws apigateway create-deployment --rest-api-id $API_ID --stage-name prod --variables environment=production
 
 # Step 4 - Log di accesso sullo stage dev
 aws logs create-log-group --log-group-name api-access-logs-dev
 LOG_ARN=$(aws logs describe-log-groups --log-group-name-prefix api-access-logs-dev --query "logGroups[0].arn" --output text | sed 's/:\*$//')
 aws apigateway update-account --patch-operations op=replace,path=/cloudwatchRoleArn,value=$ROLE_ARN
-aws apigateway update-stage --rest-api-id $API_ID --stage-name dev --patch-operations \
-  op=replace,path=/accessLogSettings/destinationArn,value=$LOG_ARN \
-  'op=replace,path=/accessLogSettings/format,value={"requestId":"$context.requestId","ip":"$context.identity.sourceIp","method":"$context.httpMethod","status":"$context.status","latency":"$context.responseLatency"}'
+# Il formato contiene virgole: in sintassi abbreviata la CLI v2 dà "Expected: '='"; le operazioni si passano quindi in JSON
+aws apigateway update-stage --rest-api-id $API_ID --stage-name dev --patch-operations '[
+  {"op":"replace","path":"/accessLogSettings/destinationArn","value":"'"$LOG_ARN"'"},
+  {"op":"replace","path":"/accessLogSettings/format","value":"{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"method\":\"$context.httpMethod\",\"status\":\"$context.status\",\"latency\":\"$context.responseLatency\"}"}
+]'
 
+sleep 20   # il nuovo stage prod impiega qualche secondo a propagarsi: subito dopo il deploy risponde {"message":"Forbidden"}
 # Step 5 - Traffico di test (5 richieste valide + 1 percorso inesistente che produce 403)
 for i in 1 2 3 4 5; do curl -s https://$API_ID.execute-api.us-east-1.amazonaws.com/dev/status; echo; done
 curl -s https://$API_ID.execute-api.us-east-1.amazonaws.com/prod/status; echo
@@ -226,29 +241,48 @@ aws lambda add-permission --function-name cache-demo --statement-id apigw-invoke
 aws apigateway create-deployment --rest-api-id $API2 --stage-name dev --cache-cluster-enabled --cache-cluster-size 0.5
 aws logs create-log-group --log-group-name cache-test-api-log-group
 LOG2=$(aws logs describe-log-groups --log-group-name-prefix cache-test-api-log-group --query "logGroups[0].arn" --output text | sed 's/:\*$//')
-aws apigateway update-stage --rest-api-id $API2 --stage-name dev --patch-operations \
-  op=replace,path=/*/*/logging/loglevel,value=INFO \
-  op=replace,path=/*/*/metrics/enabled,value=true \
-  op=replace,path=/*/*/caching/enabled,value=true \
-  op=replace,path=/tracingEnabled,value=true \
-  op=replace,path=/accessLogSettings/destinationArn,value=$LOG2 \
-  'op=replace,path=/accessLogSettings/format,value={"requestId":"$context.requestId","status":"$context.status","latency":"$context.responseLatency"}'
+# Il formato contiene virgole: in sintassi abbreviata la CLI v2 dà "Expected: '='"; le operazioni si passano quindi in JSON
+aws apigateway update-stage --rest-api-id $API2 --stage-name dev --patch-operations '[
+  {"op":"replace","path":"/*/*/logging/loglevel","value":"INFO"},
+  {"op":"replace","path":"/*/*/metrics/enabled","value":"true"},
+  {"op":"replace","path":"/*/*/caching/enabled","value":"true"},
+  {"op":"replace","path":"/tracingEnabled","value":"true"},
+  {"op":"replace","path":"/accessLogSettings/destinationArn","value":"'"$LOG2"'"},
+  {"op":"replace","path":"/accessLogSettings/format","value":"{\"requestId\":\"$context.requestId\",\"status\":\"$context.status\",\"latency\":\"$context.responseLatency\"}"}
+]'
 
 # Step 10 - X-Ray sulla funzione Lambda
 aws lambda update-function-configuration --function-name cache-demo --tracing-config Mode=Active --region us-east-1
 aws lambda get-function-configuration --function-name cache-demo --region us-east-1 --query TracingConfig
 
+# Step 8b - TTL della cache a 60 secondi
+aws apigateway update-stage --rest-api-id $API2 --stage-name dev --patch-operations op=replace,path=/*/*/caching/ttlInSeconds,value=60
+
+# Il cache cluster impiega alcuni minuti (CREATE_IN_PROGRESS): finché non è AVAILABLE le richieste non vengono messe in cache
+until [ "$(aws apigateway get-stage --rest-api-id $API2 --stage-name dev --query cacheClusterStatus --output text)" = AVAILABLE ]; do sleep 20; done
+sleep 120   # nel nostro test le prime richieste dopo AVAILABLE non venivano ancora memorizzate
+
 # Step 11 - Sei richieste con query string diverse (cache miss) e cache hit ripetendo la stessa
 for i in 1 2 3 4 5 6; do curl -s -o /dev/null -w "miss$i: %{http_code} %{time_total}s\n" "https://$API2.execute-api.us-east-1.amazonaws.com/dev/products?category=xray$i"; done
 for i in 1 2 3; do curl -s -o /dev/null -w "hit$i: %{http_code} %{time_total}s\n" "https://$API2.execute-api.us-east-1.amazonaws.com/dev/products?category=xray1"; done
+
+# Step 12 - Prova di cache hit: stessa richiesta due volte entro 60 s (stesso generated_at), poi dopo 60 s (generated_at diverso)
+U="https://$API2.execute-api.us-east-1.amazonaws.com/dev/products?category=hit"
+curl -s $U; echo; curl -s $U; echo
+sleep 65; curl -s $U; echo
+# Metriche della cache e Service Map X-Ray
+aws cloudwatch get-metric-statistics --namespace AWS/ApiGateway --metric-name CacheHitCount --dimensions Name=ApiName,Value=cache-test-api Name=Stage,Value=dev --start-time $(date -u -d '-30 minutes' +%FT%TZ) --end-time $(date -u +%FT%TZ) --period 300 --statistics Sum
+aws cloudwatch get-metric-statistics --namespace AWS/ApiGateway --metric-name CacheMissCount --dimensions Name=ApiName,Value=cache-test-api Name=Stage,Value=dev --start-time $(date -u -d '-30 minutes' +%FT%TZ) --end-time $(date -u +%FT%TZ) --period 300 --statistics Sum
+aws xray get-service-graph --start-time $(date -u -d '-30 minutes' +%FT%TZ) --end-time $(date -u +%FT%TZ) --query "Services[].Name"
 cd ..
 ```
 
-Il cache cluster di API Gateway e a pagamento orario: eliminare lo stage a fine lab.
+Il cache cluster di API Gateway è a pagamento orario: eliminare lo stage a fine lab.
 
 ### Cleanup
 
 ```bash
+aws apigateway update-stage --rest-api-id $API2 --stage-name dev --patch-operations op=replace,path=/cacheClusterEnabled,value=false   # disabilita la cache
 aws apigateway delete-stage --rest-api-id $API2 --stage-name dev    # ferma il cache cluster
 aws apigateway delete-rest-api --rest-api-id $API2
 aws apigateway delete-rest-api --rest-api-id $API_ID

@@ -1,0 +1,28 @@
+===== passo 1: passo 1
+aws cloudwatch delete-dashboards --dashboard-names lab18-serverless
+aws cloudwatch delete-alarms --alarm-names lab18-lambda-errors
+aws cloudformation delete-stack --stack-name monitored-api-lab18
+aws cloudformation delete-stack --stack-name order-api-lab18
+aws cloudformation wait stack-delete-complete --stack-name monitored-api-lab18
+aws cloudformation wait stack-delete-complete --stack-name order-api-lab18
+--- output (exit 0, 90s)
+
+
+===== passo 2: I log group delle funzioni non fanno parte dello stack e restano: si eliminano a mano
+# I log group delle funzioni non fanno parte dello stack e restano: si eliminano a mano
+for LGN in $(aws logs describe-log-groups --log-group-name-prefix /aws/lambda/order-api-lab18 --query "logGroups[].logGroupName" --output text) $(aws logs describe-log-groups --log-group-name-prefix /aws/lambda/monitored-api-lab18 --query "logGroups[].logGroupName" --output text); do aws logs delete-log-group --log-group-name $LGN; done
+--- output (exit 0, 25s)
+
+
+===== passo 3: Il bucket S3 creato da `sam deploy --resolve-s3` non è nello stack: va svuotato ed eliminato
+# Il bucket S3 creato da `sam deploy --resolve-s3` non è nello stack: va svuotato ed eliminato
+SAMB=$(aws s3api list-buckets --query "Buckets[?starts_with(Name, 'aws-sam-cli-managed-default-samclisourcebucket')].Name" --output text)
+[ -n "$SAMB" ] && aws s3 rm s3://$SAMB --recursive && aws s3api delete-bucket --bucket $SAMB
+--- output (exit 254, 14s)
+delete: s3://aws-sam-cli-managed-default-samclisourcebucket-wlhgtr5u1gn6/a21d552476cabdf3e74b8f774ee16496.template
+delete: s3://aws-sam-cli-managed-default-samclisourcebucket-wlhgtr5u1gn6/6c550eb7c84f02776241ae1c0d6293ce
+delete: s3://aws-sam-cli-managed-default-samclisourcebucket-wlhgtr5u1gn6/e8dd455e0c5a8a47307f871ad20cfd74.template
+delete: s3://aws-sam-cli-managed-default-samclisourcebucket-wlhgtr5u1gn6/e5e359908e362426a71cd63cbf372bcc
+
+aws: [ERROR]: An error occurred (BucketNotEmpty) when calling the DeleteBucket operation: The bucket you tried to delete is not empty. You must delete all versions in the bucket.
+

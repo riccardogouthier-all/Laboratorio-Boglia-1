@@ -1,0 +1,102 @@
+===== passo 1: passo 1
+aws ssm send-command --instance-ids $ID1 $ID2 --document-name AWS-RunShellScript --parameters 'commands=["sudo umount /mnt/efs-shared","sudo umount /mnt/demo-data"]'
+for MT in $(aws efs describe-mount-targets --file-system-id $EFS --query "MountTargets[].MountTargetId" --output text); do aws efs delete-mount-target --mount-target-id $MT; done
+until [ "$(aws efs describe-mount-targets --file-system-id $EFS --query 'length(MountTargets)' --output text)" = 0 ]; do sleep 10; done
+aws efs delete-file-system --file-system-id $EFS
+aws ec2 terminate-instances --instance-ids $ID1 $ID2 && aws ec2 wait instance-terminated --instance-ids $ID1 $ID2
+aws ec2 delete-volume --volume-id $V1; aws ec2 delete-volume --volume-id $V2
+aws ec2 delete-security-group --group-id $SG_E
+aws ec2 delete-security-group --group-id $SG_I
+--- output (exit 0, 101s)
+{
+    "Command": {
+        "CommandId": "05e22cf6-103a-482f-a7d2-00655ca86646",
+        "DocumentName": "AWS-RunShellScript",
+        "DocumentVersion": "$DEFAULT",
+        "Comment": "",
+        "ExpiresAfter": "2026-11-18T00:46:47.588000+01:00",
+        "Parameters": {
+            "commands": [
+                "sudo umount /mnt/efs-shared",
+                "sudo umount /mnt/demo-data"
+            ]
+        },
+        "InstanceIds": [
+            "i-0952a94e0e7f579dd",
+            "i-022da9e5e7448f693"
+        ],
+        "Targets": [],
+        "RequestedDateTime": "2026-11-17T22:46:47.588000+01:00",
+        "Status": "Pending",
+        "StatusDetails": "Pending",
+        "OutputS3Region": "us-east-1",
+        "OutputS3BucketName": "",
+        "OutputS3KeyPrefix": "",
+        "MaxConcurrency": "50",
+        "MaxErrors": "0",
+        "TargetCount": 2,
+        "CompletedCount": 0,
+        "ErrorCount": 0,
+        "DeliveryTimedOutCount": 0,
+        "ServiceRole": "",
+        "NotificationConfig": {
+            "NotificationArn": "",
+            "NotificationEvents": [],
+            "NotificationType": ""
+        },
+        "CloudWatchOutputConfig": {
+            "CloudWatchLogGroupName": "",
+            "CloudWatchOutputEnabled": false
+        },
+        "TimeoutSeconds": 3600,
+        "AlarmConfiguration": {
+            "IgnorePollAlarmFailure": false,
+            "Alarms": []
+        },
+        "TriggeredAlarms": []
+    }
+}
+{
+    "TerminatingInstances": [
+        {
+            "InstanceId": "i-0952a94e0e7f579dd",
+            "CurrentState": {
+                "Code": 32,
+                "Name": "shutting-down"
+            },
+            "PreviousState": {
+                "Code": 16,
+                "Name": "running"
+            }
+        },
+        {
+            "InstanceId": "i-022da9e5e7448f693",
+            "CurrentState": {
+                "Code": 32,
+                "Name": "shutting-down"
+            },
+            "PreviousState": {
+                "Code": 16,
+                "Name": "running"
+            }
+        }
+    ]
+}
+{
+    "Return": true,
+    "GroupId": "sg-0823ab800304cc62b"
+}
+{
+    "Return": true,
+    "GroupId": "sg-0cadaf7e64a5e7168"
+}
+
+===== passo 2: La subnet demo-subnet-public-1b è creata da questo lab: si elimina qui, dopo averla dissociata dalla route table pubblica
+# La subnet demo-subnet-public-1b è creata da questo lab: si elimina qui, dopo averla dissociata dalla route table pubblica
+# (altrimenti il cleanup del Lab 05 trova due associazioni su demo-rt-public e `disassociate-route-table` fallisce)
+ASSOC_B=$(aws ec2 describe-route-tables --route-table-ids $RT_PUB --query "RouteTables[0].Associations[?SubnetId=='$SUB_B'].RouteTableAssociationId" --output text)
+aws ec2 disassociate-route-table --association-id $ASSOC_B
+aws ec2 delete-subnet --subnet-id $SUB_B
+--- output (exit 0, 20s)
+
+

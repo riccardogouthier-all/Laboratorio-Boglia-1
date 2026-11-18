@@ -11,7 +11,7 @@ Tabella DynamoDB di ordini con chiave composta (cliente + data) e Lambda `orders
 - Tabella: `lab13-orders`
 - Partition key: `customer_id` (String)
 - Sort key: `order_date` (String)
-- Modalita capacita: On-demand
+- Modalità capacità: On-demand
 
 ## Step 2 - Dati inseriti dalla console
 
@@ -46,7 +46,7 @@ Scan di verifica: 5 elementi restituiti.
 
 ## Step 5 - Creare un nuovo ordine
 
-Problema: `create_order` non accetta numeri decimali (boto3 non scrive i `float` in DynamoDB, serve `Decimal`). Correzione in `create_order`:
+Problema: `create_order` non accetta numeri decimali (boto3 non scrive i `float` in DynamoDB, serve `Decimal`). L'errore di boto3 è `TypeError: Float types are not supported. Use Decimal types instead`. Correzione in `create_order`:
 
 ```python
 from decimal import Decimal
@@ -57,7 +57,7 @@ def create_order(event):
     return response(201, {'message': 'Order created', 'item': item})
 ```
 
-Le altre due operazioni (GetItem, Query, Scan) erano corrette senza modifiche.
+Le altre tre operazioni (GetItem, Query, Scan) erano corrette senza modifiche.
 
 Test dopo la correzione:
 

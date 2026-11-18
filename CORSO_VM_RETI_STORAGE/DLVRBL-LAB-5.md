@@ -23,11 +23,12 @@ aws ec2 describe-route-tables --filters Name=vpc-id,Values=$VPC4 \
 ```
 Output atteso (illustrativo):
 ```
-[[GatewayId: "igw-0demo123", State: "active"], [NatGatewayId: "nat-0demo456", State: "active"]]
+[["rtb-0demo-public", [["igw-0demo123", null, "active"]]], ["rtb-0demo-main", [[null, "nat-0demo456", "active"]]]]
 ```
 
 ## Configurazione SSH
-```bash
+File `~/.ssh/config`:
+```text
 Host lab-bastion
     HostName <IP_PUBBLICO_BASTION>
     User ec2-user
@@ -63,17 +64,17 @@ Verifica: `demo-private-test` senza IP pubblico (`PublicIpAddress` = `None`).
 - [x] Subnet privata con rotta verso NAT
 - [x] Bastion con SSH ristretto a IP specifico
 - [x] Istanza privata con SSH ristretto al SG del bastion
-- [ ] Cleanup (NAT, EIP, bastion, istanza privata) eseguito o giustificato
+- [ ] Cleanup (NAT, EIP, bastion, istanza privata): comandi forniti, esecuzione da confermare
 
 ## Cleanup
-- Se si prosegue con Lab 06: conservati bastion, istanza privata, VPC, subnet, IGW (riuso documentato): sì/no
-- NAT `demo-nat` eliminato ed Elastic IP rilasciato (costo orario NAT): sì/no
-- Rotta `blackhole` verso NAT eliminato rimossa dalla route table privata: sì/no
-- Bastion e istanza privata terminati: sì/no
-- IGW scollegato ed eliminato: sì/no
+Comandi nella sezione "Cleanup" in fondo; stato da confermare dopo l'esecuzione.
+- Se si prosegue con il Lab 06: si conservano bastion, istanza privata, VPC, subnet e IGW (il Lab 06 li riusa).
+- NAT `demo-nat` eliminato ed Elastic IP rilasciato: il NAT costa a ore, va eliminato appena finito il lab.
+- Rotta `blackhole` (il NAT è stato eliminato) rimossa dalla route table privata.
+- Bastion e istanza privata terminati; IGW scollegato ed eliminato (solo a fine percorso).
 
 ## Nota metodologica
-IP pubblico/privato, ID IGW/NAT/EIP: valori reali da sostituire. Fallback se Learner Lab non raggiungibile: schema routing (IGW, NAT, bastion) su Markdown, nessuna risorsa reale.
+IP e ID di IGW, NAT ed EIP variano a ogni creazione: la procedura CLI li salva in `BIP`, `PIP`, `IGW`, `NAT`, `EIP`. Il Security Group `demo-sg-private` non limita il traffico in uscita (regola di default), per questo l'istanza privata raggiunge HTTPS attraverso il NAT.
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -131,7 +132,10 @@ echo bastion=$BIP privata=$PIP pubblico_privata=$PPUB
 
 # --- Passo 8 ---
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
+touch ~/.ssh/config
+sed -i '/^# BEGIN lab5/,/^# END lab5/d' ~/.ssh/config     # rende il passo ripetibile: toglie il blocco precedente
 cat >> ~/.ssh/config <<EOF
+# BEGIN lab5
 Host lab-bastion
     HostName $BIP
     User ec2-user
@@ -146,6 +150,7 @@ Host lab-private
     IdentitiesOnly yes
     StrictHostKeyChecking accept-new
     ProxyJump lab-bastion
+# END lab5
 EOF
 chmod 600 ~/.ssh/config
 
@@ -167,4 +172,12 @@ aws ec2 delete-nat-gateway --nat-gateway-id $NAT
 aws ec2 wait nat-gateway-deleted --nat-gateway-ids $NAT
 aws ec2 release-address --allocation-id $EIP
 aws ec2 delete-security-group --group-id $SG_P; aws ec2 delete-security-group --group-id $SG_B
+
+# Rotte e Internet Gateway (saltare questo blocco se si prosegue con il Lab 06, che riusa VPC, subnet e IGW)
+aws ec2 delete-route --route-table-id $RT_MAIN --destination-cidr-block 0.0.0.0/0      # rotta blackhole verso il NAT eliminato
+ASSOC=$(aws ec2 describe-route-tables --route-table-ids $RT_PUB --query "RouteTables[0].Associations[?Main==\`false\`].RouteTableAssociationId" --output text)
+aws ec2 disassociate-route-table --association-id $ASSOC
+aws ec2 delete-route-table --route-table-id $RT_PUB
+aws ec2 detach-internet-gateway --internet-gateway-id $IGW --vpc-id $VPC4
+aws ec2 delete-internet-gateway --internet-gateway-id $IGW
 ```

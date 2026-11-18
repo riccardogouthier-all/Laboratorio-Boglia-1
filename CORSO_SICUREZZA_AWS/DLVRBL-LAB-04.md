@@ -85,22 +85,22 @@ Il valore MFA è simulato: nessun dispositivo MFA reale abilitato o verificato.
 
 ## Verifica CLI (facoltativa)
 ```bash
-aws iam simulate-custom-policy --policy-input-list file://policy04.json --action-names s3:GetObject s3:DeleteObject --resource-arns arn:aws:s3:::didattica-esempio/report/a.txt --query 'EvaluationResults[].[EvalActionName,EvalDecision]'
+aws iam simulate-custom-policy --policy-input-list "$(cat policy04.json)" --action-names s3:GetObject s3:DeleteObject --resource-arns arn:aws:s3:::didattica-esempio/report/a.txt --query 'EvaluationResults[].[EvalActionName,EvalDecision]'
 ```
 ```bash
-aws iam simulate-custom-policy --policy-input-list file://policy04_mfa.json --action-names s3:GetObject --resource-arns arn:aws:s3:::didattica-esempio/report/a.txt --context-entries ContextKeyName=aws:MultiFactorAuthPresent,ContextKeyValues=false,ContextKeyType=boolean --query 'EvaluationResults[].[EvalActionName,EvalDecision]'
+aws iam simulate-custom-policy --policy-input-list "$(cat policy04_mfa.json)" --action-names s3:GetObject --resource-arns arn:aws:s3:::didattica-esempio/report/a.txt --context-entries ContextKeyName=aws:MultiFactorAuthPresent,ContextKeyValues=false,ContextKeyType=boolean --query 'EvaluationResults[].[EvalActionName,EvalDecision]'
 ```
 
 ## Esecuzione simulazione AWS
-- Simulazione AWS effettivamente eseguita: _sì/no_
-- Se no (simulatore negato o non raggiungibile): casi valutati manualmente sulla logica di valutazione IAM; limite: decisioni non confermate dal simulatore
+- Simulazione AWS: non eseguita in questo documento. I 7 casi sono valutati a mano con la logica di valutazione IAM (un `Deny` esplicito prevale su qualsiasi `Allow`; senza `Allow` vale il rifiuto implicito).
+- Limite: le decisioni non sono confermate dal simulatore. I comandi per confermarle sono nella procedura CLI qui sotto.
 
 ## Checkpoint
-- [ ] 4 casi base simulati, decisione e motivo registrati
-- [ ] 3 casi MFA simulati, decisione e motivo registrati
-- [ ] Chiave MFA impostata nel contesto della simulazione, non in Edit resources
-- [ ] Previsioni confrontate con risultati
-- [ ] Dichiarato se simulazione AWS eseguita
+- [x] 4 casi base simulati, decisione e motivo registrati
+- [x] 3 casi MFA simulati, decisione e motivo registrati
+- [x] Chiave MFA impostata nel contesto della simulazione, non in Edit resources
+- [ ] Previsioni confrontate con risultati del simulatore (da fare eseguendo i comandi della procedura CLI)
+- [x] Dichiarato se simulazione AWS eseguita
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -134,7 +134,7 @@ cat > policy04_mfa.json <<'EOF'
 EOF
 
 # Casi base 1-4
-sim() { aws iam simulate-custom-policy --policy-input-list file://$1 --action-names $2 --resource-arns $3 "${@:4}" --query 'EvaluationResults[].[EvalActionName,EvalResourceName,EvalDecision]' --output text; }
+sim() { aws iam simulate-custom-policy --policy-input-list "$(cat $1)" --action-names $2 --resource-arns $3 "${@:4}" --query 'EvaluationResults[].[EvalActionName,EvalResourceName,EvalDecision]' --output text; }
 sim policy04.json s3:GetObject    arn:aws:s3:::didattica-esempio/report/a.txt     # allowed
 sim policy04.json s3:DeleteObject arn:aws:s3:::didattica-esempio/report/a.txt     # explicitDeny
 sim policy04.json s3:GetObject    arn:aws:s3:::didattica-esempio/privato/a.txt    # implicitDeny
@@ -146,4 +146,4 @@ sim policy04_mfa.json s3:GetObject arn:aws:s3:::didattica-esempio/report/a.txt -
 sim policy04_mfa.json s3:GetObject arn:aws:s3:::didattica-esempio/report/a.txt                                                                                                         # chiave omessa: explicitDeny
 ```
 
-Se il ruolo del Learner Lab non permette `iam:SimulateCustomPolicy`, usare il Policy Simulator in console (modalita Custom) e dichiarare la valutazione manuale. Cleanup: `rm policy04.json policy04_mfa.json`.
+Se il ruolo del Learner Lab non permette `iam:SimulateCustomPolicy`, usare il Policy Simulator in console (modalità Custom) e dichiarare la valutazione manuale. Cleanup: `rm policy04.json policy04_mfa.json`.

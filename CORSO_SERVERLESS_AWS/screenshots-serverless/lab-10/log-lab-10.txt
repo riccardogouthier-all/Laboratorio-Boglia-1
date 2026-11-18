@@ -1,0 +1,186 @@
+===== passo 1: passo 1
+export AWS_DEFAULT_REGION=us-east-1
+ROLE_ARN=$(aws iam get-role --role-name LabRole --query Role.Arn --output text)
+ACC=$(aws sts get-caller-identity --query Account --output text)
+mkdir -p lab10 && cd lab10
+--- output (exit 0, 11s)
+
+
+===== passo 2: Step 1 - Funzione api-hello (il lab usa Python 3.12; nel deliverable è stata usata una versione più recente)
+# Step 1 - Funzione api-hello (il lab usa Python 3.12; nel deliverable è stata usata una versione più recente)
+cat > lambda_function.py <<'EOF'
+import json
+
+def lambda_handler(event, context):
+    params = event.get('queryStringParameters') or {}
+    name = params.get('name', 'World')
+
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        'body': json.dumps({
+            'message': f'Hello, {name}!',
+            'method': event.get('httpMethod'),
+            'path': event.get('path')
+        })
+    }
+EOF
+zip -q function.zip lambda_function.py
+aws lambda create-function --function-name api-hello --runtime python3.12 --role $ROLE_ARN --handler lambda_function.lambda_handler --zip-file fileb://function.zip
+aws lambda wait function-active-v2 --function-name api-hello
+FN_ARN=$(aws lambda get-function --function-name api-hello --query Configuration.FunctionArn --output text)
+--- output (exit 0, 15s)
+{
+    "FunctionName": "api-hello",
+    "FunctionArn": "arn:aws:lambda:us-east-1:533267308404:function:api-hello",
+    "Runtime": "python3.12",
+    "Role": "arn:aws:iam::533267308404:role/LabRole",
+    "Handler": "lambda_function.lambda_handler",
+    "CodeSize": 403,
+    "Description": "",
+    "Timeout": 3,
+    "MemorySize": 128,
+    "LastModified": "2026-11-17T23:33:42.381+0000",
+    "CodeSha256": "IHrQvX8TQINL62n8XeDuPOnoMMoWpJvX0cpe1VgHP3g=",
+    "Version": "$LATEST",
+    "TracingConfig": {
+        "Mode": "PassThrough"
+    },
+    "RevisionId": "4e53341c-db56-4e55-8af9-f5c695263320",
+    "State": "Pending",
+    "StateReason": "The function is being created.",
+    "StateReasonCode": "Creating",
+    "PackageType": "Zip",
+    "Architectures": [
+        "x86_64"
+    ],
+    "EphemeralStorage": {
+        "Size": 512
+    },
+    "SnapStart": {
+        "ApplyOn": "None",
+        "OptimizationStatus": "Off"
+    },
+    "RuntimeVersionConfig": {
+        "RuntimeVersionArn": "arn:aws:lambda:us-east-1::runtime:9d15a516fef11563a8c452bd8d3fe5a5a120b73013e74783e925235557467534"
+    },
+    "LoggingConfig": {
+        "LogFormat": "Text",
+        "LogGroup": "/aws/lambda/api-hello"
+    }
+}
+
+===== passo 3: Step 2 - REST API regionale student-api
+# Step 2 - REST API regionale student-api
+API_ID=$(aws apigateway create-rest-api --name student-api --description "api di prova per il lab 10" --endpoint-configuration types=REGIONAL --query id --output text)
+ROOT_ID=$(aws apigateway get-resources --rest-api-id $API_ID --query "items[?path=='/'].id" --output text)
+--- output (exit 0, 11s)
+
+
+===== passo 4: Step 3 - Risorsa /hello e metodo GET con Lambda proxy
+# Step 3 - Risorsa /hello e metodo GET con Lambda proxy
+RES_ID=$(aws apigateway create-resource --rest-api-id $API_ID --parent-id $ROOT_ID --path-part hello --query id --output text)
+aws apigateway put-method --rest-api-id $API_ID --resource-id $RES_ID --http-method GET --authorization-type NONE
+aws apigateway put-integration --rest-api-id $API_ID --resource-id $RES_ID --http-method GET --type AWS_PROXY --integration-http-method POST --uri arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/$FN_ARN/invocations
+aws lambda add-permission --function-name api-hello --statement-id apigw-invoke --action lambda:InvokeFunction --principal apigateway.amazonaws.com --source-arn "arn:aws:execute-api:us-east-1:$ACC:$API_ID/*/GET/hello"
+--- output (exit 0, 19s)
+{
+    "httpMethod": "GET",
+    "authorizationType": "NONE",
+    "apiKeyRequired": false
+}
+{
+    "type": "AWS_PROXY",
+    "httpMethod": "POST",
+    "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:533267308404:function:api-hello/invocations",
+    "passthroughBehavior": "WHEN_NO_MATCH",
+    "timeoutInMillis": 29000,
+    "cacheNamespace": "g96x2c",
+    "cacheKeyParameters": [],
+    "responseTransferMode": "BUFFERED"
+}
+{
+    "Statement": "{\"Sid\":\"apigw-invoke\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"apigateway.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-east-1:533267308404:function:api-hello\",\"Condition\":{\"ArnLike\":{\"AWS:SourceArn\":\"arn:aws:execute-api:us-east-1:533267308404:54pu5clz4l/*/GET/hello\"}}}"
+}
+
+===== passo 5: Step 4 - Test del metodo (equivale al Test della console)
+# Step 4 - Test del metodo (equivale al Test della console)
+aws apigateway test-invoke-method --rest-api-id $API_ID --resource-id $RES_ID --http-method GET --path-with-query-string "/hello?name=Riccardo" --query "[status,body]" --output text
+--- output (exit 0, 5s)
+200	{"message": "Hello, Riccardo!", "method": "GET", "path": "/hello"}
+
+===== passo 6: Step 5 - Deploy sullo stage Lab-10-Serverless e chiamata dal client
+# Step 5 - Deploy sullo stage Lab-10-Serverless e chiamata dal client
+aws apigateway create-deployment --rest-api-id $API_ID --stage-name Lab-10-Serverless
+URL=https://$API_ID.execute-api.us-east-1.amazonaws.com/Lab-10-Serverless/hello
+curl -s "$URL?name=Student"; echo
+--- output (exit 0, 7s)
+{
+    "id": "5oi1ro",
+    "createdDate": "2026-11-18T00:34:33+01:00"
+}
+{"message": "Hello, Student!", "method": "GET", "path": "/hello"}
+
+===== passo 7: Step 6 - Header CORS nella risposta (Access-Control-Allow-Origin: *)
+# Step 6 - Header CORS nella risposta (Access-Control-Allow-Origin: *)
+curl -si "$URL?name=Riccardo" | grep -iE "^(HTTP|access-control|content-type|content-length)"
+--- output (exit 0, 1s)
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 66
+Access-Control-Allow-Origin: *
+
+===== passo 8: Step 6b - Preflight CORS: metodo OPTIONS con integrazione MOCK, poi nuovo deploy sullo stage
+# Step 6b - Preflight CORS: metodo OPTIONS con integrazione MOCK, poi nuovo deploy sullo stage
+aws apigateway put-method --rest-api-id $API_ID --resource-id $RES_ID --http-method OPTIONS --authorization-type NONE
+aws apigateway put-integration --rest-api-id $API_ID --resource-id $RES_ID --http-method OPTIONS --type MOCK --request-templates '{"application/json":"{\"statusCode\": 200}"}'
+aws apigateway put-method-response --rest-api-id $API_ID --resource-id $RES_ID --http-method OPTIONS --status-code 200 --response-parameters "method.response.header.Access-Control-Allow-Origin=false,method.response.header.Access-Control-Allow-Methods=false,method.response.header.Access-Control-Allow-Headers=false"
+aws apigateway put-integration-response --rest-api-id $API_ID --resource-id $RES_ID --http-method OPTIONS --status-code 200 --response-parameters '{"method.response.header.Access-Control-Allow-Origin":"'"'*'"'","method.response.header.Access-Control-Allow-Methods":"'"'GET,OPTIONS'"'","method.response.header.Access-Control-Allow-Headers":"'"'Content-Type'"'"}'
+aws apigateway create-deployment --rest-api-id $API_ID --stage-name Lab-10-Serverless
+curl -si -X OPTIONS -H "Origin: https://esempio.it" -H "Access-Control-Request-Method: GET" "$URL" | grep -iE "^(HTTP|access-control)"
+cd ..
+--- output (exit 0, 25s)
+{
+    "httpMethod": "OPTIONS",
+    "authorizationType": "NONE",
+    "apiKeyRequired": false
+}
+{
+    "type": "MOCK",
+    "requestTemplates": {
+        "application/json": "{\"statusCode\": 200}"
+    },
+    "passthroughBehavior": "WHEN_NO_MATCH",
+    "timeoutInMillis": 29000,
+    "cacheNamespace": "g96x2c",
+    "cacheKeyParameters": [],
+    "responseTransferMode": "BUFFERED"
+}
+{
+    "statusCode": "200",
+    "responseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": false,
+        "method.response.header.Access-Control-Allow-Methods": false,
+        "method.response.header.Access-Control-Allow-Origin": false
+    }
+}
+{
+    "statusCode": "200",
+    "responseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type'",
+        "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+    }
+}
+{
+    "id": "9d93o1",
+    "createdDate": "2026-11-18T00:34:58+01:00"
+}
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Methods: GET,OPTIONS
+

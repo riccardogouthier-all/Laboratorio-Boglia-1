@@ -1,0 +1,35 @@
+===== passo 1: passo 1
+aws apigateway delete-rest-api --rest-api-id $API_ID
+aws lambda delete-function --function-name crud-users
+aws lambda delete-function --function-name simple-authorizer
+aws dynamodb delete-table --table-name lab11-users
+aws logs delete-log-group --log-group-name /aws/lambda/crud-users
+aws logs delete-log-group --log-group-name /aws/lambda/simple-authorizer
+--- output (exit 0, 29s)
+{
+    "StatusCode": 204
+}
+{
+    "StatusCode": 204
+}
+{
+    "TableDescription": {
+        "TableName": "lab11-users",
+        "TableStatus": "DELETING",
+        "ProvisionedThroughput": {
+            "NumberOfDecreasesToday": 0,
+            "ReadCapacityUnits": 0,
+            "WriteCapacityUnits": 0
+        },
+        "TableSizeBytes": 0,
+        "ItemCount": 0,
+        "TableArn": "arn:aws:dynamodb:us-east-1:533267308404:table/lab11-users",
+        "TableId": "75b3091a-ae9f-4e0f-a370-9b27f310e59b",
+        "BillingModeSummary": {
+            "BillingMode": "PAY_PER_REQUEST",
+            "LastUpdateToPayPerRequestDateTime": "2026-11-18T01:42:03.223000+01:00"
+        },
+        "DeletionProtectionEnabled": false
+    }
+}
+

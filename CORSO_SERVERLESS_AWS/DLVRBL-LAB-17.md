@@ -43,7 +43,7 @@ Tipo Standard, stato `Active`, creata il 13 novembre 2026, 11:32:40 (UTC+01:00).
 
 ### Step 4 - Errori transienti e analisi dei retry
 
-`exec-ord-200` (`total` 200, `simulate_error: true`): `Succeeded` in 0,401 s. Output: `payment_id` `PAY-ORD-200`, `status` `paid`. Il pagamento non ha fallito al primo tentativo (probabilita 50%), quindi non si e attivato nessun retry.
+`exec-ord-200` (`total` 200, `simulate_error: true`): `Succeeded` in 0,401 s. Output: `payment_id` `PAY-ORD-200`, `status` `paid`. Il pagamento non ha fallito al primo tentativo (probabilità 50%), quindi non si e attivato nessun retry.
 
 Per osservare i retry sono state lanciate 5 esecuzioni `exec-retry-1..5` con `simulate_error: true`:
 
@@ -55,14 +55,14 @@ Per osservare i retry sono state lanciate 5 esecuzioni `exec-retry-1..5` con `si
 | `exec-retry-4` | Succeeded | 0,315 s | nessun errore |
 | `exec-retry-5` | Succeeded | 2,511 s | 1 retry (attesa iniziale di 2 s) |
 
-La durata di circa 2,5 s indica un retry dopo `IntervalSeconds: 2`. La lettura per `retry-1` e `retry-5` e dedotta dalla durata; la cronologia degli eventi `TaskFailed`/`TaskScheduled` non e riportata negli screenshot.
+La durata di circa 2,5 s indica un retry dopo `IntervalSeconds: 2`. La lettura per `retry-1` e `retry-5` e dedotta dalla durata; la cronologia degli eventi `TaskFailed`/`TaskScheduled` non è riportata in questo documento. Per leggerla: `aws stepfunctions get-execution-history --execution-arn ARN --query "events[?type=='TaskFailed' || type=='TaskScheduled'].[timestamp,type]"`: due `TaskScheduled` separati da un `TaskFailed` confermano il retry.
 
 ### Step 5 - Ordine non valido
 
 `exec-ord-300`, input `{"order_id":"ORD-300","total":-50}`: `Failed` in 0,543 s.
 
-- Errore: `OrderProcessingFailed` nello stato `OrderFailed`, causa `The order could not be processed after all retry attempts`
-- `ValidateOrder` risulta "Caught error" (arancione): l'errore `ValueError` e stato intercettato dal `Catch`
+- Errore: `OrderProcessingFailed` nello stato `OrderFailed`, causa `The order could not be processed after all retry attempts`. Il testo della causa è fuorviante per questo caso: l'ordine con `total` negativo è stato respinto subito dalla validazione (`ValueError` in `ValidateOrder`, durata 0,543 s) e non ha mai provato i retry, che riguardano solo `ProcessPayment` e `RuntimeError`
+- `ValidateOrder` risulta "Caught error" (arancione): l'errore `ValueError` è stato intercettato dal `Catch`
 - `ProcessPayment` non eseguito; `HandleFailure` eseguito con `error_handled: true` e messaggio `Order ORD-300 failed and has been logged for review`
 
 Elenco esecuzioni della macchina (8 in tutto): `exec-ord-100`, `exec-ord-200`, `exec-retry-1..5` Succeeded; `exec-ord-300` Failed.
@@ -127,13 +127,14 @@ Nel log gli eventi mostrano `resource: putItem` (`dynamodb`) e `resource: putObj
 ## Conclusioni
 
 1. `Retry` con `BackoffRate` gestisce errori transienti senza codice aggiuntivo; `Catch` incanala i fallimenti definitivi verso un handler e uno stato `Fail` esplicito.
-2. `ResultPath: $.error` conserva l'input originale e aggiunge l'errore, cosi `handle-failure` conosce l'ordine e la causa.
+2. `ResultPath: $.error` conserva l'input originale e aggiunge l'errore, così `handle-failure` conosce l'ordine e la causa.
 3. Le integrazioni SDK dirette eliminano le Lambda di collegamento: meno codice e meno costi per operazioni semplici su DynamoDB e S3.
-4. Il logging `ALL` con dati di esecuzione permette di ricostruire il percorso, ma puo registrare dati sensibili: da valutare in produzione.
+4. Il logging `ALL` con dati di esecuzione permette di ricostruire il percorso, ma può registrare dati sensibili: da valutare in produzione.
+5. Limite delle prove: nelle 5 esecuzioni si è visto al massimo 1 retry (durata ~2,5 s); non è stato osservato il caso con 2 o 3 retry (attese 2 s, 4 s, 8 s) né l'esaurimento di tutti i tentativi con passaggio al `Catch` su `HandleFailure`. Con probabilità di errore 50% per tentativo, l'esaurimento di 3 tentativi avviene in circa 1 esecuzione su 8: serve lanciare più esecuzioni per osservarlo.
 
 Procedura di esecuzione in CLI Cloudshell:
 
-Il parametro `sleep 25` lascia il tempo ai retry (2 s, 4 s, 8 s). I risultati dei retry variano perche l'errore e casuale (50%).
+Il parametro `sleep 25` lascia il tempo ai retry (2 s, 4 s, 8 s). I risultati dei retry variano perché l'errore è casuale (50%).
 
 ```bash
 export AWS_DEFAULT_REGION=us-east-1

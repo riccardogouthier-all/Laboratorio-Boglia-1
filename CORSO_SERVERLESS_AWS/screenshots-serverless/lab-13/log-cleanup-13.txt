@@ -1,0 +1,29 @@
+===== passo 1: passo 1
+aws lambda delete-function --function-name orders-crud
+aws dynamodb delete-table --table-name lab13-orders
+aws logs delete-log-group --log-group-name /aws/lambda/orders-crud
+--- output (exit 0, 14s)
+{
+    "StatusCode": 204
+}
+{
+    "TableDescription": {
+        "TableName": "lab13-orders",
+        "TableStatus": "DELETING",
+        "ProvisionedThroughput": {
+            "NumberOfDecreasesToday": 0,
+            "ReadCapacityUnits": 0,
+            "WriteCapacityUnits": 0
+        },
+        "TableSizeBytes": 0,
+        "ItemCount": 0,
+        "TableArn": "arn:aws:dynamodb:us-east-1:533267308404:table/lab13-orders",
+        "TableId": "3caf94cf-35de-45cf-bce5-7ad3060764ee",
+        "BillingModeSummary": {
+            "BillingMode": "PAY_PER_REQUEST",
+            "LastUpdateToPayPerRequestDateTime": "2026-11-18T01:46:07.492000+01:00"
+        },
+        "DeletionProtectionEnabled": false
+    }
+}
+

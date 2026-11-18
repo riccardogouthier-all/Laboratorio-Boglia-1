@@ -1,0 +1,10 @@
+===== passo 1: passo 1
+aws lambda delete-function-concurrency --function-name resource-test
+aws cloudwatch delete-alarms --alarm-names resource-test-errors
+aws lambda delete-function --function-name resource-test
+aws logs delete-log-group --log-group-name /aws/lambda/resource-test
+--- output (exit 0, 20s)
+{
+    "StatusCode": 204
+}
+

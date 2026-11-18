@@ -6,20 +6,22 @@ Lavoro di gruppo (Gruppo 2: Matteo Ninotti / Riccardo Gouthier / Ivan Cioffi).
 
 Normativa: Direttiva UE 2012/19/UE (RAEE), economia circolare.
 
-| Dispositivo | Quantita | Categoria RAEE | Azione consigliata | Normativa applicabile |
+| Dispositivo | Quantità | Raggruppamento italiano | Categoria Allegato III (dal 15/08/2018) | Azione consigliata |
 |---|---|---|---|---|
-| Laptop (funzionanti) | 50 | R3 - IT e Telecomunicazioni | Refurbishment / Donazione | Art. 3(1)(a), All. III - Cat. 3 |
-| Monitor LCD (non funzionanti) | 30 | R3 - IT e Telecomunicazioni | Riciclo certificato | Art. 3(1)(a), All. III - Cat. 3 |
-| Server rack (obsoleti ma funzionanti) | 20 | R3 - IT e Telecomunicazioni | Refurbishment | Art. 3(1)(a), All. III - Cat. 3 |
-| Stampanti laser (miste) | 30 | R3 - Apparecchiature IT (grandi e piccole) | Riciclo certificato | Art. 3(1)(a), All. III - Cat. 3/5 |
-| Smartphone aziendali (funzionanti) | 20 | R4 - Piccoli apparecchi elettronici | Donazione / Refurbishment | Art. 3(1)(a), All. III - Cat. 4 |
+| Laptop (funzionanti) | 50 | R4 - IT, elettronica di consumo, piccoli apparecchi | Cat. 6 - Piccole apparecchiature IT e telecomunicazione (lato max <= 50 cm) | Refurbishment / Donazione |
+| Monitor LCD (non funzionanti) | 30 | R3 - TV e monitor | Cat. 2 - Schermi, monitor e apparecchiature con schermo > 100 cm² | Riciclo certificato |
+| Server rack (obsoleti ma funzionanti) | 20 | R4 - IT e telecomunicazioni | Cat. 4 - Apparecchiature di grandi dimensioni (lato > 50 cm) | Refurbishment |
+| Stampanti laser (miste) | 30 | R4 - IT e telecomunicazioni | Cat. 6 se piccole; Cat. 4 se multifunzione grandi (> 50 cm) | Riciclo certificato |
+| Smartphone aziendali (funzionanti) | 20 | R4 - IT, elettronica di consumo, piccoli apparecchi | Cat. 6 - Piccole apparecchiature IT e telecomunicazione | Donazione / Refurbishment |
 | **Totale** | **150** | | | |
+
+Riferimento normativo: Direttiva 2012/19/UE, art. 3(1)(a) (definizione di AEE) e Allegato III (categorie valide dal 15/08/2018). I raggruppamenti R1-R5 sono la classificazione nazionale italiana (D.Lgs. 49/2014) e non coincidono con le categorie dell'Allegato III, quindi le due colonne vanno lette separatamente.
 
 Legenda azioni:
 
 - **Refurbishment / Donazione**: dispositivi funzionanti ricondizionati e ceduti a enti no-profit, scuole o rivenditori.
 - **Riciclo certificato**: dispositivi non funzionanti o non ricondizionabili avviati a impianti RAEE autorizzati per il recupero di materie prime seconde.
-- **Cat. R3 / R4**: R3 = IT e Telecomunicazioni; R4 = piccoli apparecchi elettronici (All. III, Dir. 2012/19/UE).
+- **Dati personali**: prima di donare o rivendere laptop, server e smartphone i dischi vanno cancellati in modo sicuro (GDPR).
 
 ## Step 2 - POC: elaborazione CSV con Lambda, S3, DynamoDB e SNS
 
@@ -39,11 +41,11 @@ Utente --(upload CSV)--> S3 --(PUT event)--> S3 Event Notification --(invoca)-->
 
 | Componente | Ruolo | Serverless? | Motivazione |
 |---|---|---|---|
-| Amazon S3 | Archivia il CSV; evento iniziale della pipeline | Si | Object storage gestito, scaling automatico, si paga per GB usato |
-| S3 Event Notification | Trigger automatico all'upload, senza polling | Si | Funzionalita nativa di S3, nessuna infrastruttura aggiuntiva |
-| AWS Lambda | Legge il CSV, trasforma (parsing, validazione, mapping), scrive su DynamoDB, pubblica su SNS | Si | FaaS, esecuzione on-demand, billing al millisecondo, scala da 0 a migliaia di esecuzioni |
-| Amazon DynamoDB | Database NoSQL dei dati trasformati | Si | Gestito, on-demand, nessun cluster, patching automatico |
-| Amazon SNS | Notifica publish/subscribe a fine elaborazione (email, Lambda, SQS, HTTP) | Si | Messaggistica gestita, multi-AZ nativa, si paga per messaggio |
+| Amazon S3 | Archivia il CSV; evento iniziale della pipeline | Sì | Object storage gestito, scaling automatico, si paga per GB usato |
+| S3 Event Notification | Trigger automatico all'upload, senza polling | Sì | Funzionalità nativa di S3, nessuna infrastruttura aggiuntiva |
+| AWS Lambda | Legge il CSV, trasforma (parsing, validazione, mapping), scrive su DynamoDB, pubblica su SNS | Sì | FaaS, esecuzione on-demand, billing al millisecondo, scala da 0 a migliaia di esecuzioni |
+| Amazon DynamoDB | Database NoSQL dei dati trasformati | Sì | Gestito, on-demand, nessun cluster, patching automatico |
+| Amazon SNS | Notifica publish/subscribe a fine elaborazione (email, Lambda, SQS, HTTP) | Sì | Messaggistica gestita, multi-AZ nativa, si paga per messaggio |
 | **Totale** | | **5 / 5** | Architettura 100% serverless |
 
 ### Flusso di esecuzione
@@ -57,7 +59,7 @@ Utente --(upload CSV)--> S3 --(PUT event)--> S3 Event Notification --(invoca)-->
 ### Vantaggi
 
 - Costo zero a riposo.
-- Scalabilita automatica.
+- Scalabilità automatica.
 - Overhead operativo ridotto (niente patching, niente cluster).
 - Time-to-market rapido (deploy via AWS SAM o CDK).
 
@@ -81,20 +83,20 @@ Ipotesi: us-east-1, EC2 t3.medium on-demand, Lambda 256 MB, 100.000 invocazioni/
 | Durata per invocazione | 500 ms | Lettura CSV + trasformazione + write DynamoDB |
 | Memoria | 256 MB (0,25 GB) | Sufficiente per CSV standard |
 | GB-secondi mensili | 12.500 | 100.000 x 0,5 s x 0,25 GB |
-| Free tier Lambda | 400.000 GB-s/mese (+ 1.000.000 richieste) | Carico POC coperto quasi interamente |
-| Costo eccedenza | $0.00001667 per GB-s | Pricing us-east-1 (2025) |
-| Costo mensile effettivo | ~$0.21 | Richieste + compute |
+| Free tier Lambda | 400.000 GB-s/mese (+ 1.000.000 richieste) | Il carico POC rientra interamente nel free tier |
+| Tariffa compute | $0.00001667 per GB-s | Pricing us-east-1 (2025) |
+| Costo mensile (senza free tier) | ~$0.21 | 12.500 GB-s x $0.00001667 = $0.208; stima prudente: con il free tier il costo reale sarebbe ~$0 |
 | Costo annuo | $2.52 | $0.21 x 12 |
 
 ### Collegamento ai principi Green IT
 
 | Principio | Applicazione al serverless | Beneficio per EcoTech |
 |---|---|---|
-| Efficienza energetica | Lambda esegue codice solo quando serve; EC2 always-on consuma anche con CPU allo 0% | ~350 kWh/anno di consumo idle evitati per singolo t3.medium |
+| Efficienza energetica | Lambda esegue codice solo quando serve; EC2 always-on consuma anche con CPU allo 0% | Nessun consumo da server inattivo (il risparmio in kWh non è quantificato in questo lab) |
 | Pay-as-you-go | Risorse allocate e fatturate solo per i millisecondi di esecuzione | Costo da $364.42 a $2.52/anno (-99,3%) |
 | Riduzione hardware fisico | Nessun server fisico dedicato da acquistare o dismettere | Meno RAEE (coerente con Step 1) |
-| Scalabilita sostenibile | Scala da 0 al picco richiesto | Zero over-provisioning |
-| Carbon footprint ridotta | Infrastruttura condivisa tra molti clienti, piu efficiente di un server dedicato | Programmi AWS di energia rinnovabile |
+| Scalabilità sostenibile | Scala da 0 al picco richiesto | Zero over-provisioning |
+| Carbon footprint ridotta | Infrastruttura condivisa tra molti clienti, più efficiente di un server dedicato | Programmi AWS di energia rinnovabile |
 
 ## Sintesi esecutiva
 
@@ -106,7 +108,7 @@ Ipotesi: us-east-1, EC2 t3.medium on-demand, Lambda 256 MB, 100.000 invocazioni/
 
 Procedura di esecuzione in CLI Cloudshell:
 
-La classificazione RAEE (Step 1) e documentale. Lo Step 2 (POC CSV -> S3 -> Lambda -> DynamoDB + SNS) si riproduce da CloudShell; lo Step 3 e un calcolo di costo.
+La classificazione RAEE (Step 1) è documentale. Lo Step 2 (POC CSV -> S3 -> Lambda -> DynamoDB + SNS) si riproduce da CloudShell; lo Step 3 è un calcolo di costo.
 
 ### Step 2 - POC pipeline CSV
 
@@ -155,6 +157,8 @@ FN_ARN=$(aws lambda get-function --function-name csv-poc --query Configuration.F
 aws s3api put-bucket-notification-configuration --bucket $BUCKET --notification-configuration "{\"LambdaFunctionConfigurations\":[{\"LambdaFunctionArn\":\"$FN_ARN\",\"Events\":[\"s3:ObjectCreated:*\"]}]}"
 
 # Test: upload del CSV e verifica
+# La configurazione delle notifiche S3 impiega 30-60 secondi per diventare attiva: un upload immediato non genera l'evento
+sleep 45
 printf 'id,name\n1,mario rossi\n2,anna verdi\n' > clienti.csv
 aws s3 cp clienti.csv s3://$BUCKET/clienti.csv
 sleep 10

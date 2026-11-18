@@ -1,0 +1,221 @@
+===== passo 1: passo 1
+export AWS_DEFAULT_REGION=us-east-1
+VPC=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=demo-vpc --query "Vpcs[0].VpcId" --output text)
+SUB_A=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=demo-subnet-public-1a --query "Subnets[0].SubnetId" --output text)
+RT_PUB=$(aws ec2 describe-route-tables --filters Name=tag:Name,Values=demo-rt-public --query "RouteTables[0].RouteTableId" --output text)
+--- output (exit 0, 16s)
+
+
+===== passo 2: Step 3 (parte DNS) - DNS resolution e DNS hostnames abilitati
+# Step 3 (parte DNS) - DNS resolution e DNS hostnames abilitati
+aws ec2 modify-vpc-attribute --vpc-id $VPC --enable-dns-support '{"Value":true}'
+aws ec2 modify-vpc-attribute --vpc-id $VPC --enable-dns-hostnames '{"Value":true}'
+--- output (exit 0, 11s)
+
+
+===== passo 3: Step 1 - Seconda subnet pubblica in us-east-1b e due istanze Amazon Linux 2023 (indipendenti da ASG)
+# Step 1 - Seconda subnet pubblica in us-east-1b e due istanze Amazon Linux 2023 (indipendenti da ASG)
+SUB_B=$(aws ec2 create-subnet --vpc-id $VPC --cidr-block 10.0.4.0/24 --availability-zone us-east-1b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=demo-subnet-public-1b}]' --query Subnet.SubnetId --output text)
+aws ec2 modify-subnet-attribute --subnet-id $SUB_B --map-public-ip-on-launch
+aws ec2 associate-route-table --route-table-id $RT_PUB --subnet-id $SUB_B
+aws ec2 modify-subnet-attribute --subnet-id $SUB_A --map-public-ip-on-launch
+
+SG_I=$(aws ec2 create-security-group --group-name demo-sg-instances --description "demo istanze applicative" --vpc-id $VPC --query GroupId --output text)
+BASE_AMI=$(aws ssm get-parameter --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 --query Parameter.Value --output text)
+mk() { aws ec2 run-instances --image-id $BASE_AMI --instance-type t3.micro --subnet-id $2 --security-group-ids $SG_I --iam-instance-profile Name=LabInstanceProfile --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$1}]" --query "Instances[0].InstanceId" --output text; }
+ID1=$(mk demo-web-01 $SUB_A)
+ID2=$(mk demo-web-02 $SUB_B)
+aws ec2 wait instance-status-ok --instance-ids $ID1 $ID2
+echo $ID1 $ID2
+--- output (exit 0, 218s)
+{
+    "AssociationId": "rtbassoc-0439967b3186f40f2",
+    "AssociationState": {
+        "State": "associated"
+    }
+}
+i-0952a94e0e7f579dd i-022da9e5e7448f693
+
+===== passo 4: Step 2 - Volumi EBS dedicati gp3 10 GiB, uno per istanza, nella rispettiva AZ
+# Step 2 - Volumi EBS dedicati gp3 10 GiB, uno per istanza, nella rispettiva AZ
+V1=$(aws ec2 create-volume --availability-zone us-east-1a --volume-type gp3 --size 10 --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=demo-data-vol}]' --query VolumeId --output text)
+V2=$(aws ec2 create-volume --availability-zone us-east-1b --volume-type gp3 --size 10 --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=demo-data-vol-02}]' --query VolumeId --output text)
+aws ec2 wait volume-available --volume-ids $V1 $V2
+aws ec2 attach-volume --volume-id $V1 --instance-id $ID1 --device /dev/sdf
+aws ec2 attach-volume --volume-id $V2 --instance-id $ID2 --device /dev/sdf
+aws ec2 wait volume-in-use --volume-ids $V1 $V2
+--- output (exit 0, 33s)
+{
+    "VolumeId": "vol-05056d1c9d666b42c",
+    "InstanceId": "i-0952a94e0e7f579dd",
+    "Device": "/dev/sdf",
+    "State": "attaching",
+    "AttachTime": "2026-11-17T21:37:13.433000+00:00"
+}
+{
+    "VolumeId": "vol-0ee5c3c76b24ad072",
+    "InstanceId": "i-022da9e5e7448f693",
+    "Device": "/dev/sdf",
+    "State": "attaching",
+    "AttachTime": "2026-11-17T21:37:19.004000+00:00"
+}
+
+===== passo 5: Formattazione xfs e mount su /mnt/demo-data (via SSM, nessuna chiave SSH necessaria)
+# Formattazione xfs e mount su /mnt/demo-data (via SSM, nessuna chiave SSH necessaria)
+# Su t3 (Nitro) il volume allegato come /dev/sdf è /dev/nvme1n1; il root è nvme0n1. Si controlla prima con lsblk e si formatta solo se il disco è vuoto.
+DATA_CMDS='["lsblk","sudo blkid /dev/nvme1n1 || sudo mkfs -t xfs /dev/nvme1n1","sudo mkdir -p /mnt/demo-data","sudo mount /dev/nvme1n1 /mnt/demo-data","df -h /mnt/demo-data"]'
+for I in $ID1 $ID2; do
+  CID=$(aws ssm send-command --instance-ids $I --document-name AWS-RunShellScript --parameters "commands=$DATA_CMDS" --query Command.CommandId --output text)
+  aws ssm wait command-executed --command-id $CID --instance-id $I     # si attende la fine, altrimenti lo step 7 parte prima del mount
+  aws ssm get-command-invocation --command-id $CID --instance-id $I --query "[InstanceId,Status]" --output text
+done
+--- output (exit 0, 29s)
+i-0952a94e0e7f579dd	Success
+i-022da9e5e7448f693	Success
+
+===== passo 6: Step 3 - Security Group EFS: NFS 2049 solo dal SG delle istanze
+# Step 3 - Security Group EFS: NFS 2049 solo dal SG delle istanze
+SG_E=$(aws ec2 create-security-group --group-name demo-sg-efs --description "demo EFS" --vpc-id $VPC --query GroupId --output text)
+aws ec2 authorize-security-group-ingress --group-id $SG_E --protocol tcp --port 2049 --source-group $SG_I
+--- output (exit 0, 11s)
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-048d4b35337302b54",
+            "GroupId": "sg-0823ab800304cc62b",
+            "GroupOwnerId": "533267308404",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 2049,
+            "ToPort": 2049,
+            "ReferencedGroupInfo": {
+                "GroupId": "sg-0cadaf7e64a5e7168",
+                "UserId": "533267308404"
+            },
+            "SecurityGroupRuleArn": "arn:aws:ec2:us-east-1:533267308404:security-group-rule/sgr-048d4b35337302b54"
+        }
+    ]
+}
+
+===== passo 7: Step 4 - File system EFS Regional, General Purpose
+# Step 4 - File system EFS Regional, General Purpose
+EFS=$(aws efs create-file-system --performance-mode generalPurpose --tags Key=Name,Value=demo-efs-shared --query FileSystemId --output text)
+until [ "$(aws efs describe-file-systems --file-system-id $EFS --query 'FileSystems[0].LifeCycleState' --output text)" = available ]; do sleep 5; done
+echo $EFS
+--- output (exit 0, 9s)
+fs-0d50c965150b2429b
+
+===== passo 8: Step 5 - Mount target nelle due AZ con demo-sg-efs
+# Step 5 - Mount target nelle due AZ con demo-sg-efs
+aws efs create-mount-target --file-system-id $EFS --subnet-id $SUB_A --security-groups $SG_E
+aws efs create-mount-target --file-system-id $EFS --subnet-id $SUB_B --security-groups $SG_E
+until [ "$(aws efs describe-mount-targets --file-system-id $EFS --query 'length(MountTargets[?LifeCycleState==`available`])' --output text)" = 2 ]; do sleep 10; done
+aws efs describe-mount-targets --file-system-id $EFS --query "MountTargets[].[AvailabilityZoneName,IpAddress,LifeCycleState]" --output table
+--- output (exit 0, 93s)
+{
+    "OwnerId": "533267308404",
+    "MountTargetId": "fsmt-06046915986c8bf11",
+    "FileSystemId": "fs-0d50c965150b2429b",
+    "SubnetId": "subnet-0def1818da03df983",
+    "LifeCycleState": "creating",
+    "IpAddress": "10.0.1.83",
+    "NetworkInterfaceId": "eni-072e161590b4ae8b9",
+    "AvailabilityZoneId": "use1-az4",
+    "AvailabilityZoneName": "us-east-1a",
+    "VpcId": "vpc-075e0a75c881b21ab"
+}
+{
+    "OwnerId": "533267308404",
+    "MountTargetId": "fsmt-0c9c1a24a7cd3e38a",
+    "FileSystemId": "fs-0d50c965150b2429b",
+    "SubnetId": "subnet-033771ff356992d8a",
+    "LifeCycleState": "creating",
+    "IpAddress": "10.0.4.215",
+    "NetworkInterfaceId": "eni-0ca97d726f1c0f129",
+    "AvailabilityZoneId": "use1-az6",
+    "AvailabilityZoneName": "us-east-1b",
+    "VpcId": "vpc-075e0a75c881b21ab"
+}
+-------------------------------------------
+|          DescribeMountTargets           |
++------------+--------------+-------------+
+|  us-east-1a|  10.0.1.83   |  available  |
+|  us-east-1b|  10.0.4.215  |  available  |
++------------+--------------+-------------+
+
+===== passo 9: Step 6 - Mount EFS su entrambe le istanze (via SSM)
+# Step 6 - Mount EFS su entrambe le istanze (via SSM)
+# Si usa l'opzione az=: il mount helper risolve il nome DNS di zona (us-east-1a.fs-...). Il nome generico fs-....efs.us-east-1.amazonaws.com
+# nel nostro test non si risolveva ("Failed to resolve") anche con il mount target già available.
+for P in "$ID1 us-east-1a" "$ID2 us-east-1b"; do
+  set -- $P
+  MNT="[\"sudo dnf install -y amazon-efs-utils\",\"sudo mkdir -p /mnt/efs-shared\",\"sudo mount -t efs -o tls,az=$2 $EFS:/ /mnt/efs-shared\",\"findmnt --mountpoint /mnt/efs-shared\"]"
+  CID=$(aws ssm send-command --instance-ids $1 --document-name AWS-RunShellScript --parameters "commands=$MNT" --query Command.CommandId --output text)
+  aws ssm wait command-executed --command-id $CID --instance-id $1
+  aws ssm get-command-invocation --command-id $CID --instance-id $1 --query "[InstanceId,Status]" --output text
+done
+--- output (exit 0, 86s)
+
+aws: [ERROR]: Waiter CommandExecuted failed: Waiter encountered a terminal failure state: For expression "Status" we matched expected path: "Failed"
+i-0952a94e0e7f579dd	Failed
+i-022da9e5e7448f693	Success
+
+===== passo 10: Step 7 - Prova di condivisione: scrive su web-01, legge su web-02
+# Step 7 - Prova di condivisione: scrive su web-01, legge su web-02
+run() { CID=$(aws ssm send-command --instance-ids $1 --document-name AWS-RunShellScript --parameters "commands=[\"$2\"]" --query Command.CommandId --output text); aws ssm wait command-executed --command-id $CID --instance-id $1; aws ssm get-command-invocation --command-id $CID --instance-id $1 --query StandardOutputContent --output text; }
+run $ID1 "findmnt --mountpoint /mnt/efs-shared && echo 'scritto dalla istanza 1' | sudo tee /mnt/efs-shared/condiviso.txt"
+run $ID2 "findmnt --mountpoint /mnt/efs-shared && cat /mnt/efs-shared/condiviso.txt"
+--- output (exit 0, 28s)
+
+aws: [ERROR]: Waiter CommandExecuted failed: Waiter encountered a terminal failure state: For expression "Status" we matched expected path: "Failed"
+
+aws: [ERROR]: Waiter CommandExecuted failed: Waiter encountered a terminal failure state: For expression "Status" we matched expected path: "Failed"
+TARGET          SOURCE      FSTYPE OPTIONS
+/mnt/efs-shared 127.0.0.1:/ nfs4   rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,hard,noresvport,fatal_neterrors=none,proto=tcp,port=20312,timeo=600,retrans=2,sec=sys,clientaddr=127.0.0.1,local_lock=none,addr=127.0.0.1
+
+===== passo 11: Step 8 - Contrasto: i volumi EBS restano separati (su web-02 /mnt/demo-data non contiene i dati di web-01)
+# Step 8 - Contrasto: i volumi EBS restano separati (su web-02 /mnt/demo-data non contiene i dati di web-01)
+run $ID2 "ls -la /mnt/demo-data"
+--- output (exit 0, 23s)
+total 0
+drwxr-xr-x. 2 root root  6 Nov 17 21:37 .
+drwxr-xr-x. 4 root root 41 Nov 17 21:40 ..
+
+===== passo 9: Step 6 - Mount EFS su entrambe le istanze (via SSM)
+# Step 6 - Mount EFS su entrambe le istanze (via SSM)
+# Si usa l'opzione az=: il mount helper risolve il nome DNS di zona (us-east-1a.fs-...). Il nome generico fs-....efs.us-east-1.amazonaws.com
+# nel nostro test non si risolveva ("Failed to resolve") anche con il mount target già available.
+# Anche il nome di zona compare nel DNS della VPC con qualche minuto di ritardo rispetto allo stato available: il mount si ritenta ogni 15 s con until.
+for P in "$ID1 us-east-1a" "$ID2 us-east-1b"; do
+  set -- $P
+  MNT="[\"sudo dnf install -y amazon-efs-utils\",\"sudo mkdir -p /mnt/efs-shared\",\"until sudo mount -t efs -o tls,az=$2 $EFS:/ /mnt/efs-shared; do sleep 15; done\",\"findmnt --mountpoint /mnt/efs-shared\"]"
+  CID=$(aws ssm send-command --instance-ids $1 --document-name AWS-RunShellScript --parameters "commands=$MNT" --query Command.CommandId --output text)
+  aws ssm wait command-executed --command-id $CID --instance-id $1
+  aws ssm get-command-invocation --command-id $CID --instance-id $1 --query "[InstanceId,Status]" --output text
+done
+--- output (exit 0, 105s)
+i-0952a94e0e7f579dd	Success
+i-022da9e5e7448f693	Success
+
+===== passo 10: Step 7 - Prova di condivisione: scrive su web-01, legge su web-02
+# Step 7 - Prova di condivisione: scrive su web-01, legge su web-02
+run() { CID=$(aws ssm send-command --instance-ids $1 --document-name AWS-RunShellScript --parameters "commands=[\"$2\"]" --query Command.CommandId --output text); aws ssm wait command-executed --command-id $CID --instance-id $1; aws ssm get-command-invocation --command-id $CID --instance-id $1 --query StandardOutputContent --output text; }
+run $ID1 "findmnt --mountpoint /mnt/efs-shared && echo 'scritto dalla istanza 1' | sudo tee /mnt/efs-shared/condiviso.txt"
+run $ID2 "findmnt --mountpoint /mnt/efs-shared && cat /mnt/efs-shared/condiviso.txt"
+--- output (exit 0, 29s)
+TARGET          SOURCE      FSTYPE OPTIONS
+/mnt/efs-shared 127.0.0.1:/ nfs4   rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,hard,noresvport,fatal_neterrors=none,proto=tcp,port=20776,timeo=600,retrans=2,sec=sys,clientaddr=127.0.0.1,local_lock=none,addr=127.0.0.1
+scritto dalla istanza 1
+TARGET          SOURCE      FSTYPE OPTIONS
+/mnt/efs-shared 127.0.0.1:/ nfs4   rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,hard,noresvport,fatal_neterrors=none,proto=tcp,port=20312,timeo=600,retrans=2,sec=sys,clientaddr=127.0.0.1,local_lock=none,addr=127.0.0.1
+scritto dalla istanza 1
+
+===== passo 11: Step 8 - Contrasto: i volumi EBS restano separati (su web-02 /mnt/demo-data non contiene i dati di web-01)
+# Step 8 - Contrasto: i volumi EBS restano separati (su web-02 /mnt/demo-data non contiene i dati di web-01)
+run $ID2 "ls -la /mnt/demo-data"
+--- output (exit 0, 27s)
+total 0
+drwxr-xr-x. 2 root root  6 Nov 17 21:37 .
+drwxr-xr-x. 4 root root 41 Nov 17 21:40 ..
+

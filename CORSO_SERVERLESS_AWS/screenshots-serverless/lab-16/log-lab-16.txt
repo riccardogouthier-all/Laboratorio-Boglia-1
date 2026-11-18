@@ -1,0 +1,158 @@
+===== passo 1: passo 1
+export AWS_DEFAULT_REGION=us-east-1
+ROLE_ARN=$(aws iam get-role --role-name LabRole --query Role.Arn --output text)
+echo $ROLE_ARN
+
+mkdir -p lab16 && cd lab16
+
+cat > validate.py <<'EOF'
+import json
+
+def lambda_handler(event, context):
+    order_id = event.get('order_id', 'unknown')
+    total = event.get('total', 0)
+
+    if total <= 0:
+        raise ValueError(f"Invalid order total: {total}")
+
+    return {
+        'order_id': order_id,
+        'total': total,
+        'status': 'validated'
+    }
+EOF
+
+cat > discount.py <<'EOF'
+import json
+
+def lambda_handler(event, context):
+    total = event['total']
+    discount = total * 0.1  # 10% discount
+    new_total = round(total - discount, 2)
+
+    return {
+        'order_id': event['order_id'],
+        'original_total': total,
+        'discount': round(discount, 2),
+        'total': new_total,
+        'status': 'discounted'
+    }
+EOF
+
+cat > confirm.py <<'EOF'
+import json
+
+def lambda_handler(event, context):
+    return {
+        'order_id': event['order_id'],
+        'total': event['total'],
+        'status': 'confirmed',
+        'message': f"Order {event['order_id']} confirmed. Total: {event['total']} EUR"
+    }
+EOF
+
+for p in "validate validate-order" "discount apply-discount" "confirm confirm-order"; do
+  set -- $p
+  cp $1.py lambda_function.py
+  zip -q $1.zip lambda_function.py
+  aws lambda create-function --function-name $2 --runtime python3.12 --role $ROLE_ARN --handler lambda_function.lambda_handler --zip-file fileb://$1.zip --query "[FunctionName,Runtime,State]" --output text
+  aws lambda wait function-active-v2 --function-name $2
+done
+cd ..
+aws lambda list-functions --query "Functions[?starts_with(FunctionName,'validate-')||starts_with(FunctionName,'apply-')||starts_with(FunctionName,'confirm-')].[FunctionName,Runtime]" --output table
+
+REGION=us-east-1
+ACC=$(aws sts get-caller-identity --query Account --output text)
+VAL=arn:aws:lambda:$REGION:$ACC:function:validate-order
+DIS=arn:aws:lambda:$REGION:$ACC:function:apply-discount
+CON=arn:aws:lambda:$REGION:$ACC:function:confirm-order
+
+cat > order-processor.asl.json <<EOF
+{
+  "Comment": "Order processor",
+  "StartAt": "ValidateOrder",
+  "States": {
+    "ValidateOrder": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {"FunctionName": "$VAL", "Payload.\$": "\$"},
+      "OutputPath": "\$.Payload",
+      "Next": "CheckAmount"
+    },
+    "CheckAmount": {
+      "Type": "Choice",
+      "Choices": [
+        {"Variable": "\$.total", "NumericGreaterThan": 100, "Next": "ApplyDiscount"}
+      ],
+      "Default": "ConfirmOrder"
+    },
+    "ApplyDiscount": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {"FunctionName": "$DIS", "Payload.\$": "\$"},
+      "OutputPath": "\$.Payload",
+      "Next": "ConfirmOrder"
+    },
+    "ConfirmOrder": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {"FunctionName": "$CON", "Payload.\$": "\$"},
+      "OutputPath": "\$.Payload",
+      "Next": "Success"
+    },
+    "Success": {"Type": "Succeed"}
+  }
+}
+EOF
+
+SM_ARN=$(aws stepfunctions create-state-machine --name order-processor --definition file://order-processor.asl.json --role-arn $ROLE_ARN --type STANDARD --query stateMachineArn --output text)
+echo $SM_ARN
+aws stepfunctions describe-state-machine --state-machine-arn $SM_ARN --query "[name,status,type]" --output text
+
+EX1=$(aws stepfunctions start-execution --state-machine-arn $SM_ARN --name exec-ord-001 --input '{"order_id":"ORD-001","total":50}' --query executionArn --output text)
+sleep 5
+aws stepfunctions describe-execution --execution-arn $EX1 --query "[status,output]" --output text
+
+aws stepfunctions get-execution-history --execution-arn $EX1 --query "events[?type=='TaskStateEntered'||type=='ChoiceStateEntered'].[id,type,stateEnteredEventDetails.name]" --output table
+
+EX2=$(aws stepfunctions start-execution --state-machine-arn $SM_ARN --name exec-ord-002 --input '{"order_id":"ORD-002","total":200}' --query executionArn --output text)
+sleep 5
+aws stepfunctions describe-execution --execution-arn $EX2 --query "[status,output]" --output text
+aws stepfunctions get-execution-history --execution-arn $EX2 --query "events[?type=='TaskStateEntered'||type=='ChoiceStateEntered'].[id,type,stateEnteredEventDetails.name]" --output table
+
+EX3=$(aws stepfunctions start-execution --state-machine-arn $SM_ARN --name exec-ord-003 --input '{"order_id":"ORD-003","total":-10}' --query executionArn --output text)
+sleep 5
+aws stepfunctions describe-execution --execution-arn $EX3 --query "[status,error,cause]" --output text
+--- output (exit 0, 104s)
+arn:aws:iam::533267308404:role/LabRole
+validate-order	python3.12	Pending
+apply-discount	python3.12	Pending
+confirm-order	python3.12	Pending
+----------------------------------
+|          ListFunctions         |
++-----------------+--------------+
+|  confirm-order  |  python3.12  |
+|  apply-discount |  python3.12  |
+|  validate-order |  python3.12  |
++-----------------+--------------+
+arn:aws:states:us-east-1:533267308404:stateMachine:order-processor
+order-processor	ACTIVE	STANDARD
+SUCCEEDED	{"order_id":"ORD-001","total":50,"status":"confirmed","message":"Order ORD-001 confirmed. Total: 50 EUR"}
+----------------------------------------------
+|             GetExecutionHistory            |
++---+----------------------+-----------------+
+|  2|  TaskStateEntered    |  ValidateOrder  |
+|  7|  ChoiceStateEntered  |  CheckAmount    |
+|  9|  TaskStateEntered    |  ConfirmOrder   |
++---+----------------------+-----------------+
+SUCCEEDED	{"order_id":"ORD-002","total":180.0,"status":"confirmed","message":"Order ORD-002 confirmed. Total: 180.0 EUR"}
+-----------------------------------------------
+|             GetExecutionHistory             |
++----+----------------------+-----------------+
+|  2 |  TaskStateEntered    |  ValidateOrder  |
+|  7 |  ChoiceStateEntered  |  CheckAmount    |
+|  9 |  TaskStateEntered    |  ApplyDiscount  |
+|  14|  TaskStateEntered    |  ConfirmOrder   |
++----+----------------------+-----------------+
+FAILED	ValueError	{"errorMessage":"Invalid order total: -10","errorType":"ValueError","requestId":"7506e559-c179-4544-9960-024bdc7bade5","stackTrace":["  File \"/var/task/lambda_function.py\", line 8, in lambda_handler\n    raise ValueError(f\"Invalid order total: {total}\")\n"]}
+

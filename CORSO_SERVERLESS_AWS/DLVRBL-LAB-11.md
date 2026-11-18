@@ -18,7 +18,7 @@ Client --(Authorization: Bearer ...)--> API Gateway (crud-api) --> Lambda simple
 
 - Tabella: `lab11-users`
 - Partition key: `user_id` (String)
-- Modalita capacita: On-demand
+- Modalità capacità: On-demand
 
 ## Step 2 - Funzione CRUD `crud-users`
 
@@ -35,6 +35,8 @@ Client --(Authorization: Bearer ...)--> API Gateway (crud-api) --> Lambda simple
 def lambda_handler(event, context):
     token = event.get('authorizationToken', '')
     method_arn = event.get('methodArn', '')
+    # Resource ampio (tutti i metodi dello stage): con la cache a 300 s la stessa policy deve valere per POST e DELETE
+    resource = '/'.join(method_arn.split('/')[:2]) + '/*'
 
     if token == 'Bearer my-secret-token-2025':
         effect = 'Allow'
@@ -48,13 +50,13 @@ def lambda_handler(event, context):
             'Statement': [{
                 'Action': 'execute-api:Invoke',
                 'Effect': effect,
-                'Resource': method_arn
+                'Resource': resource
             }]
         }
     }
 ```
 
-Nota: il token e un valore di prova del laboratorio, non una credenziale reale.
+Nota: il token è un valore di prova del laboratorio, non una credenziale reale.
 
 ## Step 4 - API Gateway `crud-api`
 
@@ -80,17 +82,17 @@ Authorizer `token-auth` assegnato ai metodi `POST /users` e `DELETE /users/{id}`
 
 ## Step opzionale - Prova negativa
 
-Chiamate `POST` / `DELETE` senza header `Authorization: Bearer my-secret-token-2025` restituiscono **401/403**.
+Chiamate `POST` / `DELETE` senza header `Authorization: Bearer my-secret-token-2025` restituiscono un errore di autorizzazione: **401 Unauthorized** se manca l'header `Authorization`, **403 Forbidden** se il token è presente ma l'authorizer risponde `Deny` (token sbagliato). Il codice esatto va annotato eseguendo i due casi (nella procedura CLI i comandi stampano il codice HTTP).
 
 ## Test finale
 
 `POST` da Postman con token e body `{"name": "Alice"}`:
 
 ```
-request 'https://ox5hmvvvu4.execute-api.us-east-1.amazonaws.com/dev/users' \
-  --header 'Authorization: Bearer my-secret-token-2025' \
-  --header 'Content-Type: application/json' \
-  --body '{"name": "Alice"}'
+curl -X POST 'https://ox5hmvvvu4.execute-api.us-east-1.amazonaws.com/dev/users' \
+  -H 'Authorization: Bearer my-secret-token-2025' \
+  -H 'Content-Type: application/json' \
+  -d '{"name": "Alice"}'
 ```
 
 Poi `GET /users`: **200 OK**, 165 ms, 424 B:
@@ -109,12 +111,14 @@ Poi `GET /users`: **200 OK**, 165 ms, 424 B:
 |---|---|---|---|
 | 1 | `POST /users` con token valido | Positiva | 201, utente creato |
 | 2 | `GET /users` dopo il POST | Positiva | 200, elenco con Alice |
-| 3 | `POST` / `DELETE` senza token | Negativa | 401/403 |
+| 3 | `POST` / `DELETE` senza token | Negativa | 401 (header assente) o 403 (token sbagliato) |
+| 4 | `DELETE /users/{id}` con token | Positiva | 200 `User {id} deleted` (verificato eseguendo la procedura; poi `GET /users/{id}` dà 404) |
+| 5 | `GET /users/{id}` | Da verificare | la tabella delle operazioni di `crud-users` non include una lettura per id: il risultato dipende dal codice della funzione e va annotato dopo la prova |
 
 ## Conclusioni
 
 1. L'authorizer protegge solo le operazioni di scrittura; le letture restano pubbliche.
-2. Il risultato dell'authorizer viene messo in cache 300 s: una modifica del token puo non essere immediata.
+2. Il risultato dell'authorizer viene messo in cache 300 s: una modifica del token può non essere immediata. C'è anche un rischio: con `Resource` uguale al solo `methodArn` della richiesta, la policy in cache vale solo per quel metodo e percorso. Provato eseguendo la procedura con questa versione: `DELETE /users/{id}` con token valido, subito dopo un `POST /users` con lo stesso token, ha dato `403` (`no identity-based policy allows the execute-api:Invoke action`). Per questo il codice costruisce un `Resource` più ampio (`arn:aws:execute-api:us-east-1:ACCOUNT:API_ID/dev/*`); l'alternativa è la cache a 0 s.
 3. Un token statico nel codice va bene solo per il laboratorio; in produzione servono JWT/Cognito e segreti gestiti.
 
 Procedura di esecuzione in CLI Cloudshell:
@@ -200,6 +204,8 @@ cat > lambda_function.py <<'EOF'
 def lambda_handler(event, context):
     token = event.get('authorizationToken', '')
     method_arn = event.get('methodArn', '')
+    # Resource ampio (tutti i metodi dello stage): con la cache a 300 s la stessa policy deve valere per POST e DELETE
+    resource = '/'.join(method_arn.split('/')[:2]) + '/*'
 
     if token == 'Bearer my-secret-token-2025':
         effect = 'Allow'
@@ -213,7 +219,7 @@ def lambda_handler(event, context):
             'Statement': [{
                 'Action': 'execute-api:Invoke',
                 'Effect': effect,
-                'Resource': method_arn
+                'Resource': resource
             }]
         }
     }
@@ -254,6 +260,11 @@ curl -s $BASE/users; echo                                                       
 curl -s -o /dev/null -w "senza token: %{http_code}\n" -X POST $BASE/users -d '{"name":"Alice"}'   # 401/403
 curl -s -X POST $BASE/users -H "Authorization: Bearer my-secret-token-2025" -H "Content-Type: application/json" -d '{"name":"Alice"}'; echo
 curl -s $BASE/users; echo                                                       # lista con Alice
+USER_ID=$(curl -s $BASE/users | jq -r '.users[0].user_id')   # non UID: in bash è una variabile di sola lettura
+curl -s -o /dev/null -w "DELETE senza token: %{http_code}\n" -X DELETE $BASE/users/$USER_ID        # 401 (header assente)
+curl -s -o /dev/null -w "DELETE token sbagliato: %{http_code}\n" -X DELETE $BASE/users/$USER_ID -H "Authorization: Bearer sbagliato"   # 403
+curl -s -X DELETE $BASE/users/$USER_ID -H "Authorization: Bearer my-secret-token-2025"; echo             # 200 "User ... deleted"
+curl -s -o /dev/null -w "GET /users/{id}: %{http_code}\n" $BASE/users/$USER_ID                         # da annotare
 cd ..
 ```
 

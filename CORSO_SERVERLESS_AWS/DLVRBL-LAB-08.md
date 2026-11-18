@@ -54,9 +54,10 @@ I valori MB-s sono calcolati con la formula sopra a partire dalle durate misurat
 
 Osservazioni:
 
-1. La durata scende al crescere della memoria: in Lambda la CPU e proporzionale alla memoria allocata.
-2. Il costo stimato in MB-s non cresce: piu memoria non vuol dire piu spesa, perche la durata cala quasi in proporzione.
-3. Con memoria 1024 MB la stima e la piu bassa e la funzione e la piu veloce.
+1. La durata scende al crescere della memoria: in Lambda la CPU è proporzionale alla memoria allocata.
+2. Il costo stimato in MB-s non cresce: più memoria non vuol dire più spesa, perché la durata cala quasi in proporzione.
+3. Con memoria 1024 MB la stima è la più bassa (13,1 MB-s) e la funzione è la più veloce. Tra 256 MB e 512 MB il costo stimato sale appena (16,9 contro 17,1 MB-s): la durata non dimezza esattamente e le misure sono singole, quindi la differenza sta dentro la variabilità. Il punto di equilibrio tra durata e costo sta quindi tra 256 e 512 MB, dove la durata cala molto e il costo resta quasi invariato; 1024 MB è il più veloce e, in questa misura, anche il meno costoso.
+4. Il costo reale in dollari è MB-s/1024 x prezzo per GB-s ($0,0000166667 in us-east-1): 13,1 MB-s sono circa $0,0000002 per invocazione, trascurabili. Il vantaggio da cercare è la durata, non il risparmio. La prima misura a 128 MB può includere un'esecuzione a freddo, quindi il confronto è indicativo.
 
 ## Step 3 - Concorrenza riservata
 
@@ -66,8 +67,8 @@ Osservazioni:
 ## Step 4 - Allarme CloudWatch
 
 - Allarme: `resource-test-errors`
-- Condizione: metrica `Errors` della funzione, soglia > 0,1 per 1 datapoint nel periodo configurato.
-- Stato iniziale: `Insufficient data` (nessuna invocazione in errore), nessuna azione associata.
+- Condizione: metrica `Errors` della funzione, soglia > 0 (basta un errore) per 1 datapoint nel periodo configurato (nello script CLI `--threshold 0` con `GreaterThanThreshold`; il valore 0,1 non serve perché `Errors` è un conteggio intero).
+- Stato iniziale: `Insufficient data`: CloudWatch non ha ancora un datapoint per la metrica nel periodo. Non significa errore: con `--treat-missing-data notBreaching` lo stato passerebbe a `OK`. Nessuna azione associata.
 
 ## Step 5 - Logs Insights
 
@@ -80,7 +81,7 @@ filter @type = "REPORT"
 | sort avgDuration desc
 ```
 
-Risultato: grafico a barre con `avgDuration`, `maxDuration` e `memorySize` (valore in byte, ~128 M) sulle righe `REPORT` raccolte (30 record scansionati).
+Risultato: grafico a barre con `avgDuration`, `maxDuration` e `memorySize` (valore in byte, ~128 M) sulle righe `REPORT` raccolte (30 record scansionati). Attenzione: `namePrefix: []` prende tutti i log group dell'account e mescola i dati di altre funzioni. Per analizzare solo questa funzione usare `namePrefix: ["/aws/lambda/resource-test"]`.
 
 ## Conclusioni
 
@@ -134,7 +135,7 @@ aws lambda wait function-active-v2 --function-name resource-test
 for MEM in 128 256 512 1024; do
   aws lambda update-function-configuration --function-name resource-test --memory-size $MEM > /dev/null
   aws lambda wait function-updated-v2 --function-name resource-test
-  aws lambda invoke --function-name resource-test --cli-binary-format raw-in-base64-out --payload '{"iterations":1000000}' out.json > /dev/null
+  aws lambda invoke --function-name resource-test --cli-binary-format raw-in-base64-out --payload '{"iterations":100000}' out.json > /dev/null
   DUR=$(jq -r '.body | fromjson | .duration_ms' out.json)
   echo "$MEM MB: durata ${DUR} ms, costo stimato (MB-s) = $(awk -v m=$MEM -v d=$DUR 'BEGIN{printf "%.1f", m*d/1000}')"
 done

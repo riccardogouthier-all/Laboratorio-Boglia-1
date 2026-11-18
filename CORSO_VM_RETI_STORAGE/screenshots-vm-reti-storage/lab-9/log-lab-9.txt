@@ -1,0 +1,66 @@
+===== passo 1: passo 1
+export AWS_DEFAULT_REGION=us-east-1
+BUCKET=demo-vm-reti-storage-rg-2026      # bucket del Lab 08
+--- output (exit 0, 0s)
+
+
+===== passo 2: Steps 1-2 - Storage Gateway: solo esame dei tipi (nessun gateway creato).
+# Steps 1-2 - Storage Gateway: solo esame dei tipi (nessun gateway creato).
+# S3 File Gateway = NFS/SMB | Volume Gateway = iSCSI | Tape Gateway = nastri virtuali (app di backup)
+
+# Step 3 - Volume EBS cifrato gp3 10 GiB nella AZ dell'istanza di destinazione (qui demo-web-02), chiave aws/ebs
+AZ=$(aws ec2 describe-instances --filters Name=tag:Name,Values=demo-web-02 --query "Reservations[0].Instances[0].Placement.AvailabilityZone" --output text)
+VOL=$(aws ec2 create-volume --availability-zone $AZ --volume-type gp3 --size 10 --encrypted \
+  --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=demo-encrypted-vol}]' \
+  --query VolumeId --output text)
+aws ec2 wait volume-available --volume-ids $VOL
+aws ec2 describe-volumes --volume-ids $VOL --query "Volumes[].{Encrypted:Encrypted,KmsKeyId:KmsKeyId,State:State,Size:Size,Type:VolumeType}"
+--- output (exit 0, 21s)
+[
+    {
+        "Encrypted": true,
+        "KmsKeyId": "arn:aws:kms:us-east-1:533267308404:key/ac8cde50-ebef-427c-839c-507c08c27833",
+        "State": "available",
+        "Size": 10,
+        "Type": "gp3"
+    }
+]
+
+===== passo 3: Steps 4-5 - Bucket del Lab 08: cifratura di default SSE-S3 (AES256)
+# Steps 4-5 - Bucket del Lab 08: cifratura di default SSE-S3 (AES256)
+aws s3api put-bucket-encryption --bucket $BUCKET --server-side-encryption-configuration '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
+aws s3api get-bucket-encryption --bucket $BUCKET
+--- output (exit 0, 10s)
+{
+    "ServerSideEncryptionConfiguration": {
+        "Rules": [
+            {
+                "ApplyServerSideEncryptionByDefault": {
+                    "SSEAlgorithm": "AES256"
+                },
+                "BucketKeyEnabled": false,
+                "BlockedEncryptionTypes": {
+                    "EncryptionType": [
+                        "SSE-C"
+                    ]
+                }
+            }
+        ]
+    }
+}
+
+===== passo 4: Step 6 - Oggetto di prova e verifica della cifratura
+# Step 6 - Oggetto di prova e verifica della cifratura
+echo "prova di cifratura a riposo" > test-cifratura.txt
+aws s3api put-object --bucket $BUCKET --key test-cifratura.txt --body test-cifratura.txt
+aws s3api head-object --bucket $BUCKET --key test-cifratura.txt --query ServerSideEncryption
+--- output (exit 0, 9s)
+{
+    "ETag": "\"5b6b3a95e01282e7ea46348c5f05acae\"",
+    "ChecksumCRC64NVME": "SqSVP7ktBfE=",
+    "ChecksumType": "FULL_OBJECT",
+    "ServerSideEncryption": "AES256",
+    "VersionId": "CzmYK9PRlT9Y4ICPQLuqXJSa9WMcU.7v"
+}
+"AES256"
+

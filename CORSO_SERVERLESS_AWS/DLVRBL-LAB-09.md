@@ -10,15 +10,15 @@ Lambda `secure-reader` che legge un utente da DynamoDB e carica un segreto da Se
 
 - Tabella: `lab09-users`
 - Partition key: `user_id` (String)
-- Modalita capacita: On-demand
-- Creata il 21 settembre 2026, 17:17 (UTC+02:00)
+- Modalità capacità: On-demand
+- Creata il 21 settembre 2026, 17:17 (UTC+02:00), cioè 15:17 UTC
 
 ## Step 7 - Dati di test
 
 | user_id | email | name |
 |---|---|---|
 | u001 | alice@example.com | Alice |
-| u002 | bob@exam... | Bob |
+| u002 | bob@example.com | Bob |
 
 ## Step 8 - Funzione `secure-reader`
 
@@ -45,15 +45,18 @@ Comportamento:
 
 ## Step 11 - Test
 
-Evento di test: `hello-world`.
+Evento di test: `hello-world` (è il nome del template predefinito della console; il contenuto è l'evento JSON con `user_id` descritto in tabella).
 
 | # | Input | Tipo | Risposta |
 |---|---|---|---|
 | 1 | `user_id` = `u001` | Positiva | 200, utente Alice, `secret_loaded: true`, `secret_key_present: true` |
 | 2 | `user_id` = `999` (inesistente) | Negativa (deve dare errore) | 404 `User not found` |
-| 3 | `user_id` = `"'; DROP TABLE users;--"` | Negativa (injection) | 400 `Invalid user_id format` |
+| 3 | `user_id` = `"'; DROP TABLE users;--"` | Negativa (input malevolo) | 400 `Invalid user_id format` |
+| 4 | evento vuoto `{}` | Negativa (campo mancante) | 400 `user_id is required` (verificato eseguendo la procedura: `not user_id` è il primo controllo) |
 
-## Step 12 - Azioni IAM minime richieste
+Il caso 2 usa `999`; con un id valido ma inesistente come `u999` il risultato è lo stesso (404), perché il formato è alfanumerico. Il test 3 non è una vera SQL injection: DynamoDB non usa SQL. Verifica solo che la validazione del formato respinga caratteri come apice, punto e virgola e spazio prima di arrivare al database.
+
+## Step 12 - Azioni IAM minime richieste (5 azioni)
 
 | # | Azione | Risorsa |
 |---|---|---|
@@ -63,9 +66,10 @@ Evento di test: `hello-world`.
 
 ## Conclusioni
 
-1. Le credenziali non stanno nel codice: il segreto e letto a runtime da Secrets Manager e non viene mai restituito in chiaro.
-2. La validazione del formato di `user_id` blocca input malevoli (test SQL injection -> 400).
-3. Il ruolo della funzione deve avere solo le tre azioni elencate, ciascuna limitata alla propria risorsa.
+1. Le credenziali non stanno nel codice: il segreto è letto a runtime da Secrets Manager e non viene mai restituito in chiaro.
+2. La validazione del formato di `user_id` blocca input malevoli (input con caratteri non ammessi -> 400).
+3. Il ruolo della funzione deve avere solo le cinque azioni elencate (`dynamodb:GetItem`, `secretsmanager:GetSecretValue`, `logs:CreateLogGroup`, `logs:CreateLogStream`, `logs:PutLogEvents`), ciascuna limitata alla propria risorsa.
+4. Il `LabRole` del Learner Lab è molto più ampio di queste cinque azioni: funziona per il lab ma non rispetta il minimo privilegio. In un account reale la funzione avrebbe un ruolo dedicato con solo la policy dello Step 12 (vedi `least-privilege.json` nella procedura CLI, documentale perché nel Learner Lab non si crea un ruolo dedicato).
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -171,6 +175,6 @@ cd ..
 ```bash
 aws lambda delete-function --function-name secure-reader
 aws dynamodb delete-table --table-name lab09-users
-aws secretsmanager delete-secret --secret-id lab09/app-config --recovery-window-in-days 7
+aws secretsmanager delete-secret --secret-id lab09/app-config --force-delete-without-recovery     # senza finestra di recupero: con --recovery-window-in-days 7 il nome resta bloccato e un nuovo create-secret fallisce
 aws logs delete-log-group --log-group-name /aws/lambda/secure-reader
 ```

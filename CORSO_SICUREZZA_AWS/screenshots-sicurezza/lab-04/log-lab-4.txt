@@ -1,0 +1,59 @@
+===== passo 1: passo 1
+cd "C:/Users/Riccardo/AppData/Local/Temp/claude/f3818f1616c21066/42a541a1-278f-49ac-986a-0f8567aa69ba/scratchpad/work-sic"
+export AWS_DEFAULT_REGION=us-east-1
+--- output (exit 0, 0s)
+
+
+===== passo 2: Policy base (punto 1)
+# Policy base (punto 1)
+cat > policy04.json <<'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {"Sid": "AllowReadReports", "Effect": "Allow", "Action": "s3:GetObject", "Resource": "arn:aws:s3:::didattica-esempio/report/*"},
+    {"Sid": "DenyDeleteObjects", "Effect": "Deny", "Action": "s3:DeleteObject", "Resource": "arn:aws:s3:::didattica-esempio/*"}
+  ]
+}
+EOF
+--- output (exit 0, 0s)
+
+
+===== passo 3: Policy MFA (punto 3)
+# Policy MFA (punto 3)
+cat > policy04_mfa.json <<'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {"Sid": "AllowReadReports", "Effect": "Allow", "Action": "s3:GetObject", "Resource": "arn:aws:s3:::didattica-esempio/report/*"},
+    {"Sid": "DenyDeleteObjects", "Effect": "Deny", "Action": "s3:DeleteObject", "Resource": "arn:aws:s3:::didattica-esempio/*"},
+    {"Sid": "DenyReadReportsWithoutMFA", "Effect": "Deny", "Action": "s3:GetObject", "Resource": "arn:aws:s3:::didattica-esempio/report/*",
+     "Condition": {"BoolIfExists": {"aws:MultiFactorAuthPresent": "false"}}}
+  ]
+}
+EOF
+--- output (exit 0, 0s)
+
+
+===== passo 4: Casi base 1-4
+# Casi base 1-4
+sim() { aws iam simulate-custom-policy --policy-input-list "$(cat $1)" --action-names $2 --resource-arns $3 "${@:4}" --query 'EvaluationResults[].[EvalActionName,EvalResourceName,EvalDecision]' --output text; }
+sim policy04.json s3:GetObject    arn:aws:s3:::didattica-esempio/report/a.txt     # allowed
+sim policy04.json s3:DeleteObject arn:aws:s3:::didattica-esempio/report/a.txt     # explicitDeny
+sim policy04.json s3:GetObject    arn:aws:s3:::didattica-esempio/privato/a.txt    # implicitDeny
+sim policy04.json s3:ListBucket   arn:aws:s3:::didattica-esempio                  # implicitDeny
+--- output (exit 0, 18s)
+s3:GetObject	arn:aws:s3:::didattica-esempio/report/a.txt	allowed
+s3:DeleteObject	arn:aws:s3:::didattica-esempio/report/a.txt	explicitDeny
+s3:GetObject	arn:aws:s3:::didattica-esempio/privato/a.txt	implicitDeny
+s3:ListBucket	arn:aws:s3:::didattica-esempio	implicitDeny
+
+===== passo 5: Casi MFA 5-7 (chiave MFA nel contesto della simulazione)
+# Casi MFA 5-7 (chiave MFA nel contesto della simulazione)
+sim policy04_mfa.json s3:GetObject arn:aws:s3:::didattica-esempio/report/a.txt --context-entries ContextKeyName=aws:MultiFactorAuthPresent,ContextKeyValues=true,ContextKeyType=boolean    # allowed
+sim policy04_mfa.json s3:GetObject arn:aws:s3:::didattica-esempio/report/a.txt --context-entries ContextKeyName=aws:MultiFactorAuthPresent,ContextKeyValues=false,ContextKeyType=boolean   # explicitDeny
+sim policy04_mfa.json s3:GetObject arn:aws:s3:::didattica-esempio/report/a.txt                                                                                                         # chiave omessa: explicitDeny
+--- output (exit 0, 14s)
+s3:GetObject	arn:aws:s3:::didattica-esempio/report/a.txt	allowed
+s3:GetObject	arn:aws:s3:::didattica-esempio/report/a.txt	explicitDeny
+s3:GetObject	arn:aws:s3:::didattica-esempio/report/a.txt	explicitDeny
+

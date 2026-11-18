@@ -1,0 +1,14 @@
+===== passo 1: prima, sull'istanza: sudo umount /mnt/demo-data
+# prima, sull'istanza: sudo umount /mnt/demo-data
+aws ec2 detach-volume --volume-id vol-088c23e36dca31346 && aws ec2 wait volume-available --volume-ids vol-088c23e36dca31346
+aws ec2 delete-volume --volume-id vol-088c23e36dca31346
+aws ec2 delete-snapshot --snapshot-id $SNAP
+--- output (exit 0, 21s)
+{
+    "VolumeId": "vol-088c23e36dca31346",
+    "InstanceId": "i-0c1f31bc94c020789",
+    "Device": "/dev/sdf",
+    "State": "detaching",
+    "AttachTime": "2026-11-17T21:03:34+00:00"
+}
+

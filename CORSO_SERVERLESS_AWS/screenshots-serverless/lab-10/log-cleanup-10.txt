@@ -1,0 +1,9 @@
+===== passo 1: passo 1
+aws apigateway delete-rest-api --rest-api-id $API_ID
+aws lambda delete-function --function-name api-hello
+aws logs delete-log-group --log-group-name /aws/lambda/api-hello
+--- output (exit 0, 16s)
+{
+    "StatusCode": 204
+}
+

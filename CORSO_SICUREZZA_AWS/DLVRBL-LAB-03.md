@@ -3,7 +3,7 @@
 ## 1. Trust policy vs permessi
 - Trust policy: definisce chi può assumere un ruolo.
 - Policy di permesso: definisce quali azioni sono consentite.
-- Nota: ruolo lab [visibile, trust policy letta senza modifiche | non visibile, usato caso guidato].
+- Il ruolo del lab si legge, non si modifica: la trust policy si ottiene con `aws iam get-role --role-name LabRole --query Role.AssumeRolePolicyDocument` (vedi procedura CLI). Se il ruolo non è leggibile nel Learner Lab, si usa il caso guidato descritto nel testo del lab.
 
 ## 2. Catena di evidenze
 - Requisito: proteggere un dato sintetico (conservare il rapporto cifrato e identificare il soggetto che può usare la chiave).
@@ -38,6 +38,8 @@ cmp chiaro03.txt decifrato03.txt; echo "exit=$?"
 
 **Cleanup**
 ```
+aws kms delete-alias --alias-name alias/sicurezza03-$SUF --region us-east-1
+
 aws kms schedule-key-deletion --key-id $KEY_ID --pending-window-in-days 7 --region us-east-1
 
 aws kms describe-key --key-id $KEY_ID --region us-east-1 --query 'KeyMetadata.[KeyState,DeletionDate]' --output text
@@ -80,4 +82,4 @@ rm chiaro03.txt cifrato03.b64 cifrato03.bin decifrato03.b64 decifrato03.txt
 ls
 ```
 
-La chiave risulta `PendingDeletion` (finestra di 7 giorni): non e ancora eliminata e non e utilizzabile per operazioni crittografiche.
+La chiave risulta `PendingDeletion` (finestra di 7 giorni): non è ancora eliminata e non è utilizzabile per operazioni crittografiche.

@@ -18,7 +18,7 @@ Lambda insert-sessions --put_item--> DynamoDB lab15-sessions (TTL su expires_at)
 
 - Tabella: `lab15-sessions`
 - Partition key: `session_id` (String), nessuna sort key, nessun indice
-- Modalita capacita: On-demand (`PAY_PER_REQUEST`)
+- Modalità capacità: On-demand (`PAY_PER_REQUEST`)
 - Stato: `Active`, Deletion protection: Off
 
 ### Step 2 - Abilitare il TTL
@@ -26,7 +26,7 @@ Lambda insert-sessions --put_item--> DynamoDB lab15-sessions (TTL su expires_at)
 - Attributo TTL: `expires_at` (Number, epoch in secondi)
 - Stato TTL: `On`; elementi eliminati nelle ultime 24 ore: 0
 
-Il TTL elimina in background gli item il cui `expires_at` e nel passato. La cancellazione non e istantanea: DynamoDB la esegue normalmente entro alcune ore dalla scadenza (fino a 48 ore).
+Il TTL elimina in background gli item il cui `expires_at` è nel passato. La cancellazione non è istantanea: DynamoDB la esegue normalmente entro alcune ore dalla scadenza (fino a 48 ore).
 
 ### Step 3 - Funzione `insert-sessions`
 
@@ -50,7 +50,7 @@ Scan eseguita il 12 novembre 2026 alle 12:20:55 (UTC+01:00): 3 item restituiti, 
 | `sess-001` | 1794482152 | 1794482212 | `alice` |
 | `sess-002` | 1794482152 | 1794485752 | `bob` |
 
-`sess-001` e scaduta dopo 60 secondi (`1794482212`) ma al momento della scan e ancora presente: la tabella la considera scaduta, ma la cancellazione fisica avviene in differita.
+`sess-001` è scaduta dopo 60 secondi (`1794482212`) ma al momento della scan è ancora presente: la tabella la considera scaduta, ma la cancellazione fisica avviene in differita.
 
 ## Parte 2 - Backup e PITR
 
@@ -61,7 +61,7 @@ Scan eseguita il 12 novembre 2026 alle 12:20:55 (UTC+01:00): 3 item restituiti, 
 | Backup on-demand | `sessions-backup-test` | `Available` |
 | PITR | Abilitato (`PointInTimeRecoveryEnabled=true`) | `On`, periodo di recupero 35 giorni |
 
-Il primo punto di ripristino disponibile e il 12 novembre 2026, 12:17:36 (UTC+01:00). Il backup on-demand e una copia a un istante preciso; il PITR permette di ripristinare la tabella a qualsiasi secondo entro 35 giorni.
+Il primo punto di ripristino disponibile è il 12 novembre 2026, 12:17:36 (UTC+01:00). Il backup on-demand è una copia a un istante preciso; il PITR permette di ripristinare la tabella a qualsiasi secondo entro 35 giorni.
 
 ## Parte 3 - Lifecycle S3
 
@@ -90,14 +90,15 @@ Nessuna azione definita per le versioni non correnti (il bucket non ha versionin
 
 ## Conclusioni
 
-1. Il TTL e gratuito e automatico, ma non e un timer preciso: per logica applicativa con scadenza esatta serve un filtro su `expires_at` in lettura.
+1. Il TTL è gratuito e automatico, ma non è un timer preciso: per logica applicativa con scadenza esatta serve un filtro su `expires_at` in lettura.
 2. Backup on-demand e PITR sono complementari: il primo conserva uno stato scelto, il secondo copre errori recenti.
-3. Il lifecycle S3 riduce i costi spostando gli oggetti verso classi piu economiche con l'invecchiamento; le transizioni non sono osservabili nel lab perche richiedono 30 giorni.
+3. Il lifecycle S3 riduce i costi spostando gli oggetti verso classi più economiche con l'invecchiamento; le transizioni non sono osservabili nel lab perché richiedono 30 giorni.
 4. Limite: la scadenza fisica di `sess-001` e le transizioni lifecycle non sono state attese e non sono provate.
+5. Per completare la prova del TTL: rieseguire la scan dopo qualche ora (fino a 48 ore) e controllare che `sess-001` sia sparita (`aws dynamodb get-item --table-name lab15-sessions --key '{"session_id":{"S":"sess-001"}}'` deve restituire un output vuoto), oppure filtrare in lettura con `expires_at > now`. Il PITR e il backup non sono stati ripristinati: il ripristino (`restore-table-to-point-in-time`) crea una tabella nuova e va eliminata dopo la verifica.
 
 Procedura di esecuzione in CLI Cloudshell:
 
-Eseguire nel bucket/tabella gia usati dal deliverable (nome bucket: `lab15-lifecycle-riccardogouthier`).
+Eseguire nel bucket/tabella già usati dal deliverable (nome bucket: `lab15-lifecycle-riccardogouthier`).
 
 ```bash
 export AWS_DEFAULT_REGION=us-east-1

@@ -1,0 +1,54 @@
+===== passo 1: passo 1
+cd "C:/Users/Riccardo/AppData/Local/Temp/claude/f3818f1616c21066/42a541a1-278f-49ac-986a-0f8567aa69ba/scratchpad/work-sic"
+export AWS_DEFAULT_REGION=us-east-1
+--- output (exit 0, 0s)
+
+
+===== passo 2: Policy IAM del ruolo applicativo: Get e Delete su rapporti-demo
+# Policy IAM del ruolo applicativo: Get e Delete su rapporti-demo
+cat > iam-ruolo.json <<'EOF'
+{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:GetObject","s3:DeleteObject"],"Resource":"arn:aws:s3:::rapporti-demo/*"}]}
+EOF
+--- output (exit 0, 0s)
+
+
+===== passo 3: SCP della OU Produzione (letta, non distribuita)
+# SCP della OU Produzione (letta, non distribuita)
+cat > scp-ou.json <<'EOF'
+{"Version":"2012-10-17","Statement":[{"Effect":"Deny","Action":"s3:DeleteObject","Resource":"*"}]}
+EOF
+
+sim() { aws iam simulate-custom-policy --policy-input-list "$@" --action-names s3:GetObject s3:DeleteObject s3:PutObject --resource-arns arn:aws:s3:::rapporti-demo/a.txt --query 'EvaluationResults[].[EvalActionName,EvalDecision]' --output table; }
+
+echo "== Con SCP Deny attiva =="    ; sim "$(cat iam-ruolo.json)" "$(cat scp-ou.json)"   # Get allowed, Delete explicitDeny, Put implicitDeny
+echo "== Senza SCP Deny =="         ; sim "$(cat iam-ruolo.json)"                       # Get allowed, Delete allowed, Put implicitDeny
+--- output (exit 0, 9s)
+== Con SCP Deny attiva ==
+-------------------------------------
+|       SimulateCustomPolicy        |
++------------------+----------------+
+|  s3:GetObject    |  allowed       |
+|  s3:DeleteObject |  explicitDeny  |
+|  s3:PutObject    |  implicitDeny  |
++------------------+----------------+
+== Senza SCP Deny ==
+-------------------------------------
+|       SimulateCustomPolicy        |
++------------------+----------------+
+|  s3:GetObject    |  allowed       |
+|  s3:DeleteObject |  allowed       |
+|  s3:PutObject    |  implicitDeny  |
++------------------+----------------+
+
+===== passo 4: Finding A - correzione: partner limitato a export/*
+# Finding A - correzione: partner limitato a export/*
+cat > partner-corretta.json <<'EOF'
+{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:GetObject","Resource":"arn:aws:s3:::rapporti-demo/export/*"}]}
+EOF
+for K in export/a.txt interno/b.txt; do
+  aws iam simulate-custom-policy --policy-input-list "$(cat partner-corretta.json)" --action-names s3:GetObject --resource-arns arn:aws:s3:::rapporti-demo/$K --query 'EvaluationResults[].[EvalResourceName,EvalDecision]' --output text
+done     # export/a.txt allowed (prova positiva), interno/b.txt implicitDeny (prova negativa)
+--- output (exit 0, 9s)
+arn:aws:s3:::rapporti-demo/export/a.txt	allowed
+arn:aws:s3:::rapporti-demo/interno/b.txt	implicitDeny
+

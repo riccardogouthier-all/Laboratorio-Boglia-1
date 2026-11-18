@@ -29,7 +29,7 @@ Da CloudShell: `sam init --runtime python3.12 --name order-api --app-template he
 | `OrdersTable` | `AWS::DynamoDB::Table` | `sam-lab18-orders`, partition key `order_id` (String), on-demand |
 
 - `Globals`: runtime `python3.12`, timeout 10 s, memoria 128 MB, variabile `TABLE_NAME: !Ref OrdersTable`
-- Ruolo di esecuzione: `LabRole` (`!Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole`) perche il Learner Lab non permette di creare ruoli IAM
+- Ruolo di esecuzione: `LabRole` (`!Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole`) perché il Learner Lab non permette di creare ruoli IAM
 - Output `ApiUrl`: `https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/`
 
 Codice in `src/app.py`: `create_order` genera un `order_id` di 8 caratteri (`uuid4`), salva `customer`, `total`, `status: created` e risponde 200; `get_order` legge per `order_id` e risponde 200 oppure 404 `Order not found`; errori inattesi -> 500.
@@ -56,7 +56,7 @@ Codice in `src/app.py`: `create_order` genera un `order_id` di 8 caratteri (`uui
 |---|---|---|---|
 | `72ec3f53` | Bob | created | 150 |
 
-L'ordine creato via API risulta persistito in DynamoDB. Le chiamate `GET /orders/{id}` e `GET /orders/nonexistent` (atteso 404) sono nello script ma il loro output non e riportato negli screenshot del PDF: non verificate qui.
+L'ordine creato via API risulta persistito in DynamoDB. Le chiamate `GET /orders/{id}` e `GET /orders/nonexistent` (atteso 404) sono nello script CLI ma il loro output non è riportato in questo documento: non verificate qui. Risultato atteso: `200` con l'ordine per un id esistente, `404` per `nonexistent`. Anche il test locale con `sam local invoke` non è stato eseguito.
 
 ## Parte B - CloudFormation, deploy automatizzato e monitoraggio
 
@@ -82,13 +82,13 @@ Risorse dello stack (da `describe-stack-resources`): `ProcessFunction`, `Process
 
 ### Step 9 - Logs Insights
 
-Nello script e definita la funzione `q()` (query CloudWatch Logs Insights con `jq`) per tre analisi: righe `REPORT` ordinate per durata, conteggio di invocazioni lente e cold start, ultimi messaggi `ERROR`.
+Nello script è definita la funzione `q()` (query CloudWatch Logs Insights con `jq`) per tre analisi: righe `REPORT` ordinate per durata, conteggio di invocazioni lente e cold start, ultimi messaggi `ERROR`.
 
-Esito: tutte e tre le chiamate hanno restituito `jq: error ... Cannot index string with string value "value"`. Il filtro `jq` non era compatibile con il formato dei risultati; i dati delle query non sono quindi stati letti. Correzione possibile: leggere `.[] | map(.field + "=" + .value)` solo dopo aver verificato lo stato `Complete` della query, oppure usare `--output text`.
+Esito: tutte e tre le chiamate hanno restituito `jq: error ... Cannot index string with string value "value"`. Causa: `--query "results[]"` di AWS CLI appiattisce l'array di righe in un elenco di singoli campi `{field, value}`, quindi `jq` applicava `map(.field + ...)` a stringhe invece che a oggetti. Correzione (già nello script CLI sotto): usare `--query "results"` e leggere i risultati solo quando lo stato della query è `Complete`. Nel deliverable consegnato la correzione non è stata rieseguita, quindi i dati delle query restano non verificati.
 
 ### Step 10 - Allarme CloudWatch
 
-Allarme `lab18-lambda-errors`: namespace `AWS/Lambda`, metrica `Errors` per la funzione, statistica `Sum`, periodo 300 s, 1 periodo di valutazione, soglia `> 2`, dati mancanti `notBreaching`. Stato al momento della verifica: `INSUFFICIENT_DATA` (soglia 2.0), perche l'allarme era appena stato creato.
+Allarme `lab18-lambda-errors`: namespace `AWS/Lambda`, metrica `Errors` per la funzione, statistica `Sum`, periodo 300 s, 1 periodo di valutazione, soglia `> 2`, dati mancanti `notBreaching`. Stato al momento della verifica: `INSUFFICIENT_DATA` (soglia 2.0), perché l'allarme era appena stato creato.
 
 ### Step 11 - Dashboard
 
@@ -110,7 +110,7 @@ Dashboard `lab18-serverless` creata con `put-dashboard` (`DashboardValidationMes
 1. SAM riduce la definizione serverless a poche righe e crea API Gateway, Lambda, permessi e tabella in un solo stack CloudFormation.
 2. `sam deploy` con `--confirm-changeset` mostra le risorse che verranno create prima dell'esecuzione.
 3. Logs, allarmi e dashboard di CloudWatch coprono invocazioni, errori e durata; l'allarme richiede qualche periodo di dati per uscire da `INSUFFICIENT_DATA`.
-4. Limite: l'analisi con Logs Insights non e stata completata per l'errore nel filtro `jq`; le metriche mostrate nell'allarme e nella dashboard non sono state verificate con valori reali.
+4. Limite: l'analisi con Logs Insights non è stata completata per l'errore nel filtro `jq`; le metriche mostrate nell'allarme e nella dashboard non sono state verificate con valori reali.
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -330,8 +330,10 @@ aws cloudformation describe-stack-events --stack-name monitored-api-lab18 --quer
 
 q() {
   local QID=$(aws logs start-query --log-group-name "$LG" --start-time $(date -d '-1 hour' +%s) --end-time $(date +%s) --query-string "$1" --query queryId --output text)
-  sleep 5
-  aws logs get-query-results --query-id $QID --query "results[]" --output json | jq -r '.[] | map(.field + "=" + .value) | join(" | ")'
+  # attende lo stato Complete (le query Logs Insights sono asincrone)
+  until [ "$(aws logs get-query-results --query-id $QID --query status --output text)" = "Complete" ]; do sleep 2; done
+  # "results" (non "results[]"): ogni riga è un array di {field,value}; con "results[]" l'array si appiattisce e jq fallisce
+  aws logs get-query-results --query-id $QID --query "results" --output json | jq -r '.[] | map(.field + "=" + .value) | join(" | ")'
 }
 
 q 'filter @type = "REPORT" | sort @duration desc | limit 10'
@@ -340,6 +342,8 @@ q 'filter @message like /ERROR/ | fields @timestamp, @message | sort @timestamp 
 
 aws cloudwatch put-metric-alarm --alarm-name lab18-lambda-errors --namespace AWS/Lambda --metric-name Errors --dimensions Name=FunctionName,Value=$FN --statistic Sum --period 300 --evaluation-periods 1 --threshold 2 --comparison-operator GreaterThanThreshold --treat-missing-data notBreaching
 aws cloudwatch describe-alarms --alarm-names lab18-lambda-errors --query "MetricAlarms[].[AlarmName,StateValue,Threshold]" --output table
+# Prova dell'allarme: le 5 chiamate "error" sopra superano la soglia (> 2). Dopo 5-10 minuti lo stato deve passare a ALARM
+sleep 300; aws cloudwatch describe-alarms --alarm-names lab18-lambda-errors --query "MetricAlarms[].[AlarmName,StateValue]" --output table
 
 cat > dash.json <<EOF
 {
@@ -370,4 +374,17 @@ aws cloudformation delete-stack --stack-name monitored-api-lab18
 aws cloudformation delete-stack --stack-name order-api-lab18
 aws cloudformation wait stack-delete-complete --stack-name monitored-api-lab18
 aws cloudformation wait stack-delete-complete --stack-name order-api-lab18
+
+# I log group delle funzioni non fanno parte dello stack e restano: si eliminano a mano
+for LGN in $(aws logs describe-log-groups --log-group-name-prefix /aws/lambda/order-api-lab18 --query "logGroups[].logGroupName" --output text) $(aws logs describe-log-groups --log-group-name-prefix /aws/lambda/monitored-api-lab18 --query "logGroups[].logGroupName" --output text); do aws logs delete-log-group --log-group-name $LGN; done
+
+# Il bucket S3 creato da `sam deploy --resolve-s3` non è nello stack: va svuotato ed eliminato
+SAMB=$(aws s3api list-buckets --query "Buckets[?starts_with(Name, 'aws-sam-cli-managed-default-samclisourcebucket')].Name" --output text)
+# Il bucket ha il versioning attivo: `s3 rm --recursive` non basta (DeleteBucket darebbe BucketNotEmpty), vanno tolte anche le versioni
+if [ -n "$SAMB" ]; then
+  aws s3api list-object-versions --bucket $SAMB --query "Versions[].[Key,VersionId]" --output text | while read K V; do aws s3api delete-object --bucket $SAMB --key "$K" --version-id "$V" > /dev/null; done
+  aws s3api list-object-versions --bucket $SAMB --query "DeleteMarkers[].[Key,VersionId]" --output text | while read K V; do aws s3api delete-object --bucket $SAMB --key "$K" --version-id "$V" > /dev/null; done
+  aws s3api delete-bucket --bucket $SAMB
+fi
+# Se il bucket gestito è condiviso con altri stack SAM dell'account, eliminarlo solo se non serve più (e dopo aver eliminato lo stack di gestione `aws-sam-cli-managed-default`).
 ```

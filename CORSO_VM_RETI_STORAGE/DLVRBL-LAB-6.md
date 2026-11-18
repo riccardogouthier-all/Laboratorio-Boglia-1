@@ -3,7 +3,7 @@
 ## Configurazione
 - Rete (da Lab 04/05): `demo-vpc`, bastion `demo-bastion` in `demo-subnet-public-1a`, `demo-private-test` in `demo-subnet-private-1a`
 - Security Group: `demo-sg-bastion` (22 da `$MYIP/32`), `demo-sg-private` (22 da `demo-sg-bastion`)
-- Network ACL: `demo-nacl-private`, associata a `demo-subnet-private-1a` (NACL precedente annotata per ripristino: `<acl-...>`)
+- Network ACL: `demo-nacl-private`, associata a `demo-subnet-private-1a` (la NACL precedente va annotata prima di sostituirla, nella variabile `OLD_NACL`, per il ripristino)
 
 ## Motivazione scelte
 - Minimo privilegio: nessuna regola `0.0.0.0/0` su porte sensibili
@@ -61,16 +61,17 @@ Output atteso: due voci, inbound 100 allow 22, outbound 100 allow 1024-65535 (re
 - [x] Nessun `0.0.0.0/0` su porte sensibili senza motivazione
 - [x] NACL con regola inbound e outbound di risposta
 - [x] Traffico legittimo bastion → privata funzionante dopo modifiche
-- [ ] Cleanup regole di test eseguito o giustificato
+- [ ] Cleanup (ripristino NACL, eliminazione NACL di test): comandi forniti nella sezione Cleanup, esecuzione da confermare
 
 ## Cleanup
-- Regola deny 50 rimossa: sì/no
-- Associazione subnet ripristinata alla NACL precedente (necessario: regole solo-SSH bloccherebbero HTTPS/NFS nei lab successivi): sì/no
-- `demo-nacl-private` eliminata: sì/no
-- Bastion/istanza privata terminati, o conservati per Lab 11: sì/no
+Comandi nella sezione "Cleanup" in fondo; stato da confermare dopo l'esecuzione.
+- Regola deny 50 già rimossa al passo 5 della sequenza di test.
+- Associazione della subnet ripristinata alla NACL precedente: necessario, perché le regole solo-SSH bloccherebbero HTTPS e NFS nei lab successivi.
+- `demo-nacl-private` eliminata (si può eliminare solo dopo il ripristino, perché non può avere associazioni).
+- Bastion e istanza privata: si conservano se servono ai Lab 07-11, altrimenti si terminano con il cleanup del Lab 05.
 
 ## Nota metodologica
-ID NACL e IP privati illustrativi, da sostituire con valori reali. Fallback se Learner Lab non raggiungibile: tabella regole pianificate (porta, protocollo, origine, motivazione), nessuna risorsa reale.
+Gli ID della NACL e degli IP privati variano a ogni creazione e si ricavano con i comandi della procedura CLI. I risultati SSH della tabella "Sequenza test" sono quelli attesi dal ragionamento sulle regole: vanno confermati eseguendo i passi.
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -106,4 +107,13 @@ ssh -o ConnectTimeout=5 lab-private hostname
 
 # --- Passo 7 ---
 aws ec2 describe-network-acls --network-acl-ids $NACL --query "NetworkAcls[0].Entries[?RuleNumber!=\`32767\`].[RuleNumber,Egress,Protocol,PortRange,CidrBlock,RuleAction]" --output json
+```
+
+### Cleanup
+
+```bash
+# Ripristina la NACL precedente sulla subnet privata (necessario per i lab 9-11), poi elimina quella di test
+aws ec2 replace-network-acl-association --association-id $NEW_ASSOC --network-acl-id $OLD_NACL
+aws ec2 delete-network-acl --network-acl-id $NACL
+aws ec2 describe-network-acls --filters Name=association.subnet-id,Values=$PRIV --query "NetworkAcls[0].NetworkAclId" --output text   # deve coincidere con $OLD_NACL
 ```

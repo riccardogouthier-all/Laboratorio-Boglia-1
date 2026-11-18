@@ -54,14 +54,14 @@ Secondo comando: output vuoto → nessuna associazione esplicita, entrambe le su
 - [x] CIDR VPC abbastanza ampio per subnet pianificate
 - [x] Due subnet con CIDR distinti, non sovrapposti
 - [x] Distinzione pubblica/privata motivata da route table, non dal nome
-- [ ] Cleanup eseguito o giustificato
+- [x] Cleanup giustificato: subnet e VPC si tengono per il Lab 05 (comandi di eliminazione nella sezione Cleanup)
 
 ## Cleanup
-- Subnet e VPC mantenute intenzionalmente per Lab 05: sì/no
-- Se non si prosegue: subnet eliminate, poi `demo-vpc`: sì/no
+- Subnet e VPC si mantengono per il Lab 05, che le riusa.
+- Se non si prosegue: si eliminano prima le subnet, poi `demo-vpc` (comandi sotto).
 
 ## Nota metodologica
-ID VPC/subnet non riportati: variano a ogni creazione, sostituire con valori reali del Learner Lab. Fallback se Learner Lab non raggiungibile: tabella CIDR + confronto con documentazione VPC, nessuna risorsa reale.
+Gli ID di VPC e subnet variano a ogni creazione: la procedura CLI li salva in `VPC4`, `PUB` e `PRIV`.
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -73,10 +73,10 @@ aws ec2 wait vpc-available --vpc-ids $VPC4
 echo $VPC4
 
 # --- Passo 2 ---
-# Nome	                CIDR	        AZ  	        Tipo
-# demo-vpc	            10.0.0.0/16	    -	            -
-# demo-subnet-public-1a	10.0.1.0/24	    us-east-1a	    pubblica (pianificata)
-# demo-subnet-private-1a	10.0.2.0/24	    us-east-1a	    privata
+# Piano dei CIDR (vedi tabella "Pianificazione CIDR" sopra):
+#   demo-vpc                10.0.0.0/16
+#   demo-subnet-public-1a   10.0.1.0/24   us-east-1a   pubblica (pianificata)
+#   demo-subnet-private-1a  10.0.2.0/24   us-east-1a   privata
 
 # --- Passo 3 ---
 PUB=$(aws ec2 create-subnet --vpc-id $VPC4 --cidr-block 10.0.1.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=demo-subnet-public-1a}]' --query Subnet.SubnetId --output text)
@@ -94,4 +94,13 @@ aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC4" "Name=associa
 
 # --- Passo 7 ---
 # Nessuna subnet realmente pubblica: manca rotta 0.0.0.0/0 → IGW. public = solo nome.
+```
+
+### Cleanup
+
+```bash
+# Solo se non si prosegue con il Lab 05
+aws ec2 delete-subnet --subnet-id $PUB
+aws ec2 delete-subnet --subnet-id $PRIV
+aws ec2 delete-vpc --vpc-id $VPC4
 ```

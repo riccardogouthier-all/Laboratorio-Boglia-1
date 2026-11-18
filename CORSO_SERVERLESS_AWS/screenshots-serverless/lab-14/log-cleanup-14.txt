@@ -1,0 +1,64 @@
+===== passo 1: passo 1
+aws s3 rm s3://lab14-uploads-gouthier533267 --recursive && aws s3api delete-bucket --bucket lab14-uploads-gouthier533267
+aws s3 rm s3://lab14-csv-import-gouthier533267 --recursive && aws s3api delete-bucket --bucket lab14-csv-import-gouthier533267
+aws lambda delete-function --function-name process-upload-metadata
+aws lambda delete-function --function-name csv-importer
+aws dynamodb delete-table --table-name lab14-file-metadata
+aws dynamodb delete-table --table-name lab14-products
+aws logs delete-log-group --log-group-name /aws/lambda/process-upload-metadata
+aws logs delete-log-group --log-group-name /aws/lambda/csv-importer
+--- output (exit 0, 48s)
+delete: s3://lab14-uploads-gouthier533267/test.txt
+delete: s3://lab14-uploads-gouthier533267/data.json
+delete: s3://lab14-uploads-gouthier533267/list.csv
+delete: s3://lab14-csv-import-gouthier533267/imports/products.csv
+delete: s3://lab14-csv-import-gouthier533267/imports/
+delete: s3://lab14-csv-import-gouthier533267/fuori-filtro.csv
+delete: s3://lab14-csv-import-gouthier533267/imports/note.txt
+{
+    "StatusCode": 204
+}
+{
+    "StatusCode": 204
+}
+{
+    "TableDescription": {
+        "TableName": "lab14-file-metadata",
+        "TableStatus": "DELETING",
+        "ProvisionedThroughput": {
+            "NumberOfDecreasesToday": 0,
+            "ReadCapacityUnits": 0,
+            "WriteCapacityUnits": 0
+        },
+        "TableSizeBytes": 0,
+        "ItemCount": 0,
+        "TableArn": "arn:aws:dynamodb:us-east-1:533267308404:table/lab14-file-metadata",
+        "TableId": "bec13b26-8b62-4660-9071-15a0edc0d6b3",
+        "BillingModeSummary": {
+            "BillingMode": "PAY_PER_REQUEST",
+            "LastUpdateToPayPerRequestDateTime": "2026-11-18T01:55:27.567000+01:00"
+        },
+        "DeletionProtectionEnabled": false
+    }
+}
+{
+    "TableDescription": {
+        "TableName": "lab14-products",
+        "TableStatus": "DELETING",
+        "ProvisionedThroughput": {
+            "NumberOfDecreasesToday": 0,
+            "ReadCapacityUnits": 0,
+            "WriteCapacityUnits": 0
+        },
+        "TableSizeBytes": 0,
+        "ItemCount": 0,
+        "TableArn": "arn:aws:dynamodb:us-east-1:533267308404:table/lab14-products",
+        "TableId": "659b0b8b-18df-492e-8c14-92c98b96fce8",
+        "BillingModeSummary": {
+            "BillingMode": "PAY_PER_REQUEST",
+            "LastUpdateToPayPerRequestDateTime": "2026-11-18T01:56:59.631000+01:00"
+        },
+        "DeletionProtectionEnabled": false
+    }
+}
+

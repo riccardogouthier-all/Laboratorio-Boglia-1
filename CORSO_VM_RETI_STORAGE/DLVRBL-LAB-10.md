@@ -4,10 +4,10 @@
 | Servizio | Modello | Condivisione |
 |---|---|---|
 | EBS | blocchi, una istanza, stessa AZ | no: ogni istanza ha il proprio volume |
-| EFS | file system NFS | si: stesso file system montato da piu istanze/AZ |
+| EFS | file system NFS | sì: stesso file system montato da più istanze/AZ |
 
 ## Configurazione
-Creato con Terraform in `us-east-1`.
+Regione `us-east-1`.
 
 ### Istanze
 | Istanza | AZ | Instance ID | Volume EBS dedicato |
@@ -16,12 +16,12 @@ Creato con Terraform in `us-east-1`.
 | `demo-web-02` | `us-east-1b` | `i-0f91ef84fffb17150` | `demo-data-vol-02` |
 
 - Amazon Linux 2023, `t3.micro`, stessa VPC `demo-vpc` (`10.0.0.0/16`, DNS resolution e hostnames abilitati), indipendenti da qualsiasi ASG
-- Volumi `gp3` da 10 GiB, formattati `xfs` e montati su `/mnt/demo-data` (`df`: `/dev/nvme1n1` 10G su entrambe)
+- Volumi `gp3` da 10 GiB, formattati `xfs` (nel Lab 07 il volume dati era `ext4`: qui sono volumi nuovi e la scelta del file system non cambia il risultato del lab) e montati su `/mnt/demo-data` (`df`: `/dev/nvme1n1` 10G su entrambe)
 
 ### EFS
 - File system `demo-efs-shared` (`fs-0c416404a678a550e`), General Purpose, Regional
 - Security Group `demo-sg-efs`: NFS TCP 2049 solo dal Security Group delle istanze (`demo-sg-instances`)
-- Mount target `available`: `us-east-1a` (`10.0.1.240`) e `us-east-1b` (`10.0.4.227`), con `demo-sg-efs` associato (screenshot)
+- Mount target `available`: `us-east-1a` (`10.0.1.240`) e `us-east-1b` (`10.0.4.227`), con `demo-sg-efs` associato (verificabile con `describe-mount-targets` e `describe-mount-target-security-groups`)
 
 ## Mount (via SSM)
 ```bash
@@ -37,9 +37,9 @@ echo 'scritto dalla istanza 1' | sudo tee /mnt/efs-shared/condiviso.txt
 # su demo-web-02
 cat /mnt/efs-shared/condiviso.txt
 ```
-Su `demo-web-02` il file contiene esattamente `scritto dalla istanza 1`, senza copia manuale. Riverificato dopo il riavvio delle istanze.
+Su `demo-web-02` il file contiene esattamente `scritto dalla istanza 1`, senza copia manuale.
 
-I volumi EBS restano separati: `/mnt/demo-data` di `demo-web-02` e vuoto e non contiene i dati di `demo-web-01`.
+I volumi EBS restano separati: `/mnt/demo-data` di `demo-web-02` è vuoto e non contiene i dati di `demo-web-01`.
 
 ## Motivazione scelte
 - SG EFS con origine il SG delle istanze: solo le istanze del lab raggiungono la porta 2049
@@ -53,20 +53,19 @@ I volumi EBS restano separati: `/mnt/demo-data` di `demo-web-02` e vuoto e non c
 | 2 | EBS | volumi separati, `/mnt/demo-data` diverso su ciascuna |
 | 3 | EFS | `fs-0c416404a678a550e`, 2 mount target `available` |
 | 4 | Condivisione | file scritto su istanza 1 letto su istanza 2 |
-| 5 | Persistenza | contenuto riverificato dopo riavvio |
 
 ## Checkpoint
 - [x] EBS separato per istanza, dati non condivisi
 - [x] EFS con SG dedicato e mount target in due AZ
 - [x] Mount eseguito su entrambe le istanze
 - [x] File condiviso letto dall'altra istanza
-- [x] Cleanup eseguito (vedi sotto)
+- [x] Cleanup descritto in questo documento (sezione Cleanup)
 
 ## Cleanup
-Smontaggio, mount target, EFS, Security Group, volumi e istanze rimossi a fine percorso con `terraform destroy` (cleanup finale Lab 8-11, nel Lab 11).
+Si eliminano nell'ordine: smontaggio, mount target (attendere la cancellazione), file system EFS, Security Group `demo-sg-efs` e `demo-sg-instances`, volumi, istanze. I comandi sono in fondo (sezione "Cleanup").
 
 ## Nota metodologica
-Valori (ID istanze, EFS, IP dei mount target) osservati dall'infrastruttura creata.
+ID di istanze, file system e IP dei mount target sono quelli dell'infrastruttura creata con la procedura qui sotto.
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -105,8 +104,13 @@ aws ec2 attach-volume --volume-id $V2 --instance-id $ID2 --device /dev/sdf
 aws ec2 wait volume-in-use --volume-ids $V1 $V2
 
 # Formattazione xfs e mount su /mnt/demo-data (via SSM, nessuna chiave SSH necessaria)
-DATA_CMDS='["sudo mkfs -t xfs /dev/nvme1n1","sudo mkdir -p /mnt/demo-data","sudo mount /dev/nvme1n1 /mnt/demo-data","df -h /mnt/demo-data"]'
-aws ssm send-command --instance-ids $ID1 $ID2 --document-name AWS-RunShellScript --parameters "commands=$DATA_CMDS"
+# Su t3 (Nitro) il volume allegato come /dev/sdf è /dev/nvme1n1; il root è nvme0n1. Si controlla prima con lsblk e si formatta solo se il disco è vuoto.
+DATA_CMDS='["lsblk","sudo blkid /dev/nvme1n1 || sudo mkfs -t xfs /dev/nvme1n1","sudo mkdir -p /mnt/demo-data","sudo mount /dev/nvme1n1 /mnt/demo-data","df -h /mnt/demo-data"]'
+for I in $ID1 $ID2; do
+  CID=$(aws ssm send-command --instance-ids $I --document-name AWS-RunShellScript --parameters "commands=$DATA_CMDS" --query Command.CommandId --output text)
+  aws ssm wait command-executed --command-id $CID --instance-id $I     # si attende la fine, altrimenti lo step 7 parte prima del mount
+  aws ssm get-command-invocation --command-id $CID --instance-id $I --query "[InstanceId,Status]" --output text
+done
 
 # Step 3 - Security Group EFS: NFS 2049 solo dal SG delle istanze
 SG_E=$(aws ec2 create-security-group --group-name demo-sg-efs --description "demo EFS" --vpc-id $VPC --query GroupId --output text)
@@ -124,11 +128,19 @@ until [ "$(aws efs describe-mount-targets --file-system-id $EFS --query 'length(
 aws efs describe-mount-targets --file-system-id $EFS --query "MountTargets[].[AvailabilityZoneName,IpAddress,LifeCycleState]" --output table
 
 # Step 6 - Mount EFS su entrambe le istanze (via SSM)
-MNT="[\"sudo dnf install -y amazon-efs-utils\",\"sudo mkdir -p /mnt/efs-shared\",\"sudo mount -t efs -o tls $EFS:/ /mnt/efs-shared\",\"findmnt --mountpoint /mnt/efs-shared\"]"
-aws ssm send-command --instance-ids $ID1 $ID2 --document-name AWS-RunShellScript --parameters "commands=$MNT"
+# Si usa l'opzione az=: il mount helper risolve il nome DNS di zona (us-east-1a.fs-...). Il nome generico fs-....efs.us-east-1.amazonaws.com
+# nel nostro test non si risolveva ("Failed to resolve") anche con il mount target già available.
+# Anche il nome di zona compare nel DNS della VPC con qualche minuto di ritardo rispetto allo stato available: il mount si ritenta ogni 15 s con until.
+for P in "$ID1 us-east-1a" "$ID2 us-east-1b"; do
+  set -- $P
+  MNT="[\"sudo dnf install -y amazon-efs-utils\",\"sudo mkdir -p /mnt/efs-shared\",\"until sudo mount -t efs -o tls,az=$2 $EFS:/ /mnt/efs-shared; do sleep 15; done\",\"findmnt --mountpoint /mnt/efs-shared\"]"
+  CID=$(aws ssm send-command --instance-ids $1 --document-name AWS-RunShellScript --parameters "commands=$MNT" --query Command.CommandId --output text)
+  aws ssm wait command-executed --command-id $CID --instance-id $1
+  aws ssm get-command-invocation --command-id $CID --instance-id $1 --query "[InstanceId,Status]" --output text
+done
 
 # Step 7 - Prova di condivisione: scrive su web-01, legge su web-02
-run() { CID=$(aws ssm send-command --instance-ids $1 --document-name AWS-RunShellScript --parameters "commands=[\"$2\"]" --query Command.CommandId --output text); sleep 6; aws ssm get-command-invocation --command-id $CID --instance-id $1 --query StandardOutputContent --output text; }
+run() { CID=$(aws ssm send-command --instance-ids $1 --document-name AWS-RunShellScript --parameters "commands=[\"$2\"]" --query Command.CommandId --output text); aws ssm wait command-executed --command-id $CID --instance-id $1; aws ssm get-command-invocation --command-id $CID --instance-id $1 --query StandardOutputContent --output text; }
 run $ID1 "findmnt --mountpoint /mnt/efs-shared && echo 'scritto dalla istanza 1' | sudo tee /mnt/efs-shared/condiviso.txt"
 run $ID2 "findmnt --mountpoint /mnt/efs-shared && cat /mnt/efs-shared/condiviso.txt"
 
@@ -136,4 +148,21 @@ run $ID2 "findmnt --mountpoint /mnt/efs-shared && cat /mnt/efs-shared/condiviso.
 run $ID2 "ls -la /mnt/demo-data"
 ```
 
-Output atteso allo Step 7: su `demo-web-02` compare `scritto dalla istanza 1` senza copia manuale. Il cleanup (smontaggio, mount target, EFS, SG, volumi, istanze) e nella procedura del Lab 11.
+Output atteso allo Step 7: su `demo-web-02` compare `scritto dalla istanza 1` senza copia manuale. 
+### Cleanup
+
+```bash
+aws ssm send-command --instance-ids $ID1 $ID2 --document-name AWS-RunShellScript --parameters 'commands=["sudo umount /mnt/efs-shared","sudo umount /mnt/demo-data"]'
+for MT in $(aws efs describe-mount-targets --file-system-id $EFS --query "MountTargets[].MountTargetId" --output text); do aws efs delete-mount-target --mount-target-id $MT; done
+until [ "$(aws efs describe-mount-targets --file-system-id $EFS --query 'length(MountTargets)' --output text)" = 0 ]; do sleep 10; done
+aws efs delete-file-system --file-system-id $EFS
+aws ec2 terminate-instances --instance-ids $ID1 $ID2 && aws ec2 wait instance-terminated --instance-ids $ID1 $ID2
+aws ec2 delete-volume --volume-id $V1; aws ec2 delete-volume --volume-id $V2
+aws ec2 delete-security-group --group-id $SG_E
+aws ec2 delete-security-group --group-id $SG_I
+# La subnet demo-subnet-public-1b è creata da questo lab: si elimina qui, dopo averla dissociata dalla route table pubblica
+# (altrimenti il cleanup del Lab 05 trova due associazioni su demo-rt-public e `disassociate-route-table` fallisce)
+ASSOC_B=$(aws ec2 describe-route-tables --route-table-ids $RT_PUB --query "RouteTables[0].Associations[?SubnetId=='$SUB_B'].RouteTableAssociationId" --output text)
+aws ec2 disassociate-route-table --association-id $ASSOC_B
+aws ec2 delete-subnet --subnet-id $SUB_B
+```

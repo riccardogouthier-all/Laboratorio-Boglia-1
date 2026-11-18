@@ -6,7 +6,7 @@ Autore: Riccardo Gouthier (Gruppo 2).
 
 Prima funzione Lambda `hello-serverless` (runtime Python 3.12). Restituisce un JSON con messaggio `Hello, Mario!`, nome funzione, memoria configurata e tempo di esecuzione. Confronto cold start vs warm start a 128 MB e 256 MB leggendo le righe `REPORT` in CloudWatch Logs.
 
-## Misure
+## Misure (rilevamento studente)
 
 ### Lambda 128 MB
 
@@ -29,11 +29,27 @@ Prima funzione Lambda `hello-serverless` (runtime Python 3.12). Restituisce un J
 | 128 MB | 93 | 88,10 |
 | 256 MB | 103 | 99,93 |
 
+## Rilevamento di verifica
+
+Stessa procedura CLI rieseguita il 17/11/2026 su un altro account Learner Lab (us-east-1, Python 3.12). Una sola misura per tipo, come nel rilevamento dello studente.
+
+| Memoria | Tipo | Duration | Billed Duration | Max Memory Used | Init Duration |
+|---|---|---|---|---|---|
+| 128 MB | cold | 1,75 ms | 78 ms | 32 MB | 75,38 ms |
+| 128 MB | warm (a caldo) | 1,63 ms | 2 ms | 32 MB | - |
+| 256 MB | cold | 1,98 ms | 97 ms | 32 MB | 94,79 ms |
+| 256 MB | warm (a caldo) | 1,55 ms | 2 ms | 32 MB | - |
+
+Le relazioni delle osservazioni 1-3 si confermano (cold: 75,38 + 1,75 = 77,13 arrotondati a 78 ms; 94,79 + 1,98 = 96,77 arrotondati a 97 ms). I valori assoluti differiscono: a caldo a 128 MB la verifica dà 1,63 ms contro 13,61 ms dello studente, quindi la differenza a caldo tra 128 e 256 MB non è riproducibile in modo netto (1,63 contro 1,55 ms): per una funzione così breve conta più la variabilità della singola misura che la CPU assegnata.
+
 ## Osservazioni
 
-1. Nel **cold start** la Billed Duration e uguale a Init Duration + Duration, arrotondata per eccesso al ms (128 MB: 88,10 + 4,27 = 92,37, fatturati 93 ms; 256 MB: 99,93 + 2,23 = 102,16, fatturati 103 ms).
-2. Nel **warm start** non c'e Init Duration: la Billed Duration e la sola Duration (arrotondata).
-3. "Max Memory Used" resta ~36 MB indipendentemente dalla memoria configurata: la funzione e troppo leggera per sfruttare piu memoria.
+1. Nel **cold start** la Billed Duration è uguale a Init Duration + Duration, arrotondata per eccesso al ms: la fase di Init è fatturata anche per le funzioni con runtime gestito (128 MB: 88,10 + 4,27 = 92,37, fatturati 93 ms; 256 MB: 99,93 + 2,23 = 102,16, fatturati 103 ms).
+2. Nel **warm start** non c'è Init Duration: la Billed Duration è la sola Duration (arrotondata).
+3. "Max Memory Used" resta ~36 MB indipendentemente dalla memoria configurata: la funzione è troppo leggera per sfruttare più memoria.
+4. **128 MB contro 256 MB.** A caldo la funzione passa da 13,61 ms a 1,82 ms: con più memoria Lambda assegna più CPU, quindi il codice gira più veloce. Il caldo a 128 MB (13,61 ms) è più lento del cold Duration (4,27 ms) perché la misura singola è influenzata da altri fattori (la prima esecuzione a 128 MB si è comportata in modo anomalo): una sola misura per tipo non basta per confrontare i valori assoluti. A freddo la Init Duration è invece leggermente più alta a 256 MB (99,93 ms contro 88,10 ms): il tempo di avvio del runtime non dipende dalla memoria, la differenza sta nella variabilità della misura. Per concludere con sicurezza servirebbero più invocazioni per ogni memoria.
+5. **Output della funzione.** Con evento `{"name": "Mario"}` la risposta contiene `"message": "Hello, Mario!"`, il nome della funzione, la memoria configurata e il tempo di esecuzione.
+6. Un'invocazione ripetuta dopo circa 15 minuti di inattività torna a essere a freddo: Lambda ha rimosso l'ambiente di esecuzione. Il tempo esatto non è garantito da AWS.
 
 ## Prove (evidenze)
 

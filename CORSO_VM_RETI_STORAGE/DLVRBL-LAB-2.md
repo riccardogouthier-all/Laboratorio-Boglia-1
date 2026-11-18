@@ -66,23 +66,24 @@ Dopo stop di `demo-web-02`:
 - [x] AMI `available` prima del lancio di `demo-web-02`
 - [x] Target group mostra stato di salute di entrambe le istanze
 - [x] Stop istanza → esclusione automatica, ALB serve via `demo-web-01`
-- [ ] Cleanup completo (ALB, target group, istanze, AMI, snapshot) eseguito o giustificato
+- [ ] Cleanup completo (ALB, target group, istanze, AMI, snapshot): comandi forniti, esecuzione da confermare
 
 ## Cleanup
-- ALB e target group eliminati: sì/no
-- Istanze terminate: sì/no
-- AMI deregistrata (`deregister-image`) e snapshot eliminati: sì/no
-- Se si prosegue con Lab 03: AMI, snapshot, ALB, target group conservati; riuso documentato, consumo crediti verificato
+Comandi nella sezione "Cleanup" in fondo; stato da confermare dopo l'esecuzione.
+- ALB e target group: eliminati (prima l'ALB, poi si attende la sua cancellazione, poi il target group).
+- Istanze: terminate.
+- AMI: `deregister-image`, poi eliminazione dello snapshot associato.
+- Se si prosegue con il Lab 03: tenere AMI, snapshot, key pair e Security Group (il Lab 03 li riusa) ed eseguire solo il cleanup dell'ALB e del target group se non servono.
 
 ## Nota metodologica
-Valori (ID AMI, ID istanze, DNS ALB) illustrativi, coerenti con doc ufficiale EC2/ELB. Sostituire con valori reali osservati nel Learner Lab. Se Learner Lab non raggiungibile: fallback, nessuna risorsa reale creata.
+Gli ID (AMI, istanze, DNS dell'ALB) sono illustrativi: nella procedura CLI si ricavano dai comandi (`AMI_ID`, `ID2`, `DNS`).
 
 Procedura di esecuzione in CLI Cloudshell:
 
 Passi 4-8 dello script: AMI da `demo-web-01`, seconda istanza, target group, ALB e verifica.
 
 ```bash
-# Se la sessione CloudShell e nuova, ricostruire le variabili del Lab 01
+# Se la sessione CloudShell è nuova, ricostruire le variabili del Lab 01
 export AWS_DEFAULT_REGION=us-east-1
 VPC_ID=$(aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query "Vpcs[0].VpcId" --output text)
 read SUB1 SUB2 <<< $(aws ec2 describe-subnets --filters Name=vpc-id,Values=$VPC_ID Name=default-for-az,Values=true --query "sort_by(Subnets,&AvailabilityZone)[0:2].SubnetId" --output text)
@@ -117,9 +118,22 @@ aws elbv2 wait load-balancer-available --load-balancer-arns $ALB_ARN
 aws elbv2 create-listener --load-balancer-arn $ALB_ARN --protocol HTTP --port 80 --default-actions Type=forward,TargetGroupArn=$TG_ARN
 
 # --- Passo 8 ---
+# I target restano "initial" per 1-2 minuti dopo la creazione dell'ALB: si attende lo stato healthy prima di leggere
+aws elbv2 wait target-in-service --target-group-arn $TG_ARN
 aws elbv2 describe-target-health --target-group-arn $TG_ARN --query "TargetHealthDescriptions[].[Target.Id,TargetHealth.State]" --output table
 DNS=$(aws elbv2 describe-load-balancers --load-balancer-arns $ALB_ARN --query "LoadBalancers[0].DNSName" --output text)
 curl -s http://$DNS/
+
+# --- Passo 9 --- Prova del health check: stop di demo-web-02, lettura dello stato, riavvio
+aws ec2 stop-instances --instance-ids $ID2 --query "StoppingInstances[0].CurrentState.Name" --output text
+aws ec2 wait instance-stopped --instance-ids $ID2
+sleep 30
+aws elbv2 describe-target-health --target-group-arn $TG_ARN --query "TargetHealthDescriptions[].[Target.Id,TargetHealth.State,TargetHealth.Reason]" --output table
+for i in 1 2 3 4; do curl -s -m 10 http://$DNS/; done     # risponde solo demo-web-01
+aws ec2 start-instances --instance-ids $ID2 --query "StartingInstances[0].CurrentState.Name" --output text
+aws ec2 wait instance-running --instance-ids $ID2
+aws elbv2 wait target-in-service --target-group-arn $TG_ARN
+aws elbv2 describe-target-health --target-group-arn $TG_ARN --query "TargetHealthDescriptions[].[Target.Id,TargetHealth.State]" --output table
 ```
 
 ### Cleanup
@@ -127,9 +141,14 @@ curl -s http://$DNS/
 ```bash
 # Cleanup a fine percorso (ordine: listener/ALB, target group, istanze, AMI e snapshot, key pair, SG)
 aws elbv2 delete-load-balancer --load-balancer-arn $ALB_ARN
+aws elbv2 wait load-balancers-deleted --load-balancer-arns $ALB_ARN
 aws elbv2 delete-target-group --target-group-arn $TG_ARN
 aws ec2 terminate-instances --instance-ids $ID1 $ID2
+aws ec2 wait instance-terminated --instance-ids $ID1 $ID2
+SNAP_ID=$(aws ec2 describe-images --image-ids $AMI_ID --query "Images[0].BlockDeviceMappings[0].Ebs.SnapshotId" --output text)
 aws ec2 deregister-image --image-id $AMI_ID
-aws ec2 delete-key-pair --key-name demo-key
-aws ec2 delete-security-group --group-id $SG_ID
+aws ec2 delete-snapshot --snapshot-id $SNAP_ID
+# Key pair e Security Group servono anche al Lab 03: eliminarli solo a fine percorso
+# aws ec2 delete-key-pair --key-name demo-key
+# aws ec2 delete-security-group --group-id $SG_ID
 ```

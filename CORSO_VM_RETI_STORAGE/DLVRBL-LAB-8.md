@@ -4,7 +4,7 @@
 Bucket S3 con versioning attivo e regola di lifecycle, verificando che sovrascrittura ed eliminazione non causino perdita definitiva dei dati.
 
 ## Configurazione
-- Regione `us-east-1`. Creato con IaC; il bucket e la sua configurazione tramite AWS CLI perche la SCP del Learner Lab nega a Terraform la lettura dell'object lock
+- Regione `us-east-1`. Il bucket e la sua configurazione sono stati creati con AWS CLI, perché la SCP del Learner Lab nega a Terraform la lettura dell'object lock
 - Bucket: `demo-vm-reti-storage-rg-2026`, Block all public access attivo, Bucket Versioning `Enabled`
 
 ## Versioni di `report.txt`
@@ -42,14 +42,14 @@ Regola `demo-lifecycle-standard-ia`:
 - [x] Delete marker osservato, nessuna perdita dei dati
 - [x] Recupero verificato rimuovendo il marker
 - [x] Lifecycle configurato (transizione non attesa, dichiarato)
-- [x] Cleanup eseguito (vedi sotto)
+- [x] Cleanup descritto in questo documento (sezione Cleanup)
 
 ## Cleanup
 - Bucket conservato per il Lab 09
-- Eliminazione finale (tutte le versioni e i delete marker, poi il bucket): eseguita a fine percorso, vedi cleanup finale Lab 8-11 nel Lab 11
+- Eliminazione finale a fine percorso: si rimuovono tutte le versioni e tutti i delete marker, poi il bucket (comandi nella sezione "Cleanup" in fondo).
 
 ## Nota metodologica
-Version ID e delete marker sono valori osservati. La transizione lifecycle non e provata: richiede 30 giorni.
+Version ID e delete marker sono valori osservati. La transizione lifecycle non è provata: richiede 30 giorni.
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -100,7 +100,7 @@ aws s3api get-bucket-lifecycle-configuration --bucket $BUCKET
 # Step 6 - Eliminazione semplice: crea un delete marker, le versioni restano
 aws s3api delete-object --bucket $BUCKET --key report.txt
 aws s3api list-object-versions --bucket $BUCKET --prefix report.txt --query "{Versions:Versions[].VersionId,DeleteMarkers:DeleteMarkers[].VersionId}"
-aws s3 ls s3://$BUCKET/        # report.txt non compare piu nella vista normale
+aws s3 ls s3://$BUCKET/        # report.txt non compare più nella vista normale
 
 # Step 7 - Recupero: rimuovere solo il delete marker
 DM=$(aws s3api list-object-versions --bucket $BUCKET --prefix report.txt --query "DeleteMarkers[?IsLatest==\`true\`].VersionId | [0]" --output text)
@@ -108,4 +108,14 @@ aws s3api delete-object --bucket $BUCKET --key report.txt --version-id $DM
 aws s3 cp s3://$BUCKET/report.txt - 
 ```
 
-Il bucket resta per il Lab 09. Il cleanup finale (tutte le versioni e i delete marker, poi il bucket) e nella procedura del Lab 11.
+Il bucket resta per il Lab 09.
+
+### Cleanup (a fine percorso)
+
+Eliminazione finale: prima tutte le versioni e i delete marker, poi il bucket.
+
+```bash
+aws s3api list-object-versions --bucket $BUCKET --query "Versions[].[Key,VersionId]" --output text | while read K V; do aws s3api delete-object --bucket $BUCKET --key "$K" --version-id "$V" > /dev/null; done
+aws s3api list-object-versions --bucket $BUCKET --query "DeleteMarkers[].[Key,VersionId]" --output text | while read K V; do aws s3api delete-object --bucket $BUCKET --key "$K" --version-id "$V" > /dev/null; done
+aws s3api delete-bucket --bucket $BUCKET
+```

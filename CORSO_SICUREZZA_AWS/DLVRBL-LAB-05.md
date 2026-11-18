@@ -1,7 +1,7 @@
 # Consegna Lab 05 - SCP e Access Analyzer (modello locale)
 
 ## Ambito
-Esercizio svolto in locale: AWS Organizations e IAM Access Analyzer non sono autorizzati nel Learner Lab, quindi non e stata creata nessuna risorsa cloud. Nessuno screenshot della console (sarebbe inventato). Identificativi fittizi.
+Esercizio svolto in locale: AWS Organizations e IAM Access Analyzer non sono autorizzati nel Learner Lab, quindi non è stata creata nessuna risorsa cloud e non ci sono screenshot della console. Gli identificativi sono fittizi.
 
 ## Gerarchia
 ```
@@ -27,7 +27,7 @@ Il ruolo applicativo ha una policy IAM che consente `s3:GetObject` e `s3:DeleteO
 | `s3:DeleteObject` | consentito | policy IAM |
 | `s3:PutObject` | negato implicitamente | nessun Allow IAM |
 
-Cambia soltanto `Delete`. `FullAWSAccess` e un limite, non una concessione: le SCP non assegnano permessi, restringono quelli che IAM puo dare.
+Cambia soltanto `Delete`. `FullAWSAccess` è un limite, non una concessione: le SCP non assegnano permessi, restringono quelli che IAM può dare.
 
 ## Finding Access Analyzer (modello)
 | Finding | Problema | Correzione | Prova positiva | Prova negativa |
@@ -36,13 +36,13 @@ Cambia soltanto `Delete`. `FullAWSAccess` e un limite, non una concessione: le S
 | B | Lettura anonima non approvata | Rimuovere l'accesso anonimo, mantenere Block Public Access | - | Una richiesta anonima non legge |
 
 ## Limite delle evidenze
-Per provare un accesso realmente avvenuto servono log reali (CloudTrail, log di accesso S3) e l'esito di Access Analyzer. Qui il modello e locale: dimostra la logica di valutazione, non lo stato di un account reale.
+Per provare un accesso realmente avvenuto servono log reali (CloudTrail, log di accesso S3) e l'esito di Access Analyzer. Qui il modello è locale: dimostra la logica di valutazione, non lo stato di un account reale.
 
 ## Checkpoint
 - [x] Gerarchia root -> OU -> account descritta
 - [x] Matrice con e senza SCP, differenza limitata a `Delete`
 - [x] Finding A e B con correzione e prove positiva/negativa
-- [x] Dichiarato che nessuna risorsa cloud e stata creata
+- [x] Dichiarato che nessuna risorsa cloud è stata creata
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -63,8 +63,8 @@ EOF
 
 sim() { aws iam simulate-custom-policy --policy-input-list "$@" --action-names s3:GetObject s3:DeleteObject s3:PutObject --resource-arns arn:aws:s3:::rapporti-demo/a.txt --query 'EvaluationResults[].[EvalActionName,EvalDecision]' --output table; }
 
-echo "== Con SCP Deny attiva =="    ; sim file://iam-ruolo.json file://scp-ou.json   # Get allowed, Delete explicitDeny, Put implicitDeny
-echo "== Senza SCP Deny =="         ; sim file://iam-ruolo.json                       # Get allowed, Delete allowed, Put implicitDeny
+echo "== Con SCP Deny attiva =="    ; sim "$(cat iam-ruolo.json)" "$(cat scp-ou.json)"   # Get allowed, Delete explicitDeny, Put implicitDeny
+echo "== Senza SCP Deny =="         ; sim "$(cat iam-ruolo.json)"                       # Get allowed, Delete allowed, Put implicitDeny
 ```
 
 Finding A e B (accesso partner troppo ampio, lettura anonima) sono modelli locali con identificativi fittizi:
@@ -75,8 +75,8 @@ cat > partner-corretta.json <<'EOF'
 {"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:GetObject","Resource":"arn:aws:s3:::rapporti-demo/export/*"}]}
 EOF
 for K in export/a.txt interno/b.txt; do
-  aws iam simulate-custom-policy --policy-input-list file://partner-corretta.json --action-names s3:GetObject --resource-arns arn:aws:s3:::rapporti-demo/$K --query 'EvaluationResults[].[EvalResourceName,EvalDecision]' --output text
+  aws iam simulate-custom-policy --policy-input-list "$(cat partner-corretta.json)" --action-names s3:GetObject --resource-arns arn:aws:s3:::rapporti-demo/$K --query 'EvaluationResults[].[EvalResourceName,EvalDecision]' --output text
 done     # export/a.txt allowed (prova positiva), interno/b.txt implicitDeny (prova negativa)
 ```
 
-Limite: per provare un accesso realmente avvenuto servono CloudTrail, log di accesso S3 e Access Analyzer. Se `iam:SimulateCustomPolicy` e negata nel lab, dichiarare la valutazione manuale. Cleanup: `rm iam-ruolo.json scp-ou.json partner-corretta.json`.
+Limite: per provare un accesso realmente avvenuto servono CloudTrail, log di accesso S3 e Access Analyzer. Se `iam:SimulateCustomPolicy` è negata nel lab, dichiarare la valutazione manuale. Cleanup: `rm iam-ruolo.json scp-ou.json partner-corretta.json`.

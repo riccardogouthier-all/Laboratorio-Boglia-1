@@ -1,0 +1,17 @@
+===== passo 6: Elenco e dettaglio dei finding SAMPLE: type, severity, resource, indicatore sample
+# Elenco e dettaglio dei finding SAMPLE: type, severity, resource, indicatore sample
+sleep 15
+FIDS=$(aws guardduty list-findings --detector-id $DETECTOR_ID --region us-east-1 --query "FindingIds" --output text)
+aws guardduty get-findings --detector-id $DETECTOR_ID --finding-ids $FIDS --region us-east-1 \
+  --query "Findings[].[Title,Type,Severity,Resource.ResourceType,Region,Service.AdditionalInfo.Value]" --output table
+aws inspector2 batch-get-account-status --region us-east-1 2>&1 | head -20      # se Inspector non e attivo / accesso negato: registrare l'errore, non modificare IAM
+--- output (exit 254, 30s)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|                                                                                                                       GetFindings                                                                                                                       |
++-------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------+------+-----------+------------+-------------------+
+|  198.51.100.0 is performing SSH brute force attacks against i-99999999.                                                                                     |  UnauthorizedAccess:EC2/SSHBruteForce |  2.0 |  Instance |  us-east-1 |  {"sample":true}  |
+|  The EC2 instance i-99999999 is behaving in a manner that may indicate it is being used to perform a Denial of Service (DoS) attack using the TCP protocol. |  Backdoor:EC2/DenialOfService.Tcp     |  8.0 |  Instance |  us-east-1 |  {"sample":true}  |
++-------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------+------+-----------+------------+-------------------+
+
+aws: [ERROR]: An error occurred (AccessDeniedException) when calling the BatchGetAccountStatus operation: User: arn:aws:sts::533267308404:assumed-role/voclabs/user4792014=riccardo.gouthier@edu-its.it is not authorized to perform: inspector2:BatchGetAccountStatus on resource: arn:aws:inspector2:us-east-1:533267308404:/status/batch/get because no identity-based policy allows the inspector2:BatchGetAccountStatus action
+

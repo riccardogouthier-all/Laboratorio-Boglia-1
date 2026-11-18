@@ -1,10 +1,22 @@
-# Consegna Lab 07 - Connettivita sicura e CloudTrail
+# Consegna Lab 07 - Connettività sicura e CloudTrail
 
 ## Confronto
 | Opzione | Caratteristica |
 |---|---|
 | Site-to-Site VPN | tunnel IPsec, protegge la comunicazione su Internet |
-| Direct Connect | connettivita dedicata; la cifratura va progettata separatamente |
+| Direct Connect | connettività dedicata; la cifratura va progettata separatamente |
+
+### Schema 1 - Site-to-Site VPN
+```
+Rete on-premises --[ Customer Gateway ]==== tunnel IPsec (cifrato) su Internet ====[ Virtual Private Gateway ]-- VPC AWS
+```
+Attivazione rapida e costo basso; la banda dipende da Internet e la latenza non è costante. Il traffico è cifrato dal tunnel.
+
+### Schema 2 - Direct Connect
+```
+Rete on-premises --[ router ]-- collegamento fisico dedicato --[ Direct Connect location ]-- [ Virtual Private Gateway / Direct Connect Gateway ]-- VPC AWS
+```
+Banda e latenza prevedibili; attivazione in settimane e costo più alto. Il collegamento è privato ma non cifrato di default: per cifrare serve una VPN sopra Direct Connect o MACsec dove disponibile.
 
 ## Configurazione
 - Log group `/sicurezza07/rg` in `us-east-1`, creato con Terraform il 16 novembre 2026 alle 16:32:14 UTC
@@ -22,19 +34,19 @@ In CloudTrail Event history, filtro `Event name = CreateLogGroup`:
 | `errorCode` | assente (operazione riuscita) |
 
 ## Tre fatti
-1. `CreateLogGroup` e un evento di gestione, non traffico applicativo.
-2. L'identita e un ruolo assunto, distinta dalla persona.
-3. Nessun `errorCode`: l'operazione e riuscita.
+1. `CreateLogGroup` è un evento di gestione, non traffico applicativo.
+2. L'identità è un ruolo assunto, distinta dalla persona.
+3. Nessun `errorCode`: l'operazione è riuscita.
 
 ## Limiti
-- L'evento non prova l'uso di VPN ne di Direct Connect.
+- L'evento non prova l'uso di VPN né di Direct Connect.
 - Per attribuire l'azione a una persona servono altri dati di sessione.
 
 ## Checkpoint
 - [x] Confronto VPN / Direct Connect
 - [x] Evento CloudTrail trovato con filtro e campi riportati
 - [x] Tre fatti e limiti dichiarati
-- [x] Log group rimosso nel cleanup finale (Lab 6-10)
+- [x] Cleanup descritto nel documento (sezione Cleanup: eliminazione del log group)
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -46,8 +58,9 @@ SUF=rg
 aws logs create-log-group --log-group-name /sicurezza07/$SUF --region us-east-1
 date -u +"%Y-%m-%dT%H:%M:%SZ"
 
-# Steps 7-12 - Evento CloudTrail CreateLogGroup (puo richiedere alcuni minuti per comparire)
-sleep 60
+# Steps 7-12 - Evento CloudTrail CreateLogGroup (può richiedere alcuni minuti per comparire)
+# CloudTrail pubblica l'evento dopo 3-10 minuti: se la query è vuota si ripete più tardi (con --max-results 5 l'evento può non essere ancora tra i primi)
+sleep 240
 aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,AttributeValue=CreateLogGroup --region us-east-1 --max-results 5 \
   --query "Events[].[EventTime,EventName,EventSource,Username]" --output table
 
@@ -56,7 +69,7 @@ aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,Attribut
   --query "Events[].CloudTrailEvent" --output text | jq -c 'select(.requestParameters.logGroupName=="/sicurezza07/'$SUF'") | {eventTime,eventName,eventSource,identity:.userIdentity.type,logGroup:.requestParameters.logGroupName,errorCode}'
 ```
 
-Controllo finale: l'evento mostra `CreateLogGroup` da `logs.amazonaws.com`; assenza di `errorCode` = operazione riuscita. E una chiamata di gestione AWS, non traffico applicativo ne prova di uso di VPN. Se l'evento non compare entro 15 minuti, usare il caso sintetico dichiarando la simulazione.
+Controllo finale: l'evento mostra `CreateLogGroup` da `logs.amazonaws.com`; assenza di `errorCode` = operazione riuscita. È una chiamata di gestione AWS, non traffico applicativo né prova di uso di VPN. Se l'evento non compare entro 15 minuti, usare il caso sintetico dichiarando la simulazione.
 
 ### Cleanup
 

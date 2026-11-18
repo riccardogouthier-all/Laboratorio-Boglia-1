@@ -1,0 +1,215 @@
+===== passo 1: --- Passo 0 ---
+# --- Passo 0 ---
+export AWS_DEFAULT_REGION=us-east-1
+VPC4=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=demo-vpc --query "Vpcs[0].VpcId" --output text)
+PUB=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=demo-subnet-public-1a --query "Subnets[0].SubnetId" --output text)
+PRIV=$(aws ec2 describe-subnets --filters Name=tag:Name,Values=demo-subnet-private-1a --query "Subnets[0].SubnetId" --output text)
+echo $VPC4 $PUB $PRIV; ls -l demo-key.pem
+--- output (exit 0, 17s)
+vpc-075e0a75c881b21ab subnet-0def1818da03df983 subnet-0d2fe5bbccc67f401
+-r--r--r-- 1 Riccardo 197121 1675 Nov 17 21:48 demo-key.pem
+
+===== passo 2: --- Passo 1 ---
+# --- Passo 1 ---
+IGW=$(aws ec2 create-internet-gateway --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=demo-igw}]' --query InternetGateway.InternetGatewayId --output text)
+aws ec2 attach-internet-gateway --internet-gateway-id $IGW --vpc-id $VPC4
+--- output (exit 0, 10s)
+
+
+===== passo 3: --- Passo 2 ---
+# --- Passo 2 ---
+RT_PUB=$(aws ec2 create-route-table --vpc-id $VPC4 --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=demo-rt-public}]' --query RouteTable.RouteTableId --output text)
+aws ec2 create-route --route-table-id $RT_PUB --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW
+aws ec2 associate-route-table --route-table-id $RT_PUB --subnet-id $PUB
+--- output (exit 0, 17s)
+{
+    "Return": true
+}
+{
+    "AssociationId": "rtbassoc-0f954e2b2910ff8c5",
+    "AssociationState": {
+        "State": "associated"
+    }
+}
+
+===== passo 4: --- Passo 3 ---
+# --- Passo 3 ---
+EIP=$(aws ec2 allocate-address --domain vpc --query AllocationId --output text)
+NAT=$(aws ec2 create-nat-gateway --subnet-id $PUB --allocation-id $EIP --connectivity-type public --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=demo-nat}]' --query NatGateway.NatGatewayId --output text)
+aws ec2 wait nat-gateway-available --nat-gateway-ids $NAT
+echo $IGW $RT_PUB $EIP $NAT
+--- output (exit 0, 138s)
+igw-0e7b78d8f23e29689 rtb-0a3e005f37dafc66d eipalloc-0bdfaed9e8d1a1a1b nat-0b37ccf1c1e2e670f
+
+===== passo 5: --- Passo 4 ---
+# --- Passo 4 ---
+RT_MAIN=$(aws ec2 describe-route-tables --filters Name=vpc-id,Values=$VPC4 Name=association.main,Values=true --query "RouteTables[0].RouteTableId" --output text)
+aws ec2 create-route --route-table-id $RT_MAIN --destination-cidr-block 0.0.0.0/0 --nat-gateway-id $NAT
+--- output (exit 0, 10s)
+{
+    "Return": true
+}
+
+===== passo 6: --- Passo 5 ---
+# --- Passo 5 ---
+aws ec2 describe-route-tables --filters Name=vpc-id,Values=$VPC4 --query "RouteTables[].[RouteTableId,Routes[?DestinationCidrBlock=='0.0.0.0/0'].[GatewayId,NatGatewayId,State]]" --output json
+--- output (exit 0, 7s)
+[
+    [
+        "rtb-0716374b6b364322c",
+        [
+            [
+                null,
+                "nat-0b37ccf1c1e2e670f",
+                "active"
+            ]
+        ]
+    ],
+    [
+        "rtb-0a3e005f37dafc66d",
+        [
+            [
+                "igw-0e7b78d8f23e29689",
+                null,
+                "active"
+            ]
+        ]
+    ]
+]
+
+===== passo 7: --- Passo 6 ---
+# --- Passo 6 ---
+MYIP=$(curl -s https://checkip.amazonaws.com)
+SG_B=$(aws ec2 create-security-group --group-name demo-sg-bastion --description "demo bastion" --vpc-id $VPC4 --query GroupId --output text)
+aws ec2 authorize-security-group-ingress --group-id $SG_B --protocol tcp --port 22 --cidr $MYIP/32
+
+SG_P=$(aws ec2 create-security-group --group-name demo-sg-private --description "demo private" --vpc-id $VPC4 --query GroupId --output text)
+aws ec2 authorize-security-group-ingress --group-id $SG_P --protocol tcp --port 22 --source-group $SG_B
+--- output (exit 0, 33s)
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-02fcb76c2166f7ee1",
+            "GroupId": "sg-0646e7fbd88491ad1",
+            "GroupOwnerId": "533267308404",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIpv4": "93.37.212.151/32",
+            "SecurityGroupRuleArn": "arn:aws:ec2:us-east-1:533267308404:security-group-rule/sgr-02fcb76c2166f7ee1"
+        }
+    ]
+}
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-0e2220b0a3331d12c",
+            "GroupId": "sg-0bf91fb8b0fa48628",
+            "GroupOwnerId": "533267308404",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "ReferencedGroupInfo": {
+                "GroupId": "sg-0646e7fbd88491ad1",
+                "UserId": "533267308404"
+            },
+            "SecurityGroupRuleArn": "arn:aws:ec2:us-east-1:533267308404:security-group-rule/sgr-0e2220b0a3331d12c"
+        }
+    ]
+}
+
+===== passo 8: --- Passo 7 ---
+# --- Passo 7 ---
+BASE_AMI=$(aws ssm get-parameter --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 --query Parameter.Value --output text)
+
+BID=$(aws ec2 run-instances --image-id $BASE_AMI --instance-type t3.micro --key-name demo-key --subnet-id $PUB --security-group-ids $SG_B --associate-public-ip-address --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demo-bastion}]' --query "Instances[0].InstanceId" --output text)
+
+PID=$(aws ec2 run-instances --image-id $BASE_AMI --instance-type t3.micro --key-name demo-key --subnet-id $PRIV --security-group-ids $SG_P --no-associate-public-ip-address --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demo-private-test}]' --query "Instances[0].InstanceId" --output text)
+
+aws ec2 wait instance-status-ok --instance-ids $BID $PID
+
+BIP=$(aws ec2 describe-instances --instance-ids $BID --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
+PIP=$(aws ec2 describe-instances --instance-ids $PID --query "Reservations[0].Instances[0].PrivateIpAddress" --output text)
+PPUB=$(aws ec2 describe-instances --instance-ids $PID --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
+echo bastion=$BIP privata=$PIP pubblico_privata=$PPUB
+--- output (exit 0, 208s)
+bastion=23.22.255.81 privata=10.0.2.224 pubblico_privata=None
+
+===== passo 9: --- Passo 8 ---
+# --- Passo 8 ---
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
+touch ~/.ssh/config
+sed -i '/^# BEGIN lab5/,/^# END lab5/d' ~/.ssh/config     # rende il passo ripetibile: toglie il blocco precedente
+cat >> ~/.ssh/config <<EOF
+# BEGIN lab5
+Host lab-bastion
+    HostName $BIP
+    User ec2-user
+    IdentityFile ~/demo-key.pem
+    IdentitiesOnly yes
+    StrictHostKeyChecking accept-new
+
+Host lab-private
+    HostName $PIP
+    User ec2-user
+    IdentityFile ~/demo-key.pem
+    IdentitiesOnly yes
+    StrictHostKeyChecking accept-new
+    ProxyJump lab-bastion
+# END lab5
+EOF
+chmod 600 ~/.ssh/config
+
+ssh lab-bastion 'hostname'
+ssh lab-private 'hostname; curl -sI https://aws.amazon.com | head -1'
+--- output (exit 255, 6s)
+ssh: Could not resolve hostname lab-bastion: Name or service not known
+ssh: Could not resolve hostname lab-private: Name or service not known
+
+===== passo 9: --- Passo 8 ---
+# --- Passo 8 ---
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
+touch ~/.ssh/config
+sed -i '/^# BEGIN lab5/,/^# END lab5/d' ~/.ssh/config     # rende il passo ripetibile: toglie il blocco precedente
+cat >> ~/.ssh/config <<EOF
+# BEGIN lab5
+Host lab-bastion
+    HostName $BIP
+    User ec2-user
+    IdentityFile C:/Users/Riccardo/AppData/Local/Temp/claude/f3818f1616c21066/42a541a1-278f-49ac-986a-0f8567aa69ba/scratchpad/home-vm/demo-key.pem
+    IdentitiesOnly yes
+    StrictHostKeyChecking accept-new
+
+Host lab-private
+    HostName $PIP
+    User ec2-user
+    IdentityFile C:/Users/Riccardo/AppData/Local/Temp/claude/f3818f1616c21066/42a541a1-278f-49ac-986a-0f8567aa69ba/scratchpad/home-vm/demo-key.pem
+    IdentitiesOnly yes
+    StrictHostKeyChecking accept-new
+    ProxyJump lab-bastion
+# END lab5
+EOF
+chmod 600 ~/.ssh/config
+
+ssh lab-bastion 'hostname'
+ssh lab-private 'hostname; curl -sI https://aws.amazon.com | head -1'
+--- output (exit 0, 5s)
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+ip-10-0-1-192.ec2.internal
+Warning: Permanently added '23.22.255.81' (ED25519) to the list of known hosts.
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+Warning: Permanently added '10.0.2.224' (ED25519) to the list of known hosts.
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+ip-10-0-2-224.ec2.internal
+HTTP/2 200 
+

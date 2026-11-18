@@ -25,18 +25,26 @@ Nessun accesso Internet e nessuna istanza.
 | 3 | uscita | verso `10.20.1.10` | TCP 55000 | ammessa | NACL outbound 1024-65535 |
 | 4 | uscita | verso `10.20.1.10` | TCP 80 | negata | porta fuori da 1024-65535 |
 
+## Come funzionano le regole
+- Una Network ACL appena creata nega tutto (regola finale `*` con `Deny`): senza le regole 100 nessun pacchetto passa.
+- Le regole sono valutate in ordine crescente di numero e si ferma alla prima che corrisponde, quindi un `Deny` con numero più basso prevale su un `Allow` con numero più alto.
+- Il Security Group è stateful (la risposta passa da sola); la NACL è stateless, per questo serve la regola di uscita sulle porte effimere 1024-65535.
+
+## Identificativi delle risorse create
+La procedura CLI stampa `VPC`, `SUB`, `SG`, `NACL`, `OLD_NACL` e `NEW_ASSOC` con `echo`: copiarli qui dopo l'esecuzione. `OLD_NACL` è la ACL precedente della subnet, necessaria per il ripristino nel cleanup.
+
 ## Limite
-Nessun test applicativo e dichiarato riuscito: senza istanza e senza accesso Internet le decisioni derivano dalla lettura delle regole, non da traffico reale.
+Nessun test applicativo è dichiarato riuscito: senza istanza e senza accesso Internet le decisioni derivano dalla lettura delle regole, non da traffico reale.
 
 ## Checkpoint
 - [x] SG e NACL configurati con regole minime
 - [x] 4 decisioni sui pacchetti motivate
 - [x] Dichiarata l'assenza di test applicativi
-- [x] Cleanup eseguito (vedi Lab 10, cleanup finale 6-10)
+- [x] Cleanup descritto in questo documento (sezione Cleanup: ripristino ACL, eliminazione ACL, Security Group, subnet e VPC)
 
 Procedura di esecuzione in CLI Cloudshell:
 
-Il lab si e eseguito con Terraform; qui l'equivalente con AWS CLI. Nessuna istanza, NAT o indirizzo pubblico viene creato.
+Il lab è stato eseguito con Terraform; qui l'equivalente con AWS CLI. Nessuna istanza, NAT o indirizzo pubblico viene creato.
 
 ```bash
 export AWS_DEFAULT_REGION=us-east-1

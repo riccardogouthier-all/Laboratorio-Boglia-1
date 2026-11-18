@@ -1,0 +1,11 @@
+===== passo 1: Ripristina la NACL precedente sulla subnet privata (necessario per i lab 9-11), poi elimina quella di test
+# Ripristina la NACL precedente sulla subnet privata (necessario per i lab 9-11), poi elimina quella di test
+aws ec2 replace-network-acl-association --association-id $NEW_ASSOC --network-acl-id $OLD_NACL
+aws ec2 delete-network-acl --network-acl-id $NACL
+aws ec2 describe-network-acls --filters Name=association.subnet-id,Values=$PRIV --query "NetworkAcls[0].NetworkAclId" --output text   # deve coincidere con $OLD_NACL
+--- output (exit 0, 16s)
+{
+    "NewAssociationId": "aclassoc-05db7503816a6a5c3"
+}
+acl-0e225f156098190b3
+

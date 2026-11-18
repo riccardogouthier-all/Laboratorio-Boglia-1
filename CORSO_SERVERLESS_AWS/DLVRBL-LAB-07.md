@@ -46,8 +46,10 @@ Log group `/aws/lambda/process-s3-upload`:
 ```
 File uploaded: s3://lab07-trigger-gouthier/comando hypervisor.txt (size: 290 bytes)
 Dimensione: 290 bytes
-REPORT ... Duration: 2.16 ms  Billed Duration: 94 ms  Memory Size: 128 MB  Max Memory Used: 37 MB  Init Duration: (cold start)
+REPORT Duration: 2.16 ms  Billed Duration: 94 ms  Memory Size: 128 MB  Max Memory Used: 37 MB  Init Duration: presente
 ```
+
+La riga `REPORT` è riportata senza `RequestId` e senza `XRAY TraceId`. `Init Duration` compare perché questa è la prima invocazione (cold start); il suo valore in millisecondi non è stato annotato. La Billed Duration (94 ms) è molto maggiore della Duration (2,16 ms) proprio perché comprende la fase di Init.
 
 ## Parte 2 - Trigger schedulato (cron)
 
@@ -64,11 +66,13 @@ def lambda_handler(event, context):
     return {'statusCode': 200, 'body': f'Executed at {now}'}
 ```
 
+Nota: `datetime.utcnow()` è deprecata da Python 3.12; la forma raccomandata è `datetime.now(timezone.utc)`. Qui resta quella del testo del lab.
+
 Trigger: regola EventBridge `every-5-min-rule` (ogni 5 minuti).
 
 ### Step 6 - Verifica nei log CloudWatch
 
-- Esecuzioni osservate alle 16:36:01 e 16:41:01 (UTC+02:00), cioe a distanza di 5 minuti.
+- Esecuzioni osservate alle 16:36:01 e 16:41:01 (UTC+02:00), cioè a distanza di 5 minuti.
 - Evento ricevuto: `detail-type` = `Scheduled Event`, `source` = `aws.events`, `region` = `us-east-1`, `resources` = ARN della regola `every-5-min-rule`.
 - REPORT tipico: Duration 1,71 ms, Billed Duration 67 ms, Memory Size 128 MB, Max Memory Used 37 MB.
 
@@ -78,13 +82,13 @@ Trigger: regola EventBridge `every-5-min-rule` (ogni 5 minuti).
 |---|---|---|---|
 | 1 | Upload di un file nel bucket | Trigger S3 | Lambda invocata, log con chiave e dimensione corrette |
 | 2 | Nome file con spazio | Decodifica chiave | Chiave letta correttamente grazie a `unquote_plus` |
-| 3 | Attesa di piu intervalli da 5 min | Trigger EventBridge | Esecuzioni periodiche visibili nei log |
+| 3 | Attesa di più intervalli da 5 min | Trigger EventBridge | Esecuzioni periodiche visibili nei log |
 
 ## Conclusioni
 
 1. Lo stesso modello a eventi serve sia per eventi di dati (S3) sia per eventi temporali (EventBridge).
 2. Il payload dell'evento cambia per sorgente: `Records[]` per S3, `Scheduled Event` per EventBridge.
-3. I cold start (Init Duration) compaiono nella prima esecuzione dopo il deploy; le successive sono warm.
+3. I cold start (Init Duration) compaiono quando Lambda deve creare un nuovo ambiente di esecuzione: alla prima invocazione dopo il deploy, dopo un periodo di inattività, dopo una modifica del codice o della configurazione e quando serve più concorrenza (scale-out). Le invocazioni che riusano un ambiente già pronto sono warm. Con la regola ogni 5 minuti i riavvii a freddo si osservano solo se l'ambiente è stato rimosso tra un'esecuzione e l'altra.
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -157,6 +161,8 @@ cd ..
 ```
 
 ### Cleanup
+
+Il cleanup è necessario: la regola EventBridge continua a invocare `scheduled-task` ogni 5 minuti finché non viene eliminata, e la funzione e il bucket restano nell'account.
 
 ```bash
 aws events remove-targets --rule every-5-min-rule --ids scheduled-task

@@ -18,7 +18,7 @@ Upload S3 (lab14-uploads-gouthier) --ObjectCreated--> Lambda process-upload-meta
 
 - Tabella: `lab14-file-metadata`
 - Partition key: `file_key` (String)
-- Modalita capacita: On-demand
+- Modalità capacità: On-demand
 
 ### Step 2 - Bucket S3
 
@@ -82,7 +82,7 @@ Upload CSV in imports/ (lab14-csv-import-gouthier) --> Lambda csv-importer --> D
 - Tabella: `lab14-products`, partition key `product_id` (String), on-demand.
 - GSI: `category-price-index`
 
-| Nome indice | Partition key | Sort key | Proiezione | Capacita |
+| Nome indice | Partition key | Sort key | Proiezione | Capacità |
 |---|---|---|---|---|
 | `category-price-index` | `category` (String) | `price` (Number) | All | On-demand |
 
@@ -104,7 +104,7 @@ Upload CSV in imports/ (lab14-csv-import-gouthier) --> Lambda csv-importer --> D
 |---|---|---|---|
 | `csv-import-trigger` | All object create events | prefisso `imports/`, suffisso `.csv` | Lambda `csv-importer` |
 
-I file fuori da `imports/` o senza estensione `.csv` non avviano la funzione.
+I file fuori da `imports/` o senza estensione `.csv` non avviano la funzione. Prova negativa (comandi nella procedura CLI): il caricamento di `fuori-filtro.csv` nella radice del bucket e di `imports/note.txt` non deve cambiare il numero di prodotti in tabella (restano 6) né creare nuove righe di log di `csv-importer`.
 
 ### Step 12 - Test della pipeline
 
@@ -137,6 +137,7 @@ Query su `category-price-index`:
 | 1 | Upload di 3 file in `lab14-uploads-gouthier` | Positiva | 3 righe di metadati in DynamoDB |
 | 2 | Upload di `products.csv` in `imports/` | Positiva (trigger con filtro) | 6 prodotti importati |
 | 3 | Query GSI per categoria | Positiva | Item della categoria, ordinati per prezzo |
+| 4 | Upload fuori da `imports/` e con suffisso diverso da `.csv` | Negativa (filtro del trigger) | Atteso: nessuna invocazione, tabella invariata (6 prodotti). Da eseguire e annotare |
 
 ## Conclusioni
 
@@ -144,6 +145,8 @@ Query su `category-price-index`:
 2. I filtri prefisso/suffisso sul trigger evitano invocazioni inutili.
 3. Il GSI `category-price-index` abilita query per categoria ordinate per prezzo senza scansionare la tabella.
 4. `batch_writer` scrive molte righe riducendo le chiamate a DynamoDB.
+5. Le due funzioni decodificano la chiave dell'oggetto con `urllib.parse.unquote_plus`: nell'evento S3 spazi e caratteri speciali arrivano codificati (per esempio `+` al posto dello spazio) e senza la decodifica `head_object` o `get_object` fallirebbero con `NoSuchKey`. Il codice di partenza del lab non lo prevedeva.
+6. Il titolo del lab parla di DynamoDB Streams, ma la pipeline implementata non li usa: il flusso è S3 -> Lambda -> DynamoDB scritto direttamente dalla funzione.
 
 Procedura di esecuzione in CLI Cloudshell:
 
@@ -202,6 +205,7 @@ aws lambda wait function-active-v2 --function-name process-upload-metadata
 aws lambda add-permission --function-name process-upload-metadata --statement-id s3-invoke --action lambda:InvokeFunction --principal s3.amazonaws.com --source-arn arn:aws:s3:::lab14-uploads-gouthier --source-account $ACC
 FN1=$(aws lambda get-function --function-name process-upload-metadata --query Configuration.FunctionArn --output text)
 aws s3api put-bucket-notification-configuration --bucket lab14-uploads-gouthier --notification-configuration "{\"LambdaFunctionConfigurations\":[{\"Id\":\"upload-metadata-trigger\",\"LambdaFunctionArn\":\"$FN1\",\"Events\":[\"s3:ObjectCreated:*\"]}]}"
+sleep 45   # la notifica S3 diventa attiva dopo 30-60 s: un upload immediato non genera l'evento
 
 # Step 5 - Upload di 3 file (json, csv, txt)
 echo '{"nome":"test","valore":1}' > data.json
@@ -269,6 +273,7 @@ aws lambda wait function-active-v2 --function-name csv-importer
 aws lambda add-permission --function-name csv-importer --statement-id s3-invoke --action lambda:InvokeFunction --principal s3.amazonaws.com --source-arn arn:aws:s3:::lab14-csv-import-gouthier --source-account $ACC
 FN2=$(aws lambda get-function --function-name csv-importer --query Configuration.FunctionArn --output text)
 aws s3api put-bucket-notification-configuration --bucket lab14-csv-import-gouthier --notification-configuration "{\"LambdaFunctionConfigurations\":[{\"Id\":\"csv-import-trigger\",\"LambdaFunctionArn\":\"$FN2\",\"Events\":[\"s3:ObjectCreated:*\"],\"Filter\":{\"Key\":{\"FilterRules\":[{\"Name\":\"prefix\",\"Value\":\"imports/\"},{\"Name\":\"suffix\",\"Value\":\".csv\"}]}}}]}"
+sleep 45   # la notifica S3 diventa attiva dopo 30-60 s: un upload immediato non genera l'evento
 
 # Step 12 - Upload di products.csv in imports/ e scan
 cat > products.csv <<'EOF'
@@ -283,6 +288,13 @@ EOF
 aws s3 cp products.csv s3://lab14-csv-import-gouthier/imports/products.csv
 sleep 10
 aws dynamodb scan --table-name lab14-products --query "Items[].[product_id.S,category.S,name.S,price.N,stock.N]" --output table
+
+# Prova negativa del filtro: file fuori da imports/ e file .txt dentro imports/ non devono avviare csv-importer
+aws s3 cp products.csv s3://lab14-csv-import-gouthier/fuori-filtro.csv
+echo "nota" > note.txt
+aws s3 cp note.txt s3://lab14-csv-import-gouthier/imports/note.txt
+sleep 10
+aws dynamodb scan --table-name lab14-products --select COUNT      # atteso: Count 6, invariato
 
 # Step 13 - Query sul GSI (ordinata per prezzo)
 aws dynamodb query --table-name lab14-products --index-name category-price-index --key-condition-expression "category = :c" --expression-attribute-values '{":c":{"S":"Electronics"}}' --return-consumed-capacity INDEXES --query "[Items[].[name.S,price.N],ConsumedCapacity]" --output json

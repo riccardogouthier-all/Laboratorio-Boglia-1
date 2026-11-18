@@ -15,18 +15,18 @@ Client --GET /hello?name=...--> API Gateway (student-api) --proxy--> Lambda api-
 ## Step 1 - Creazione Lambda
 
 - Funzione: `api-hello`
-- Runtime: Python 3.14, package Zip
+- Runtime: Python 3.14, package Zip (il testo del lab indica Python 3.12; per questa funzione, che usa solo `json`, la versione non cambia il comportamento)
 
 ## Step 2 - Creazione API
 
 | Parametro | Valore |
 |---|---|
 | Nome | `student-api` |
-| Descrizione | api di prova per il lab 10 Java Serverless |
+| Descrizione | api di prova per il lab 10 (il testo "Java Serverless" è un residuo del nome del corso, non indica il linguaggio) |
 | ID | `ja4wdab3x9` |
 | Protocollo | REST |
 | Endpoint type | Regional |
-| Security policy | TLS_1_0 |
+| Security policy | TLS_1_0 (valore predefinito per la creazione da console in quel momento: accetta protocolli vecchi; per un'API reale va impostata `TLS_1_2`) |
 | Creata | 2026-09-18 |
 
 ## Step 3 - Risorsa e metodo
@@ -48,7 +48,7 @@ Richiesta `/hello?name=Riccardo`:
 
 ## Step 5 - Deploy API
 
-- Stage: `Lab-10-Serverless`
+- Stage: `Lab-10-Serverless` (nome scelto dal gruppo; il testo del lab suggerisce `dev`, ma il nome dello stage non cambia il comportamento, entra solo nell'URL)
 - URL: `https://ja4wdab3x9.execute-api.us-east-1.amazonaws.com/Lab-10-Serverless/hello?name=Student`
 - Risposta dal browser: `{"message": "Hello, Student!", "method": "GET", "path": "/hello"}`
 
@@ -67,7 +67,7 @@ Verifica da DevTools (Network) su `hello?name=Riccardo`:
 ## Conclusioni
 
 1. Con l'integrazione proxy la Lambda controlla status, header e body della risposta.
-2. L'header `Access-Control-Allow-Origin: *` presente nella risposta consente le chiamate cross-origin dal browser.
+2. L'header `Access-Control-Allow-Origin: *` restituito dalla Lambda basta per le richieste GET semplici. Per le richieste con preflight (metodi diversi da GET/POST semplici o header personalizzati) il browser invia prima una richiesta `OPTIONS`: serve anche un metodo `OPTIONS` sulla risorsa (Step 6b nella procedura CLI), con i tre header CORS e un nuovo deploy sullo stage. Nel deliverable acquisito da console è stato verificato solo il caso GET semplice.
 3. Le modifiche a metodi e risorse diventano attive solo dopo il deploy su uno stage.
 
 Procedura di esecuzione in CLI Cloudshell:
@@ -78,7 +78,7 @@ ROLE_ARN=$(aws iam get-role --role-name LabRole --query Role.Arn --output text)
 ACC=$(aws sts get-caller-identity --query Account --output text)
 mkdir -p lab10 && cd lab10
 
-# Step 1 - Funzione api-hello (il lab usa Python 3.12; nel deliverable e stata usata una versione piu recente)
+# Step 1 - Funzione api-hello (il lab usa Python 3.12; nel deliverable è stata usata una versione più recente)
 cat > lambda_function.py <<'EOF'
 import json
 
@@ -124,6 +124,14 @@ curl -s "$URL?name=Student"; echo
 
 # Step 6 - Header CORS nella risposta (Access-Control-Allow-Origin: *)
 curl -si "$URL?name=Riccardo" | grep -iE "^(HTTP|access-control|content-type|content-length)"
+
+# Step 6b - Preflight CORS: metodo OPTIONS con integrazione MOCK, poi nuovo deploy sullo stage
+aws apigateway put-method --rest-api-id $API_ID --resource-id $RES_ID --http-method OPTIONS --authorization-type NONE
+aws apigateway put-integration --rest-api-id $API_ID --resource-id $RES_ID --http-method OPTIONS --type MOCK --request-templates '{"application/json":"{\"statusCode\": 200}"}'
+aws apigateway put-method-response --rest-api-id $API_ID --resource-id $RES_ID --http-method OPTIONS --status-code 200 --response-parameters "method.response.header.Access-Control-Allow-Origin=false,method.response.header.Access-Control-Allow-Methods=false,method.response.header.Access-Control-Allow-Headers=false"
+aws apigateway put-integration-response --rest-api-id $API_ID --resource-id $RES_ID --http-method OPTIONS --status-code 200 --response-parameters '{"method.response.header.Access-Control-Allow-Origin":"'"'*'"'","method.response.header.Access-Control-Allow-Methods":"'"'GET,OPTIONS'"'","method.response.header.Access-Control-Allow-Headers":"'"'Content-Type'"'"}'
+aws apigateway create-deployment --rest-api-id $API_ID --stage-name Lab-10-Serverless
+curl -si -X OPTIONS -H "Origin: https://esempio.it" -H "Access-Control-Request-Method: GET" "$URL" | grep -iE "^(HTTP|access-control)"
 cd ..
 ```
 

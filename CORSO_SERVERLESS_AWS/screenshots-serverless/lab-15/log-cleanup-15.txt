@@ -1,0 +1,79 @@
+===== passo 1: passo 1
+aws dynamodb delete-backup --backup-arn $BK_ARN
+aws dynamodb update-continuous-backups --table-name lab15-sessions --point-in-time-recovery-specification PointInTimeRecoveryEnabled=false
+aws dynamodb delete-table --table-name lab15-sessions
+aws lambda delete-function --function-name insert-sessions
+aws s3 rm s3://$BUCKET --recursive && aws s3api delete-bucket --bucket $BUCKET
+aws logs delete-log-group --log-group-name /aws/lambda/insert-sessions
+--- output (exit 0, 34s)
+{
+    "BackupDescription": {
+        "BackupDetails": {
+            "BackupArn": "arn:aws:dynamodb:us-east-1:533267308404:table/lab15-sessions/backup/01794963611255-f7e2f6b6",
+            "BackupName": "sessions-backup-test",
+            "BackupSizeBytes": 0,
+            "BackupStatus": "DELETED",
+            "BackupType": "USER",
+            "BackupCreationDateTime": "2026-11-18T02:00:11.255000+01:00"
+        },
+        "SourceTableDetails": {
+            "TableName": "lab15-sessions",
+            "TableId": "341c6808-fe5d-4aaf-9f3f-5026776340af",
+            "TableArn": "arn:aws:dynamodb:us-east-1:533267308404:table/lab15-sessions",
+            "TableSizeBytes": 0,
+            "KeySchema": [
+                {
+                    "AttributeName": "session_id",
+                    "KeyType": "HASH"
+                }
+            ],
+            "TableCreationDateTime": "2026-11-18T01:58:57.593000+01:00",
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 0,
+                "WriteCapacityUnits": 0
+            },
+            "ItemCount": 0,
+            "BillingMode": "PAY_PER_REQUEST"
+        },
+        "SourceTableFeatureDetails": {
+            "TimeToLiveDescription": {
+                "TimeToLiveStatus": "ENABLED",
+                "AttributeName": "expires_at"
+            }
+        }
+    }
+}
+{
+    "ContinuousBackupsDescription": {
+        "ContinuousBackupsStatus": "ENABLED",
+        "PointInTimeRecoveryDescription": {
+            "PointInTimeRecoveryStatus": "DISABLED"
+        }
+    }
+}
+{
+    "TableDescription": {
+        "TableName": "lab15-sessions",
+        "TableStatus": "DELETING",
+        "ProvisionedThroughput": {
+            "NumberOfDecreasesToday": 0,
+            "ReadCapacityUnits": 0,
+            "WriteCapacityUnits": 0
+        },
+        "TableSizeBytes": 0,
+        "ItemCount": 0,
+        "TableArn": "arn:aws:dynamodb:us-east-1:533267308404:table/lab15-sessions",
+        "TableId": "341c6808-fe5d-4aaf-9f3f-5026776340af",
+        "BillingModeSummary": {
+            "BillingMode": "PAY_PER_REQUEST",
+            "LastUpdateToPayPerRequestDateTime": "2026-11-18T01:58:57.593000+01:00"
+        },
+        "DeletionProtectionEnabled": false
+    }
+}
+{
+    "StatusCode": 204
+}
+delete: s3://lab15-lifecycle-riccardogouthier533267/test2.txt
+delete: s3://lab15-lifecycle-riccardogouthier533267/test1.txt
+

@@ -1,0 +1,97 @@
+===== passo 1: passo 1
+cd "$HOME"
+export AWS_DEFAULT_REGION=us-east-1
+SUF=riccardogouthier533267
+--- output (exit 0, 0s)
+
+
+===== passo 2: Step 1-3 - Trust policy del ruolo del lab (sola lettura, nessuna modifica)
+# Step 1-3 - Trust policy del ruolo del lab (sola lettura, nessuna modifica)
+aws iam get-role --role-name LabRole --query Role.AssumeRolePolicyDocument
+--- output (exit 0, 5s)
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::533267308404:role/LabRole",
+                "Service": [
+                    "iotanalytics.amazonaws.com",
+                    "elasticfilesystem.amazonaws.com",
+                    "codecommit.amazonaws.com",
+                    "iot.amazonaws.com",
+                    "rekognition.amazonaws.com",
+                    "elasticloadbalancing.amazonaws.com",
+                    "sns.amazonaws.com",
+                    "lambda.amazonaws.com",
+                    "iotevents.amazonaws.com",
+                    "ecs-tasks.amazonaws.com",
+                    "events.amazonaws.com",
+                    "application-autoscaling.amazonaws.com",
+                    "eks.amazonaws.com",
+                    "pipes.amazonaws.com",
+                    "backup.amazonaws.com",
+                    "forecast.amazonaws.com",
+                    "athena.amazonaws.com",
+                    "credentials.iot.amazonaws.com",
+                    "ec2.amazonaws.com",
+                    "codewhisperer.amazonaws.com",
+                    "servicecatalog.amazonaws.com",
+                    "resource-groups.amazonaws.com",
+                    "rds.amazonaws.com",
+                    "cloudformation.amazonaws.com",
+                    "elasticmapreduce.amazonaws.com",
+                    "kms.amazonaws.com",
+                    "batch.amazonaws.com",
+                    "autoscaling.amazonaws.com",
+                    "scheduler.amazonaws.com",
+                    "redshift.amazonaws.com",
+                    "s3.amazonaws.com",
+                    "states.amazonaws.com",
+                    "ecs.amazonaws.com",
+                    "apigateway.amazonaws.com",
+                    "sqs.amazonaws.com",
+                    "ec2.application-autoscaling.amazonaws.com",
+                    "codedeploy.amazonaws.com",
+                    "elasticbeanstalk.amazonaws.com",
+                    "kinesisanalytics.amazonaws.com",
+                    "kinesis.amazonaws.com",
+                    "logs.amazonaws.com",
+                    "secretsmanager.amazonaws.com",
+                    "firehose.amazonaws.com",
+                    "deepracer.amazonaws.com",
+                    "cloudtrail.amazonaws.com",
+                    "eks-fargate-pods.amazonaws.com",
+                    "databrew.amazonaws.com",
+                    "sagemaker.amazonaws.com",
+                    "ssm.amazonaws.com",
+                    "glue.amazonaws.com",
+                    "cognito-idp.amazonaws.com",
+                    "dynamodb.amazonaws.com"
+                ]
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+
+===== passo 3: Step 4-9 - Chiave KMS customer managed: simmetrica, encrypt and decrypt, alias sicurezza03-SUFFISSO
+# Step 4-9 - Chiave KMS customer managed: simmetrica, encrypt and decrypt, alias sicurezza03-SUFFISSO
+KEY_ID=$(aws kms create-key --key-spec SYMMETRIC_DEFAULT --key-usage ENCRYPT_DECRYPT --description "sicurezza03-$SUF" --region us-east-1 --query KeyMetadata.KeyId --output text)
+aws kms create-alias --alias-name alias/sicurezza03-$SUF --target-key-id $KEY_ID --region us-east-1
+echo $KEY_ID
+--- output (exit 0, 9s)
+7a01a1d3-6c15-4aa2-a7f2-9e035072c491
+
+===== passo 4: Step 10-11 - Ciclo encrypt -> decrypt e confronto con l'originale
+# Step 10-11 - Ciclo encrypt -> decrypt e confronto con l'originale
+printf '%s' 'rapporto sintetico 03' > chiaro03.txt
+aws kms encrypt --key-id $KEY_ID --plaintext fileb://chiaro03.txt --region us-east-1 --query CiphertextBlob --output text > cifrato03.b64
+base64 -d cifrato03.b64 > cifrato03.bin
+aws kms decrypt --ciphertext-blob fileb://cifrato03.bin --region us-east-1 --query Plaintext --output text > decifrato03.b64
+base64 -d decifrato03.b64 > decifrato03.txt
+cmp chiaro03.txt decifrato03.txt; echo "exit=$?"      # exit=0: nessuna differenza
+--- output (exit 0, 10s)
+exit=0
+

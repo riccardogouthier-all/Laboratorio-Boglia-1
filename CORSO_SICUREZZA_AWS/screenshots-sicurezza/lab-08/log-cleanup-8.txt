@@ -1,0 +1,14 @@
+===== passo 1: passo 1
+cd "C:/Users/Riccardo/AppData/Local/Temp/claude/f3818f1616c21066/42a541a1-278f-49ac-986a-0f8567aa69ba/scratchpad/work-sic"
+export AWS_DEFAULT_REGION=us-east-1
+SUF=rg
+--- output (exit 0, 0s)
+
+
+===== passo 2: --- Cleanup ---
+# --- Cleanup ---
+aws cloudwatch delete-alarms --alarm-names sicurezza08-$SUF --region us-east-1
+aws cloudwatch describe-alarms --alarm-names sicurezza08-$SUF --query "MetricAlarms" --output text    # atteso: vuoto
+--- output (exit 0, 9s)
+
+

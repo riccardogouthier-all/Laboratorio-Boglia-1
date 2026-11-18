@@ -1,0 +1,68 @@
+===== passo 1: passo 1
+cd "$HOME"
+export AWS_DEFAULT_REGION=us-east-1
+SUF=riccardogouthier533267
+--- output (exit 0, 1s)
+
+
+===== passo 2: Step 1-2 - Zone name e Zone ID
+# Step 1-2 - Zone name e Zone ID
+aws ec2 describe-availability-zones --region us-east-1 --query 'AvailabilityZones[].[ZoneName,ZoneId,State]' --output table
+--- output (exit 0, 6s)
+-----------------------------------------
+|       DescribeAvailabilityZones       |
++------------+------------+-------------+
+|  us-east-1a|  use1-az4  |  available  |
+|  us-east-1b|  use1-az6  |  available  |
+|  us-east-1c|  use1-az1  |  available  |
+|  us-east-1d|  use1-az2  |  available  |
+|  us-east-1e|  use1-az3  |  available  |
+|  us-east-1f|  use1-az5  |  available  |
++------------+------------+-------------+
+
+===== passo 3: Step 3-9 - Bucket privato con SSE-S3, ACL disabilitate, Block Public Access, versioning non abilitato
+# Step 3-9 - Bucket privato con SSE-S3, ACL disabilitate, Block Public Access, versioning non abilitato
+aws s3api create-bucket --bucket sicurezza02-$SUF --region us-east-1
+aws s3api put-bucket-ownership-controls --bucket sicurezza02-$SUF --ownership-controls 'Rules=[{ObjectOwnership=BucketOwnerEnforced}]'
+aws s3api put-public-access-block --bucket sicurezza02-$SUF --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+aws s3api put-bucket-encryption --bucket sicurezza02-$SUF --server-side-encryption-configuration '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
+--- output (exit 0, 19s)
+{
+    "Location": "/sicurezza02-riccardogouthier533267",
+    "BucketArn": "arn:aws:s3:::sicurezza02-riccardogouthier533267"
+}
+
+===== passo 4: Step 10-12 - Oggetto sintetico e verifica della cifratura a riposo
+# Step 10-12 - Oggetto sintetico e verifica della cifratura a riposo
+echo "Rapporto manutenzione sintetico" > rapporto.txt
+aws s3 cp rapporto.txt s3://sicurezza02-$SUF/rapporto.txt
+aws s3api head-object --bucket sicurezza02-$SUF --key rapporto.txt --region us-east-1 --query '{Encryption:ServerSideEncryption,Size:ContentLength}'
+--- output (exit 0, 9s)
+Completed 32 Bytes/32 Bytes (46 Bytes/s) with 1 file(s) remainingupload: .\rapporto.txt to s3://sicurezza02-riccardogouthier533267/rapporto.txt
+{
+    "Encryption": "AES256",
+    "Size": 32
+}
+
+===== passo 5: Step 13 - Download autenticato e confronto del contenuto
+# Step 13 - Download autenticato e confronto del contenuto
+aws s3 cp s3://sicurezza02-$SUF/rapporto.txt scaricato.txt
+sha256sum rapporto.txt scaricato.txt
+--- output (exit 0, 4s)
+Completed 32 Bytes/32 Bytes (78 Bytes/s) with 1 file(s) remainingdownload: s3://sicurezza02-riccardogouthier533267/rapporto.txt to .\scaricato.txt
+767d2972fd1533a9ead15ebab6ecfde0a8e3a9a94d04b6808e455519fad1f074 *rapporto.txt
+767d2972fd1533a9ead15ebab6ecfde0a8e3a9a94d04b6808e455519fad1f074 *scaricato.txt
+
+===== passo 6: Accesso pubblico bloccato
+# Accesso pubblico bloccato
+aws s3api get-public-access-block --bucket sicurezza02-$SUF
+--- output (exit 0, 5s)
+{
+    "PublicAccessBlockConfiguration": {
+        "BlockPublicAcls": true,
+        "IgnorePublicAcls": true,
+        "BlockPublicPolicy": true,
+        "RestrictPublicBuckets": true
+    }
+}
+
