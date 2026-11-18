@@ -1,1 +1,17 @@
 (Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned) ; (& c:\Users\riccardo.gouthier\Desktop\GITHUB\Laboratorio-Boglia-1\CORSO_PROGRAMMAZIONE\.venv\Scripts\Activate.ps1)
+
+
+
+Altro dispositivo:
+git clone <repo>
+cd <repo>
+python -m venv venv
+source venv/bin/activate    # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+
+Note:
+
+pip freeze include anche dipendenze transitive → lista lunga ma riproducibile. Alternativa: scrivere a mano solo pacchetti diretti.
+Versione Python: annotarla (README o .python-version), stessa major.minor.
+Dipendenze native (es. psycopg2, numpy su arch diverse) possono richiedere pacchetti di sistema.
+Tool più robusti: pip-tools, poetry, uv (lockfile).
