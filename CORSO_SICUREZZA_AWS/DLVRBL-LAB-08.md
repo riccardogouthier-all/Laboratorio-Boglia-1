@@ -27,6 +27,18 @@ Nella console AWS Config risulta non attivo in `us-east-1` (nessun recorder, sch
 ## Limite
 Un allarme `OK` non prova la conformità dei volumi: monitoraggio e conformità sono controlli diversi.
 
+## Screenshot e log
+Cartella: `screenshots-sicurezza/lab-08/`
+
+- `cleanup-02.png`
+- `log-cleanup-8.txt`
+- `log-lab-8.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+- `passo-06.png`
+
 ## Checkpoint
 - [x] Metrica custom pubblicata, allarme in `ALARM` con valore 5
 - [x] Ritorno a `OK` dichiarato come atteso, non osservato

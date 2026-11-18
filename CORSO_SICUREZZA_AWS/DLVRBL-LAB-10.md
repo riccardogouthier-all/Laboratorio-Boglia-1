@@ -49,6 +49,19 @@ Verifica via CLI: resta solo la VPC di default; nessun detector GuardDuty, nessu
 
 Non ancora rimosso: il segreto `sicurezza09/rg`, in eliminazione pianificata con 7 giorni di recupero (data di cancellazione 2026-11-16 20:38:59 +01:00); non è stata usata l'eliminazione forzata. Le metriche già pubblicate in `Sicurezza08` restano secondo la retention AWS e l'evento CloudTrail resta nell'account.
 
+## Screenshot e log
+Cartella: `screenshots-sicurezza/lab-10/`
+
+- `cleanup-02.png`
+- `cleanup-03.png`
+- `log-cleanup-10.txt`
+- `log-lab-10.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+- `passo-06.png`
+
 ## Checkpoint
 - [x] Stato iniziale reale dichiarato
 - [x] G1 e G2 analizzati con verifica, contenimento e priorità

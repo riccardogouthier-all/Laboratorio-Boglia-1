@@ -51,6 +51,16 @@ Output atteso: prompt `[ec2-user@ip-10-0-1-25 ~]$`, che conferma AMI, Security G
 - Status check atteso: `3/3 checks passed` (`aws ec2 wait instance-status-ok` lo attende)
 - SSH: prompt Amazon Linux
 
+## Screenshot e log
+Cartella: `screenshots-vm-reti-storage/lab-1/`
+
+- `log-lab-1.txt`
+- `passo-01.png`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+
 ## Checkpoint
 - [x] Tipo istanza coerente, entro `.large`
 - [x] SG solo 22 (ristretta) + 80, non `0.0.0.0/0` su tutte le porte

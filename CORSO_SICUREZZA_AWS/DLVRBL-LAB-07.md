@@ -42,6 +42,16 @@ In CloudTrail Event history, filtro `Event name = CreateLogGroup`:
 - L'evento non prova l'uso di VPN né di Direct Connect.
 - Per attribuire l'azione a una persona servono altri dati di sessione.
 
+## Screenshot e log
+Cartella: `screenshots-sicurezza/lab-07/`
+
+- `cleanup-02.png`
+- `log-cleanup-7.txt`
+- `log-lab-7.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+
 ## Checkpoint
 - [x] Confronto VPN / Direct Connect
 - [x] Evento CloudTrail trovato con filtro e campi riportati

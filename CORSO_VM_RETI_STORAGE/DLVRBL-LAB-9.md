@@ -47,6 +47,16 @@ Esito: `describe-volumes` -> `Encrypted: true`; `head-object` -> `ServerSideEncr
 ## Limite
 La cifratura a riposo è verificata su volume e oggetto. HTTPS protegge il trasferimento ed è una cosa distinta, non provata da queste verifiche.
 
+## Screenshot e log
+Cartella: `screenshots-vm-reti-storage/lab-9/`
+
+- `cleanup-01.png`
+- `log-cleanup-9.txt`
+- `log-lab-9.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+
 ## Checkpoint
 - [x] Tipi di Storage Gateway confrontati e scelta motivata
 - [x] Volume EBS cifrato verificato via CLI

@@ -61,6 +61,20 @@ Dopo stop di `demo-web-02`:
 | 4 | Load balancer | `demo-alb` `active`, DNS name `http://<DNS-ALB>/` risponde |
 | 5 | Health check | prima: 2 `healthy`; dopo stop: `demo-web-01` `healthy`, `demo-web-02` `unused`; dopo riavvio: 2 `healthy` |
 
+## Screenshot e log
+Cartella: `screenshots-vm-reti-storage/lab-2/`
+
+- `cleanup-01.png`
+- `log-cleanup-2.txt`
+- `log-lab-2.txt`
+- `passo-01.png`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+- `passo-06.png`
+- `passo-07.png`
+
 ## Checkpoint
 - [x] AMI creata da istanza in stato coerente (`stopped`), nome con versione
 - [x] AMI `available` prima del lancio di `demo-web-02`

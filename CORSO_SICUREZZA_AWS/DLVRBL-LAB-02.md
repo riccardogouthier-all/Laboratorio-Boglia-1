@@ -112,3 +112,15 @@ aws s3 rm s3://sicurezza02-$SUF --recursive
 aws s3api delete-bucket --bucket sicurezza02-$SUF
 rm -f rapporto.txt scaricato.txt
 ```
+
+## Screenshot e log
+Cartella: `screenshots-sicurezza/lab-02/`
+
+- `cleanup-02.png`
+- `log-cleanup-2.txt`
+- `log-lab-2.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+- `passo-06.png`

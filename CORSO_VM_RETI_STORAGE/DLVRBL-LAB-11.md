@@ -60,6 +60,21 @@ Per uno scenario con banda moderata, costo contenuto e attivazione rapida si sce
 | 3 | VGW | `vgw-000a3229e7834c3fc`, Available, Attached |
 | 4 | CGW/VPN | non creati: `UnauthorizedOperation` (SCP) |
 
+## Screenshot e log
+Cartella: `screenshots-vm-reti-storage/lab-11/`
+
+- `cleanup-01.png`
+- `cleanup-02.png`
+- `cleanup-03.png`
+- `cleanup-04.png`
+- `log-cleanup-11.txt`
+- `log-lab-11.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+- `passo-06.png`
+
 ## Checkpoint
 - [x] Tre tier con subnet dedicate, database senza IGW
 - [x] Security Group a catena, origine = SG a monte

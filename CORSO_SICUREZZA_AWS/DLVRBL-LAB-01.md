@@ -101,3 +101,11 @@ aws cloudtrail lookup-events --max-results 5 --query "Events[].[EventTime,EventN
 ```
 
 Le sei prove (positive/negative per lettura, cancellazione e attribuzione) sono descritte nel deliverable; non c'e nulla da cancellare (nessuna risorsa creata). Eliminare `consegna01.md` se contiene dati non sintetici.
+
+## Screenshot e log
+Cartella: `screenshots-sicurezza/lab-01/`
+
+- `log-lab-1.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`

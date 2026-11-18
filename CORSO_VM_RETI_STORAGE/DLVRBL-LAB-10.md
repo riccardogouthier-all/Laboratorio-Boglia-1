@@ -54,6 +54,23 @@ I volumi EBS restano separati: `/mnt/demo-data` di `demo-web-02` è vuoto e non 
 | 3 | EFS | `fs-0c416404a678a550e`, 2 mount target `available` |
 | 4 | Condivisione | file scritto su istanza 1 letto su istanza 2 |
 
+## Screenshot e log
+Cartella: `screenshots-vm-reti-storage/lab-10/`
+
+- `cleanup-01.png`
+- `log-cleanup-10.txt`
+- `log-lab-10.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+- `passo-06.png`
+- `passo-07.png`
+- `passo-08.png`
+- `passo-09.png`
+- `passo-10.png`
+- `passo-11.png`
+
 ## Checkpoint
 - [x] EBS separato per istanza, dati non condivisi
 - [x] EFS con SG dedicato e mount target in due AZ

@@ -36,6 +36,19 @@ La procedura CLI stampa `VPC`, `SUB`, `SG`, `NACL`, `OLD_NACL` e `NEW_ASSOC` con
 ## Limite
 Nessun test applicativo è dichiarato riuscito: senza istanza e senza accesso Internet le decisioni derivano dalla lettura delle regole, non da traffico reale.
 
+## Screenshot e log
+Cartella: `screenshots-sicurezza/lab-06/`
+
+- `cleanup-02.png`
+- `log-cleanup-6.txt`
+- `log-lab-6.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+- `passo-06.png`
+- `passo-07.png`
+
 ## Checkpoint
 - [x] SG e NACL configurati con regole minime
 - [x] 4 decisioni sui pacchetti motivate

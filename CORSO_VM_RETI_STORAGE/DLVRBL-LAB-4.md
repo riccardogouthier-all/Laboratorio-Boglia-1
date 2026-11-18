@@ -50,6 +50,16 @@ Secondo comando: output vuoto → nessuna associazione esplicita, entrambe le su
 | 4 | Route table osservata | main, solo `10.0.0.0/16 → local`, nessun IGW |
 | 5 | Conclusione | nessuna subnet realmente pubblica: manca rotta `0.0.0.0/0 → IGW`; `public` = solo nome |
 
+## Screenshot e log
+Cartella: `screenshots-vm-reti-storage/lab-4/`
+
+- `log-lab-4.txt`
+- `passo-01.png`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+
 ## Checkpoint
 - [x] CIDR VPC abbastanza ampio per subnet pianificate
 - [x] Due subnet con CIDR distinti, non sovrapposti

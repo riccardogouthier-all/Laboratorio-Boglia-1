@@ -37,6 +37,19 @@ Regola `demo-lifecycle-standard-ia`:
 | 4 | Delete marker | `BS9QzPa_O7074w8c4985rnGdhzJVxxF_`, due versioni ancora presenti |
 | 5 | Recupero | marker rimosso, `report.txt` leggibile (v2) |
 
+## Screenshot e log
+Cartella: `screenshots-vm-reti-storage/lab-8/`
+
+- `log-lab-8.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+- `passo-06.png`
+- `passo-07.png`
+- `passo-08.png`
+- `passo-09.png`
+
 ## Checkpoint
 - [x] Versioning attivo e due versioni distinte
 - [x] Delete marker osservato, nessuna perdita dei dati

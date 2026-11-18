@@ -39,6 +39,18 @@ Il segreto è in eliminazione pianificata con 7 giorni di recupero, non forzata.
 - Nessun traffico è stato inviato e la Web ACL non è associata a risorse: i contatori `Count` restano a 0 e gli esiti della tabella sono dedotti dalla regola, non osservati.
 - Shield Advanced non attivato: protegge da DDoS di livello avanzato ma ha un costo mensile fisso elevato e non serve in questo lab; AWS Shield Standard è già incluso senza attivazione.
 
+## Screenshot e log
+Cartella: `screenshots-sicurezza/lab-09/`
+
+- `cleanup-02.png`
+- `log-cleanup-9.txt`
+- `log-lab-9.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+- `passo-06.png`
+
 ## Checkpoint
 - [x] Web ACL con regola `Count` e 5 esiti attesi motivati
 - [x] Segreto con due versioni, `AWSCURRENT`/`AWSPREVIOUS`

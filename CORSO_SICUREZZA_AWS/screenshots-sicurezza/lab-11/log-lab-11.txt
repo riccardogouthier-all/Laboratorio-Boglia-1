@@ -1,0 +1,83 @@
+===== Lab 11 - evidenze reali (output CLI salvati durante il lab)
+
+--- vol_src.json
+[
+    {
+        "Id": "vol-0b6525be00f61679b",
+        "State": "available",
+        "Type": "gp3",
+        "Size": 1,
+        "Az": "us-east-1a",
+        "Enc": true,
+        "Attach": []
+    }
+]
+
+--- backup_start.json
+{
+    "BackupJobId": "d12dad94-8eb7-431d-acd3-eb0b1354a835",
+    "CreationDate": "2026-11-18T12:26:15.415000+01:00",
+    "IsParent": false
+}
+
+--- backup_done.json
+{
+    "State": "COMPLETED",
+    "Msg": null,
+    "Rp": "arn:aws:ec2:us-east-1::snapshot/snap-08692aef2fe312c5c",
+    "Size": 1073741824,
+    "Vault": "sicurezza11-rg"
+}
+
+--- restore_start.json
+{
+    "RestoreJobId": "abe6b32e-a6e0-4c48-979b-a8b9bd6234ba"
+}
+
+--- restore_meta.json
+{
+    "BackupVaultArn": "arn:aws:backup:us-east-1:533267308404:backup-vault:sicurezza11-rg",
+    "RecoveryPointArn": "arn:aws:ec2:us-east-1::snapshot/snap-08692aef2fe312c5c",
+    "RestoreMetadata": {
+        "availabilityZone": null,
+        "aws:backup:request-id": "375691e3-bc33-4dc7-aff7-beb8e0970b1b",
+        "encrypted": "true",
+        "kmsKeyId": "arn:aws:kms:us-east-1:533267308404:key/ac8cde50-ebef-427c-839c-507c08c27833",
+        "volumeId": "vol-0b6525be00f61679b",
+        "volumeSize": "1"
+    },
+    "ResourceType": "EBS"
+}
+
+--- restore_done.json
+{
+    "Status": "COMPLETED",
+    "Msg": null,
+    "Created": "arn:aws:ec2:us-east-1:533267308404:volume/vol-081e302b5df3d95ae"
+}
+
+--- vols_both.json
+[
+    {
+        "Id": "vol-081e302b5df3d95ae",
+        "State": "available",
+        "Type": "gp3",
+        "Size": 1,
+        "Az": "us-east-1a",
+        "Enc": true,
+        "Name": null
+    },
+    {
+        "Id": "vol-0b6525be00f61679b",
+        "State": "available",
+        "Type": "gp3",
+        "Size": 1,
+        "Az": "us-east-1a",
+        "Enc": true,
+        "Name": "sicurezza11-rg"
+    }
+]
+
+--- hash.txt (SHA-256 locale)
+ede21663ae3f0602cb61f6570edab60b797db6511c7282788814a06634ebe218 *originale11.txt
+ede21663ae3f0602cb61f6570edab60b797db6511c7282788814a06634ebe218 *recuperato11.txt

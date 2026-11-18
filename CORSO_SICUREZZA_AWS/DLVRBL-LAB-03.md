@@ -83,3 +83,13 @@ ls
 ```
 
 La chiave risulta `PendingDeletion` (finestra di 7 giorni): non è ancora eliminata e non è utilizzabile per operazioni crittografiche.
+
+## Screenshot e log
+Cartella: `screenshots-sicurezza/lab-03/`
+
+- `cleanup-02.png`
+- `log-cleanup-3.txt`
+- `log-lab-3.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`

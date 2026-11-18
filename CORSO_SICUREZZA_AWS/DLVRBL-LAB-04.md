@@ -95,6 +95,15 @@ aws iam simulate-custom-policy --policy-input-list "$(cat policy04_mfa.json)" --
 - Simulazione AWS: non eseguita in questo documento. I 7 casi sono valutati a mano con la logica di valutazione IAM (un `Deny` esplicito prevale su qualsiasi `Allow`; senza `Allow` vale il rifiuto implicito).
 - Limite: le decisioni non sono confermate dal simulatore. I comandi per confermarle sono nella procedura CLI qui sotto.
 
+## Screenshot e log
+Cartella: `screenshots-sicurezza/lab-04/`
+
+- `log-lab-4.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+
 ## Checkpoint
 - [x] 4 casi base simulati, decisione e motivo registrati
 - [x] 3 casi MFA simulati, decisione e motivo registrati

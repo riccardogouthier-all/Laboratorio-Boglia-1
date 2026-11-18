@@ -1,7 +1,7 @@
 # Consegna Lab 05 - SCP e Access Analyzer (modello locale)
 
 ## Ambito
-Esercizio svolto in locale: AWS Organizations e IAM Access Analyzer non sono autorizzati nel Learner Lab, quindi non è stata creata nessuna risorsa cloud e non ci sono screenshot della console. Gli identificativi sono fittizi.
+Esercizio svolto in locale: AWS Organizations e IAM Access Analyzer non sono autorizzati nel Learner Lab, quindi non è stata creata nessuna risorsa cloud e sono disponibili solo gli  screenshot della CLI. Gli identificativi sono fittizi.
 
 ## Gerarchia
 ```
@@ -37,6 +37,14 @@ Cambia soltanto `Delete`. `FullAWSAccess` è un limite, non una concessione: le 
 
 ## Limite delle evidenze
 Per provare un accesso realmente avvenuto servono log reali (CloudTrail, log di accesso S3) e l'esito di Access Analyzer. Qui il modello è locale: dimostra la logica di valutazione, non lo stato di un account reale.
+
+## Screenshot e log
+Cartella: `screenshots-sicurezza/lab-05/`
+
+- `log-lab-5.txt`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
 
 ## Checkpoint
 - [x] Gerarchia root -> OU -> account descritta

@@ -75,6 +75,22 @@ Output atteso (illustrativo):
 | 4 | Allarme CloudWatch | `demo-cpu-alta`, CPUUtilization, Average, 5 min, soglia 70 |
 | 5 | Sostituzione automatica | istanza terminata → nuova `InService` + `healthy` (tab Activity) |
 
+## Screenshot e log
+Cartella: `screenshots-vm-reti-storage/lab-3/`
+
+- `cleanup-01.png`
+- `log-cleanup-3.txt`
+- `log-lab-3.txt`
+- `passo-01.png`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+- `passo-06.png`
+- `passo-07.png`
+- `passo-08.png`
+- `passo-09.png`
+
 ## Checkpoint
 - [x] Min/desiderato/max coerenti con servizio sempre disponibile (min ≥ 1)
 - [x] Allarme con soglia e periodo motivati

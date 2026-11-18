@@ -71,6 +71,15 @@ Output atteso:
 | 4 | File di test | `test.txt` scritto e riletto: «demo storage EBS» |
 | 5 | Snapshot | ID stampato da `echo $SNAP`, `completed`, 100% |
 
+## Screenshot e log
+Cartella: `screenshots-vm-reti-storage/lab-7/`
+
+- `cleanup-01.png`
+- `log-cleanup-7.txt`
+- `log-lab-7.txt`
+- `passo-02.png`
+- `passo-03.png`
+
 ## Checkpoint
 - [x] Tipo consentito, dimensione ≤ 100 GiB
 - [x] Volume nella stessa AZ dell'istanza

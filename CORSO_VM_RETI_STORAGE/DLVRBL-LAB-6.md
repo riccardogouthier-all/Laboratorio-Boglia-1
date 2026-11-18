@@ -57,6 +57,20 @@ Output atteso: due voci, inbound 100 allow 22, outbound 100 allow 1024-65535 (re
 | 4 | Outbound 100 | Allow 1024-65535 verso `10.0.1.0/24` |
 | 5 | Priorità regole | deny 50 prima di allow 100; rimossa dopo test |
 
+## Screenshot e log
+Cartella: `screenshots-vm-reti-storage/lab-6/`
+
+- `cleanup-01.png`
+- `log-cleanup-6.txt`
+- `log-lab-6.txt`
+- `passo-01.png`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+- `passo-06.png`
+- `passo-07.png`
+
 ## Checkpoint
 - [x] Nessun `0.0.0.0/0` su porte sensibili senza motivazione
 - [x] NACL con regola inbound e outbound di risposta

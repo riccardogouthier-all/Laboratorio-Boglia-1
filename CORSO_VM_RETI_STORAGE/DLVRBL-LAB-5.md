@@ -59,6 +59,20 @@ Output atteso: hostname privato (es. `ip-10-0-2-15...`) + `HTTP/2 200` → uscit
 
 Verifica: `demo-private-test` senza IP pubblico (`PublicIpAddress` = `None`).
 
+## Screenshot e log
+Cartella: `screenshots-vm-reti-storage/lab-5/`
+
+- `log-lab-5.txt`
+- `passo-01.png`
+- `passo-02.png`
+- `passo-03.png`
+- `passo-04.png`
+- `passo-05.png`
+- `passo-06.png`
+- `passo-07.png`
+- `passo-08.png`
+- `passo-09.png`
+
 ## Checkpoint
 - [x] Subnet pubblica con rotta verso IGW
 - [x] Subnet privata con rotta verso NAT
