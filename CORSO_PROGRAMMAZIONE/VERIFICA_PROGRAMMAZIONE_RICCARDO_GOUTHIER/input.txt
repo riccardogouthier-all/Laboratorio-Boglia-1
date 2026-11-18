@@ -1,6 +1,0 @@
-Posso localizzare il gatto
-ciao mondo
-concatenare stringhe
-questo non ha corrispondenza
-una persona curiosa e talentuosa
-xyz abc
