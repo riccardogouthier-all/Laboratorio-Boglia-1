@@ -1,7 +1,7 @@
 (Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned) ; (& c:\Users\riccardo.gouthier\Desktop\GITHUB\Laboratorio-Boglia-1\CORSO_PROGRAMMAZIONE\.venv\Scripts\Activate.ps1)
 
 
-
+procedura per rifaver .venv     (environment)
 Altro dispositivo:
 git clone <repo>
 cd <repo>
