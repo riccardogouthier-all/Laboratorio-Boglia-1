@@ -9,10 +9,10 @@ Inventario app installate (Impostazioni > App > App installate) per migrazione s
 - **Dati da migrare**: ⚠️ = app con dati/configurazioni da copiare a parte (indicato cosa).
 - **Gruppo**: app dipendenti, da installare insieme.
 - **Possibili ridondanze** (stesso colore = stessa coppia/gruppo da valutare):
+  - 🟨 ODBC Driver 17 ↔ ODBC Driver 18  (SPESSO COESISTONO PER COMPATIBILITA')
   - 🟥 Docker Desktop ↔ Rancher Desktop
   - 🟦 HashiCorp Terraform ↔ OpenTofu
   - 🟩 Java 8 ↔ JDK 25
-  - 🟨 ODBC Driver 17 ↔ ODBC Driver 18
   - 🟪 OLE DB Driver 18 ↔ OLE DB Driver 19
   - 🟧 Python 3.14.3 ↔ Python Install Manager ↔ Python Launcher
 
@@ -172,4 +172,4 @@ Nessuna reinstallazione necessaria.
 - Le dimensioni sono quelle del programma installato, non dei file di installazione da scaricare.
 - Dati da migrare = stima per tipo di software; verificare sulla macchina di origine (percorsi dati reali, DB da esportare con dump/backup).
 - Classificazione preinstallata/da installare = stima da nomi app; verificare Microsoft 365 Apps, PowerShell.
-- Le ridondanze 🟥🟦🟩🟨🟪🟧 sono solo da valutare: nulla è obbligatorio rimuovere (es. ODBC 17 e 18 coesistono spesso per compatibilità).
+- Le ridondanze 🟥🟦🟩🟨🟪🟧 sono solo da valutare: nulla è obbligatorio rimuovere.
